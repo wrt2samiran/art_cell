@@ -192,34 +192,6 @@
                 </li>
                 @endif
 
-                <li class="nav-item has-treeview @if(Route::currentRouteName()=='admin.attendance-management.list'){{'menu-open'}}@endif">
-                    <a href="#"
-                       class="nav-link @if(Route::currentRouteName()=='admin.attendance-management.list'
-                       ){{'active'}}@endif">
-                        <i class="nav-icon fa fa-list"></i>
-                        <p>
-                            Attendance Manage
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview @if(Route::currentRouteName()=='admin.attendance-management.list' 
-                    ){{'style="display: block;"'}}@endif">
-                        <li class="nav-item">
-                            <a href="{{ route('admin.attendance-management.list') }}"
-                               class="nav-link @if(Route::currentRouteName()=='admin.attendance-management.list'){{'active'}}@endif">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>list</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-               
-
-               
-
-               
-               
-
             </ul>
 
         </nav>
