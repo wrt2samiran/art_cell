@@ -9,7 +9,7 @@
         <img src="{{asset('assets/dist/img/AdminLTELogo.png')}}" alt="User Logo"
              class="brand-image img-circle elevation-3"
              style="opacity: .8">
-        <span class="brand-text font-weight-light">Attendance Panel</span>
+        <span class="brand-text font-weight-light">{{__('general_sentence.admin_panel')}}</span>
     </a>
 
     <!-- Sidebar -->
@@ -39,7 +39,7 @@
                        ){{'active'}}@endif">
                         <i class="nav-icon fa fa-home"></i>
                         <p>
-                            Home
+                            {{__('nav_link_text.home')}}
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
@@ -49,14 +49,14 @@
                             <a href="{{ route('admin.dashboard') }}"
                                class="nav-link @if(Route::currentRouteName()=='admin.dashboard'){{'active'}}@endif">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Dashboard</p>
+                                <p>{{__('nav_link_text.dashboard')}}</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('admin.settings') }}"
                                class="nav-link @if(Route::currentRouteName()=='admin.settings'){{'active'}}@endif">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Settings</p>
+                                <p>{{__('nav_link_text.settings')}}</p>
                             </a>
                         </li>
                     </ul>
@@ -78,11 +78,11 @@
                                                 Route::currentRouteName()=='admin.module-management.functionality-edit'){{'active'}}@endif">
                             <i class="nav-icon fa fa-universal-access"></i>
                             <p>
-                                Access Control
+                                {{__('nav_link_text.access_control')}}
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
-                        <ul class="nav nav-treeview @if(Route::currentRouteName()=='admin.module-management.module.list' ||
+<!--                         <ul class="nav nav-treeview @if(Route::currentRouteName()=='admin.module-management.module.list' ||
                                     Route::currentRouteName()=='admin.module-management.module.add' || 
                                     Route::currentRouteName()=='admin.module-management.edit' ||
                                     Route::currentRouteName()=='admin.module-management.function.add' || 
@@ -110,7 +110,7 @@
                                 </a>
                             </li>
                             @endif
-                        </ul>
+                        </ul> -->
                     </li>
                 @endif
                 @if (checkModulePermission("user.management"))
@@ -133,11 +133,11 @@
                                         Route::currentRouteName()=='admin.user-management.site.user.list'){{'active'}}@endif">
                         <i class="nav-icon fa fa-users"></i>
                         <p>
-                            User Management
+                             {{__('nav_link_text.user_management')}}
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
-                    <ul class="nav nav-treeview @if(Route::currentRouteName()=='admin.user-management.role-list' ||
+<!--                     <ul class="nav nav-treeview @if(Route::currentRouteName()=='admin.user-management.role-list' ||
                                     Route::currentRouteName()=='admin.user-management.user.list' ||
                                     Route::currentRouteName()=='admin.user-management.user.add' || 
                                     Route::currentRouteName()=='admin.user-management.user-edit' || 
@@ -188,7 +188,7 @@
                                 <p> App User List</p>
                             </a>
                         </li>
-                    </ul>
+                    </ul> -->
                 </li>
                 @endif
 

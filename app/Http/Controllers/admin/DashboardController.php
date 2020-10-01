@@ -21,6 +21,21 @@ use Carbon\Carbon;
 class DashboardController extends Controller
 {
     public $data = array();             // set global class object
+    
+    /*****************************************************/
+    # DashboardController
+    # Function name : changeLanguage
+    # Author        :
+    # Created Date  : 01-10-2020
+    # Purpose       : To change language              
+    # Params        : 
+    /*****************************************************/
+    public function changeLanguage($locale){
+        App::setLocale($locale);
+        session()->put('locale', $locale);
+        return redirect()->back();
+    }
+
 
     /*****************************************************/
     # DashboardController

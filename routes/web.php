@@ -15,6 +15,7 @@ Route::get('/', function () {
     return redirect()->route('admin.login');
 });
 
+Route::get('/language/{locale}','admin\DashboardController@changeLanguage')->name('changeLanguage');
 
 /* Start Admin's route */
 Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], function() {

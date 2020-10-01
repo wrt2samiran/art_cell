@@ -52,16 +52,22 @@
 
         <ul class="navbar-nav ml-auto">
             <!-- Notifications Dropdown Menu -->
+            <li class="nav-item">
+              <select class="form-control" id="language" onchange="onLanguageChange(this.value)">
+                <option value="en" {{(App::getLocale()=='en')?'selected':''}}>English</option>
+                <option value="ar" {{(App::getLocale()=='ar')?'selected':''}}>Arabic</option>
+              </select>
+            </li>
             <li class="nav-item dropdown">
                 <a class="nav-link" data-toggle="dropdown" href="#">
                     <i class="fa fa-caret-down"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-xs dropdown-menu-right">
                     <a href="{{route('admin.changePassword')}}" class="dropdown-item btn btn-succes btn-sms">
-                        <span class="float-right text-muted text-sm">Change Password</span>
+                        <span class="float-right text-muted text-sm">{{__('nav_link_text.change_password')}}</span>
                     </a>
                     <a href="{{route('admin.logout')}}" class="dropdown-item btn btn-primary btn-sms">
-                        <span class="float-right text-muted text-sm">Sign Out</span>
+                        <span class="float-right text-muted text-sm">{{__('nav_link_text.sign_out')}}</span>
                     </a>
 
                 </div>

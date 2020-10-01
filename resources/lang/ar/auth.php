@@ -4,7 +4,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Admin Language Lines
+    | Authentication Language Lines
     |--------------------------------------------------------------------------
     |
     | The following language lines are used during authentication for various
@@ -12,10 +12,8 @@ return [
     | these language lines according to your application's requirements.
     |
     */
-    
-    // Common
-    
-    'access_control'                  =>  'Arbic Access Control'
-   
+
+    'failed' => 'These credentials do not match our records.',
+    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
 
 ];

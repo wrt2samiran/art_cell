@@ -1,5 +1,5 @@
 <footer class="main-footer">
-    <strong>Copyright &copy; {{date('Y')}} <a href="#">bernays.com</a>.</strong>
+    <strong>Copyright &copy; {{date('Y')}} .</strong>
     All rights reserved.
     <div class="float-right d-none d-sm-inline-block">
       <b>Version</b> 1.0.0
@@ -14,6 +14,9 @@
     </div>
 <!-- ./wrapper -->
 
+<script type="text/javascript">
+  window.baseUrl="{{URL::to('/')}}";
+</script>
 <!-- jQuery -->
 <script src="{{asset('assets/plugins/jquery/jquery.min.js')}}"></script>
 <!-- jQuery UI 1.11.4 -->

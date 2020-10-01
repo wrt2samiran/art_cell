@@ -35,8 +35,10 @@ $.validator.addMethod("enique_slug", function(value, element) {
 });
 
 
-
-
+//this function will call when language will change from header language dropdown
+function onLanguageChange(lang){
+  window.location.href=baseUrl+'/language/'+lang;
+}
 
 
 //============= Add User==========================    
