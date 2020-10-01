@@ -15,15 +15,15 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string(('name');
+            $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('phone')->nullable();
-            $table->foreign('role_id')->references('id')->on('roles');
+            $table->unsignedBigInteger('role_id')->length(20);
+            $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
             $table->string('userkey')->nullable();
-            
             $table->enum('usertype', ['S', 'SA', 'FU'])->nullable()->comment = 'S=Superadmin SA=SubAdmin FU=Frontend User';
-            $table->string(('profile_pic')->nullable();
+            $table->string('profile_pic')->nullable();
             $table->string('password')->nullable();
             $table->enum('status', ['A', 'I', 'D'])->comment = 'A-active,I-inactive,D-delete';
             $table->longText('setting_json')->nullable();
