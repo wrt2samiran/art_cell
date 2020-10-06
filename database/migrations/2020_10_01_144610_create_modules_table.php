@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRolesTable extends Migration
+class CreateModulesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,21 +13,20 @@ class CreateRolesTable extends Migration
      */
     public function up()
     {
-        
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('modules', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('parrent_id')->nullable();
-            $table->string('role_name');
+            $table->integer('parent_id');
+            $table->string('module_name');
+            $table->longText('module_description');
             $table->string('slug');
-            $table->longText('role_description');
             $table->enum('status', ['A', 'I', 'D'])->comment = 'A-active,I-inactive,D-delete';
-            $table->timestamps();
-            $table->bigInteger('created_by')->length(20);
-            $table->bigInteger('updated_by')->length(20);
             $table->enum('is_deleted', ['Y', 'N'])->default('N')->comment = 'Y-yes,N-no';
-            $table->bigInteger('deleted_by')->length(20)->nullable();
+            $table->timestamps();
+            $table->bigInteger('created_by');
+            $table->bigInteger('updated_by');
+            $table->bigInteger('deleted_by')->nullable();
+            $table->softDeletes('deleted_at', 0)->nullable();          
             
-            $table->softDeletes('deleted_at', 0)->nullable();
         });
     }
 
@@ -38,6 +37,6 @@ class CreateRolesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('modules');
     }
 }
