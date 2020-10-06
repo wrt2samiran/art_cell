@@ -13,6 +13,7 @@ class CreateSharedServicesTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('shared_services', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name')->index();
@@ -35,6 +36,7 @@ class CreateSharedServicesTable extends Migration
             $table->foreign('deleted_by')
                 ->references('id')->on('users');
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -44,6 +46,8 @@ class CreateSharedServicesTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('shared_services');
+        Schema::enableForeignKeyConstraints();
     }
 }

@@ -13,6 +13,7 @@ class CreateRolePermissionsTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('role_permissions', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('role_id');
@@ -29,6 +30,7 @@ class CreateRolePermissionsTable extends Migration
             $table->bigInteger('deleted_by')->nullable();
             $table->softDeletes('deleted_at', 0)->nullable();  
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -38,6 +40,8 @@ class CreateRolePermissionsTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('role_permissions');
+        Schema::enableForeignKeyConstraints();
     }
 }

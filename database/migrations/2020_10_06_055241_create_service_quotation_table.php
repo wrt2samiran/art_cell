@@ -13,6 +13,7 @@ class CreateServiceQuotationTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('service_quotation', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('service_id')->index();
@@ -26,6 +27,7 @@ class CreateServiceQuotationTable extends Migration
               ->references('id')->on('quotations')
               ->onDelete('cascade');
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -35,6 +37,8 @@ class CreateServiceQuotationTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('service_quotation');
+        Schema::enableForeignKeyConstraints();
     }
 }

@@ -13,6 +13,7 @@ class CreatePropertyTypesTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('property_types', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('type_name')->index();
@@ -35,6 +36,7 @@ class CreatePropertyTypesTable extends Migration
 
 
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -44,6 +46,8 @@ class CreatePropertyTypesTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('property_types');
+        Schema::enableForeignKeyConstraints();
     }
 }

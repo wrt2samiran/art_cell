@@ -13,6 +13,7 @@ class CreateUnitMastersTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('unit_masters', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('unit_name')->index();
@@ -23,6 +24,7 @@ class CreateUnitMastersTable extends Migration
             $table->softDeletes();
             $table->timestamps();
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -32,6 +34,8 @@ class CreateUnitMastersTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('unit_masters');
+        Schema::enableForeignKeyConstraints();
     }
 }

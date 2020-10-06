@@ -13,6 +13,7 @@ class CreateStatesTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('states', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('country_id')->index();
@@ -25,6 +26,7 @@ class CreateStatesTable extends Migration
                 ->onDelete('cascade');
 
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -34,6 +36,8 @@ class CreateStatesTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('states');
+        Schema::enableForeignKeyConstraints();
     }
 }

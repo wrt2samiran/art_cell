@@ -13,6 +13,7 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
@@ -37,6 +38,7 @@ class CreateUsersTable extends Migration
             $table->bigInteger('deleted_by')->length(20)->nullable();
             $table->softDeletes('deleted_at', 0)->nullable();
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -46,6 +48,8 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('users');
+        Schema::enableForeignKeyConstraints();
     }
 }

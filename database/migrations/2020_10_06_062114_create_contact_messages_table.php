@@ -13,6 +13,7 @@ class CreateContactMessagesTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('contact_messages', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('to_user')->index();
@@ -29,6 +30,7 @@ class CreateContactMessagesTable extends Migration
                 ->onDelete('cascade');
 
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -38,6 +40,8 @@ class CreateContactMessagesTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('contact_messages');
+        Schema::enableForeignKeyConstraints();
     }
 }

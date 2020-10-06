@@ -13,6 +13,7 @@ class CreateComplaintsTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('complaints', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('created_by')->index();
@@ -37,6 +38,7 @@ class CreateComplaintsTable extends Migration
             $table->foreign('last_updated_by')
                 ->references('id')->on('users');
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -46,6 +48,8 @@ class CreateComplaintsTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('complaints');
+        Schema::enableForeignKeyConstraints();
     }
 }

@@ -13,6 +13,7 @@ class CreateTasksTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('tasks', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('contarct_id');
@@ -35,6 +36,7 @@ class CreateTasksTable extends Migration
             $table->bigInteger('deleted_by')->nullable();
             $table->softDeletes('deleted_at', 0)->nullable(); 
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -44,6 +46,8 @@ class CreateTasksTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('tasks');
+        Schema::enableForeignKeyConstraints();
     }
 }

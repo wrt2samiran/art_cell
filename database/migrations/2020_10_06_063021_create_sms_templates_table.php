@@ -13,6 +13,7 @@ class CreateSmsTemplatesTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('sms_templates', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('template_for')->index();
@@ -20,6 +21,7 @@ class CreateSmsTemplatesTable extends Migration
             $table->text('variable_fields')->comment = 'to store variables like USER_NAME';
             $table->timestamps();
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -29,6 +31,8 @@ class CreateSmsTemplatesTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('sms_templates');
+        Schema::enableForeignKeyConstraints();
     }
 }

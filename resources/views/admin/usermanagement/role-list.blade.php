@@ -142,10 +142,8 @@
 @endsection
 
 @push('custom-scripts')
-    <script src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-    <!-- Sweet alert -->
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-    <script src="{{asset('assets/plugins/toastr/toastr.min.js')}}"></script>
+   
+
 <script>
     $(document).ready( function () {
        var roleTable= $('#roleTable').DataTable({

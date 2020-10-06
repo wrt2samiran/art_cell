@@ -13,6 +13,7 @@ class CreateLabourSchedulesTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('labour_schedules', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('task_id');
@@ -32,6 +33,8 @@ class CreateLabourSchedulesTable extends Migration
             $table->bigInteger('deleted_by')->nullable();
             $table->softDeletes('deleted_at', 0)->nullable(); 
         });
+
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -41,6 +44,8 @@ class CreateLabourSchedulesTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('labour_schedules');
+        Schema::enableForeignKeyConstraints();
     }
 }

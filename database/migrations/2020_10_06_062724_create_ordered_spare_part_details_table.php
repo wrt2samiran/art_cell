@@ -13,6 +13,7 @@ class CreateOrderedSparePartDetailsTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('ordered_spare_part_details', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('spare_part_order_id')->index();
@@ -30,6 +31,7 @@ class CreateOrderedSparePartDetailsTable extends Migration
                 ->references('id')->on('spare_parts')
                 ->onDelete('cascade');
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -39,6 +41,8 @@ class CreateOrderedSparePartDetailsTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('ordered_spare_part_details');
+        Schema::enableForeignKeyConstraints();
     }
 }

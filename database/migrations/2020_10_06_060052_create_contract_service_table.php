@@ -13,6 +13,7 @@ class CreateContractServiceTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('contract_service', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('contract_id')->index();
@@ -27,6 +28,7 @@ class CreateContractServiceTable extends Migration
               ->onDelete('cascade');
               
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -36,6 +38,8 @@ class CreateContractServiceTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('contract_service');
+        Schema::enableForeignKeyConstraints();
     }
 }

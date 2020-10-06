@@ -13,6 +13,7 @@ class CreatePropertyTypeQuotationTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('property_type_quotation', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('property_type_id')->index();
@@ -26,6 +27,7 @@ class CreatePropertyTypeQuotationTable extends Migration
               ->references('id')->on('quotations')
               ->onDelete('cascade');
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -35,6 +37,8 @@ class CreatePropertyTypeQuotationTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('property_type_quotation');
+        Schema::enableForeignKeyConstraints();
     }
 }

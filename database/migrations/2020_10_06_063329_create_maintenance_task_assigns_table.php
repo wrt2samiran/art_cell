@@ -13,6 +13,7 @@ class CreateMaintenanceTaskAssignsTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('maintenance_task_assigns', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('task_id');
@@ -24,6 +25,7 @@ class CreateMaintenanceTaskAssignsTable extends Migration
             $table->timestamps();
              
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -33,6 +35,8 @@ class CreateMaintenanceTaskAssignsTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('maintenance_task_assigns');
+        Schema::enableForeignKeyConstraints();
     }
 }

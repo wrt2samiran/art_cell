@@ -13,6 +13,7 @@ class CreateSharedServiceOrdersTable extends Migration
      */
     public function up()
     {
+       Schema::disableForeignKeyConstraints();
        Schema::create('shared_service_orders', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id')->index();
@@ -32,12 +33,13 @@ class CreateSharedServiceOrdersTable extends Migration
             $table->timestamps();
 
             $table->foreign('user_id')
-                ->references('id')->on('users');
+                ->references('id')->on('users')->onDelete('cascade');
             $table->foreign('updated_by')
                 ->references('id')->on('users');
             $table->foreign('deleted_by')
                 ->references('id')->on('users');
         });
+       Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -47,6 +49,8 @@ class CreateSharedServiceOrdersTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('shared_service_orders');
+        Schema::enableForeignKeyConstraints();
     }
 }

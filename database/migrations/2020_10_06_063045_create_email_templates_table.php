@@ -13,6 +13,7 @@ class CreateEmailTemplatesTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('email_templates', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('template_for')->index();
@@ -20,6 +21,7 @@ class CreateEmailTemplatesTable extends Migration
             $table->text('variable_fields')->comment = 'to store variables like USER_NAME';
             $table->timestamps();
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -28,7 +30,9 @@ class CreateEmailTemplatesTable extends Migration
      * @return void
      */
     public function down()
-    {
+    {   
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('email_templates');
+        Schema::enableForeignKeyConstraints();
     }
 }

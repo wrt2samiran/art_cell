@@ -13,6 +13,7 @@ class CreateFrequencyTypesTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('frequency_types', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('type',20)->comment = 'Daily,Weekly,Monthly,Quaterly,Yearly';
@@ -34,6 +35,7 @@ class CreateFrequencyTypesTable extends Migration
             $table->foreign('deleted_by')
                 ->references('id')->on('users');
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -43,6 +45,8 @@ class CreateFrequencyTypesTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('frequency_types');
+        Schema::enableForeignKeyConstraints();
     }
 }

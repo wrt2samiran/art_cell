@@ -9,9 +9,86 @@ use App\Models\Role;
 use App\Models\RolePermission;
 use App\Models\ModuleFunctionality;
 use Helper, AdminHelper, Image, Auth, Hash, Redirect, Validator, View, Config;
+use Yajra\Datatables\Datatables;
+use Illuminate\Support\Str;
 class RoleController extends Controller
 {
-    public $data= array();
+    private $view_path='admin.roles';
+    private $data=[];
+
+    public function list(Request $request){
+        $this->data['page_title']='Role List';
+        if($request->ajax()){
+            $roles=Role::orderBy('parrent_id','ASC')->orderBy('id','DESC');
+            return Datatables::of($roles)
+            ->editColumn('created_at', function ($role) {
+                return $role->created_at ? with(new Carbon($role->created_at))->format('m/d/Y') : '';
+            })
+            ->editColumn('role_description', function ($role) {
+                return Str::limit($role->role_description,100);
+            })
+            ->filterColumn('created_at', function ($query, $keyword) {
+                $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
+            })
+            ->addColumn('status',function($role){
+                if($role->status=='A'){
+                   $message='deactivate';
+                   return '<a title="Click to deactivate the gallery image" href="javascript:change_status('."'".route('admin.roles.change_status',$role->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm">Active</a>';
+                    
+                }else{
+                   $message='activate';
+                   return '<a title="Click to activate the gallery image" href="javascript:change_status('."'".route('admin.roles.change_status',$role->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm">Inactive</a>';
+                }
+            })
+            ->addColumn('action',function($role){
+                $delete_url=route('admin.roles.delete',$role->id);
+                $details_url=route('admin.roles.show',$role->id);
+                $edit_url=route('admin.roles.show',$role->id);
+
+                return '<a title="View Role Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>&nbsp;&nbsp;<a title="Edit Role" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>&nbsp;&nbsp;<a title="Delete gallery image" href="javascript:delete_role('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
+                
+            })
+            ->rawColumns(['action','status'])
+            ->make(true);
+        }
+        return view($this->view_path.'.list',$this->data);
+    }
+
+    public function create(){
+        $this->data['page_title']='Role List';
+        return view($this->view_path.'.create',$this->data);
+    }
+
+    public function store(Request $request){
+        return redirect()->back()->with('success','Success message');
+
+    }
+    public function show($id){
+        return view($this->view_path.'.show');
+    }
+    public function edit($id){
+
+    }
+    public function update(Request $request,$id){
+
+    }
+    public function delete($id){
+
+    }
+
+    public function change_status($id){
+        $role=Role::findOrFail($id);
+        $change_status_to=($role->status=='A')?'I':'A';
+        $message=($role->status=='A')?'deactivated':'activated';
+
+         //updating gallery status
+        $role->update([
+            'status'=>$change_status_to
+        ]);
+         
+        //returning json success response
+        return response()->json(['message'=>'Role successfully '.$message.'.']);
+    }
 
     public function __construct(Request $request)
     {

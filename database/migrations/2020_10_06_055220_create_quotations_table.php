@@ -13,6 +13,7 @@ class CreateQuotationsTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('quotations', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('first_name',100)->index();
@@ -42,6 +43,7 @@ class CreateQuotationsTable extends Migration
 
         
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -51,6 +53,8 @@ class CreateQuotationsTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('quotations');
+        Schema::enableForeignKeyConstraints();
     }
 }

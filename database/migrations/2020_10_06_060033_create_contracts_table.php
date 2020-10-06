@@ -13,6 +13,7 @@ class CreateContractsTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('contracts', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('code',30)->comment = 'System generated';
@@ -53,6 +54,7 @@ class CreateContractsTable extends Migration
 
 
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -62,6 +64,8 @@ class CreateContractsTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('contracts');
+        Schema::enableForeignKeyConstraints();
     }
 }
