@@ -13,6 +13,7 @@ class CreateContractInstallmentsTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('contract_installments', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('contract_id')->index();
@@ -39,6 +40,7 @@ class CreateContractInstallmentsTable extends Migration
             $table->foreign('deleted_by')
                 ->references('id')->on('users');
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -48,6 +50,8 @@ class CreateContractInstallmentsTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('contract_installments');
+        Schema::enableForeignKeyConstraints();
     }
 }

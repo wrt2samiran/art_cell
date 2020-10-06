@@ -13,6 +13,7 @@ class CreateModulesTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('modules', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('module_name');
@@ -26,6 +27,7 @@ class CreateModulesTable extends Migration
             $table->bigInteger('deleted_by')->nullable();
             $table->softDeletes('deleted_at', 0)->nullable();
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -35,6 +37,8 @@ class CreateModulesTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('modules');
+        Schema::enableForeignKeyConstraints();
     }
 }

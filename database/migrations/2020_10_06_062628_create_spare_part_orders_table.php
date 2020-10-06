@@ -13,6 +13,7 @@ class CreateSparePartOrdersTable extends Migration
      */
     public function up()
     {
+      Schema::disableForeignKeyConstraints();
       Schema::create('spare_part_orders', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id')->index();
@@ -40,6 +41,7 @@ class CreateSparePartOrdersTable extends Migration
 
 
         });
+      Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -49,6 +51,8 @@ class CreateSparePartOrdersTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('spare_part_orders');
+        Schema::enableForeignKeyConstraints();
     }
 }

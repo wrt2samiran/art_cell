@@ -34,6 +34,19 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             Route::get('/change-password','DashboardController@showChangePasswordForm')->name('changePassword');
             Route::post('/change-password','DashboardController@changePassword')->name('changePassword');
 
+            Route::group(['prefix'=>'roles','as'=>'roles.'],function(){
+                Route::get('/', 'RoleController@list')->name('list');
+                Route::get('/create', 'RoleController@create')->name('create');
+                Route::post('/store', 'RoleController@store')->name('store');
+                Route::get('/{id}', 'RoleController@show')->name('show');
+                Route::get('/{id}/edit', 'RoleController@edit')->name('edit');
+                Route::put('/{id}', 'RoleController@update')->name('update');
+                Route::delete('/{id}/delete', 'RoleController@delete')->name('delete');
+                Route::get('/{id}/change-change', 'RoleController@change_status')->name('change_status');
+            });
+
+
+
             Route::group(['prefix' => 'user-management', 'as' => 'user-management.'], function () {
                 Route::get('/role-list', 'RoleController@roleList')->name('role-list');
                 Route::any('/role-add','RoleController@roleAdd')->name('role-add');

@@ -13,6 +13,7 @@ class CreateServicesTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('services', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('service_name')->index();
@@ -33,6 +34,7 @@ class CreateServicesTable extends Migration
             $table->foreign('deleted_by')
                 ->references('id')->on('users');
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -42,6 +44,8 @@ class CreateServicesTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('services');
+        Schema::enableForeignKeyConstraints();
     }
 }

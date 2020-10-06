@@ -13,6 +13,7 @@ class CreatePropertiesTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('properties', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('code',30)->index()->comment = 'System generated';
@@ -47,6 +48,7 @@ class CreatePropertiesTable extends Migration
             $table->foreign('deleted_by')
                 ->references('id')->on('users');
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -56,6 +58,8 @@ class CreatePropertiesTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('properties');
+        Schema::enableForeignKeyConstraints();
     }
 }

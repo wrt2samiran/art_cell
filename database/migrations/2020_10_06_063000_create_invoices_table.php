@@ -13,6 +13,7 @@ class CreateInvoicesTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('invoices', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('invoice_id')->index()->comment = 'system generated';
@@ -27,6 +28,7 @@ class CreateInvoicesTable extends Migration
             $table->string('currency',10)->index();
             $table->timestamps();
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -36,6 +38,8 @@ class CreateInvoicesTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('invoices');
+        Schema::enableForeignKeyConstraints();
     }
 }

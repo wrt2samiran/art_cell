@@ -13,6 +13,7 @@ class CreateCitiesTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('cities', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('state_id')->index();
@@ -26,6 +27,7 @@ class CreateCitiesTable extends Migration
 
 
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -35,6 +37,8 @@ class CreateCitiesTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('cities');
+        Schema::enableForeignKeyConstraints();
     }
 }

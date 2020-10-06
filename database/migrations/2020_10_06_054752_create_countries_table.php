@@ -13,6 +13,7 @@ class CreateCountriesTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('countries', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name',100);
@@ -22,6 +23,7 @@ class CreateCountriesTable extends Migration
             $table->softDeletes();
             $table->timestamps();
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -31,6 +33,8 @@ class CreateCountriesTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('countries');
+        Schema::enableForeignKeyConstraints();
     }
 }
