@@ -19,6 +19,7 @@ class CreateCountriesTable extends Migration
             $table->string('country_code',3);
             $table->string('dial_code',10)->nullable();
             $table->boolean('is_active')->default(true);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSparePartOrdersTable extends Migration
+class CreateContractInstallmentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,32 +13,31 @@ class CreateSparePartOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::create('spare_part_orders', function (Blueprint $table) {
+        Schema::create('contract_installments', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('user_id')->index();
-            $table->string('order_currency',10);
-            $table->double('total_amount', 8, 2)->index();
-            $table->integer('tax_percentage');
-            $table->double('tax_amount', 8, 2);
-            $table->double('delivery_charge', 8, 2);
+            $table->unsignedBigInteger('contract_id')->index();
+            $table->double('price', 8, 2);
+            $table->string('currency',10);
+            $table->date('due_date')->index();
+            $table->date('pre_notification_date')->index();
             $table->boolean('is_paid')->default(false);
-            $table->datetime('paid_on')->nullable();
-            $table->boolean('is_accepted')->index()->default(true);
-            $table->string('curent_status',50)->index()->default('received');
-            $table->text('delivery_address_details')->nullable();
+            $table->date('paid_on')->nullable();
+            $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by');
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->softDeletes();
             $table->timestamps();
 
-            $table->foreign('user_id')
+            $table->foreign('contract_id')
+                ->references('id')->on('contracts')
+                ->onDelete('cascade');;
+
+            $table->foreign('created_by')
                 ->references('id')->on('users');
             $table->foreign('updated_by')
                 ->references('id')->on('users');
             $table->foreign('deleted_by')
                 ->references('id')->on('users');
-
-
         });
     }
 
@@ -49,6 +48,6 @@ class CreateSparePartOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('spare_part_orders');
+        Schema::dropIfExists('contract_installments');
     }
 }

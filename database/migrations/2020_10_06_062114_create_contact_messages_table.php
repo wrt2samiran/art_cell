@@ -18,13 +18,15 @@ class CreateContactMessagesTable extends Migration
             $table->unsignedBigInteger('to_user')->index();
             $table->unsignedBigInteger('from_user')->index();
             $table->text('message');
+            $table->boolean('is_read')->default(false);
             $table->timestamps();
 
             $table->foreign('to_user')
-                ->references('id')->on('users');
+                ->references('id')->on('users')
+                ->onDelete('cascade');
             $table->foreign('from_user')
-                ->references('id')->on('users');
-
+                ->references('id')->on('users')
+                ->onDelete('cascade');
 
         });
     }

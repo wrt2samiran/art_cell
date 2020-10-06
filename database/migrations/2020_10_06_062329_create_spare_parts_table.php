@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFrequencyTypesTable extends Migration
+class CreateSparePartsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,26 +13,30 @@ class CreateFrequencyTypesTable extends Migration
      */
     public function up()
     {
-        Schema::create('frequency_types', function (Blueprint $table) {
+        Schema::create('spare_parts', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('type',20)->comment = 'Daily,Weekly,Monthly,Quaterly,Yearly';
-            $table->string('slug',50);
+            $table->string('name')->index();
+            $table->string('manufacturer')->index();
+            $table->unsignedBigInteger('unit_master_id')->index();
             $table->text('description')->nullable();
-            $table->integer('no_of_days')->comment = 'i.e 30 for monthly';
-            $table->boolean('is_active')->index()->default(true);
+            $table->double('price', 8, 2)->index();
+            $table->string('currency',10);
+            $table->boolean('is_active')->default(true);
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by');
             $table->unsignedBigInteger('deleted_by')->nullable();
-            
             $table->softDeletes();
             $table->timestamps();
 
+            $table->foreign('unit_master_id')
+                ->references('id')->on('unit_masters');
             $table->foreign('created_by')
                 ->references('id')->on('users');
             $table->foreign('updated_by')
                 ->references('id')->on('users');
             $table->foreign('deleted_by')
                 ->references('id')->on('users');
+
         });
     }
 
@@ -43,6 +47,6 @@ class CreateFrequencyTypesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('frequenty_types');
+        Schema::dropIfExists('spare_parts');
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMaintenenceTaskAssignTable extends Migration
+class CreateMaintenanceTaskAssignsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateMaintenenceTaskAssignTable extends Migration
      */
     public function up()
     {
-        Schema::create('maintenence_task_assign', function (Blueprint $table) {
+        Schema::create('maintenance_task_assigns', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('task_id');
             $table->foreign('task_id')->references('id')->on('tasks')->onDelete('cascade');
@@ -33,6 +33,6 @@ class CreateMaintenenceTaskAssignTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('maintenence_task_assign');
+        Schema::dropIfExists('maintenance_task_assigns');
     }
 }

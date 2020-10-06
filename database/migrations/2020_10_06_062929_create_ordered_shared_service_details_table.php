@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOrderedSharedServcieDetailsTable extends Migration
+class CreateOrderedSharedServiceDetailsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -48,6 +48,6 @@ class CreateOrderedSharedServcieDetailsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ordered_shared_servcie_details');
+        Schema::dropIfExists('ordered_shared_service_details');
     }
 }

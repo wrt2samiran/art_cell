@@ -19,6 +19,7 @@ class CreateQuotationsTable extends Migration
             $table->string('last_name',100)->index();
             $table->string('email',150)->index();
             $table->string('contact_number',25)->index();
+            $table->unsignedBigInteger('user_id')->nullable()->index();
             $table->unsignedBigInteger('country_id')->index();
             $table->unsignedBigInteger('state_id')->index();
             $table->unsignedBigInteger('city_id')->index();
@@ -28,6 +29,8 @@ class CreateQuotationsTable extends Migration
             $table->unsignedBigInteger('frequency_type_id');
             $table->timestamps();
 
+            $table->foreign('user_id')
+                ->references('id')->on('users')->onDelete('cascade');
             $table->foreign('country_id')
                 ->references('id')->on('countries');
             $table->foreign('state_id')

@@ -20,14 +20,19 @@ class CreateComplaintsTable extends Migration
             $table->unsignedBigInteger('work_order_id')->index()->nullable();
             $table->unsignedBigInteger('task_id')->index()->nullable();
             $table->text('details');
-            $table->enum('status', ['resolved', 'pending', 'revoked'])->default('pending')->index();
 
-            $table->text('note_from_manager')->nullable();
+            $table->unsignedBigInteger('complaint_status_id')->index()->nullable();
+            $table->string('status',30)->nullable();
+            $table->text('note_from_admin_end')->nullable();
+            $table->text('note_service_provider')->nullable();
+            $table->text('note_property_owner_end')->nullable();
+
             $table->unsignedBigInteger('last_updated_by')->nullable();
             $table->timestamps();
 
             $table->foreign('contract_id')
-                ->references('id')->on('contracts');
+                ->references('id')->on('contracts')
+                ->onDelete('cascade');
 
             $table->foreign('last_updated_by')
                 ->references('id')->on('users');

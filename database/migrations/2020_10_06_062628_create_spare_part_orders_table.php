@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSharedServiceOrdersTable extends Migration
+class CreateSparePartOrdersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateSharedServiceOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::create('shared_service_orders', function (Blueprint $table) {
+      Schema::create('spare_part_orders', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id')->index();
             $table->string('order_currency',10);
@@ -22,7 +22,7 @@ class CreateSharedServiceOrdersTable extends Migration
             $table->double('tax_amount', 8, 2);
             $table->double('delivery_charge', 8, 2);
             $table->boolean('is_paid')->default(false);
-            $table->datetime('paid_on')->index()->nullable();
+            $table->datetime('paid_on')->nullable();
             $table->boolean('is_accepted')->index()->default(true);
             $table->string('curent_status',50)->index()->default('received');
             $table->text('delivery_address_details')->nullable();
@@ -37,6 +37,8 @@ class CreateSharedServiceOrdersTable extends Migration
                 ->references('id')->on('users');
             $table->foreign('deleted_by')
                 ->references('id')->on('users');
+
+
         });
     }
 
@@ -47,6 +49,6 @@ class CreateSharedServiceOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('shared_service_orders');
+        Schema::dropIfExists('spare_part_orders');
     }
 }

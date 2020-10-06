@@ -15,7 +15,6 @@ class CreateModulesTable extends Migration
     {
         Schema::create('modules', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('parent_id');
             $table->string('module_name');
             $table->longText('module_description');
             $table->string('slug');
@@ -25,8 +24,7 @@ class CreateModulesTable extends Migration
             $table->bigInteger('created_by');
             $table->bigInteger('updated_by');
             $table->bigInteger('deleted_by')->nullable();
-            $table->softDeletes('deleted_at', 0)->nullable();          
-            
+            $table->softDeletes('deleted_at', 0)->nullable();
         });
     }
 
