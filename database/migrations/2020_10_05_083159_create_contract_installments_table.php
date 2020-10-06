@@ -25,7 +25,7 @@ class CreateContractInstallmentsTable extends Migration
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by');
             $table->unsignedBigInteger('deleted_by')->nullable();
-            $table->softDeletes(0);
+            $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('contract_id')

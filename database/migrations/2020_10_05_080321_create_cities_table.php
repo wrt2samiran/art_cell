@@ -18,7 +18,7 @@ class CreateCitiesTable extends Migration
             $table->unsignedBigInteger('state_id')->index();
             $table->string('name',100);
             $table->boolean('is_active')->default(true);
-            $table->softDeletes(0);
+            $table->softDeletes();
             $table->timestamps();
             $table->foreign('state_id')
                 ->references('id')->on('states')
