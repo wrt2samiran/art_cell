@@ -14,7 +14,7 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.roles.list')}}">Role List</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.roles.list')}}">Roles</a></li>
               <li class="breadcrumb-item active">Create</li>
             </ol>
           </div>
@@ -30,7 +30,6 @@
               <div class="card-header">
                 <h3 class="card-title">Create Role</h3>
               </div>
-    
               <div class="card-body">
                   @if(Session::has('success'))
                     <div class="alert alert-success alert-dismissable __web-inspector-hide-shortcut__">
@@ -64,6 +63,21 @@
                               <span class="text-danger">{{$errors->first('role_description')}}</span>
                              @endif
                           </div>
+                          <div class="form-group required">
+                             <label for="parent_role">Role for which group <span class="error">*</span></label>
+                              <select class="form-control select2" style="width: 100%;" name="parent_role">
+                                <option value="">Select a group</option>
+                                @forelse($parent_roles as $parent_role)
+                                   <option value="{{$parent_role->id}}" {{(old('parent_role') && old('menu_category')== $parent_role->id)? 'selected':''}}>{{$parent_role->role_name}}</option>
+                                @empty
+                               <option value="">No Parent Group Found</option>
+                                @endforelse
+            
+                              </select>
+                             @if($errors->has('parent_role'))
+                              <span class="text-danger">{{$errors->first('parent_role')}}</span>
+                             @endif
+                          </div>
                         </div>
                         <div>
                            <a href="{{route('admin.roles.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
@@ -73,7 +87,6 @@
                     </div>
                   </div>
               </div>
-
             </div>
           </div>
       </div>
