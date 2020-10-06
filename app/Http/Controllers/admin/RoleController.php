@@ -19,7 +19,7 @@ class RoleController extends Controller
     public function list(Request $request){
         $this->data['page_title']='Role List';
         if($request->ajax()){
-            $roles=Role::orderBy('parrent_id','ASC')->orderBy('id','DESC');
+            $roles=Role::orderBy('parrent_id','ASC')->orderBy('id','ASC');
             return Datatables::of($roles)
             ->editColumn('created_at', function ($role) {
                 return $role->created_at ? with(new Carbon($role->created_at))->format('m/d/Y') : '';
@@ -51,11 +51,15 @@ class RoleController extends Controller
             ->rawColumns(['action','status'])
             ->make(true);
         }
+
+
         return view($this->view_path.'.list',$this->data);
     }
 
     public function create(){
         $this->data['page_title']='Role List';
+        $parent_roles=Role::whereStatus('A')->orderBy('id','ASC')->get();
+        $this->data['parent_roles']=$parent_roles;
         return view($this->view_path.'.create',$this->data);
     }
 
