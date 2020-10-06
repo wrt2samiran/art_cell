@@ -60,8 +60,27 @@
                             </a>
                         </li>
                     </ul>
+                    <?php// echo Route::currentRouteName()?>
+                    <ul class="nav nav-treeview @if(Route::currentRouteName()=='admin.master-management.country.list' 
+                    || Route::currentRouteName()=='admin.settings'){{'style="display: block;"'}}@endif">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.master-management.country.list') }}"
+                               class="nav-link @if(Route::currentRouteName()=='admin.dashboard'){{'active'}}@endif">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>{{__('nav_link_text.country')}}</p>
+                            </a>
+                        </li>
+                        <!-- <li class="nav-item">
+                            <a href="{{ route('admin.settings') }}"
+                               class="nav-link @if(Route::currentRouteName()=='admin.settings'){{'active'}}@endif">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>{{__('nav_link_text.settings')}}</p>
+                            </a>
+                        </li> -->
+                    </ul>
                 </li>
-                @if (checkModulePermission("access.control"))
+                
+               
                     <li  class="nav-item has-treeview @if(Route::currentRouteName()=='admin.module-management.module.list'|| 
                                                      Route::currentRouteName()=='admin.module-management.functionality.list' || 
                                                      Route::currentRouteName()=='admin.module-management.module.add' || 
@@ -88,7 +107,7 @@
                                     Route::currentRouteName()=='admin.module-management.function.add' || 
                                     Route::currentRouteName()=='admin.module-management.functionality.list' ||
                                     Route::currentRouteName()=='admin.module-management.functionality-edit'){{'style="display: block;"'}}@endif">
-                            @if(checkFunctionPermission('module-management.module.list'))
+                            
                             <li class="nav-item">
                                 <a href="{{route('admin.module-management.module.list')}}"
                                 class="nav-link @if(Route::currentRouteName()=='admin.module-management.module.list' ||
@@ -98,8 +117,7 @@
                                     <p>Module Management</p>
                                 </a>
                             </li>
-                            @endif
-                            @if(checkFunctionPermission('module-management.functionality.list'))
+                            
                             <li class="nav-item">
                                 <a href="{{route('admin.module-management.functionality.list')}}"
                                 class="nav-link @if(Route::currentRouteName()=='admin.module-management.functionality.list' ||
@@ -109,11 +127,11 @@
                                     <p>Functionality Management</p>
                                 </a>
                             </li>
-                            @endif
+                            
                         </ul> -->
                     </li>
-                @endif
-                @if (checkModulePermission("user.management"))
+                
+                
                 <li class="nav-item has-treeview @if(Route::currentRouteName()=='admin.user-management.role-list' ||
                             Route::currentRouteName()=='admin.user-management.user.list'||
                             Route::currentRouteName()=='admin.user-management.user.add'||
@@ -156,7 +174,7 @@
                                 <p>Role Management</p>
                             </a>
                         </li>
-                        @if(checkFunctionPermission('user-management.user.add'))
+                        
 
                         <li class="nav-item">
                             <a href="{{route('admin.user-management.user.add')}}"
@@ -166,9 +184,7 @@
                             </a>
                         </li>
                                     
-                        @endif 
-
-                        @if(checkFunctionPermission('user-management.user.list'))
+                        
                         <li class="nav-item">
                             <a href="{{route('admin.user-management.user.list' )}}"
                              class="nav-link @if(Route::currentRouteName()=='admin.user-management.user.list' 
@@ -178,7 +194,7 @@
                                 <p> Admin User List</p>
                             </a>
                         </li>
-                        @endif
+                        
                         <li class="nav-item">
                             <a href="{{route('admin.user-management.site.user.list' )}}"
                              class="nav-link @if(Route::currentRouteName()=='admin.user-management.site.user.list' 
@@ -190,7 +206,7 @@
                         </li>
                     </ul> -->
                 </li>
-                @endif
+               
 
             </ul>
 

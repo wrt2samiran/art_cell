@@ -72,6 +72,23 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             Route::group(['prefix' => 'attendance-management', 'as' => 'attendance-management.'], function () {
                 Route::get('/list', 'AttendanceController@list')->name('list');
             });
+
+            Route::group(['prefix' => 'master-management', 'as' => 'master-management.'], function () {
+                Route::get('/country-list', 'CountryController@list')->name('country.list');
+                Route::get('/module-list-table', 'ModuleManagementController@moduleListTable')->name('list.table');
+                Route::any('/add','ModuleManagementController@moduleAdd')->name('module.add');
+                Route::get('/edit/{encryptCode}', 'ModuleManagementController@moduleEdit')->name('edit');
+                Route::post('/edit-submit/{encryptCode}', 'ModuleManagementController@moduleEdit')->name('editSubmit');
+                Route::get('/module-delete/{encryptCode}','ModuleManagementController@moduleDelete')->name('module-delete');
+                Route::get('/reset-module-status/{encryptCode}','ModuleManagementController@resetmoduleStatus')->name('reset-module-status');
+                Route::get('/functionality-list', 'ModuleManagementController@functionalityList')->name('functionality.list');
+                Route::get('/functionality-table', 'ModuleManagementController@functionalityTable')->name('functionality.table');
+                Route::any('/add-function','ModuleManagementController@functionAdd')->name('function.add');
+                Route::get('/function-edit/{encryptCode}', 'ModuleManagementController@functionalityEdit')->name('functionality-edit');
+                Route::post('/function-edit-submit/{encryptCode}', 'ModuleManagementController@functionalityEdit')->name('function-editSubmit');
+                Route::get('/function-delete/{encryptCode}', 'ModuleManagementController@functionaDelete')->name('function-delete');
+                Route::get('/reset-function-status/{encryptCode}','ModuleManagementController@resetfunctionStatus')->name('reset-function-status');
+            });
         });
        
 });

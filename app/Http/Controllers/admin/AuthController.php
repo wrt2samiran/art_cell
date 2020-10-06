@@ -69,6 +69,7 @@ class   AuthController extends Controller
                         // If validation error occurs, load the error listing
                         return Redirect::route('admin.login')->withErrors($Validator);
                     } else {
+                        
                         $rememberMe = false; // set default boolean value for remember me
 
                         if ($request->input('remember_me')) // if user checked remember me
