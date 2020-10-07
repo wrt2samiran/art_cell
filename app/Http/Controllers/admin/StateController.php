@@ -43,11 +43,11 @@ class StateController extends Controller
             ->addColumn('is_active',function($state){
                 if($state->is_active=='1'){
                    $message='deactivate';
-                   return '<a title="Click to deactivate the gallery image" href="javascript:change_status('."'".route('admin.state.change_status',$state->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm">Active</a>';
+                   return '<a title="Click to deactivate the state" href="javascript:change_status('."'".route('admin.state.change_status',$state->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm">Active</a>';
                     
                 }else{
                    $message='activate';
-                   return '<a title="Click to activate the gallery image" href="javascript:change_status('."'".route('admin.state.change_status',$state->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm">Inactive</a>';
+                   return '<a title="Click to activate the state" href="javascript:change_status('."'".route('admin.state.change_status',$state->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm">Inactive</a>';
                 }
             })
             ->addColumn('action',function($state){
@@ -233,7 +233,7 @@ class StateController extends Controller
     # StateController
     # Function name : stateDelete
     # Author        :
-    # Created Date  : 13-08-2020
+    # Created Date  : 06-10-2020
     # Purpose       : Showing subAdminList of state
     # Params        : Request $request
     /*****************************************************/
@@ -264,7 +264,20 @@ class StateController extends Controller
     }
     
 
+    /*****************************************************/
+    # StateController
+    # Function name : show
+    # Author        :
+    # Created Date  : 06-10-2020
+    # Purpose       : Showing State details
+    # Params        : Request $request
+    /*****************************************************/
+
     public function show($id){
-        return view($this->view_path.'.show');
+
+        $state=State::findOrFail($id);
+        $this->data['page_title']='Sate Details';
+        $this->data['state']=$state;
+        return view($this->view_path.'.show',$this->data);
     }
 }

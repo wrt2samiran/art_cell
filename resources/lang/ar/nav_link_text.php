@@ -9,8 +9,10 @@ return [
 	'user_management'=>'إدارةالمستخدم',
 	'change_password'=>'تغيير كلمة المرور',
 	'sign_out'=>'خروج',
+	'master_modules'=>'وحدات رئيسية',
 	'country_management'=>'إدارة البلد',
 	'state_management' => 'إدارة الدولة',
-	'city_management'	=> 'إدارة المدينة'
+	'city_management'	=> 'إدارة المدينة',
+	'shared_service_management' => 'إدارة الخدمة المشتركة',
 
 ];

@@ -9,7 +9,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>State</h1>
+            <h1>City</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -46,7 +46,7 @@
                   @endif
                   <div class="row justify-content-center">
                     <div class="col-md-10 col-sm-12">
-                      <form  method="post" id="admin_state_add_form" action="{{route('admin.state.add')}}" method="post" enctype="multipart/form-data">
+                      <form  method="post" id="admin_city_add_form" action="{{route('admin.city.add')}}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div>                        
 
@@ -78,7 +78,7 @@
                           </div>
 
                           <div class="form-group required">
-                            <label for="name">State Name <span class="error">*</span></label>
+                            <label for="name">City Name <span class="error">*</span></label>
                             <input type="text" class="form-control" value="{{old('name')?old('name'):''}}" name="name" id="name"  placeholder="Please Enter Country Name">
                             @if($errors->has('name'))
                             <span class="text-danger">{{$errors->first('name')}}</span>
@@ -87,7 +87,7 @@
                           
                         </div>
                         <div>
-                           <a href="{{route('admin.state.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
+                           <a href="{{route('admin.city.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
                            <button type="submit" class="btn btn-success">Submit</button> 
                         </div>
                       </form>
@@ -126,7 +126,7 @@
             }
         });
     }
-    
+
 </script>
 
 <script type="text/javascript" src="{{asset('js/admin/city/create.js')}}">

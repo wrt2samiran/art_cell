@@ -32,7 +32,7 @@ class CityController extends Controller
         $this->data['page_title']='City List';
         if($request->ajax()){
 
-            $city=City::with('state')->with('country')->orderBy('id','ASC');
+            $city=City::with('state')->with('country')->orderBy('id','Desc');
             return Datatables::of($city)
             ->editColumn('created_at', function ($city) {
                 return $city->created_at ? with(new Carbon($city->created_at))->format('m/d/Y') : '';
@@ -44,11 +44,11 @@ class CityController extends Controller
             ->addColumn('is_active',function($city){
                 if($city->is_active=='1'){
                    $message='deactivate';
-                   return '<a title="Click to deactivate the gallery image" href="javascript:change_status('."'".route('admin.city.change_status',$city->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm">Active</a>';
+                   return '<a title="Click to deactivate the city" href="javascript:change_status('."'".route('admin.city.change_status',$city->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm">Active</a>';
                     
                 }else{
                    $message='activate';
-                   return '<a title="Click to activate the gallery image" href="javascript:change_status('."'".route('admin.city.change_status',$city->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm">Inactive</a>';
+                   return '<a title="Click to activate the city" href="javascript:change_status('."'".route('admin.city.change_status',$city->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm">Inactive</a>';
                 }
             })
             ->addColumn('action',function($city){
@@ -56,7 +56,7 @@ class CityController extends Controller
                 $details_url=route('admin.city.show',$city->id);
                 $edit_url=route('admin.city.edit',$city->id);
 
-                return '<a title="View State Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>&nbsp;&nbsp;<a title="Edit State" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>&nbsp;&nbsp;<a title="Delete city" href="javascript:delete_state('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
+                return '<a title="View City Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>&nbsp;&nbsp;<a title="Edit City" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>&nbsp;&nbsp;<a title="Delete city" href="javascript:delete_city('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
                 
             })
             ->rawColumns(['action','is_active'])
@@ -85,13 +85,15 @@ class CityController extends Controller
             if ($request->isMethod('POST'))
             {
                 $validationCondition = array(
-                    'name'          => 'required|min:2|max:255|unique:'.(new State)->getTable().',name',
+                    'name'          => 'required|min:2|max:255|unique:'.(new City)->getTable().',name',
+                    'country_id'    => 'required',
                     'state_id'      => 'required',
                 );
                 $validationMessages = array(
                     'name.required'         => 'Please enter name',
                     'name.min'              => 'Name should be should be at least 2 characters',
                     'name.max'              => 'Name should not be more than 255 characters',
+                    'country_id'            => 'Please select country',
                     'state_id.required'     => 'Please select state',
                 );
 
@@ -103,7 +105,8 @@ class CityController extends Controller
                     $new = new City;
                     $new->name = trim($request->name, ' ');
                     $new->country_id  = $request->country_id;
-                    
+                    $new->state_id    = $request->state_id;
+
                     $new->created_at = date('Y-m-d H:i:s');
                     $save = $new->save();
                 
@@ -152,12 +155,14 @@ class CityController extends Controller
                 $validationCondition = array(
                     'name'          => 'required|min:2|max:255|unique:' .(new City)->getTable().',name,'.$id.'',
                     'country_id'    => 'required',
+                    'state_id'      => 'required',
                 );
                 $validationMessages = array(
                     'name.required'         => 'Please enter name',
                     'name.min'              => 'Name should be should be at least 2 characters',
                     'name.max'              => 'Name should not be more than 255 characters',
                     'country_id.required'   => 'Please select country',
+                    'state_id.required'     => 'Please select state',
 
                 );
                 
@@ -167,10 +172,11 @@ class CityController extends Controller
                 } else {
                     $details->name        = trim($request->name, ' ');
                     $details->country_id  = $request->country_id;
-                    $details->updated_at      = date('Y-m-d H:i:s');
+                    $details->state_id    = $request->state_id;
+                    $details->updated_at  = date('Y-m-d H:i:s');
                     $save = $details->save();                        
                     if ($save) {
-                        $request->session()->flash('alert-success', 'State has been updated successfully');
+                        $request->session()->flash('alert-success', 'City has been updated successfully');
                         return redirect()->route('admin.city.list');
                     } else {
                         $request->session()->flash('alert-danger', 'An error occurred while updating the city');
@@ -180,7 +186,9 @@ class CityController extends Controller
             }
             
             $country_list=Country::whereIsActive('1')->orderBy('id','ASC')->get();
+            $state_list=State::whereIsActive('1')->whereCountryId($details->country_id)->orderBy('id','ASC')->get();
             $this->data['country_list']=$country_list;
+            $this->data['state_list']=$state_list;
             return view($this->view_path.'.edit',$this->data)->with(['details' => $details]);
 
         } catch (Exception $e) {
@@ -203,7 +211,7 @@ class CityController extends Controller
             if ($id == null) {
                 return redirect()->route('admin.city.list');
             }
-            $details = State::where('id', $id)->first();
+            $details = City::where('id', $id)->first();
             if ($details != null) {
                 if ($details->is_active == 1) {
                     
@@ -264,15 +272,26 @@ class CityController extends Controller
     }
     
 
-    public function show($id){
-        return view($this->view_path.'.show');
-    }
-
     /*****************************************************/
-    # RangeController
+    # CityController
+    # Function name : show
+    # Author        :
+    # Created Date  : 06-10-2020
+    # Purpose       : Showing Country details
+    # Params        : Request $request
+    /*****************************************************/
+
+    public function show($id){
+        $city=City::findOrFail($id);
+        $this->data['page_title']='Country Details';
+        $this->data['city']=$city;
+        return view($this->view_path.'.show',$this->data);
+    }
+    /*****************************************************/
+    # CityController
     # Function name : getState
     # Author        :
-    # Created Date  : 25-09-2020
+    # Created Date  : 06-10-2020
     # Purpose       : Get Country wise State List
     # Params        : Request $request
     /*****************************************************/

@@ -1,15 +1,18 @@
 //initializing galleries datatable
-    var city_table=$('#city_table').DataTable({
+    var shared_service_table=$('#shared_service_table').DataTable({
         "responsive": true,
         "autoWidth": false,
         processing: true,
         serverSide: true,
-        ajax: baseUrl+'/admin/city',
+        ajax: baseUrl+'/admin/shared-service',
         columns: [
             { data: 'id', name: 'id' },
             { data: 'name', name: 'name'},
-            { data: 'country.name', name: 'country.name' },
-            { data: 'state.name', name: 'state.name' },
+            { data: 'description', name: 'description' },
+            { data: 'number_of_days', name: 'number_of_days' },
+            { data: 'price', name: 'price'},
+            { data: 'extra_price_per_day', name: 'extra_price_per_day' },
+            { data: 'currency', name: 'currency' },
             { data: 'is_active', name: 'is_active' },
             { data: 'created_at', name: 'created_at' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
@@ -23,11 +26,11 @@
 
     });
 
- //function to delete city
- function delete_city(url){
+ //function to delete country
+ function delete_country(url){
   swal({
   title: "Are you sure?",
-  text: "Once deleted, you will not be able to recover this city!",
+  text: "Once deleted, you will not be able to recover this country!",
   icon: "warning",
   buttons: true,
   dangerMode: true,
@@ -43,7 +46,7 @@
         data:{ "_token": $('meta[name="csrf-token"]').attr('content')},
         success: function (data) {
           $.LoadingOverlay("hide");
-          toastr.success('City successfully deleted.', 'Success', {timeOut: 5000});
+          toastr.success('Shared Service successfully deleted.', 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");
@@ -57,7 +60,7 @@
         }
      });
 
-     city_table.ajax.reload(null, false);
+     shared_service_table.ajax.reload(null, false);
 
 
     } 
@@ -69,7 +72,7 @@
  function change_status(url,activate_or_deactivate){
   swal({
   title: "Are you sure?",
-  text: "You want to "+activate_or_deactivate+" the city.",
+  text: "You want to "+activate_or_deactivate+" the shared service.",
   icon: "warning",
   buttons: true,
   dangerMode: true,
@@ -97,10 +100,11 @@
         }
      });
 
-     city_table.ajax.reload(null, false);
+     shared_service_table.ajax.reload(null, false);
     // window.location.href=url;
     } 
   });
 
 
  }
+

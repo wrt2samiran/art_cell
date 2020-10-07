@@ -33,7 +33,7 @@ class CreateUsersTable extends Migration
             $table->enum('created_from', ['B', 'F'])->nullable()->comment = 'B= Backend , F = Frontednd';
             $table->timestamps();
             $table->bigInteger('created_by')->length(20);
-            $table->bigInteger('updated_by')->length(20);
+            $table->bigInteger('updated_by')->nullable()->length(20);
             $table->enum('is_deleted', ['Y', 'N'])->default('N')->comment = 'Y-yes,N-no';
             $table->bigInteger('deleted_by')->length(20)->nullable();
             $table->softDeletes('deleted_at', 0)->nullable();

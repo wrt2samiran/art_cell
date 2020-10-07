@@ -9,7 +9,9 @@ return [
 	'user_management'=>'User Management',
 	'change_password'=>'Change Password',
 	'sign_out'=>'Sign Out',
+	'master_modules'=>'Master Modules',
 	'country_management'=>'Country Management',
 	'state_management'=>'State Management',
-	'city_management'=>'City Management'
+	'city_management'=>'City Management',
+	'shared_service_management' => 'Shared Service Management'
 ];

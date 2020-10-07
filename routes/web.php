@@ -127,15 +127,12 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
 
             Route::group(['prefix' => 'country', 'as' => 'country.'], function () {
                 Route::get('/', 'CountryController@list')->name('list');
-               // Route::get('/module-list-table', 'ModuleManagementController@moduleListTable')->name('list.table');
                 Route::any('/add','CountryController@countryAdd')->name('country.add');
                 Route::any('/edit/{encryptCode}', 'CountryController@edit')->name('edit');
                 Route::put('/update', 'CountryController@update')->name('update');
                 Route::get('/{id}/change-change', 'CountryController@change_status')->name('change_status');
                 Route::delete('/{id}/delete', 'CountryController@delete')->name('delete');
-                Route::get('/{id}', 'CountryController@show')->name('show');
-                
-                
+                Route::get('/{id}', 'CountryController@show')->name('show');                
             });
 
             Route::group(['prefix' => 'state', 'as' => 'state.'], function () {
@@ -157,10 +154,17 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::get('/{id}/change-change', 'CityController@change_status')->name('change_status');
                 Route::delete('/{id}/delete', 'CityController@delete')->name('delete');
                 Route::get('/{id}', 'CityController@show')->name('show');
-                Route::post('/get-zone', 'CityController@getZone')->name('getZone');
-                //Route::get('/state', 'CityController@getState')->name('state');
-                
-                
+                Route::post('/get-zone', 'CityController@getZone')->name('getZone');                
+            });
+
+            Route::group(['prefix' => 'shared-service', 'as' => 'shared-service.'], function () {
+                Route::get('/', 'SharedServiceController@list')->name('list');
+                Route::any('/add','SharedServiceController@sharedServiceAdd')->name('add');
+                Route::any('/edit/{encryptCode}', 'SharedServiceController@edit')->name('edit');
+                Route::get('/{id}/change-change', 'SharedServiceController@change_status')->name('change_status');
+                Route::delete('/{id}/delete', 'SharedServiceController@delete')->name('delete');
+                Route::get('/{id}', 'SharedServiceController@show')->name('show');
+                Route::post('/get-zone', 'SharedServiceController@getZone')->name('getZone');                
             });
         });
        

@@ -31,10 +31,7 @@
                 <!-- Add icons to the links using the .nav-icon class
                      with font-awesome or any other icon font library -->
                 <li class="nav-item has-treeview @if(Route::currentRouteName()=='admin.dashboard' 
-                || Route::currentRouteName()=='admin.settings' || Route::currentRouteName()=='admin.country.list' || Route::currentRouteName()=='admin.country.country.add' || Route::currentRouteName()=='admin.country.edit' ||
-                Route::currentRouteName()=='admin.state.list' || Route::currentRouteName()=='admin.state.country.add' || 
-                Route::currentRouteName()=='admin.state.edit' || Route::currentRouteName()=='admin.city.list' || Route::currentRouteName()=='admin.city.add' || Route::currentRouteName()=='admin.city.edit'
-                ){{'menu-open'}}@endif">
+                || Route::currentRouteName()=='admin.settings'){{'menu-open'}}@endif">
                     <a href="#"
                        class="nav-link @if(Route::currentRouteName()=='admin.dashboard' 
                        || Route::currentRouteName()=='admin.settings' 
@@ -62,34 +59,62 @@
                             </a>
                         </li>
                     </ul>
+                    
+                </li>
+
+                <li class="nav-item has-treeview @if(Route::currentRouteName()=='admin.country.list' || Route::currentRouteName()=='admin.country.country.add' || Route::currentRouteName()=='admin.country.edit' || Route::currentRouteName()=='admin.country.show' ||
+                Route::currentRouteName()=='admin.state.list' || Route::currentRouteName()=='admin.state.country.add' || Route::currentRouteName()=='admin.state.show' ||
+                Route::currentRouteName()=='admin.state.edit' || Route::currentRouteName()=='admin.city.list' || Route::currentRouteName()=='admin.city.add' || Route::currentRouteName()=='admin.city.edit' || Route::currentRouteName()=='admin.city.show'
+                ){{'menu-open'}}@endif">
+                    <a href="#"
+                       class="nav-link @if(Route::currentRouteName()=='admin.dashboard' 
+                       || Route::currentRouteName()=='admin.settings' 
+                       ){{'active'}}@endif">
+                        <i class="nav-icon fa fa-home"></i>
+                        <p>
+                            {{__('nav_link_text.master_modules')}}
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    
                     <ul class="nav nav-treeview @if(Route::currentRouteName()=='admin.country.list' 
                     || Route::currentRouteName()=='admin.country.edit' || Route::currentRouteName()=='admin.country.country.add'){{'style="display: block;"'}}@endif">
                         <li class="nav-item">
                             <a href="{{ route('admin.country.list') }}"
-                               class="nav-link @if(Route::currentRouteName()=='admin.country.list' || Route::currentRouteName()=='admin.country.edit' || Route::currentRouteName()=='admin.country.country.add'){{'active'}}@endif">
+                               class="nav-link @if(Route::currentRouteName()=='admin.country.list' || Route::currentRouteName()=='admin.country.edit' || Route::currentRouteName()=='admin.country.country.add' || Route::currentRouteName()=='admin.country.show'){{'active'}}@endif">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>{{__('nav_link_text.country_management')}}</p>
                             </a>
                         </li>
                     </ul>
 
-                    <ul class="nav nav-treeview @if(Route::currentRouteName()=='admin.state.list' 
-                    || Route::currentRouteName()=='admin.state.edit' || Route::currentRouteName()=='admin.state.add'){{'style="display: block;"'}}@endif">
+                    <ul class="nav nav-treeview @if(Route::currentRouteName()=='admin.state.list' || Route::currentRouteName()=='admin.state.show' 
+                    || Route::currentRouteName()=='admin.state.edit' || Route::currentRouteName()=='admin.state.add' || Route::currentRouteName()=='admin.state.show'){{'style="display: block;"'}}@endif">
                         <li class="nav-item">
                             <a href="{{ route('admin.state.list') }}"
-                               class="nav-link @if(Route::currentRouteName()=='admin.state.list' || Route::currentRouteName()=='admin.state.edit' || Route::currentRouteName()=='admin.state.add'){{'active'}}@endif">
+                               class="nav-link @if(Route::currentRouteName()=='admin.state.list' || Route::currentRouteName()=='admin.state.edit' || Route::currentRouteName()=='admin.state.add' || Route::currentRouteName()=='admin.state.show'){{'active'}}@endif">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>{{__('nav_link_text.state_management')}}</p>
                             </a>
                         </li>
                     </ul>
-                    <ul class="nav nav-treeview @if(Route::currentRouteName()=='admin.city.list' 
-                    || Route::currentRouteName()=='admin.city.edit' || Route::currentRouteName()=='admin.city.add'){{'style="display: block;"'}}@endif">
+                    <ul class="nav nav-treeview @if(Route::currentRouteName()=='admin.city.list' || Route::currentRouteName()=='admin.city.show'
+                    || Route::currentRouteName()=='admin.city.edit' || Route::currentRouteName()=='admin.city.add' || Route::currentRouteName()=='admin.city.show'){{'style="display: block;"'}}@endif">
                         <li class="nav-item">
                             <a href="{{ route('admin.city.list') }}"
-                               class="nav-link @if(Route::currentRouteName()=='admin.city.list' || Route::currentRouteName()=='admin.city.edit' || Route::currentRouteName()=='admin.city.add'){{'active'}}@endif">
+                               class="nav-link @if(Route::currentRouteName()=='admin.city.list' || Route::currentRouteName()=='admin.city.edit' || Route::currentRouteName()=='admin.city.add' || Route::currentRouteName()=='admin.city.show'){{'active'}}@endif">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>{{__('nav_link_text.city_management')}}</p>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav nav-treeview @if(Route::currentRouteName()=='admin.shared-service.list' || Route::currentRouteName()=='admin.shared-service.show'
+                    || Route::currentRouteName()=='admin.shared-service.edit' || Route::currentRouteName()=='admin.shared-service.add' || Route::currentRouteName()=='admin.shared-service.show'){{'style="display: block;"'}}@endif">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.shared-service.list') }}"
+                               class="nav-link @if(Route::currentRouteName()=='admin.shared-service.list' || Route::currentRouteName()=='admin.shared-service.edit' || Route::currentRouteName()=='admin.shared-service.add' || Route::currentRouteName()=='admin.shared-service.show'){{'active'}}@endif">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>{{__('nav_link_text.shared_service_management')}}</p>
                             </a>
                         </li>
                     </ul>

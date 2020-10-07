@@ -1,4 +1,4 @@
-    $("#admin_state_add_form").validate({
+    $("#admin_city_add_form").validate({
         rules: {
             name: {
                 required: true,
@@ -8,17 +8,23 @@
            
             country_id: {
                 required: true,
+            },
+            state_id: {
+                required: true,
             },           
            
         },
         messages: {
             name: {
-                required:  "State name is required",
-                minlength: "State name should have 3 characters",
-                maxlength: "State name should not be more then 50 characters"
+                required:  "City name is required",
+                minlength: "City name should have 3 characters",
+                maxlength: "City name should not be more then 50 characters"
             },
             country_id: {
-                required:  "State code is required",
+                required:  "Country name is required",
+            },
+            state_id: {
+                required:  "State name is required",
             },
         },
 

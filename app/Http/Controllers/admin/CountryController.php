@@ -44,11 +44,11 @@ class CountryController extends Controller
             ->addColumn('is_active',function($country){
                 if($country->is_active=='1'){
                    $message='deactivate';
-                   return '<a title="Click to deactivate the gallery image" href="javascript:change_status('."'".route('admin.country.change_status',$country->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm">Active</a>';
+                   return '<a title="Click to deactivate the country" href="javascript:change_status('."'".route('admin.country.change_status',$country->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm">Active</a>';
                     
                 }else{
                    $message='activate';
-                   return '<a title="Click to activate the gallery image" href="javascript:change_status('."'".route('admin.country.change_status',$country->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm">Inactive</a>';
+                   return '<a title="Click to activate the country" href="javascript:change_status('."'".route('admin.country.change_status',$country->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm">Inactive</a>';
                 }
             })
             ->addColumn('action',function($country){
@@ -132,10 +132,10 @@ class CountryController extends Controller
 
     /*****************************************************/
     # CountryController
-    # Function name : cityEdit
+    # Function name : edit
     # Author        :
-    # Created Date  : 13-08-2020
-    # Purpose       : Showing subAdminList of users
+    # Created Date  : 06-10-2020
+    # Purpose       : Editing Country
     # Params        : Request $request
     /*****************************************************/
     public function edit(Request $request, $id = null) {
@@ -203,7 +203,7 @@ class CountryController extends Controller
     # CountryController
     # Function name : change_status
     # Author        :
-    # Created Date  : 13-08-2020
+    # Created Date  : 06-10-2020
     # Purpose       : Change country status
     # Params        : Request $request
     /*****************************************************/
@@ -242,10 +242,10 @@ class CountryController extends Controller
 
     /*****************************************************/
     # CountryController
-    # Function name : cityDelete
+    # Function name : delete
     # Author        :
-    # Created Date  : 13-08-2020
-    # Purpose       : Showing subAdminList of users
+    # Created Date  : 06-10-2020
+    # Purpose       : Delete country
     # Params        : Request $request
     /*****************************************************/
     public function delete(Request $request, $id = null)
@@ -274,6 +274,14 @@ class CountryController extends Controller
         }
     }
     
+    /*****************************************************/
+    # CountryController
+    # Function name : show
+    # Author        :
+    # Created Date  : 06-10-2020
+    # Purpose       : Show Country details
+    # Params        : Request $request
+    /*****************************************************/
 
     public function show($id){
         $country=Country::findOrFail($id);
