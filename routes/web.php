@@ -43,18 +43,17 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::put('/{id}', 'RoleController@update')->name('update');
                 Route::delete('/{id}/delete', 'RoleController@delete')->name('delete');
                 Route::get('/{id}/change-change', 'RoleController@change_status')->name('change_status');
+                Route::post('/ajax/check_role_name_unique/{role_id?}', 'RoleController@ajax_check_role_name_unique')
+                ->name('ajax_check_role_name_unique');
+                
+                Route::post('/ajax/ajax_parent_module_permissions/{role_id?}', 'RoleController@ajax_parent_module_permissions')
+                ->name('ajax_parent_module_permissions');
+
             });
 
 
-
             Route::group(['prefix' => 'user-management', 'as' => 'user-management.'], function () {
-                Route::get('/role-list', 'RoleController@roleList')->name('role-list');
-                Route::any('/role-add','RoleController@roleAdd')->name('role-add');
-                Route::any('/role-permission/{encryptCode}','RoleController@rolePermission')->name('role.permission');
-                Route::get('/edit/{id}', 'RoleController@editRole')->name('edit')->where('id','[0-9]+');
-                Route::post('/edit-submit/{id}', 'RoleController@editRole')->name('editSubmit')->where('id','[0-9]+');
-                Route::get('/delete/{id}', 'RoleController@roleDelete')->name('delete')->where('id','[0-9]+');
-                Route::get('/reset-role-status/{encryptCode}','RoleController@resetRoleStatus')->name('reset-role-status');
+
                 Route::get('/admin-user-list', 'UserController@userList')->name('user.list');
                 Route::get('/user-list-table', 'UserController@userListTable')->name('user.list.table');
                 Route::get('/site-user-list', 'UserController@SiteuserList')->name('site.user.list');

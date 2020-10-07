@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RolePermission extends Model
 {
+    protected $guarded=[];
     /*****************************************************/
     # RolePermission
     # Function name : module

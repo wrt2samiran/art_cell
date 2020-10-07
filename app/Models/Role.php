@@ -29,4 +29,14 @@ class Role extends Model
 
         return $this->belongsTo('App\Models\User','created_by');
     }
+
+    public function parent()
+    {
+        return $this->belongsTo(Role::class, 'parrent_id');
+    }
+
+    
+
+
+
 }

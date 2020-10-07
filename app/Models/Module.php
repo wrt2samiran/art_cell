@@ -13,6 +13,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Module extends Model
 {
-
+	protected $guarded=[];
+	public function functionalities(){
+		return $this->hasMany('App\Models\ModuleFunctionality');
+	}
 
 }

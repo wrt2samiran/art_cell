@@ -61,6 +61,15 @@
                         </li>
                     </ul>
                 </li>
+
+                <li class="nav-item">
+                    <a href="{{route('admin.roles.list')}}" class="nav-link {{(request()->is('admin/roles/*','admin/roles'))?'active':''}}">
+                       &nbsp;&nbsp;<i class="fas fa-users"></i>
+                      <p>
+                        &nbsp;&nbsp;Roles/User Groups
+                      </p>
+                    </a>
+                </li>
                 @if (checkModulePermission("access.control"))
                     <li  class="nav-item has-treeview @if(Route::currentRouteName()=='admin.module-management.module.list'|| 
                                                      Route::currentRouteName()=='admin.module-management.functionality.list' || 
@@ -114,22 +123,20 @@
                     </li>
                 @endif
                 @if (checkModulePermission("user.management"))
-                <li class="nav-item has-treeview @if(Route::currentRouteName()=='admin.user-management.role-list' ||
+                <li class="nav-item has-treeview @if(
                             Route::currentRouteName()=='admin.user-management.user.list'||
                             Route::currentRouteName()=='admin.user-management.user.add'||
                             Route::currentRouteName()=='admin.user-management.user-edit'|| 
-                            Route::currentRouteName()=='admin.user-management.role-add' ||
+             
                             Route::currentRouteName()=='admin.user-management.edit' ||
-                            Route::currentRouteName()=='admin.user-management.role.permission' ||
+                   
                             Route::currentRouteName()=='admin.user-management.site.user.list'){{'menu-open'}}@endif">
                     <a href="#"
-                    class="nav-link @if(Route::currentRouteName()=='admin.user-management.role-list' || 
+                    class="nav-link @if( 
                                         Route::currentRouteName()=='admin.user-management.user.list'||
                                         Route::currentRouteName()=='admin.user-management.user.add' ||
                                         Route::currentRouteName()=='admin.user-management.user-edit' ||
                                         Route::currentRouteName()=='admin.user-management.edit' ||
-                                        Route::currentRouteName()=='admin.user-management.role-add' ||
-                                        Route::currentRouteName()=='admin.user-management.role.permission' ||
                                         Route::currentRouteName()=='admin.user-management.site.user.list'){{'active'}}@endif">
                         <i class="nav-icon fa fa-users"></i>
                         <p>
@@ -137,25 +144,15 @@
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
-<!--                     <ul class="nav nav-treeview @if(Route::currentRouteName()=='admin.user-management.role-list' ||
+<!--                     <ul class="nav nav-treeview @if(
                                     Route::currentRouteName()=='admin.user-management.user.list' ||
                                     Route::currentRouteName()=='admin.user-management.user.add' || 
                                     Route::currentRouteName()=='admin.user-management.user-edit' || 
-                                    Route::currentRouteName()=='admin.user-management.role-add' || 
+                                   
                                     Route::currentRouteName()=='admin.user-management.edit' ||
-                                    Route::currentRouteName()=='admin.user-management.role.permission' ||
+                                 
                                     Route::currentRouteName()=='admin.user-management.site.user.list'){{'style="display: block;"'}}@endif">
-                        <li class="nav-item">
-                            <a href="{{route('admin.user-management.role-list')}}"
-                                class="nav-link @if(Route::currentRouteName()=='admin.user-management.role-list'
-                                        ||Route::currentRouteName()=='admin.user-management.role-add'  
-                                        || Route::currentRouteName()=='admin.user-management.edit'
-                                        ||Route::currentRouteName()=='admin.user-management.role.permission' 
-                                        ){{'active'}}@endif">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Role Management</p>
-                            </a>
-                        </li>
+
                         @if(checkFunctionPermission('user-management.user.add'))
 
                         <li class="nav-item">

@@ -4,12 +4,12 @@
         "autoWidth": false,
         processing: true,
         serverSide: true,
-        ajax: baseUrl+'/admin/roles',
+        ajax: $('#roles_data_url').val(),
         columns: [
             { data: 'id', name: 'id' },
             { data: 'role_name', name: 'role_name'},
             { data: 'role_description', name: 'role_description' },
-            { data: 'status', name: 'status' },
+            { data: 'status', name: 'status',orderable: false },
             { data: 'created_at', name: 'created_at' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
