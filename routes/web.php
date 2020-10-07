@@ -86,21 +86,29 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::get('/list', 'AttendanceController@list')->name('list');
             });
 
-            Route::group(['prefix' => 'master-management', 'as' => 'master-management.'], function () {
-                Route::get('/country-list', 'CountryController@list')->name('country.list');
-                Route::get('/module-list-table', 'ModuleManagementController@moduleListTable')->name('list.table');
-                Route::any('/add','ModuleManagementController@moduleAdd')->name('module.add');
-                Route::get('/edit/{encryptCode}', 'ModuleManagementController@moduleEdit')->name('edit');
-                Route::post('/edit-submit/{encryptCode}', 'ModuleManagementController@moduleEdit')->name('editSubmit');
-                Route::get('/module-delete/{encryptCode}','ModuleManagementController@moduleDelete')->name('module-delete');
-                Route::get('/reset-module-status/{encryptCode}','ModuleManagementController@resetmoduleStatus')->name('reset-module-status');
-                Route::get('/functionality-list', 'ModuleManagementController@functionalityList')->name('functionality.list');
-                Route::get('/functionality-table', 'ModuleManagementController@functionalityTable')->name('functionality.table');
-                Route::any('/add-function','ModuleManagementController@functionAdd')->name('function.add');
-                Route::get('/function-edit/{encryptCode}', 'ModuleManagementController@functionalityEdit')->name('functionality-edit');
-                Route::post('/function-edit-submit/{encryptCode}', 'ModuleManagementController@functionalityEdit')->name('function-editSubmit');
-                Route::get('/function-delete/{encryptCode}', 'ModuleManagementController@functionaDelete')->name('function-delete');
-                Route::get('/reset-function-status/{encryptCode}','ModuleManagementController@resetfunctionStatus')->name('reset-function-status');
+            Route::group(['prefix' => 'country', 'as' => 'country.'], function () {
+                Route::get('/', 'CountryController@list')->name('list');
+               // Route::get('/module-list-table', 'ModuleManagementController@moduleListTable')->name('list.table');
+                Route::any('/add','CountryController@countryAdd')->name('country.add');
+                Route::any('/edit/{encryptCode}', 'CountryController@edit')->name('edit');
+                Route::put('/update', 'CountryController@update')->name('update');
+                Route::get('/{id}/change-change', 'CountryController@change_status')->name('change_status');
+                Route::delete('/{id}/delete', 'CountryController@delete')->name('delete');
+                Route::get('/{id}', 'CountryController@show')->name('show');
+                
+                
+            });
+
+            Route::group(['prefix' => 'state', 'as' => 'state.'], function () {
+                Route::get('/', 'CountryController@list')->name('list');
+               // Route::get('/module-list-table', 'ModuleManagementController@moduleListTable')->name('list.table');
+                Route::any('/add','StateController@countryAdd')->name('add');
+                Route::any('/edit/{encryptCode}', 'StateController@edit')->name('edit');
+                Route::put('/update', 'StateController@update')->name('update');
+                Route::get('/{id}/change-change', 'StateController@change_status')->name('change_status');
+                Route::delete('/{id}/delete', 'StateController@delete')->name('delete');
+                Route::get('/{id}', 'StateController@show')->name('show');
+                
             });
         });
        

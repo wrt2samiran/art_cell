@@ -31,7 +31,7 @@
                 <!-- Add icons to the links using the .nav-icon class
                      with font-awesome or any other icon font library -->
                 <li class="nav-item has-treeview @if(Route::currentRouteName()=='admin.dashboard' 
-                || Route::currentRouteName()=='admin.settings' 
+                || Route::currentRouteName()=='admin.settings' || Route::currentRouteName()=='admin.country.list' || Route::currentRouteName()=='admin.country.country.add' || Route::currentRouteName()=='admin.country.edit'
                 ){{'menu-open'}}@endif">
                     <a href="#"
                        class="nav-link @if(Route::currentRouteName()=='admin.dashboard' 
@@ -60,23 +60,26 @@
                             </a>
                         </li>
                     </ul>
-                    <?php// echo Route::currentRouteName()?>
-                    <ul class="nav nav-treeview @if(Route::currentRouteName()=='admin.master-management.country.list' 
-                    || Route::currentRouteName()=='admin.settings'){{'style="display: block;"'}}@endif">
+                    <ul class="nav nav-treeview @if(Route::currentRouteName()=='admin.country.list' 
+                    || Route::currentRouteName()=='admin.country.edit' || Route::currentRouteName()=='admin.country.country.add'){{'style="display: block;"'}}@endif">
                         <li class="nav-item">
-                            <a href="{{ route('admin.master-management.country.list') }}"
-                               class="nav-link @if(Route::currentRouteName()=='admin.dashboard'){{'active'}}@endif">
+                            <a href="{{ route('admin.country.list') }}"
+                               class="nav-link @if(Route::currentRouteName()=='admin.country.list' || Route::currentRouteName()=='admin.country.edit' || Route::currentRouteName()=='admin.country.country.add'){{'active'}}@endif">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>{{__('nav_link_text.country')}}</p>
+                                <p>{{__('nav_link_text.country_management')}}</p>
                             </a>
                         </li>
-                        <!-- <li class="nav-item">
-                            <a href="{{ route('admin.settings') }}"
-                               class="nav-link @if(Route::currentRouteName()=='admin.settings'){{'active'}}@endif">
+                    </ul>
+
+                    <ul class="nav nav-treeview @if(Route::currentRouteName()=='admin.state.list' 
+                    || Route::currentRouteName()=='admin.state.edit' || Route::currentRouteName()=='admin.state.add'){{'style="display: block;"'}}@endif">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.state.list') }}"
+                               class="nav-link @if(Route::currentRouteName()=='admin.state.list' || Route::currentRouteName()=='admin.state.edit' || Route::currentRouteName()=='admin.state.add'){{'active'}}@endif">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>{{__('nav_link_text.settings')}}</p>
+                                <p>{{__('nav_link_text.state_management')}}</p>
                             </a>
-                        </li> -->
+                        </li>
                     </ul>
                 </li>
                 

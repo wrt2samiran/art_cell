@@ -7,5 +7,7 @@ return [
 	'access_control'=>'Access Control',
 	'user_management'=>'User Management',
 	'change_password'=>'Change Password',
-	'sign_out'=>'Sign Out'
+	'sign_out'=>'Sign Out',
+	'country_management'=>'Country Management',
+	'state_management'=>'State Management'
 ];
