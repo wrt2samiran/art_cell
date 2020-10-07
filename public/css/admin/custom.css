@@ -1,0 +1,13 @@
+table.record-details-table {
+ width: 100%;
+}
+.form-group label span.error{
+	color: red;
+}
+table.record-details-table tr td:first-child {
+ width: 20%!important;
+}
+
+div.cursor-poiner{
+	cursor: pointer;
+}

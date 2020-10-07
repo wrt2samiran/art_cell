@@ -51,7 +51,7 @@
                         <div>
                           <div class="form-group required">
                             <label for="role_name">Role Name <span class="error">*</span></label>
-                            <input type="text"  class="form-control" value="{{old('role_name')?old('role_name'):$role->role_name}}" name="role_name" id="role_name"  placeholder="Category Name">
+                            <input type="text"  class="form-control" value="{{old('role_name')?old('role_name'):$role->role_name}}" name="role_name" id="role_name"  placeholder="Role Name">
                             @if($errors->has('role_name'))
                             <span class="text-danger">{{$errors->first('role_name')}}</span>
                             @endif

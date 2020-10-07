@@ -34,6 +34,7 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             Route::get('/change-password','DashboardController@showChangePasswordForm')->name('changePassword');
             Route::post('/change-password','DashboardController@changePassword')->name('changePassword');
 
+            /*Routes for role/group management */
             Route::group(['prefix'=>'roles','as'=>'roles.'],function(){
                 Route::get('/', 'RoleController@list')->name('list');
                 Route::get('/create', 'RoleController@create')->name('create');
@@ -42,7 +43,7 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::get('/{id}/edit', 'RoleController@edit')->name('edit');
                 Route::put('/{id}', 'RoleController@update')->name('update');
                 Route::delete('/{id}/delete', 'RoleController@delete')->name('delete');
-                Route::get('/{id}/change-change', 'RoleController@change_status')->name('change_status');
+                Route::get('/{id}/change-status', 'RoleController@change_status')->name('change_status');
                 Route::post('/ajax/check_role_name_unique/{role_id?}', 'RoleController@ajax_check_role_name_unique')
                 ->name('ajax_check_role_name_unique');
                 
@@ -50,7 +51,46 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 ->name('ajax_parent_module_permissions');
 
             });
+            /************************************/
 
+            /*Routes for property type management */
+            Route::group(['prefix'=>'property-types','as'=>'property_types.'],function(){
+                Route::get('/', 'PropertyTypeController@list')->name('list');
+                Route::get('/create', 'PropertyTypeController@create')->name('create');
+                Route::post('/store', 'PropertyTypeController@store')->name('store');
+                Route::get('/{id}', 'PropertyTypeController@show')->name('show');
+                Route::get('/{id}/edit', 'PropertyTypeController@edit')->name('edit');
+                Route::put('/{id}', 'PropertyTypeController@update')->name('update');
+                Route::delete('/{id}/delete', 'PropertyTypeController@delete')->name('delete');
+                Route::get('/{id}/change-change', 'PropertyTypeController@change_status')->name('change_status');
+                Route::post('/ajax/ajax_check_type_name_unique/{property_type_id?}', 'PropertyTypeController@ajax_check_type_name_unique')
+                ->name('ajax_check_type_name_unique');
+            });
+            /************************************/
+
+            /*Routes for service management */
+            Route::group(['prefix'=>'services','as'=>'services.'],function(){
+                Route::get('/', 'ServiceController@list')->name('list');
+                Route::get('/create', 'ServiceController@create')->name('create');
+                Route::post('/store', 'ServiceController@store')->name('store');
+                Route::get('/{id}', 'ServiceController@show')->name('show');
+                Route::get('/{id}/edit', 'ServiceController@edit')->name('edit');
+                Route::put('/{id}', 'ServiceController@update')->name('update');
+                Route::delete('/{id}/delete', 'ServiceController@delete')->name('delete');
+                Route::get('/{id}/change-change', 'ServiceController@change_status')->name('change_status');
+                Route::post('/ajax/ajax_check_service_name_unique/{service_id?}', 'ServiceController@ajax_check_service_name_unique')
+                ->name('ajax_check_service_name_unique');
+
+            });
+            /************************************/
+
+            /*Routes for quotations */
+            Route::group(['prefix'=>'quotations','as'=>'quotations.'],function(){
+                Route::get('/', 'QuotationController@list')->name('list');
+                Route::get('/{id}', 'QuotationController@show')->name('show');
+                Route::delete('/{id}/delete', 'QuotationController@delete')->name('delete');
+            });
+            /************************************/
 
             Route::group(['prefix' => 'user-management', 'as' => 'user-management.'], function () {
 
