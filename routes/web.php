@@ -43,18 +43,17 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::put('/{id}', 'RoleController@update')->name('update');
                 Route::delete('/{id}/delete', 'RoleController@delete')->name('delete');
                 Route::get('/{id}/change-change', 'RoleController@change_status')->name('change_status');
+                Route::post('/ajax/check_role_name_unique/{role_id?}', 'RoleController@ajax_check_role_name_unique')
+                ->name('ajax_check_role_name_unique');
+                
+                Route::post('/ajax/ajax_parent_module_permissions/{role_id?}', 'RoleController@ajax_parent_module_permissions')
+                ->name('ajax_parent_module_permissions');
+
             });
 
 
-
             Route::group(['prefix' => 'user-management', 'as' => 'user-management.'], function () {
-                Route::get('/role-list', 'RoleController@roleList')->name('role-list');
-                Route::any('/role-add','RoleController@roleAdd')->name('role-add');
-                Route::any('/role-permission/{encryptCode}','RoleController@rolePermission')->name('role.permission');
-                Route::get('/edit/{id}', 'RoleController@editRole')->name('edit')->where('id','[0-9]+');
-                Route::post('/edit-submit/{id}', 'RoleController@editRole')->name('editSubmit')->where('id','[0-9]+');
-                Route::get('/delete/{id}', 'RoleController@roleDelete')->name('delete')->where('id','[0-9]+');
-                Route::get('/reset-role-status/{encryptCode}','RoleController@resetRoleStatus')->name('reset-role-status');
+
                 Route::get('/admin-user-list', 'UserController@userList')->name('user.list');
                 Route::get('/user-list-table', 'UserController@userListTable')->name('user.list.table');
                 Route::get('/site-user-list', 'UserController@SiteuserList')->name('site.user.list');
@@ -100,14 +99,27 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             });
 
             Route::group(['prefix' => 'state', 'as' => 'state.'], function () {
-                Route::get('/', 'CountryController@list')->name('list');
-               // Route::get('/module-list-table', 'ModuleManagementController@moduleListTable')->name('list.table');
-                Route::any('/add','StateController@countryAdd')->name('add');
+                Route::get('/', 'StateController@list')->name('list');
+                Route::any('/add','StateController@stateAdd')->name('add');
                 Route::any('/edit/{encryptCode}', 'StateController@edit')->name('edit');
                 Route::put('/update', 'StateController@update')->name('update');
                 Route::get('/{id}/change-change', 'StateController@change_status')->name('change_status');
                 Route::delete('/{id}/delete', 'StateController@delete')->name('delete');
                 Route::get('/{id}', 'StateController@show')->name('show');
+                
+            });
+
+            Route::group(['prefix' => 'city', 'as' => 'city.'], function () {
+                Route::get('/', 'CityController@list')->name('list');
+                Route::any('/add','CityController@cityAdd')->name('add');
+                Route::any('/edit/{encryptCode}', 'CityController@edit')->name('edit');
+                Route::put('/update', 'CityController@update')->name('update');
+                Route::get('/{id}/change-change', 'CityController@change_status')->name('change_status');
+                Route::delete('/{id}/delete', 'CityController@delete')->name('delete');
+                Route::get('/{id}', 'CityController@show')->name('show');
+                Route::post('/get-zone', 'CityController@getZone')->name('getZone');
+                //Route::get('/state', 'CityController@getState')->name('state');
+                
                 
             });
         });

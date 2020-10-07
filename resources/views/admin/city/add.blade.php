@@ -1,70 +1,136 @@
-@extends('admin.layouts.app', ['title' => $panel_title])
+@extends('admin.layouts.after-login-layout')
 
-@section('content')
-<section class="content-header">
-    <h1>
-        {{ $page_title }}
-    </h1>
-    <ol class="breadcrumb">
-        <li><a href="{{route('admin.dashboard')}}"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="{{route('admin.city.list')}}"><i class="fa fa-city" aria-hidden="true"></i> City List</a></li>
-        <li class="active">{{ $page_title }}</li>
-    </ol>
-</section>
 
-<!-- Main content -->
-<section class="content">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="box box-primary">
-                @include('admin.elements.notification')
-                
-                {{ Form::open(array(
-		                            'method'=> 'POST',
-		                            'class' => '',
-                                    'route' => ['admin.city.addSubmit'],
-                                    'name'  => 'addCityForm',
-                                    'id'    => 'addCityForm',
-                                    'files' => true,
-		                            'novalidate' => true)) }}
-                    <div class="box-body">
-                        <div class="row">
-                        <div class="col-md-6">
-                                <div class="form-group">
-                                <label for="title">State Name<span class="red_star">*</span></label>
-                                    <select name="state_id" id="state_id" class="form-control" value="{{old('state_id')}}">
-                                        <option value="">-Select-</option>
-                                @if (count($stateList))
-                                    @foreach ($stateList as $state)
-                                        <option value="{{$state->id}}" @if($state->id == old('state_id') ) selected="selected" @endif>{{$state->name}}</option>
-                                    @endforeach
-                                @endif
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="name">CityName<span class="red_star">*</span></label>
-                                    {{ Form::text('name', null, array(
-                                                                'id' => 'name',
-                                                                'placeholder' => 'Name',
-                                                                'class' => 'form-control',
-                                                                'required' => 'required'
-                                                                 )) }}
-                                </div>
-                            </div>
-                            
-                        </div>
-                    </div>                        
-                    <div class="box-footer">
-                        <div class="col-md-6">
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                            <a href="{{ route('admin.city.list') }}" class="btn btn-block btn-default btn_width_reset">Cancel</a>
-                        </div>
-                    </div>
-                {!! Form::close() !!}
-            </div>
+@section('unique-content')
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>State</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.city.list')}}">City</a></li>
+              <li class="breadcrumb-item active">Create</li>
+            </ol>
+          </div>
         </div>
-    </div>
-</section>
-@endsection
+      </div><!-- /.container-fluid -->
+    </section>
+    <section class="content">
+      <div class="container-fluid">
+          <!-- SELECT2 EXAMPLE -->
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Create City</h3>
+              </div>
+              <div class="card-body">
+                  @if(Session::has('success'))
+                    <div class="alert alert-success alert-dismissable __web-inspector-hide-shortcut__">
+                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                        {{ Session::get('success') }}
+                    </div>
+                  @endif
+
+                  @if(Session::has('error'))
+                    <div class="alert alert-danger alert-dismissable">
+                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                        {{ Session::get('error') }}
+                    </div>
+                  @endif
+                  <div class="row justify-content-center">
+                    <div class="col-md-10 col-sm-12">
+                      <form  method="post" id="admin_state_add_form" action="{{route('admin.state.add')}}" method="post" enctype="multipart/form-data">
+                        @csrf
+                        <div>                        
+
+                          <div class="form-group required">
+                            <label for="country_id">Country <span class="error">*</span></label>
+                            <select class="form-control parent_role_select2" onchange='onCountryChange(this.value)' style="width: 100%;" name="country_id" id="country_id">
+                                <option value="">Select a Country</option>
+                                @forelse($country_list as $country_data)
+                                   <option value="{{$country_data->id}}" {{(old('country_id')== $country_data->id)? 'selected':''}}>{{$country_data->name}}</option>
+                                @empty
+                               <option value="">No Country Found</option>
+                                @endforelse
+            
+                              </select>
+                            @if($errors->has('country_id'))
+                            <span class="text-danger">{{$errors->first('country_id')}}</span>
+                            @endif
+                          </div>
+
+                          <div class="form-group required">
+                            <label for="country_id">State <span class="error">*</span></label>
+                             <select name="state_id" id="state_id" class="form-control">
+                                    <option value=""> Select State</option>
+                                   
+                             </select>
+                            @if($errors->has('state_id'))
+                            <span class="text-danger">{{$errors->first('state_id')}}</span>
+                            @endif
+                          </div>
+
+                          <div class="form-group required">
+                            <label for="name">State Name <span class="error">*</span></label>
+                            <input type="text" class="form-control" value="{{old('name')?old('name'):''}}" name="name" id="name"  placeholder="Please Enter Country Name">
+                            @if($errors->has('name'))
+                            <span class="text-danger">{{$errors->first('name')}}</span>
+                            @endif
+                          </div>
+                          
+                        </div>
+                        <div>
+                           <a href="{{route('admin.state.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
+                           <button type="submit" class="btn btn-success">Submit</button> 
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+      </div>
+    </section>
+    
+</div>
+@endsection 
+@push('custom-scripts')
+<script type="text/javascript">
+
+  function onCountryChange(country_id){
+     $.ajax({
+       
+        url: "{{route('admin.city.getZone')}}",
+        type:'post',
+        dataType: "json",
+        data:{country_id:country_id,_token:"{{ csrf_token() }}"}
+        }).done(function(response) {
+           
+           console.log(response.status);
+            if(response.status){
+             console.log(response.allZone);
+             var stringified = JSON.stringify(response.allZone);
+            var zonedata = JSON.parse(stringified);
+             var zone_list = '<option value=""> Select Zone</option>';
+             $.each(zonedata,function(index, zone_id){
+                    zone_list += '<option value="'+zone_id.id+'">'+ zone_id.name +'</option>';
+             });
+                $("#state_id").html(zone_list);
+            }
+        });
+    }
+    
+</script>
+
+<script type="text/javascript" src="{{asset('js/admin/city/create.js')}}">
+
+  
+</script>
+@endpush

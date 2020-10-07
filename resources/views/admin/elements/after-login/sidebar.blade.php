@@ -31,7 +31,9 @@
                 <!-- Add icons to the links using the .nav-icon class
                      with font-awesome or any other icon font library -->
                 <li class="nav-item has-treeview @if(Route::currentRouteName()=='admin.dashboard' 
-                || Route::currentRouteName()=='admin.settings' || Route::currentRouteName()=='admin.country.list' || Route::currentRouteName()=='admin.country.country.add' || Route::currentRouteName()=='admin.country.edit'
+                || Route::currentRouteName()=='admin.settings' || Route::currentRouteName()=='admin.country.list' || Route::currentRouteName()=='admin.country.country.add' || Route::currentRouteName()=='admin.country.edit' ||
+                Route::currentRouteName()=='admin.state.list' || Route::currentRouteName()=='admin.state.country.add' || 
+                Route::currentRouteName()=='admin.state.edit' || Route::currentRouteName()=='admin.city.list' || Route::currentRouteName()=='admin.city.add' || Route::currentRouteName()=='admin.city.edit'
                 ){{'menu-open'}}@endif">
                     <a href="#"
                        class="nav-link @if(Route::currentRouteName()=='admin.dashboard' 
@@ -81,6 +83,16 @@
                             </a>
                         </li>
                     </ul>
+                    <ul class="nav nav-treeview @if(Route::currentRouteName()=='admin.city.list' 
+                    || Route::currentRouteName()=='admin.city.edit' || Route::currentRouteName()=='admin.city.add'){{'style="display: block;"'}}@endif">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.city.list') }}"
+                               class="nav-link @if(Route::currentRouteName()=='admin.city.list' || Route::currentRouteName()=='admin.city.edit' || Route::currentRouteName()=='admin.city.add'){{'active'}}@endif">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>{{__('nav_link_text.city_management')}}</p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 
                
@@ -104,34 +116,7 @@
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
-<!--                         <ul class="nav nav-treeview @if(Route::currentRouteName()=='admin.module-management.module.list' ||
-                                    Route::currentRouteName()=='admin.module-management.module.add' || 
-                                    Route::currentRouteName()=='admin.module-management.edit' ||
-                                    Route::currentRouteName()=='admin.module-management.function.add' || 
-                                    Route::currentRouteName()=='admin.module-management.functionality.list' ||
-                                    Route::currentRouteName()=='admin.module-management.functionality-edit'){{'style="display: block;"'}}@endif">
-                            
-                            <li class="nav-item">
-                                <a href="{{route('admin.module-management.module.list')}}"
-                                class="nav-link @if(Route::currentRouteName()=='admin.module-management.module.list' ||
-                                                Route::currentRouteName()=='admin.module-management.module.add' ||
-                                                Route::currentRouteName()=='admin.module-management.edit'){{'active'}}@endif">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Module Management</p>
-                                </a>
-                            </li>
-                            
-                            <li class="nav-item">
-                                <a href="{{route('admin.module-management.functionality.list')}}"
-                                class="nav-link @if(Route::currentRouteName()=='admin.module-management.functionality.list' ||
-                                                    Route::currentRouteName()=='admin.module-management.function.add'||
-                                                    Route::currentRouteName()=='admin.module-management.functionality-edit'){{'active'}}@endif">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Functionality Management</p>
-                                </a>
-                            </li>
-                            
-                        </ul> -->
+
                     </li>
                 
                 
@@ -158,56 +143,14 @@
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
-<!--                     <ul class="nav nav-treeview @if(Route::currentRouteName()=='admin.user-management.role-list' ||
-                                    Route::currentRouteName()=='admin.user-management.user.list' ||
-                                    Route::currentRouteName()=='admin.user-management.user.add' || 
-                                    Route::currentRouteName()=='admin.user-management.user-edit' || 
-                                    Route::currentRouteName()=='admin.user-management.role-add' || 
-                                    Route::currentRouteName()=='admin.user-management.edit' ||
-                                    Route::currentRouteName()=='admin.user-management.role.permission' ||
-                                    Route::currentRouteName()=='admin.user-management.site.user.list'){{'style="display: block;"'}}@endif">
-                        <li class="nav-item">
-                            <a href="{{route('admin.user-management.role-list')}}"
-                                class="nav-link @if(Route::currentRouteName()=='admin.user-management.role-list'
-                                        ||Route::currentRouteName()=='admin.user-management.role-add'  
-                                        || Route::currentRouteName()=='admin.user-management.edit'
-                                        ||Route::currentRouteName()=='admin.user-management.role.permission' 
-                                        ){{'active'}}@endif">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Role Management</p>
-                            </a>
-                        </li>
-                        
-
-                        <li class="nav-item">
-                            <a href="{{route('admin.user-management.user.add')}}"
-                             class="nav-link @if( \Route::currentRouteName()=='admin.user-management.user.add'){{'active'}}@endif">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p> User Create</p>
-                            </a>
-                        </li>
-                                    
-                        
-                        <li class="nav-item">
-                            <a href="{{route('admin.user-management.user.list' )}}"
-                             class="nav-link @if(Route::currentRouteName()=='admin.user-management.user.list' 
-                                        ||(Route::currentRouteName()=='admin.user-management.user-edit' && isset($details->usertype) && $details->usertype != 'FU')
-                                      ){{'active'}}@endif">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p> Admin User List</p>
-                            </a>
-                        </li>
-                        
-                        <li class="nav-item">
-                            <a href="{{route('admin.user-management.site.user.list' )}}"
-                             class="nav-link @if(Route::currentRouteName()=='admin.user-management.site.user.list' 
-                                        || (Route::currentRouteName()=='admin.user-management.user-edit' && isset($details->usertype) && $details->usertype == 'FU')
-                                        ){{'active'}}@endif">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p> App User List</p>
-                            </a>
-                        </li>
-                    </ul> -->
+                    <li class="nav-item">
+                        <a href="{{route('admin.roles.list')}}" class="nav-link {{(request()->is('admin/roles/*','admin/roles'))?'active':''}}">
+                           &nbsp;&nbsp;<i class="fas fa-users"></i>
+                          <p>
+                            &nbsp;&nbsp;Roles/User Groups
+                          </p>
+                        </a>
+                    </li>
                 </li>
                
 

@@ -276,6 +276,9 @@ class CountryController extends Controller
     
 
     public function show($id){
-        return view($this->view_path.'.show');
+        $country=Country::findOrFail($id);
+        $this->data['page_title']='Country Details';
+        $this->data['country']=$country;
+        return view($this->view_path.'.show',$this->data);
     }
 }

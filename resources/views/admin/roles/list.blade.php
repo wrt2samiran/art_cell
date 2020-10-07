@@ -39,6 +39,18 @@
 
                             <!-- /.card-header -->
                             <div class="card-body">
+                                @if(Session::has('success'))
+                                    <div class="alert alert-success alert-dismissable __web-inspector-hide-shortcut__">
+                                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                        {{ Session::get('success') }}
+                                    </div>
+                                @endif
+                                @if(Session::has('error'))
+                                    <div class="alert alert-danger alert-dismissable">
+                                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                        {{ Session::get('error') }}
+                                    </div>
+                                @endif
                                 <table class="table table-bordered" id="roles_table">
                                     <thead>
                                         <tr>
@@ -51,6 +63,8 @@
                                         </tr>
                                     </thead>
                                 </table>
+                                <!-- calling this url from datatable data which is inside public\js\admin\roles\list.js-->
+                                <input type="hidden" id="roles_data_url" value="{{route('admin.roles.list')}}">
                             </div>
                         </div>
                     </div>

@@ -23,11 +23,11 @@
 
     });
 
- //function to delete gallery
+ //function to delete country
  function delete_country(url){
   swal({
   title: "Are you sure?",
-  text: "Once deleted, you will not be able to recover this role!",
+  text: "Once deleted, you will not be able to recover this country!",
   icon: "warning",
   buttons: true,
   dangerMode: true,

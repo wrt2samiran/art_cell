@@ -16,6 +16,7 @@ class CreateCitiesTable extends Migration
         Schema::disableForeignKeyConstraints();
         Schema::create('cities', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->integer('country_id');
             $table->unsignedBigInteger('state_id')->index();
             $table->string('name',100);
             $table->boolean('is_active')->default(true);

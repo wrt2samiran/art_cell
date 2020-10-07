@@ -14,7 +14,7 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.roles.list')}}">Roles</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.country.list')}}">Country</a></li>
               <li class="breadcrumb-item active">Create</li>
             </ol>
           </div>
@@ -74,7 +74,7 @@
                           
                         </div>
                         <div>
-                           <a href="{{route('admin.roles.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
+                           <a href="{{route('admin.country.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
                            <button type="submit" class="btn btn-success">Submit</button> 
                         </div>
                       </form>

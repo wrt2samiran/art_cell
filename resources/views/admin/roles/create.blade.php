@@ -65,7 +65,7 @@
                           </div>
                           <div class="form-group required">
                              <label for="parent_role">Role for which group <span class="error">*</span></label>
-                              <select class="form-control select2" style="width: 100%;" name="parent_role">
+                              <select class="form-control parent_role_select2" onchange='onParentRoleChange(this.value,"{{route('admin.roles.ajax_parent_module_permissions')}}")' style="width: 100%;" name="parent_role">
                                 <option value="">Select a group</option>
                                 @forelse($parent_roles as $parent_role)
                                    <option value="{{$parent_role->id}}" {{(old('parent_role') && old('menu_category')== $parent_role->id)? 'selected':''}}>{{$parent_role->role_name}}</option>
@@ -78,7 +78,14 @@
                               <span class="text-danger">{{$errors->first('parent_role')}}</span>
                              @endif
                           </div>
+                          <div id="permissions_error"></div>
+                          <div id="module_permissions_container">
+                            
+                          </div>
+
                         </div>
+                        <!--  this the url for remote validattion rule for role name -->
+                        <input type="hidden" id="ajax_check_role_name_unique_url" value="{{route('admin.roles.ajax_check_role_name_unique')}}">
                         <div>
                            <a href="{{route('admin.roles.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
                            <button type="submit" class="btn btn-success">Submit</button> 
@@ -91,7 +98,6 @@
           </div>
       </div>
     </section>
-    
 </div>
 @endsection 
 @push('custom-scripts')

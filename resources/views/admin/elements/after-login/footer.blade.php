@@ -60,7 +60,7 @@
 <script src="{{asset('assets/dist/js/demo.js')}}"></script>
 <!-- Jquery form-validate -->
 <script src="{{asset('js/jquery.validate.js')}}"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="{{ asset('js/development-admin.js')}}"></script>
 
 <!-- Sweet alert -->

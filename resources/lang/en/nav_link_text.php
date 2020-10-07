@@ -9,5 +9,6 @@ return [
 	'change_password'=>'Change Password',
 	'sign_out'=>'Sign Out',
 	'country_management'=>'Country Management',
-	'state_management'=>'State Management'
+	'state_management'=>'State Management',
+	'city_management'=>'City Management'
 ];

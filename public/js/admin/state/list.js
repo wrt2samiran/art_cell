@@ -1,15 +1,15 @@
 //initializing galleries datatable
-    var roles_table=$('#roles_table').DataTable({
+    var state_table=$('#state_table').DataTable({
         "responsive": true,
         "autoWidth": false,
         processing: true,
         serverSide: true,
-        ajax: $('#roles_data_url').val(),
+        ajax: baseUrl+'/admin/state',
         columns: [
             { data: 'id', name: 'id' },
-            { data: 'role_name', name: 'role_name'},
-            { data: 'role_description', name: 'role_description' },
-            { data: 'status', name: 'status',orderable: false },
+            { data: 'name', name: 'name'},
+            { data: 'country.name', name: 'country.name' },
+            { data: 'is_active', name: 'is_active' },
             { data: 'created_at', name: 'created_at' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
@@ -22,11 +22,11 @@
 
     });
 
- //function to delete gallery
- function delete_role(url){
+ //function to delete state
+ function delete_state(url){
   swal({
   title: "Are you sure?",
-  text: "Once deleted, you will not be able to recover this role!",
+  text: "Once deleted, you will not be able to recover this state!",
   icon: "warning",
   buttons: true,
   dangerMode: true,
@@ -38,10 +38,11 @@
       $.ajax({
         url: url,
         type: "DELETE",
+        
         data:{ "_token": $('meta[name="csrf-token"]').attr('content')},
         success: function (data) {
           $.LoadingOverlay("hide");
-          toastr.success('Role successfully deleted.', 'Success', {timeOut: 5000});
+          toastr.success('State successfully deleted.', 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");
@@ -55,7 +56,7 @@
         }
      });
 
-     roles_table.ajax.reload(null, false);
+     state_table.ajax.reload(null, false);
 
 
     } 
@@ -67,7 +68,7 @@
  function change_status(url,activate_or_deactivate){
   swal({
   title: "Are you sure?",
-  text: "You want to "+activate_or_deactivate+" the role.",
+  text: "You want to "+activate_or_deactivate+" the state.",
   icon: "warning",
   buttons: true,
   dangerMode: true,
@@ -95,9 +96,10 @@
         }
      });
 
-     roles_table.ajax.reload(null, false);
+     state_table.ajax.reload(null, false);
     // window.location.href=url;
     } 
   });
+
 
  }
