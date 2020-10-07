@@ -31,7 +31,7 @@ class EditRoleRequest extends FormRequest
 
         $role=Role::find(request()->route('id'));
         if($role && $role->parrent_id!=null){
-            $rules_array['parrent_id']='required';
+            $rules_array['parent_role']='required';
         }
 
         return $rules_array;

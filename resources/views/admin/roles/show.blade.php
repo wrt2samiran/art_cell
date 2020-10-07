@@ -23,7 +23,7 @@
     </section>
     <section class="content">
       <div class="container-fluid">
-                <div class="row">
+          <div class="row">
           <div class="col-12">
             <!-- Default box -->
             <div class="card card-success">
@@ -31,7 +31,7 @@
                   Role Deatils
                 </div> 
               <div class="card-body"> 
-                 <table class="table table-bordered table-hover" id="role-details-table">
+                 <table class="table table-bordered table-hover record-details-table" id="role-details-table">
                       <tbody>
                         <tr>
                           <td>Role Name</td>
@@ -48,10 +48,58 @@
                           </td>
                         </tr>
                         <tr>
+                          <td >Total Users</td>
+                          <td >{{$role->users()->count()}}</td>
+                        </tr>
+                        <tr>
                           <td >Parent Role/Group</td>
                           <td >{{$role->parent? $role->parent->role_name:'--' }}</td>
                         </tr>
+                        <tr>
+                          <td >Child Role/Groups</td>
+                          <td>
+                            @if($role->childrens->count())
+                              @foreach($role->childrens as $key=> $children)
+                              <span>{{($key!=0)?',':''}}{{$children->role_name}}</span>
+                              @endforeach
+                            @else
+                            No child groups
+                            @endif
+                            
+                          </td>
+                        </tr>
+                        <tr>
+                          <td >Module wise permissions</td>
+                          <td>
+                            <div class="container-fluid">
+                              <div class="row">
+                                @if(count($modules))
+                                  @foreach($modules as $module)
+                                  <div class="col-sm-4">
+                                    <div class="card card-success">
+                                      <div  class="card-header">{{$module->module_name}}</div>
+                                      <div  class="card-body">
+                                        @if(count($module->functionalities))
+                                          @foreach($module->functionalities as $functionality)
+                                          
+                                            <span class="">{{$functionality->function_name}}</span><br>
+                                          
+                                          @endforeach
+                                        @endif
+                                      </div>
+                                    </div>
+                                  </div>
+                                  @endforeach
+                                @else
+                                <div class="col-sm-12">
+                                  <p>No Module Found</p>
+                                </div>
+                                @endif
+                              </div>                            
+                            </div>
 
+                          </td>
+                        </tr>
                         <tr>
                           <td>Created At</td>
                           <td>{{$role->created_at->format('d/m/Y')}}</td>

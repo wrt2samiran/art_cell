@@ -5,7 +5,6 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use Helper, AdminHelper, Image, Auth, Hash, Redirect, Validator, View, Config;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
 use App\Http\Requests\Admin\Role\{CreateRoleRequest,EditRoleRequest};
@@ -19,6 +18,7 @@ class RoleController extends Controller
 
     public function list(Request $request){
         $this->data['page_title']='Role List';
+        
         if($request->ajax()){
             $roles=Role::select('roles.*');
             return Datatables::of($roles)
@@ -26,7 +26,7 @@ class RoleController extends Controller
                 return $role->created_at ? with(new Carbon($role->created_at))->format('m/d/Y') : '';
             })
             ->editColumn('role_description', function ($role) {
-                return Str::limit($role->role_description,100);
+                return Str::limit($role->role_description,50);
             })
             ->filterColumn('created_at', function ($query, $keyword) {
                 $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
@@ -120,6 +120,17 @@ class RoleController extends Controller
         $role=Role::findOrFail($id);
         $this->data['page_title']='Role Details';
         $this->data['role']=$role;
+
+        $modules_id_array=RolePermission::where('role_id',$role->id)->pluck('module_id')->toArray();
+        $modules_id_array=array_unique($modules_id_array);
+
+        $functionalities_id_array=RolePermission::where('role_id',$role->id)->pluck('module_functionality_id')->toArray();
+
+        $modules=Module::whereIn('id',$modules_id_array)
+        ->with(['functionalities'=>function($q)use($functionalities_id_array) {
+            $q->whereIn('id',$functionalities_id_array);
+        }])->orderBy('created_at','ASC')->get();
+        $this->data['modules']=$modules;
         return view($this->view_path.'.show',$this->data);
     }
     public function edit($id){
@@ -163,6 +174,22 @@ class RoleController extends Controller
     public function update(EditRoleRequest $request,$id){
         $role=Role::findOrFail($id);
         $current_user=auth()->guard('admin')->user();
+
+        if($request->parent_role){
+            $parent_role_details=Role::findOrFail($request->parent_role);  
+        }else{
+            $parent_role_details=null;
+        }
+        
+        $role->update([
+            'parrent_id'=>($parent_role_details)?$parent_role_details->id:$role->parrent_id,
+            'role_type'=>($parent_role_details)?$parent_role_details->role_type:$role->role_type,
+            'role_name'=>$request->role_name,
+            'role_description'=>$request->role_description,
+            'slug'=>Str::slug($request->role_name, '-')
+        ]);
+
+
         $module_functionalities=ModuleFunctionality::whereIn('id',$request->functionalities)->get();
 
         $role_permission_data_array=[];
@@ -175,8 +202,8 @@ class RoleController extends Controller
                     'status'=>'A',
                     'created_by'=>$current_user->id,
                     'updated_by'=>$current_user->id,
-                    'created_at'=>\Carbon\Carbon::now(),
-                    'updated_at'=>\Carbon\Carbon::now()
+                    'created_at'=>Carbon::now(),
+                    'updated_at'=>Carbon::now()
                 ];
             }
         }
@@ -196,7 +223,7 @@ class RoleController extends Controller
          if($users){
             return response()->json(['message'=>'There are active users with this role/group. You can not delete this role/group. To delete this group assign the users to other group and try again.'],400);
          }else{
-            $role->updated([
+            $role->update([
                 'deleted_by'=>auth()->guard('admin')->id()
             ]);
             $role->delete();
