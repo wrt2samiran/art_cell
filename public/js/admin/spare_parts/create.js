@@ -1,42 +1,42 @@
-    $("#admin_shared_service_edit_form").validate({
+    $("#admin_spare_parts_add_form").validate({
         rules: {
             name: {
                 required: true,
                 minlength: 3,
                 maxlength: 255,
             },
-           
-            number_of_days: {
+            manufacturer: {
+                required: true,
+                minlength: 3,
+                maxlength: 255,
+            },
+            unit_master_id: {
                 required: true,
             },
             
             price: {
                 required: true,
             },
-           
-            extra_price_per_day: {
-                required: true,
-            },
-
             currency: {
                 required: true,
             },
         },
         messages: {
             name: {
-                required:  "Shared Service name is required",
-                minlength: "Shared Service name should have 3 characters",
-                maxlength: "Shared Service name should not be more then 255 characters"
+                required:  "Spare Parts name is required",
+                minlength: "Spare Parts name should have 3 characters",
+                maxlength: "Spare Parts name should not be more then 255 characters"
             },
-            number_of_days: {
-                required:  "Number of Days is required",
+            manufacturer: {
+                required:  "Spare Parts name is required",
+                minlength: "Spare Parts name should have 3 characters",
+                maxlength: "Spare Parts name should not be more then 255 characters"
+            },
+            unit_master_id: {
+                required:  "Unit is required",
             },
             price: {
                 required:  "Price is required",
-            },
-
-            extra_price_per_day: {
-                required:  "Extra Price/day is required",
             },
             currency: {
                 required:  "Currency is required",

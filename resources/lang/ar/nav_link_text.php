@@ -14,5 +14,6 @@ return [
 	'state_management' => 'إدارة الدولة',
 	'city_management'	=> 'إدارة المدينة',
 	'shared_service_management' => 'إدارة الخدمة المشتركة',
+	'spare_parts_management' => 'إدارة قطع الغيار',
 
 ];

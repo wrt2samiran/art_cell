@@ -1,6 +1,6 @@
 <?php
 
 return [
-	'admin_panel'=>'لوحة إدارة CMMS',
+	'admin_panel'=>'لوحة إدارة SMMS',
 	'dashboard'=>'لوحة القيادة'
 ];

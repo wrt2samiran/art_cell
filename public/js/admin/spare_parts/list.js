@@ -1,17 +1,17 @@
 //initializing galleries datatable
-    var shared_service_table=$('#shared_service_table').DataTable({
+    var spare_parts_table=$('#spare_parts_table').DataTable({
         "responsive": true,
         "autoWidth": false,
         processing: true,
         serverSide: true,
-        ajax: baseUrl+'/admin/shared-service',
+        ajax: baseUrl+'/admin/spare-parts',
         columns: [
             { data: 'id', name: 'id' },
             { data: 'name', name: 'name'},
+            { data: 'manufacturer', name: 'manufacturer'},
+            { data: 'unitmaster.unit_name', name: 'unitmaster.unit_name'},
             { data: 'description', name: 'description' },
-            { data: 'number_of_days', name: 'number_of_days' },
             { data: 'price', name: 'price'},
-            { data: 'extra_price_per_day', name: 'extra_price_per_day' },
             { data: 'currency', name: 'currency' },
             { data: 'is_active', name: 'is_active' },
             { data: 'created_at', name: 'created_at' },
@@ -30,7 +30,7 @@
  function delete_shared_service(url){
   swal({
   title: "Are you sure?",
-  text: "Once deleted, you will not be able to recover this Shared Service!",
+  text: "Once deleted, you will not be able to recover this Spare Part!",
   icon: "warning",
   buttons: true,
   dangerMode: true,
@@ -46,7 +46,7 @@
         data:{ "_token": $('meta[name="csrf-token"]').attr('content')},
         success: function (data) {
           $.LoadingOverlay("hide");
-          toastr.success('Shared Service successfully deleted.', 'Success', {timeOut: 5000});
+          toastr.success('Spare Part successfully deleted.', 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");
@@ -60,7 +60,7 @@
         }
      });
 
-     shared_service_table.ajax.reload(null, false);
+     spare_parts_table.ajax.reload(null, false);
 
 
     } 
@@ -72,7 +72,7 @@
  function change_status(url,activate_or_deactivate){
   swal({
   title: "Are you sure?",
-  text: "You want to "+activate_or_deactivate+" the shared service.",
+  text: "You want to "+activate_or_deactivate+" the spare part.",
   icon: "warning",
   buttons: true,
   dangerMode: true,
@@ -100,7 +100,7 @@
         }
      });
 
-     shared_service_table.ajax.reload(null, false);
+     spare_parts_table.ajax.reload(null, false);
     // window.location.href=url;
     } 
   });

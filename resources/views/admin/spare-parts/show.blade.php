@@ -9,12 +9,12 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Shared Service Management</h1>
+            <h1>Spare Parts Management</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.shared-service.list')}}">Shared Service</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.spare-parts.list')}}">Spare Parts</a></li>
               <li class="breadcrumb-item active">Details</li>
             </ol>
           </div>
@@ -28,46 +28,48 @@
             <!-- Default box -->
             <div class="card card-success">
                 <div class="card-header">
-                  Shared Service Deatils
+                  Spare Parts Deatils
                 </div> 
               <div class="card-body"> 
-                 <table class="table table-bordered table-hover" id="country-details-table">
+                 <table class="table table-bordered table-hover" id="spare-parts-details-table">
                       <tbody>
                         <tr>
-                          <td>Shared Service Name</td>
-                          <td>{{$sharedServices->name}}</td>
+                          <td>Spare Parts Name</td>
+                          <td>{{$spareParts->name}}</td>
+                        </tr>
+                        <tr>
+                          <td>Unit</td>
+                          <td >{{$spareParts->unitmaster->unit_name}}</td>
+                        </tr>
+                        <tr>
+                          <td>Manufacturer</td>
+                          <td >{{$spareParts->manufacturer}}</td>
                         </tr>
                         <tr>
                           <td>Description</td>
-                          <td>{{$sharedServices->description}}</td>
+                          <td>{{$spareParts->description}}</td>
                         </tr>
-                        <tr>
-                          <td>Number of Days</td>
-                          <td >{{$sharedServices->number_of_days}}</td>
-                        </tr>
+                        
                         <tr>
                           <td>Price</td>
-                          <td >{{$sharedServices->price}}</td>
+                          <td >{{$spareParts->price}}</td>
                         </tr>
-                        <tr>
-                          <td>Extra Price/Day</td>
-                          <td >{{$sharedServices->extra_price_per_day}}</td>
-                        </tr>
+                        
                         <tr>
                           <td>Currency</td>
-                          <td >{{$sharedServices->currency}}</td>
+                          <td >{{$spareParts->currency}}</td>
                         </tr>
                         <tr>
                           <td>Status</td>
                           <td>
-                            <button role="button" class="btn btn-{{($sharedServices->is_active=='1')?'success':'danger'}}">{{($sharedServices->is_active=='1')?'Active':'Inactive'}}</button>
+                            <button role="button" class="btn btn-{{($spareParts->is_active=='1')?'success':'danger'}}">{{($spareParts->is_active=='1')?'Active':'Inactive'}}</button>
                           </td>
                         </tr>
                        
                       </tbody>
                       <tfoot>
                         <tr>
-                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.shared-service.list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
+                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.spare-parts.list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
                         </tr>
                       </tfoot>
                   </table>
