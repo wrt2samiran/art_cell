@@ -9,12 +9,12 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Shared Service Management</h1>
+            <h1>Spare Parts Management</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.shared-service.list')}}">Shared Services</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.shared-service.list')}}">Spare Parts</a></li>
               <li class="breadcrumb-item active">Edit</li>
             </ol>
           </div>
@@ -28,7 +28,7 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Edit Shared Service</h3>
+                <h3 class="card-title">Edit Spare Parts</h3>
               </div>
               <div class="card-body">
                   @if(Session::has('success'))
@@ -46,32 +46,47 @@
                   @endif
                   <div class="row justify-content-center">
                     <div class="col-md-10 col-sm-12">
-                      <form  method="post" id="admin_shared_service_edit_form" action="{{route('admin.shared-service.edit',$details->id)}}" method="post" >
+                      <form  method="post" id="admin_shared_service_edit_form" action="{{route('admin.spare-parts.edit',$details->id)}}" method="post" >
                         @csrf
                         
                         <div>
                           <div class="form-group required">
-                            <label for="name">Service Name <span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('name')?old('name'):$details->name}}" name="name" id="name"  placeholder="Shared Service Name">
-                            @if($errors->has('service_name'))
+                            <label for="name">Spare Part Name <span class="error">*</span></label>
+                            <input type="text" class="form-control" value="{{old('name')?old('name'):$details->name}}" name="name" id="name"  placeholder="Please Enter Spare Part Name">
+                            @if($errors->has('name'))
                             <span class="text-danger">{{$errors->first('name')}}</span>
                             @endif
                           </div>
                           <div class="form-group required">
-                             <label for="description">Description <span class="error">*</span></label>
-                             <textarea rows="5" class="form-control"  name="description" id="description"  placeholder="Description">{{old('description')?old('description'):$details->description}}</textarea>
-                             @if($errors->has('description'))
-                              <span class="text-danger">{{$errors->first('description')}}</span>
-                             @endif
-                          </div>
-
-                          <div class="form-group required">
-                            <label for="number_of_days">Number of Days <span class="error">*</span></label>
-                            <input type="number" class="form-control" value="{{old('number_of_days')?old('number_of_days'):$details->number_of_days}}" name="number_of_days" id="number_of_days"  placeholder="Please Enter Number of Days">
-                            @if($errors->has('number_of_days'))
-                            <span class="text-danger">{{$errors->first('number_of_days')}}</span>
+                            <label for="manufacturer">Manufacturer <span class="error">*</span></label>
+                            <input type="text" class="form-control" value="{{old('manufacturer')?old('manufacturer'):$details->manufacturer}}" name="manufacturer" id="manufacturer"  placeholder="Please Enter Manufacturer name">
+                            @if($errors->has('manufacturer'))
+                            <span class="text-danger">{{$errors->first('manufacturer')}}</span>
                             @endif
                           </div>
+                          <div class="form-group required">
+                            <label for="unit_master_id">Unit <span class="error">*</span></label>
+                            <select class="form-control parent_role_select2" style="width: 100%;" name="unit_master_id" id="unit_master_id">
+                                <option value="">Select a Unit</option>
+                                @forelse($unit_list as $unit_data)
+                                   <option value="{{$unit_data->id}}" {{($details->unit_master_id== $unit_data->id)? 'selected':''}}>{{$unit_data->unit_name}}</option>
+                                @empty
+                               <option value="">No Unit Found</option>
+                                @endforelse
+            
+                              </select>
+                            @if($errors->has('unit_master_id'))
+                            <span class="text-danger">{{$errors->first('unit_master_id')}}</span>
+                            @endif
+                          </div>
+                          <div class="form-group required">
+                            <label for="description">Description </label>
+                           <textarea rows="5" class="form-control"  name="description" id="description"  placeholder="Description">{{old('description')?old('description'):$details->description}}</textarea>
+                            @if($errors->has('country_code'))
+                            <span class="text-danger">{{$errors->first('description')}}</span>
+                            @endif
+                          </div>
+                          
                           <div class="form-group required">
                             <label for="price">Price <span class="error">*</span></label>
                             <input type="text" class="form-control" value="{{old('price')?old('price'):$details->price}}" name="price" id="price"  placeholder="Please Enter Price">
@@ -79,13 +94,7 @@
                             <span class="text-danger">{{$errors->first('price')}}</span>
                             @endif
                           </div>
-                          <div class="form-group required">
-                            <label for="extra_price_per_day">Extra Price/Day <span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('extra_price_per_day')?old('extra_price_per_day'):$details->extra_price_per_day}}" name="extra_price_per_day" id="extra_price_per_day"  placeholder="Please Enter Extra Price/Day">
-                            @if($errors->has('extra_price_per_day'))
-                            <span class="text-danger">{{$errors->first('extra_price_per_day')}}</span>
-                            @endif
-                          </div>
+                         
                           <div class="form-group required">
                             <label for="currency">Currency <span class="error">*</span></label>
                             <input type="text" class="form-control" value="{{old('currency')?old('currency'):$details->currency}}" name="currency" id="currency"  placeholder="Please Enter Currency">
@@ -93,11 +102,13 @@
                             <span class="text-danger">{{$errors->first('currency')}}</span>
                             @endif
                           </div>
-
+                          
+                          
+                          
                         </div>
-                        <input type="hidden" name="shared_service_id" id="shared_service_id" value="{{$details->id}}">
+                        <input type="hidden" name="spare_parts_id" id="spare_parts_id" value="{{$details->id}}">
                         <div>
-                           <a href="{{route('admin.shared-service.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
+                           <a href="{{route('admin.spare-parts.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
                            <button type="submit" class="btn btn-success">Submit</button> 
                         </div>
                       </form>

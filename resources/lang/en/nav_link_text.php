@@ -13,5 +13,6 @@ return [
 	'country_management'=>'Country Management',
 	'state_management'=>'State Management',
 	'city_management'=>'City Management',
-	'shared_service_management' => 'Shared Service Management'
+	'shared_service_management' => 'Shared Service Management',
+	'spare_parts_management' => 'Spare Parts Management',
 ];

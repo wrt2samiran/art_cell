@@ -64,11 +64,12 @@
 
                 <li class="nav-item has-treeview @if(Route::currentRouteName()=='admin.country.list' || Route::currentRouteName()=='admin.country.country.add' || Route::currentRouteName()=='admin.country.edit' || Route::currentRouteName()=='admin.country.show' ||
                 Route::currentRouteName()=='admin.state.list' || Route::currentRouteName()=='admin.state.country.add' || Route::currentRouteName()=='admin.state.show' ||
-                Route::currentRouteName()=='admin.state.edit' || Route::currentRouteName()=='admin.city.list' || Route::currentRouteName()=='admin.city.add' || Route::currentRouteName()=='admin.city.edit' || Route::currentRouteName()=='admin.city.show'
+                Route::currentRouteName()=='admin.state.edit' || Route::currentRouteName()=='admin.city.list' || Route::currentRouteName()=='admin.city.add' || Route::currentRouteName()=='admin.city.edit' || Route::currentRouteName()=='admin.city.show' || Route::currentRouteName()=='admin.spare-parts.list' || Route::currentRouteName()=='admin.spare-parts.edit' || Route::currentRouteName()=='admin.spare-parts.add' || Route::currentRouteName()=='admin.spare-parts.show' || Route::currentRouteName()=='admin.shared-service.list' || Route::currentRouteName()=='admin.shared-service.edit' || Route::currentRouteName()=='admin.shared-service.add' || Route::currentRouteName()=='admin.shared-service.show'
                 ){{'menu-open'}}@endif">
                     <a href="#"
-                       class="nav-link @if(Route::currentRouteName()=='admin.dashboard' 
-                       || Route::currentRouteName()=='admin.settings' 
+                       class="nav-link @if(Route::currentRouteName()=='admin.country.list' || Route::currentRouteName()=='admin.country.country.add' || Route::currentRouteName()=='admin.country.edit' || Route::currentRouteName()=='admin.country.show' ||
+                        Route::currentRouteName()=='admin.state.list' || Route::currentRouteName()=='admin.state.country.add' || Route::currentRouteName()=='admin.state.show' ||
+                        Route::currentRouteName()=='admin.state.edit' || Route::currentRouteName()=='admin.city.list' || Route::currentRouteName()=='admin.city.add' || Route::currentRouteName()=='admin.city.edit' || Route::currentRouteName()=='admin.city.show' || Route::currentRouteName()=='admin.spare-parts.list' || Route::currentRouteName()=='admin.spare-parts.edit' || Route::currentRouteName()=='admin.spare-parts.add' || Route::currentRouteName()=='admin.spare-parts.show' || Route::currentRouteName()=='admin.shared-service.list' || Route::currentRouteName()=='admin.shared-service.edit' || Route::currentRouteName()=='admin.shared-service.add' || Route::currentRouteName()=='admin.shared-service.show'
                        ){{'active'}}@endif">
                         <i class="nav-icon fa fa-home"></i>
                         <p>
@@ -115,6 +116,16 @@
                                class="nav-link @if(Route::currentRouteName()=='admin.shared-service.list' || Route::currentRouteName()=='admin.shared-service.edit' || Route::currentRouteName()=='admin.shared-service.add' || Route::currentRouteName()=='admin.shared-service.show'){{'active'}}@endif">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>{{__('nav_link_text.shared_service_management')}}</p>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav nav-treeview @if(Route::currentRouteName()=='admin.spare-parts.list' || Route::currentRouteName()=='admin.spare-parts.show'
+                    || Route::currentRouteName()=='admin.spare-parts.edit' || Route::currentRouteName()=='admin.spare-parts.add' || Route::currentRouteName()=='admin.spare-parts.show'){{'style="display: block;"'}}@endif">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.spare-parts.list') }}"
+                               class="nav-link @if(Route::currentRouteName()=='admin.spare-parts.list' || Route::currentRouteName()=='admin.spare-parts.edit' || Route::currentRouteName()=='admin.spare-parts.add' || Route::currentRouteName()=='admin.spare-parts.show'){{'active'}}@endif">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>{{__('nav_link_text.spare_parts_management')}}</p>
                             </a>
                         </li>
                     </ul>

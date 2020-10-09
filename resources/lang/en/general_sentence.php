@@ -1,7 +1,7 @@
 <?php
 
 return [
-	'admin_panel'=>'CMMS Admin Panel',
+	'admin_panel'=>'SMMS Admin Panel',
 	'dashboard'=>'Dashboard'
 	
 ];

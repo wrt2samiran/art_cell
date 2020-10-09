@@ -11,6 +11,7 @@ use App\Models\User;
 use  App\Models\PressRelease;
 use  App\Models\PrCopywriterContent;
 use App\Models\Timezone;
+use App\Models\Setting;
 use App\Models\Transaction;
 use App\Models\MasterCategory;
 use App\Models\OurService;
@@ -693,6 +694,54 @@ class DashboardController extends Controller
     }
 
 
+/**************************************************************************/
+    # Function to load admin setting page                                      #
+    # Function name    : editSetting                                           #
+    # Created Date     : 25-05-2020                                            #
+    # Modified date    : 25-05-2020                                            #
+    # Purpose          : to load admin setting page                            #
+    public function editSetting(){
+    $this->data['page_title']='Site settings';
+     $settings=Setting::get();
+     //return view('admin.setting.edit',compact('settings'));
+     return view('admin.setting.edit',$this->data)->with(['settings' => $settings]);
+    }
 
+    /**************************************************************************/
+    # Function to update admin setting                                         #
+    # Function name    : editSetting                                           #
+    # Created Date     : 25-05-2020                                            #
+    # Modified date    : 25-05-2020                                            #
+    # Purpose          : to update admin setting                               #
+    # Param            : \Illuminate\Http\Request $request                     #
+    public function updateSetting(Request $request){
+     
+     $settings=Setting::get();
+     $validations=[];
+     if(count($settings)){
+       foreach ($settings as $setting) {
+        $validations[$setting->slug]='required';
+       }
+     }
+
+     $request->validate($validations);
+     
+     //updating all setting data by foreach loop
+     if(count($settings)){
+       foreach ($settings as $setting) {
+        
+        if($request->has($setting->slug)){
+          $setting->update([
+           'value'=>$request->get($setting->slug)
+          ]);
+        }
+
+       }
+     }
+     
+     //redirecting back with success message
+     return redirect()->back()->with('success','Setting successfully updated');
+
+    }
 
 }

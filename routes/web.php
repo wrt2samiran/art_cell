@@ -38,7 +38,11 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
 
         Route::group(['middleware' => 'admin'], function () {
             Route::get('/dashboard', 'DashboardController@dashboardView')->name('dashboard');
-            Route::any('/settings', 'DashboardController@settings')->name('settings');
+            Route::any('/edit-settings', 'DashboardController@editSetting')->name('settings');
+            Route::any('/update-settings', 'DashboardController@updateSetting')->name('updateSetting');
+            //Route::any('/settings', 'DashboardController@settings')->name('settings');
+            
+            
             Route::get('/logout', 'AuthController@logout')->name('logout');
             Route::get('/change-password','DashboardController@showChangePasswordForm')->name('changePassword');
             Route::post('/change-password','DashboardController@changePassword')->name('changePassword');
@@ -188,7 +192,15 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::get('/{id}/change-change', 'SharedServiceController@change_status')->name('change_status');
                 Route::delete('/{id}/delete', 'SharedServiceController@delete')->name('delete');
                 Route::get('/{id}', 'SharedServiceController@show')->name('show');
-                Route::post('/get-zone', 'SharedServiceController@getZone')->name('getZone');                
+            });
+
+            Route::group(['prefix' => 'spare-parts', 'as' => 'spare-parts.'], function () {
+                Route::get('/', 'SparePartsController@list')->name('list');
+                Route::any('/add','SparePartsController@sparePartsAdd')->name('add');
+                Route::any('/edit/{encryptCode}', 'SparePartsController@edit')->name('edit');
+                Route::get('/{id}/change-change', 'SparePartsController@change_status')->name('change_status');
+                Route::delete('/{id}/delete', 'SparePartsController@delete')->name('delete');
+                Route::get('/{id}', 'SparePartsController@show')->name('show');
             });
         });
        
