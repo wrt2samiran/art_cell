@@ -46,6 +46,11 @@ class UserController extends Controller
             ->whereHas('role',function($q){
                 $q->whereNotIn('slug',['service-provider','property-owner','property-manager']);
             })
+            ->when($request->role_id,function($query) use($request){
+                $query->whereHas('role',function($sub_query)use ($request){
+                    $sub_query->where('roles.id',$request->role_id);
+                });
+            })
             ->select('users.*');
             return Datatables::of($users)
             ->editColumn('created_at', function ($user) {
@@ -77,17 +82,26 @@ class UserController extends Controller
                     $action_buttons=$action_buttons.'<a title="View Servide Provider Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
                 }
 
-                if(true){
+                $has_edit_permission=(auth()->guard('admin')->id()==$user->id || $user->id=='1' )?false:true;
+
+                if($has_edit_permission){
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Servide Provider" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
                 }
-                if(true){
+
+                $has_delete_permission=(auth()->guard('admin')->id()==$user->id || $user->id=='1' )?false:true;
+                if($has_delete_permission){
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete user" href="javascript:delete_user('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
                 }
                 return $action_buttons;
             })
             ->rawColumns(['action','status'])
             ->make(true);
-        }     
+        }
+
+        $roles=Role::whereStatus('A')->where(function($q){
+            $q->whereNotIn('slug',['service-provider','property-owner','property-manager']);
+        })->orderBy('id','ASC')->get(); 
+        $this->data['roles']=$roles;
         return view($this->view_path.'.list',$this->data);
     }
 

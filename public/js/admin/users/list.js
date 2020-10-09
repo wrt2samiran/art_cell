@@ -4,7 +4,12 @@
         "autoWidth": false,
         processing: true,
         serverSide: true,
-        ajax: $('#users_data_url').val(),
+        ajax: {
+            url: $('#users_data_url').val(),
+            data: function (d) {
+                d.role_id = $('#role_id').val();
+            }
+        },
         columns: [
             { data: 'id', name: 'id' },
             { data: 'name', name: 'name'},
@@ -19,7 +24,10 @@
         {   "targets": [0],
             "visible": false,
             "searchable": false
-        }]
+        }],
+        "drawCallback": function( settings ) {
+            $.LoadingOverlay("hide");
+        }
     });
 
  //function to delete user
@@ -101,3 +109,29 @@
   });
 
  }
+
+
+
+ $('.role-filter').select2({
+  theme: 'bootstrap4',
+  placeholder:'Filter By Group/Role'
+});
+
+
+$('#role_id').on('change', function(e) {
+    if(this.value!=''){
+      $('#role-filter-clear').show();
+    }else{
+      $('#role-filter-clear').hide();
+    }
+    
+    $.LoadingOverlay("show");
+    users_table.draw();
+});
+
+
+$('#role-filter-clear').on('click',function(){
+  $('#role_id').val("").change();
+});
+
+

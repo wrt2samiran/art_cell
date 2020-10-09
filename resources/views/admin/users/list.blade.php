@@ -51,6 +51,22 @@
                                         {{ Session::get('error') }}
                                     </div>
                                 @endif
+                                <div class="filter-area ">
+                                    <div class="row">
+                                        <div class="col-sm-4" id="role-filter-container">
+                                            <select class="form-control role-filter"  name="role_id" id="role_id">
+                                                <option value="">Filter By Group/Role</option>
+                                                @forelse($roles as $role)
+                                                   <option value="{{$role->id}}">{{$role->role_name}}</option>
+                                                @empty
+                                                <option value="">No Group/Role Found</option>
+                                                @endforelse
+                                           </select>
+                                           <div class="cursor-poiner" title="Click to clear filter" style="display: none;" id="role-filter-clear"><span class="badge badge-danger">Clear Filter <i class="fas fa-times"></i></span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="mt-3 mb-3"/>
                                 <table class="table table-bordered" id="users_table">
                                     <thead>
                                         <tr>
