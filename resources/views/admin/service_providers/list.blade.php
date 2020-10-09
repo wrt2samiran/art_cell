@@ -51,7 +51,7 @@
                                         {{ Session::get('error') }}
                                     </div>
                                 @endif
-                                <table class="table table-bordered" id="roles_table">
+                                <table class="table table-bordered" id="service_providers_table">
                                     <thead>
                                         <tr>
                                             <th>Id</th>
@@ -63,7 +63,7 @@
                                         </tr>
                                     </thead>
                                 </table>
-                                <!-- calling this url from datatable data which is inside public\js\admin\roles\list.js-->
+                                <!-- calling this url from datatable data which is inside public\js\admin\service_providers\list.js-->
                                 <input type="hidden" id="service_providers_data_url" value="{{route('admin.service_providers.list')}}">
                             </div>
                         </div>

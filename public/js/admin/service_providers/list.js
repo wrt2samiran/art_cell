@@ -1,5 +1,5 @@
 //initializing galleries datatable
-    var roles_table=$('#roles_table').DataTable({
+    var service_providers_table=$('#service_providers_table').DataTable({
         "responsive": true,
         "autoWidth": false,
         processing: true,
@@ -7,26 +7,25 @@
         ajax: $('#service_providers_data_url').val(),
         columns: [
             { data: 'id', name: 'id' },
-            { data: 'firat_name', name: 'firat_name'},
+            { data: 'name', name: 'name'},
             { data: 'email', name: 'email' },
             { data: 'status', name: 'status',orderable: false },
             { data: 'created_at', name: 'created_at' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
-         order: [ [0, 'asc'] ],
+        order: [ [0, 'asc'] ],
         columnDefs: [
         {   "targets": [0],
             "visible": false,
             "searchable": false
         }]
-
     });
 
  //function to delete gallery
  function delete_service_provider(url){
   swal({
   title: "Are you sure?",
-  text: "Once deleted, you will not be able to recover this role!",
+  text: "Once deleted, you will not be able to recover this service provider!",
   icon: "warning",
   buttons: true,
   dangerMode: true,
@@ -40,8 +39,10 @@
         type: "DELETE",
         data:{ "_token": $('meta[name="csrf-token"]').attr('content')},
         success: function (data) {
+
+          service_providers_table.ajax.reload(null, false);
           $.LoadingOverlay("hide");
-          toastr.success('Role successfully deleted.', 'Success', {timeOut: 5000});
+          toastr.success('Service provider successfully deleted.', 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");
@@ -54,10 +55,7 @@
            }
         }
      });
-
-     roles_table.ajax.reload(null, false);
-
-
+   
     } 
   });
 
@@ -67,7 +65,7 @@
  function change_status(url,activate_or_deactivate){
   swal({
   title: "Are you sure?",
-  text: "You want to "+activate_or_deactivate+" the role.",
+  text: "You want to "+activate_or_deactivate+" the service provider.",
   icon: "warning",
   buttons: true,
   dangerMode: true,
@@ -80,8 +78,10 @@
         type: "GET",
         data:{},
         success: function (data) {
+          service_providers_table.ajax.reload(null, false);
           $.LoadingOverlay("hide");
           toastr.success('Status successfully updated.', 'Success', {timeOut: 5000});
+
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");
@@ -95,7 +95,7 @@
         }
      });
 
-     roles_table.ajax.reload(null, false);
+ 
     // window.location.href=url;
     } 
   });

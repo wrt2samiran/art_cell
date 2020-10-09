@@ -40,6 +40,7 @@
         type: "DELETE",
         data:{ "_token": $('meta[name="csrf-token"]').attr('content')},
         success: function (data) {
+          property_types_table.ajax.reload(null, false);
           $.LoadingOverlay("hide");
           toastr.success('Property type successfully deleted.', 'Success', {timeOut: 5000});
         },
@@ -55,7 +56,7 @@
         }
      });
 
-     property_types_table.ajax.reload(null, false);
+
     } 
   });
 
@@ -78,6 +79,7 @@
         type: "GET",
         data:{},
         success: function (data) {
+          property_types_table.ajax.reload(null, false);
           $.LoadingOverlay("hide");
           toastr.success('Status successfully updated.', 'Success', {timeOut: 5000});
         },
@@ -93,7 +95,7 @@
         }
      });
 
-     property_types_table.ajax.reload(null, false);
+   
     // window.location.href=url;
     } 
   });

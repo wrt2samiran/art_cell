@@ -31,6 +31,7 @@
                 <h3 class="card-title">Create Service Provider</h3>
               </div>
               <div class="card-body">
+
                   @if(Session::has('success'))
                     <div class="alert alert-success alert-dismissable __web-inspector-hide-shortcut__">
                         <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
@@ -68,6 +69,13 @@
                             <input type="email" class="form-control" value="{{old('email')?old('email'):''}}" name="email" id="email"  placeholder="Last Name">
                             @if($errors->has('email'))
                             <span class="text-danger">{{$errors->first('email')}}</span>
+                            @endif
+                          </div>
+                          <div class="form-group required">
+                            <label for="password">Password <span class="error">*</span></label>
+                            <input type="password" class="form-control" value="{{old('password')?old('password'):''}}" name="password" id="password"  placeholder="Password">
+                            @if($errors->has('password'))
+                            <span class="text-danger">{{$errors->first('password')}}</span>
                             @endif
                           </div>
                           <div class="form-group required">

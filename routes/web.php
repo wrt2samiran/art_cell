@@ -22,7 +22,7 @@ Route::get('/datatable-url','PostController@datatable')->name('datatable');
 Route::post('/store-post','PostController@storePost')->name('storePost');
 
 Route::group(["prefix" => "ajax", 'as' => 'ajax.'], function() {
-   Route::get('/check_user_email_unique','AuthController@check_user_email_unique')
+   Route::post('/check_user_email_unique/{id?}','CommonAjaxController@check_user_email_unique')
    ->name('check_user_email_unique');    
 });
 
@@ -115,24 +115,54 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::put('/{id}', 'ServiceProviderController@update')->name('update');
                 Route::delete('/{id}/delete', 'ServiceProviderController@delete')->name('delete');
                 Route::get('/{id}/change-change', 'ServiceProviderController@change_status')->name('change_status');
-                Route::post('/ajax/ajax_check_service_name_unique/{service_id?}', 'ServiceProviderController@ajax_check_service_name_unique')
-                ->name('ajax_check_service_name_unique');
+
             });
             /************************************/
 
-            Route::group(['prefix' => 'user-management', 'as' => 'user-management.'], function () {
-
-                Route::get('/admin-user-list', 'UserController@userList')->name('user.list');
-                Route::get('/user-list-table', 'UserController@userListTable')->name('user.list.table');
-                Route::get('/site-user-list', 'UserController@SiteuserList')->name('site.user.list');
-                Route::get('/site-user-list-table', 'UserController@SiteuserListTable')->name('site.user.list.table');
-                Route::any('/user-add','UserController@userAdd')->name('user.add');
-                Route::get('/user-edit/{encryptCode}', 'UserController@userEdit')->name('user-edit');
-                Route::post('/user-edit-submit/{encryptCode}', 'UserController@userEdit')->name('user-editSubmit');
-                Route::any('/user-change-password/{encryptCode}', 'UserController@userChangePassword')->name('user-changepassword');
-                Route::get('/user-delete/{encryptCode}','UserController@userDelete')->name('user-delete');
-                Route::get('/reset-user-status/{encryptCode}','UserController@resetuserStatus')->name('reset-user-status');
+            /*Routes for property owner management */
+            Route::group(['prefix'=>'property-owners','as'=>'property_owners.'],function(){
+                Route::get('/', 'PropertyOwnerController@list')->name('list');
+                Route::get('/create', 'PropertyOwnerController@create')->name('create');
+                Route::post('/store', 'PropertyOwnerController@store')->name('store');
+                Route::get('/{id}', 'PropertyOwnerController@show')->name('show');
+                Route::get('/{id}/edit', 'PropertyOwnerController@edit')->name('edit');
+                Route::put('/{id}', 'PropertyOwnerController@update')->name('update');
+                Route::delete('/{id}/delete', 'PropertyOwnerController@delete')->name('delete');
+                Route::get('/{id}/change-change', 'PropertyOwnerController@change_status')->name('change_status');
+  
             });
+            /************************************/
+            /*Routes for property manager management */
+            Route::group(['prefix'=>'property-managers','as'=>'property_managers.'],function(){
+                Route::get('/', 'PropertyManagerController@list')->name('list');
+                Route::get('/create', 'PropertyManagerController@create')->name('create');
+                Route::post('/store', 'PropertyManagerController@store')->name('store');
+                Route::get('/{id}', 'PropertyManagerController@show')->name('show');
+                Route::get('/{id}/edit', 'PropertyManagerController@edit')->name('edit');
+                Route::put('/{id}', 'PropertyManagerController@update')->name('update');
+                Route::delete('/{id}/delete', 'PropertyManagerController@delete')->name('delete');
+                Route::get('/{id}/change-change', 'PropertyManagerController@change_status')->name('change_status');
+  
+            });
+            
+            /************************************/
+
+            /*Routes for property manager management */
+            Route::group(['prefix'=>'users','as'=>'users.'],function(){
+                Route::get('/', 'UserController@list')->name('list');
+                Route::get('/create', 'UserController@create')->name('create');
+                Route::post('/store', 'UserController@store')->name('store');
+                Route::get('/{id}', 'UserController@show')->name('show');
+                Route::get('/{id}/edit', 'UserController@edit')->name('edit');
+                Route::put('/{id}', 'UserController@update')->name('update');
+                Route::delete('/{id}/delete', 'UserController@delete')->name('delete');
+                Route::get('/{id}/change-change', 'UserController@change_status')->name('change_status');
+  
+            });
+            
+            /************************************/
+
+
             Route::group(['prefix' => 'module-management', 'as' => 'module-management.'], function () {
                 Route::get('/list', 'ModuleManagementController@moduleList')->name('module.list');
                 Route::get('/module-list-table', 'ModuleManagementController@moduleListTable')->name('list.table');

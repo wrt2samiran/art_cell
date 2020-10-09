@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\ServiceProvider;
+namespace App\Http\Requests\Admin\ServiceProvider;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateServiceProviderRequest extends FormRequest
+class UpdateServiceProviderRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,8 +21,9 @@ class CreateServiceProviderRequest extends FormRequest
         return [
             'first_name'=>'required|min:2|max:100',
             'last_name'=>'required|min:2|max:100',
-            'email'=>'required|email|max:100|unique:users',
-            'phone'=>'required|numeric|min:8|max:20'
+            'email'=>'required|email|max:100|unique:users,email,'.request()->route('id'),
+            'phone'=>'required|regex:/[0-9]{8,20}/',
+            'password'=>'nullable|min:6|max:100',
         ];
     }
     public function messages(){
@@ -37,10 +38,10 @@ class CreateServiceProviderRequest extends FormRequest
             'email.email'=>'Please enter valid email address',
             'email.unique'=>'Email alredy exist. Try with different email',
             'email.max'=>'Email should not be more then 100 characters',
-            'phone.required' => 'Last name is required',
-            'phone.min'=>'Phone/Contact number should have 8 characters',
-            'phone.max'=>'Phone/Contact number should not be more then 20 characters',
-            'phone.numeric'=>'Only number allowed'
+            'password.min'=>'Password should have 6 characters',
+            'password.max'=>'Password should not be more then 100 characters',
+            'phone.required' => 'Phone/Contact is required',
+            'phone.regex'=>'Phone/Contact number should be a valid number of size 8 to 20 characters'
         ];
     }
 }

@@ -26,6 +26,11 @@ $("#admin_service_provider_create_form").validate({
                 }
             }
         },
+        password:{
+            required: true,
+            minlength: 6,
+            maxlength: 100,  
+        },
         phone:{
             required: true,
             minlength: 8,
@@ -34,12 +39,6 @@ $("#admin_service_provider_create_form").validate({
         },
     },
     messages: {
-        email: {
-            required:  "Email is required",
-            email: "Please enter valid email address",
-            maxlength: "Email not be more then 100 characters",
-            remote:"Email alredy exist. Try with different email",
-        },
         first_name: {
             required:  "First name is required",
             minlength: "First name should have 2 characters",
@@ -49,6 +48,17 @@ $("#admin_service_provider_create_form").validate({
             required:  "Last name is required",
             minlength: "Last name should have 2 characters",
             maxlength: "Last name should not be more then 100 characters",
+        },
+        email: {
+            required:  "Email is required",
+            email: "Please enter valid email address",
+            maxlength: "Email not be more then 100 characters",
+            remote:"Email alredy exist. Try with different email",
+        },
+        password: {
+            required:  "Password is required",
+            minlength: "Password should have 6 characters",
+            maxlength: "Password should not be more then 100 characters",
         },
         phone: {
             required:  "Phone/Contact number is required",
