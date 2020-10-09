@@ -71,7 +71,7 @@
                         Route::currentRouteName()=='admin.state.list' || Route::currentRouteName()=='admin.state.country.add' || Route::currentRouteName()=='admin.state.show' ||
                         Route::currentRouteName()=='admin.state.edit' || Route::currentRouteName()=='admin.city.list' || Route::currentRouteName()=='admin.city.add' || Route::currentRouteName()=='admin.city.edit' || Route::currentRouteName()=='admin.city.show' || Route::currentRouteName()=='admin.spare-parts.list' || Route::currentRouteName()=='admin.spare-parts.edit' || Route::currentRouteName()=='admin.spare-parts.add' || Route::currentRouteName()=='admin.spare-parts.show' || Route::currentRouteName()=='admin.shared-service.list' || Route::currentRouteName()=='admin.shared-service.edit' || Route::currentRouteName()=='admin.shared-service.add' || Route::currentRouteName()=='admin.shared-service.show'
                        ){{'active'}}@endif">
-                        <i class="nav-icon fa fa-home"></i>
+                        <i class="nav-icon fas fa-bars"></i>
                         <p>
                             {{__('nav_link_text.master_modules')}}
                             <i class="right fas fa-angle-left"></i>
@@ -89,46 +89,58 @@
                         </li>
                     </ul>
 
-                    <ul class="nav nav-treeview @if(Route::currentRouteName()=='admin.state.list' || Route::currentRouteName()=='admin.state.show' 
-                    || Route::currentRouteName()=='admin.state.edit' || Route::currentRouteName()=='admin.state.add' || Route::currentRouteName()=='admin.state.show'){{'style="display: block;"'}}@endif">
+                    <ul class="nav nav-treeview {{(request()->is('admin/state/*','admin/state'))?'style="display: block;"':''}}" >
                         <li class="nav-item">
                             <a href="{{ route('admin.state.list') }}"
-                               class="nav-link @if(Route::currentRouteName()=='admin.state.list' || Route::currentRouteName()=='admin.state.edit' || Route::currentRouteName()=='admin.state.add' || Route::currentRouteName()=='admin.state.show'){{'active'}}@endif">
+                               class="nav-link {{(request()->is('admin/state/*','admin/state'))?'active':''}}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>{{__('nav_link_text.state_management')}}</p>
                             </a>
                         </li>
                     </ul>
-                    <ul class="nav nav-treeview @if(Route::currentRouteName()=='admin.city.list' || Route::currentRouteName()=='admin.city.show'
-                    || Route::currentRouteName()=='admin.city.edit' || Route::currentRouteName()=='admin.city.add' || Route::currentRouteName()=='admin.city.show'){{'style="display: block;"'}}@endif">
+                    <ul class="nav nav-treeview {{(request()->is('admin/city/*','admin/city'))?'style="display: block;"':''}}">
                         <li class="nav-item">
                             <a href="{{ route('admin.city.list') }}"
-                               class="nav-link @if(Route::currentRouteName()=='admin.city.list' || Route::currentRouteName()=='admin.city.edit' || Route::currentRouteName()=='admin.city.add' || Route::currentRouteName()=='admin.city.show'){{'active'}}@endif">
+                               class="nav-link {{(request()->is('admin/city/*','admin/city'))?'active':''}}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>{{__('nav_link_text.city_management')}}</p>
                             </a>
                         </li>
                     </ul>
-                    <ul class="nav nav-treeview @if(Route::currentRouteName()=='admin.shared-service.list' || Route::currentRouteName()=='admin.shared-service.show'
-                    || Route::currentRouteName()=='admin.shared-service.edit' || Route::currentRouteName()=='admin.shared-service.add' || Route::currentRouteName()=='admin.shared-service.show'){{'style="display: block;"'}}@endif">
-                        <li class="nav-item">
-                            <a href="{{ route('admin.shared-service.list') }}"
-                               class="nav-link @if(Route::currentRouteName()=='admin.shared-service.list' || Route::currentRouteName()=='admin.shared-service.edit' || Route::currentRouteName()=='admin.shared-service.add' || Route::currentRouteName()=='admin.shared-service.show'){{'active'}}@endif">
-                                <i class="far fa-circle nav-icon"></i>
+                   
+                    
+                </li>
+
+                <li class="nav-item has-treeview {{(request()->is('admin/spare-parts/*','admin/spare-parts'))?'menu-open':''}}">
+                    
+                    <li class="nav-item">
+                            <a href="{{ route('admin.shared-service.list') }}" class="nav-link {{(request()->is('admin/shared-service/*','admin/shared-service'))?'active':''}}">
+                              
+                               
+                                <i class="nav-icon fas fa-hammer"></i>
                                 <p>{{__('nav_link_text.shared_service_management')}}</p>
                             </a>
                         </li>
-                    </ul>
-                    <ul class="nav nav-treeview @if(Route::currentRouteName()=='admin.spare-parts.list' || Route::currentRouteName()=='admin.spare-parts.show'
-                    || Route::currentRouteName()=='admin.spare-parts.edit' || Route::currentRouteName()=='admin.spare-parts.add' || Route::currentRouteName()=='admin.spare-parts.show'){{'style="display: block;"'}}@endif">
-                        <li class="nav-item">
-                            <a href="{{ route('admin.spare-parts.list') }}"
-                               class="nav-link @if(Route::currentRouteName()=='admin.spare-parts.list' || Route::currentRouteName()=='admin.spare-parts.edit' || Route::currentRouteName()=='admin.spare-parts.add' || Route::currentRouteName()=='admin.spare-parts.show'){{'active'}}@endif">
-                                <i class="far fa-circle nav-icon"></i>
+                </li>
+
+                <li class="nav-item has-treeview {{(request()->is('admin/spare-parts/*','admin/spare-parts'))?'menu-open':''}}">
+                    
+                    <li class="nav-item">
+                        <a href="{{route('admin.spare-parts.list')}}" class="nav-link {{(request()->is('admin/spare-parts/*','admin/spare-parts'))?'active':''}}">
+                            <i class="nav-icon fas fa-screwdriver"></i>
                                 <p>{{__('nav_link_text.spare_parts_management')}}</p>
-                            </a>
-                        </li>
-                    </ul>
+                        </a>
+                    </li>
+                </li>
+
+                <li class="nav-item has-treeview {{(request()->is('admin/message/*','admin/message'))?'menu-open':''}}">
+                    
+                    <li class="nav-item">
+                        <a href="{{route('admin.message.list')}}" class="nav-link {{(request()->is('admin/message/*','admin/message'))?'active':''}}">
+                            <i class="nav-icon fas fa-screwdriver"></i>
+                                <p>{{__('nav_link_text.message_management')}}</p>
+                        </a>
+                    </li>
                 </li>
                 
                

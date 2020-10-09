@@ -102,7 +102,7 @@ class SharedServiceController extends Controller
                     'number_of_days'  => 'required',
                     'price'     => 'required',
                     'extra_price_per_day'  => 'required',
-                    'currency'     => 'required',
+                    //'currency'     => 'required',
 				);
 				$validationMessages = array(
 					'name.required'                => 'Please enter name',
@@ -111,7 +111,7 @@ class SharedServiceController extends Controller
                     'number_of_days.required'      => 'Number of Days is required',
                     'price.required'               => 'Price is required',
                     'extra_price_per_day.required' => 'Extra Price/day is required',
-                    'currency.required'            => 'Currency is required',
+                   // 'currency.required'            => 'Currency is required',
                     
 
                
@@ -128,7 +128,7 @@ class SharedServiceController extends Controller
                     $new->number_of_days  = $request->number_of_days;
                     $new->price  = $request->price;
                     $new->extra_price_per_day  = $request->extra_price_per_day;
-                    $new->currency  = $request->currency;
+                    $new->currency  = 'AED';
                     $new->created_at = Carbon::now();
                     $new->created_by = $logedin_user->id;
                     $new->updated_by = $logedin_user->id;
@@ -181,7 +181,7 @@ class SharedServiceController extends Controller
                     'number_of_days'  => 'required',
                     'price'     => 'required',
                     'extra_price_per_day'  => 'required',
-                    'currency'     => 'required',
+                    //'currency'     => 'required',
                 );
                 $validationMessages = array(
                     'name.required'                => 'Please enter name',
@@ -190,7 +190,7 @@ class SharedServiceController extends Controller
                     'number_of_days.required'      => 'Number of Days is required',
                     'price.required'               => 'Price is required',
                     'extra_price_per_day.required' => 'Extra Price/day is required',
-                    'currency.required'            => 'Currency is required',
+                    //'currency.required'            => 'Currency is required',
                     
 
                
@@ -207,7 +207,7 @@ class SharedServiceController extends Controller
                     $details->number_of_days  = $request->number_of_days;
                     $details->price  = $request->price;
                     $details->extra_price_per_day  = $request->extra_price_per_day;
-                    $details->currency  = $request->currency;
+                    $details->currency  = 'AED';
                     $details->updated_at = Carbon::now();
                     $details->updated_by = $logedin_user->id;
                     $save = $details->save();                        

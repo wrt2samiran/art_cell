@@ -17,10 +17,6 @@
             extra_price_per_day: {
                 required: true,
             },
-
-            currency: {
-                required: true,
-            },
         },
         messages: {
             name: {
@@ -38,9 +34,7 @@
             extra_price_per_day: {
                 required:  "Extra Price/day is required",
             },
-            currency: {
-                required:  "Currency is required",
-            },
+            
 
         },
 

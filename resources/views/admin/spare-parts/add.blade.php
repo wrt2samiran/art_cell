@@ -81,7 +81,7 @@
                           <div class="form-group required">
                             <label for="description">Description </label>
                            <textarea rows="5" class="form-control"  name="description" id="description"  placeholder="Description">{{old('description')?old('description'):''}}</textarea>
-                            @if($errors->has('country_code'))
+                            @if($errors->has('description'))
                             <span class="text-danger">{{$errors->first('description')}}</span>
                             @endif
                           </div>
@@ -93,17 +93,7 @@
                             <span class="text-danger">{{$errors->first('price')}}</span>
                             @endif
                           </div>
-                         
-                          <div class="form-group required">
-                            <label for="currency">Currency <span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('currency')?old('currency'):''}}" name="currency" id="currency"  placeholder="Please Enter Currency">
-                            @if($errors->has('currency'))
-                            <span class="text-danger">{{$errors->first('currency')}}</span>
-                            @endif
-                          </div>
-                          
-                          
-                          
+
                         </div>
                         <div>
                            <a href="{{route('admin.shared-service.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
@@ -121,5 +111,11 @@
 </div>
 @endsection 
 @push('custom-scripts')
+<!-- *********Used for CK Editor ***************-->
+<script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
+<script>
+CKEDITOR.replace( 'description' );
+</script>
+<!-- *********Used for CK Editor ***************--> 
 <script type="text/javascript" src="{{asset('js/admin/spare_parts/create.js')}}"></script>
 @endpush

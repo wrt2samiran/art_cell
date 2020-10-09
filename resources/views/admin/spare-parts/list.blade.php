@@ -46,9 +46,9 @@
                                             <th>Spare Part Name</th>
                                             <th>Manufacturer</th>
                                             <th>Unit</th>
-                                            <th>Description</th>
+                                           
                                             <th>Price</th>
-                                            <th>Currency</th>
+                                            
                                             <th>Status</th>
                                             <th>Created At</th>
                                             <th>Action</th>

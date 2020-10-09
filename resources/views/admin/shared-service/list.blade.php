@@ -44,11 +44,10 @@
                                         <tr>
                                             <th>Id</th>
                                             <th>Shared Service Name</th>
-                                            <th>Description</th>
                                             <th>Number of Days</th>
                                             <th>Price</th>
                                             <th>Extra Price/Day</th>
-                                            <th>Currency</th>
+                                            
                                             <th>Status</th>
                                             <th>Created At</th>
                                             <th>Action</th>

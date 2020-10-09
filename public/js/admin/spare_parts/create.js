@@ -17,9 +17,9 @@
             price: {
                 required: true,
             },
-            currency: {
-                required: true,
-            },
+            // currency: {
+            //     required: true,
+            // },
         },
         messages: {
             name: {
@@ -38,9 +38,9 @@
             price: {
                 required:  "Price is required",
             },
-            currency: {
-                required:  "Currency is required",
-            },
+            // currency: {
+            //     required:  "Currency is required",
+            // },
 
         },
 

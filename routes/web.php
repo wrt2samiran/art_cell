@@ -178,6 +178,15 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::delete('/{id}/delete', 'SparePartsController@delete')->name('delete');
                 Route::get('/{id}', 'SparePartsController@show')->name('show');
             });
+
+            Route::group(['prefix' => 'message', 'as' => 'message.'], function () {
+                Route::get('/', 'MessageController@list')->name('list');
+                Route::any('/add','MessageController@messageAdd')->name('add');
+                Route::any('/edit/{encryptCode}', 'MessageController@edit')->name('edit');
+                Route::get('/{id}/change-change', 'MessageController@change_status')->name('change_status');
+                Route::delete('/{id}/delete', 'MessageController@delete')->name('delete');
+                Route::get('/{id}', 'MessageController@show')->name('show');
+            });
         });
        
 });

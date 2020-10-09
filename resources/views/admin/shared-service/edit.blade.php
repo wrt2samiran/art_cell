@@ -53,7 +53,7 @@
                           <div class="form-group required">
                             <label for="name">Service Name <span class="error">*</span></label>
                             <input type="text" class="form-control" value="{{old('name')?old('name'):$details->name}}" name="name" id="name"  placeholder="Shared Service Name">
-                            @if($errors->has('service_name'))
+                            @if($errors->has('name'))
                             <span class="text-danger">{{$errors->first('name')}}</span>
                             @endif
                           </div>
@@ -86,13 +86,7 @@
                             <span class="text-danger">{{$errors->first('extra_price_per_day')}}</span>
                             @endif
                           </div>
-                          <div class="form-group required">
-                            <label for="currency">Currency <span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('currency')?old('currency'):$details->currency}}" name="currency" id="currency"  placeholder="Please Enter Currency">
-                            @if($errors->has('currency'))
-                            <span class="text-danger">{{$errors->first('currency')}}</span>
-                            @endif
-                          </div>
+                          
 
                         </div>
                         <input type="hidden" name="shared_service_id" id="shared_service_id" value="{{$details->id}}">
@@ -111,5 +105,11 @@
 </div>
 @endsection 
 @push('custom-scripts')
+<!-- *********Used for CK Editor ***************-->
+<script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
+<script>
+CKEDITOR.replace( 'description' );
+</script>
+<!-- *********Used for CK Editor ***************-->
 <script type="text/javascript" src="{{asset('js/admin/shared_service/edit.js')}}"></script>
 @endpush

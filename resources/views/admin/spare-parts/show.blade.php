@@ -47,18 +47,14 @@
                         </tr>
                         <tr>
                           <td>Description</td>
-                          <td>{{$spareParts->description}}</td>
+                          <td>{!!$spareParts->description!!}</td>
                         </tr>
                         
                         <tr>
                           <td>Price</td>
-                          <td >{{$spareParts->price}}</td>
+                          <td >{{$spareParts->currency}} {{$spareParts->price}}</td>
                         </tr>
                         
-                        <tr>
-                          <td>Currency</td>
-                          <td >{{$spareParts->currency}}</td>
-                        </tr>
                         <tr>
                           <td>Status</td>
                           <td>

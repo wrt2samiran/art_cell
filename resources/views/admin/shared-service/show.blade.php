@@ -39,7 +39,7 @@
                         </tr>
                         <tr>
                           <td>Description</td>
-                          <td>{{$sharedServices->description}}</td>
+                          <td>{!! $sharedServices->description !!}</td>
                         </tr>
                         <tr>
                           <td>Number of Days</td>
@@ -47,16 +47,13 @@
                         </tr>
                         <tr>
                           <td>Price</td>
-                          <td >{{$sharedServices->price}}</td>
+                          <td >{{$sharedServices->currency}} {{$sharedServices->price}}</td>
                         </tr>
                         <tr>
                           <td>Extra Price/Day</td>
-                          <td >{{$sharedServices->extra_price_per_day}}</td>
+                          <td >{{$sharedServices->currency}} {{$sharedServices->extra_price_per_day}}</td>
                         </tr>
-                        <tr>
-                          <td>Currency</td>
-                          <td >{{$sharedServices->currency}}</td>
-                        </tr>
+                        
                         <tr>
                           <td>Status</td>
                           <td>

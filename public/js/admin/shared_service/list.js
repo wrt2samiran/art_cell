@@ -6,13 +6,15 @@
         serverSide: true,
         ajax: baseUrl+'/admin/shared-service',
         columns: [
+
             { data: 'id', name: 'id' },
             { data: 'name', name: 'name'},
-            { data: 'description', name: 'description' },
+            
             { data: 'number_of_days', name: 'number_of_days' },
-            { data: 'price', name: 'price'},
-            { data: 'extra_price_per_day', name: 'extra_price_per_day' },
-            { data: 'currency', name: 'currency' },
+            
+            { data: "price", render: function ( data, type, row, meta ) {return row['currency'] + ' ' + data ;} },
+
+            { data: 'extra_price_per_day', render: function ( data, type, row, meta ) {return row['currency'] + ' ' + data ;}  },
             { data: 'is_active', name: 'is_active' },
             { data: 'created_at', name: 'created_at' },
             {data: 'action', name: 'action', orderable: false, searchable: false}

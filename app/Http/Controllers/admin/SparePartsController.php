@@ -104,7 +104,7 @@ class SparePartsController extends Controller
                     'manufacturer'    => 'required|min:2|max:255',
                     'unit_master_id'  => 'required',
                     'price'     => 'required',
-                    'currency'     => 'required',
+                   // 'currency'     => 'required',
 				);
 				$validationMessages = array(
 					'name.required'                => 'Please enter name',
@@ -115,7 +115,7 @@ class SparePartsController extends Controller
                     'manufacturer.max'             => 'Manufacturer name should not be more than 255 characters',
                     'unit_master_id.required'      => 'Unit is required',
                     'price.required'               => 'Price is required',
-                    'currency.required'            => 'Currency is required',               
+                   // 'currency.required'            => 'Currency is required',               
 				);
 
 				$Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);
@@ -129,7 +129,7 @@ class SparePartsController extends Controller
                     $new->description  = $request->description;
                     $new->unit_master_id  = $request->unit_master_id;
                     $new->price  = $request->price;
-                    $new->currency  = $request->currency;
+                    $new->currency  = 'AED';
                     $new->created_at = Carbon::now();
                     $new->created_by = $logedin_user->id;
                     $new->updated_by = $logedin_user->id;
@@ -182,7 +182,7 @@ class SparePartsController extends Controller
                     'manufacturer'    => 'required|min:2|max:255',
                     'unit_master_id'  => 'required',
                     'price'     => 'required',
-                    'currency'     => 'required',
+                  //  'currency'     => 'required',
                 );
                 $validationMessages = array(
                     'name.required'                => 'Please enter name',
@@ -193,7 +193,7 @@ class SparePartsController extends Controller
                     'manufacturer.max'             => 'Manufacturer name should not be more than 255 characters',
                     'unit_master_id.required'      => 'Unit is required',
                     'price.required'               => 'Price is required',
-                    'currency.required'            => 'Currency is required',               
+                  //  'currency.required'            => 'Currency is required',               
                 );
 
                 
@@ -208,7 +208,7 @@ class SparePartsController extends Controller
                     $details->description  = $request->description;
                     $details->unit_master_id  = $request->unit_master_id;
                     $details->price  = $request->price;
-                    $details->currency  = $request->currency;
+                    $details->currency  = 'AED';
                     $details->updated_at = Carbon::now();
                     $details->updated_by = $logedin_user->id;
                     $save = $details->save();                        

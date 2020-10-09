@@ -15,4 +15,5 @@ return [
 	'city_management'=>'City Management',
 	'shared_service_management' => 'Shared Service Management',
 	'spare_parts_management' => 'Spare Parts Management',
+	'message_management' => 'Message Management',
 ];

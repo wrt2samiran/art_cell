@@ -15,5 +15,6 @@ return [
 	'city_management'	=> 'إدارة المدينة',
 	'shared_service_management' => 'إدارة الخدمة المشتركة',
 	'spare_parts_management' => 'إدارة قطع الغيار',
+	'message_management' => 'إدارة الرسائل',
 
 ];
