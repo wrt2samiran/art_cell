@@ -14,7 +14,7 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.roles.list')}}">Roles</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.roles.list')}}">Group/Roles</a></li>
               <li class="breadcrumb-item active">Details</li>
             </ol>
           </div>
@@ -28,17 +28,17 @@
             <!-- Default box -->
             <div class="card card-success">
                 <div class="card-header">
-                  Role Deatils
+                  Group/Role Deatils
                 </div> 
               <div class="card-body"> 
                  <table class="table table-bordered table-hover record-details-table" id="role-details-table">
                       <tbody>
                         <tr>
-                          <td>Role Name</td>
+                          <td>Group/Role Name</td>
                           <td >{{$role->role_name}}</td>
                         </tr>
                         <tr>
-                          <td >Role Description</td>
+                          <td >Group/Role Description</td>
                           <td >{{$role->role_description}}</td>
                         </tr>
                         <tr>

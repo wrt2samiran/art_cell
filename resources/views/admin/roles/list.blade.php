@@ -14,7 +14,7 @@
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                   <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item active">Roles</li>
+                  <li class="breadcrumb-item active">Group/Roles</li>
                 </ol>
               </div>
             </div>
@@ -31,7 +31,7 @@
 				                    <div><span>Group/Role List</span></div>
 					                <div>
 						                <a class="btn btn-success" href="{{route('admin.roles.create')}}">
-						                 Create Role
+						                 Create Group/Role
 						                </a>
 					                </div>
 				                </div>

@@ -64,12 +64,26 @@
 
                 <li class="nav-item has-treeview @if(Route::currentRouteName()=='admin.country.list' || Route::currentRouteName()=='admin.country.country.add' || Route::currentRouteName()=='admin.country.edit' || Route::currentRouteName()=='admin.country.show' ||
                 Route::currentRouteName()=='admin.state.list' || Route::currentRouteName()=='admin.state.country.add' || Route::currentRouteName()=='admin.state.show' ||
-                Route::currentRouteName()=='admin.state.edit' || Route::currentRouteName()=='admin.city.list' || Route::currentRouteName()=='admin.city.add' || Route::currentRouteName()=='admin.city.edit' || Route::currentRouteName()=='admin.city.show' || Route::currentRouteName()=='admin.spare-parts.list' || Route::currentRouteName()=='admin.spare-parts.edit' || Route::currentRouteName()=='admin.spare-parts.add' || Route::currentRouteName()=='admin.spare-parts.show' || Route::currentRouteName()=='admin.shared-service.list' || Route::currentRouteName()=='admin.shared-service.edit' || Route::currentRouteName()=='admin.shared-service.add' || Route::currentRouteName()=='admin.shared-service.show'
+                Route::currentRouteName()=='admin.state.edit' || Route::currentRouteName()=='admin.city.list' || Route::currentRouteName()=='admin.city.add' || Route::currentRouteName()=='admin.city.edit' || Route::currentRouteName()=='admin.city.show' || Route::currentRouteName()=='admin.spare-parts.list' || Route::currentRouteName()=='admin.spare-parts.edit' || Route::currentRouteName()=='admin.spare-parts.add' || Route::currentRouteName()=='admin.spare-parts.show' || Route::currentRouteName()=='admin.shared-service.list' || Route::currentRouteName()=='admin.shared-service.edit' || Route::currentRouteName()=='admin.shared-service.add' || Route::currentRouteName()=='admin.shared-service.show' || Route::currentRouteName()=='admin.property_types.list'||
+                        Route::currentRouteName()=='admin.property_types.create'||
+                        Route::currentRouteName()=='admin.property_types.edit'||
+                        Route::currentRouteName()=='admin.property_types.show'||
+                        Route::currentRouteName()=='admin.services.list'||
+                        Route::currentRouteName()=='admin.services.create'||
+                        Route::currentRouteName()=='admin.services.edit'||
+                        Route::currentRouteName()=='admin.services.show'
                 ){{'menu-open'}}@endif">
                     <a href="#"
                        class="nav-link @if(Route::currentRouteName()=='admin.country.list' || Route::currentRouteName()=='admin.country.country.add' || Route::currentRouteName()=='admin.country.edit' || Route::currentRouteName()=='admin.country.show' ||
                         Route::currentRouteName()=='admin.state.list' || Route::currentRouteName()=='admin.state.country.add' || Route::currentRouteName()=='admin.state.show' ||
-                        Route::currentRouteName()=='admin.state.edit' || Route::currentRouteName()=='admin.city.list' || Route::currentRouteName()=='admin.city.add' || Route::currentRouteName()=='admin.city.edit' || Route::currentRouteName()=='admin.city.show' || Route::currentRouteName()=='admin.spare-parts.list' || Route::currentRouteName()=='admin.spare-parts.edit' || Route::currentRouteName()=='admin.spare-parts.add' || Route::currentRouteName()=='admin.spare-parts.show' || Route::currentRouteName()=='admin.shared-service.list' || Route::currentRouteName()=='admin.shared-service.edit' || Route::currentRouteName()=='admin.shared-service.add' || Route::currentRouteName()=='admin.shared-service.show'
+                        Route::currentRouteName()=='admin.state.edit' || Route::currentRouteName()=='admin.city.list' || Route::currentRouteName()=='admin.city.add' || Route::currentRouteName()=='admin.city.edit' || Route::currentRouteName()=='admin.city.show' || Route::currentRouteName()=='admin.spare-parts.list' || Route::currentRouteName()=='admin.spare-parts.edit' || Route::currentRouteName()=='admin.spare-parts.add' || Route::currentRouteName()=='admin.spare-parts.show' || Route::currentRouteName()=='admin.shared-service.list' || Route::currentRouteName()=='admin.shared-service.edit' || Route::currentRouteName()=='admin.shared-service.add' || Route::currentRouteName()=='admin.shared-service.show' || Route::currentRouteName()=='admin.property_types.list'||
+                        Route::currentRouteName()=='admin.property_types.create'||
+                        Route::currentRouteName()=='admin.property_types.edit'||
+                        Route::currentRouteName()=='admin.property_types.show'||
+                        Route::currentRouteName()=='admin.services.list'||
+                        Route::currentRouteName()=='admin.services.create'||
+                        Route::currentRouteName()=='admin.services.edit'||
+                        Route::currentRouteName()=='admin.services.show'
                        ){{'active'}}@endif">
                         <i class="nav-icon fas fa-bars"></i>
                         <p>
@@ -107,6 +121,23 @@
                             </a>
                         </li>
                     </ul>
+
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.property_types.list') }}"
+                               class="nav-link {{(request()->is('admin/property-types/*','admin/property-types'))?'active':''}}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>{{__('nav_link_text.property_types')}}</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.services.list') }}"
+                               class="nav-link {{(request()->is('admin/services/*','admin/services'))?'active':''}}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>{{__('nav_link_text.services')}}</p>
+                            </a>
+                        </li>
+                    </ul>
                    
                     
                 </li>
@@ -132,75 +163,56 @@
                         </a>
                     </li>
                 </li>
-
-                <li class="nav-item has-treeview {{(request()->is('admin/message/*','admin/message'))?'menu-open':''}}">
-                    
-                    <li class="nav-item">
-                        <a href="{{route('admin.message.list')}}" class="nav-link {{(request()->is('admin/message/*','admin/message'))?'active':''}}">
-                            <i class="nav-icon fas fa-screwdriver"></i>
-                                <p>{{__('nav_link_text.message_management')}}</p>
-                        </a>
-                    </li>
-                </li>
                 
                
-                    <li  class="nav-item has-treeview @if(Route::currentRouteName()=='admin.module-management.module.list'|| 
-                                                     Route::currentRouteName()=='admin.module-management.functionality.list' || 
-                                                     Route::currentRouteName()=='admin.module-management.module.add' || 
-                                                     Route::currentRouteName()=='admin.module-management.edit' || 
-                                                     Route::currentRouteName()=='admin.module-management.function.add' || 
-                                                     Route::currentRouteName()=='admin.module-management.functionality-edit'
-                                                    ){{'menu-open'}}@endif">
-                        <a href="#"
-                           class="nav-link @if(Route::currentRouteName()=='admin.module-management.module.list' || 
-                                                Route::currentRouteName()=='admin.module-management.functionality.list' || 
-                                                 Route::currentRouteName()=='admin.module-management.module.add' ||
-                                                Route::currentRouteName()=='admin.module-management.edit' ||
-                                                Route::currentRouteName()=='admin.module-management.function.add' || 
-                                                Route::currentRouteName()=='admin.module-management.functionality-edit'){{'active'}}@endif">
-                            <i class="nav-icon fa fa-universal-access"></i>
-                            <p>
-                                {{__('nav_link_text.access_control')}}
-                                <i class="right fas fa-angle-left"></i>
-                            </p>
-                        </a>
-
-                    </li>
                 
                 
-                <li class="nav-item has-treeview @if(Route::currentRouteName()=='admin.user-management.role-list' ||
-                            Route::currentRouteName()=='admin.user-management.user.list'||
-                            Route::currentRouteName()=='admin.user-management.user.add'||
-                            Route::currentRouteName()=='admin.user-management.user-edit'|| 
-                            Route::currentRouteName()=='admin.user-management.role-add' ||
-                            Route::currentRouteName()=='admin.user-management.edit' ||
-                            Route::currentRouteName()=='admin.user-management.role.permission' ||
-                            Route::currentRouteName()=='admin.user-management.site.user.list'){{'menu-open'}}@endif">
-                    <a href="#"
-                    class="nav-link @if(Route::currentRouteName()=='admin.user-management.role-list' || 
-                                        Route::currentRouteName()=='admin.user-management.user.list'||
-                                        Route::currentRouteName()=='admin.user-management.user.add' ||
-                                        Route::currentRouteName()=='admin.user-management.user-edit' ||
-                                        Route::currentRouteName()=='admin.user-management.edit' ||
-                                        Route::currentRouteName()=='admin.user-management.role-add' ||
-                                        Route::currentRouteName()=='admin.user-management.role.permission' ||
-                                        Route::currentRouteName()=='admin.user-management.site.user.list'){{'active'}}@endif">
-                        <i class="nav-icon fa fa-users"></i>
+                 <li class="nav-item">
+                    <a href="{{route('admin.roles.list')}}" class="nav-link {{(request()->is('admin/roles/*','admin/roles'))?'active':''}}">
+                       <i class="nav-icon fas fa-users"></i>
+                      <p>
+                        {{__('nav_link_text.role_groups')}}
+                      </p>
+                    </a>
+                </li>
+                
+                <li class="nav-item ">
+                    <a href="{{route('admin.users.list')}}"
+                    class="nav-link {{(request()->is('admin/users/*','admin/users'))?'active':''}}">
+                        <i class="nav-icon fa fa-user"></i>
                         <p>
                              {{__('nav_link_text.user_management')}}
-                            <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
-                    <li class="nav-item">
-                        <a href="{{route('admin.roles.list')}}" class="nav-link {{(request()->is('admin/roles/*','admin/roles'))?'active':''}}">
-                           &nbsp;&nbsp;<i class="fas fa-users"></i>
-                          <p>
-                            &nbsp;&nbsp;Roles/User Groups
-                          </p>
-                        </a>
-                    </li>
                 </li>
-               
+                <li class="nav-item">
+                    <a href="{{route('admin.service_providers.list')}}"
+                    class="nav-link {{(request()->is('admin/service-providers/*','admin/service-providers'))?'active':''}}">
+                        <i class="nav-icon fab fa-usps"></i>
+                        <p>{{__('nav_link_text.service_providers')}}</p>
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a href="{{route('admin.property_owners.list')}}"
+                    class="nav-link {{(request()->is('admin/property-owners/*','admin/property-owners'))?'active':''}}">
+                        <i class="nav-icon far fa-building"></i>
+                        <p>{{__('nav_link_text.property_owners')}}</p>
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a href="{{route('admin.property_managers.list')}}"
+                    class="nav-link {{(request()->is('admin/property-managers/*','admin/property-managers'))?'active':''}}">
+                        <i class="nav-icon fas fa-warehouse"></i>
+                        <p>{{__('nav_link_text.property_managers')}}</p>
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a href="{{route('admin.quotations.list')}}"
+                    class="nav-link {{(request()->is('admin/quotations/*','admin/quotations'))?'active':''}}">
+                        <i class="nav-icon fas fa-quote-right"></i>
+                        <p>{{__('nav_link_text.quotations')}}</p>
+                    </a>
+                </li>            
 
             </ul>
 
