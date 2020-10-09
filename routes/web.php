@@ -16,6 +16,15 @@ Route::get('/', function () {
 });
 
 Route::get('/language/{locale}','admin\DashboardController@changeLanguage')->name('changeLanguage');
+Route::get('/multi-lang','PostController@index');
+
+Route::get('/datatable-url','PostController@datatable')->name('datatable');
+Route::post('/store-post','PostController@storePost')->name('storePost');
+
+Route::group(["prefix" => "ajax", 'as' => 'ajax.'], function() {
+   Route::get('/check_user_email_unique','AuthController@check_user_email_unique')
+   ->name('check_user_email_unique');    
+});
 
 /* Start Admin's route */
 Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], function() {
@@ -89,6 +98,21 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::get('/', 'QuotationController@list')->name('list');
                 Route::get('/{id}', 'QuotationController@show')->name('show');
                 Route::delete('/{id}/delete', 'QuotationController@delete')->name('delete');
+            });
+            /************************************/
+
+            /*Routes for service management */
+            Route::group(['prefix'=>'service-providers','as'=>'service_providers.'],function(){
+                Route::get('/', 'ServiceProviderController@list')->name('list');
+                Route::get('/create', 'ServiceProviderController@create')->name('create');
+                Route::post('/store', 'ServiceProviderController@store')->name('store');
+                Route::get('/{id}', 'ServiceProviderController@show')->name('show');
+                Route::get('/{id}/edit', 'ServiceProviderController@edit')->name('edit');
+                Route::put('/{id}', 'ServiceProviderController@update')->name('update');
+                Route::delete('/{id}/delete', 'ServiceProviderController@delete')->name('delete');
+                Route::get('/{id}/change-change', 'ServiceProviderController@change_status')->name('change_status');
+                Route::post('/ajax/ajax_check_service_name_unique/{service_id?}', 'ServiceProviderController@ajax_check_service_name_unique')
+                ->name('ajax_check_service_name_unique');
             });
             /************************************/
 

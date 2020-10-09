@@ -14,7 +14,7 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.roles.list')}}">Roles</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.roles.list')}}">Group/Roles</a></li>
               <li class="breadcrumb-item active">Create</li>
             </ol>
           </div>
@@ -28,7 +28,7 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Create Role</h3>
+                <h3 class="card-title">Create Group/Role</h3>
               </div>
               <div class="card-body">
                   @if(Session::has('success'))
@@ -50,21 +50,21 @@
                         @csrf
                         <div>
                           <div class="form-group required">
-                            <label for="role_name">Role Name <span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('role_name')?old('role_name'):''}}" name="role_name" id="role_name"  placeholder="Category Name">
+                            <label for="role_name">Group/Role Name <span class="error">*</span></label>
+                            <input type="text" class="form-control" value="{{old('role_name')?old('role_name'):''}}" name="role_name" id="role_name"  placeholder="Group/Role Name">
                             @if($errors->has('role_name'))
                             <span class="text-danger">{{$errors->first('role_name')}}</span>
                             @endif
                           </div>
                           <div class="form-group required">
-                             <label for="role_description">Role Description <span class="error">*</span></label>
-                             <textarea rows="5" class="form-control"  name="role_description" id="role_description"  placeholder="Role Description">{{old('role_description')?old('role_description'):''}}</textarea>
+                             <label for="role_description">Group/Role Description <span class="error">*</span></label>
+                             <textarea rows="5" class="form-control"  name="role_description" id="role_description"  placeholder="Group/Role Description">{{old('role_description')?old('role_description'):''}}</textarea>
                              @if($errors->has('role_description'))
                               <span class="text-danger">{{$errors->first('role_description')}}</span>
                              @endif
                           </div>
                           <div class="form-group required">
-                             <label for="parent_role">Role for which group <span class="error">*</span></label>
+                             <label for="parent_role">Select base Group/Role under which you want to create new group/role <span class="error">*</span></label>
                               <select class="form-control parent_role_select2" onchange='onParentRoleChange(this.value,"{{route('admin.roles.ajax_parent_module_permissions')}}")' style="width: 100%;" name="parent_role">
                                 <option value="">Select a group</option>
                                 @forelse($parent_roles as $parent_role)

@@ -1,5 +1,20 @@
 <?php
-
+/*********************************************************/
+# Class name     : RoleController                         #
+# Methods  :                                              #
+#    1. list ,                                            #
+#    2. create,                                           #
+#    3. store                                             #
+#    4. show                                              #
+#    5. edit                                              #
+#    6. update                                            #
+#    7. delete                                            #
+#    8. change_status                                     #
+#    9. ajax_check_role_name_unique                       #
+#    10.ajax_parent_module_permissions                    #
+# Created Date   : 15-05-2020                             #
+# Purpose        : Role/User group management             #
+/*********************************************************/
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
@@ -13,8 +28,18 @@ use App\Models\{Module,User,Role,RolePermission,ModuleFunctionality};
 
 class RoleController extends Controller
 {
+    //defining the view path
     private $view_path='admin.roles';
+    //defining data array
     private $data=[];
+
+    /************************************************************************/
+    # Function for role list and datatable ajax response to display record   #
+    # in datatable                                                           #
+    # Function name    : list                                                #
+    # Created Date     : 06-10-2020                                          #
+    # Modified date    : 07-10-2020                                          #
+    # Purpose          : For role list and returning datatable ajax response #
 
     public function list(Request $request){
         $this->data['page_title']='Role List';
@@ -72,12 +97,26 @@ class RoleController extends Controller
         return view($this->view_path.'.list',$this->data);
     }
 
+    /************************************************************************/
+    # Function to load role create view page                                 #
+    # Function name    : create                                              #
+    # Created Date     : 06-10-2020                                          #
+    # Modified date    : 07-10-2020                                          #
+    # Purpose          : To load role create view page                       #
     public function create(){
         $this->data['page_title']='Role Create';
         $parent_roles=Role::whereStatus('A')->whereNull('parrent_id')->orderBy('id','ASC')->get();
         $this->data['parent_roles']=$parent_roles;
         return view($this->view_path.'.create',$this->data);
     }
+
+    /********************************************************************************/
+    # Function to store role data                                                    #
+    # Function name    : store                                                       #
+    # Created Date     : 06-10-2020                                                  #
+    # Modified date    : 06-10-2020                                                  #
+    # Purpose          : to store role data                                          #
+    # Param            : CreateRoleRequest $request                                  #
 
     public function store(CreateRoleRequest $request){
         $parent_role_details=Role::findOrFail($request->parent_role);
@@ -114,8 +153,17 @@ class RoleController extends Controller
         }
         //insert new records
         RolePermission::insert($role_permission_data_array);
-        return redirect()->route('admin.roles.list')->with('success','Role/Group successfully created.');
+        return redirect()->route('admin.roles.list')->with('success','Group/Role successfully created.');
     }
+
+    /************************************************************************/
+    # Function to show/load details page for role                            #
+    # Function name    : show                                                #
+    # Created Date     : 06-10-2020                                          #
+    # Modified date    : 07-10-2020                                          #
+    # Purpose          : show/load details page for role                     #
+    # Param            : id                                                  #
+
     public function show($id){
         $role=Role::findOrFail($id);
         $this->data['page_title']='Role Details';
@@ -133,6 +181,14 @@ class RoleController extends Controller
         $this->data['modules']=$modules;
         return view($this->view_path.'.show',$this->data);
     }
+
+    /************************************************************************/
+    # Function to load role edit page                                        #
+    # Function name    : edit                                                #
+    # Created Date     : 15-05-2020                                          #
+    # Modified date    : 15-05-2020                                          #
+    # Purpose          : to load role edit page                              #
+    # Param            : id                                                  #
     public function edit($id){
         $role=Role::findOrFail($id);
         $this->data['page_title']='Role Edit';
@@ -171,6 +227,14 @@ class RoleController extends Controller
         $this->data['modules']=$modules;
         return view($this->view_path.'.edit',$this->data);
     }
+
+    /************************************************************************************/
+    # Function to update role data with module permissions                               #
+    # Function name    : update                                                          #
+    # Created Date     : 06-10-2020                                                      #
+    # Modified date    : 07-10-2020                                                      #
+    # Purpose          : to update role data with module permissions                     #
+    # Param            : EditRoleRequest $request,id                                     #
     public function update(EditRoleRequest $request,$id){
         $role=Role::findOrFail($id);
         $current_user=auth()->guard('admin')->user();
@@ -214,24 +278,39 @@ class RoleController extends Controller
         //insert new records
         RolePermission::insert($role_permission_data_array);
 
-        return redirect()->route('admin.roles.list')->with('success','Role/group successfully updated');
+        return redirect()->route('admin.roles.list')->with('success','Group/Role successfully updated');
     }
+
+    /************************************************************************/
+    # Function to delete role                                                #
+    # Function name    : delete                                              #
+    # Created Date     : 06-10-2020                                          #
+    # Modified date    : 07-10-2020                                          #
+    # Purpose          : to delete role                                      #
+    # Param            : id                                                  #
     public function delete($id){
          $role=Role::findOrFail($id);
          $users=User::where('role_id',$id)->whereStatus('A')->first();
 
          if($users){
-            return response()->json(['message'=>'There are active users with this role/group. You can not delete this role/group. To delete this group assign the users to other group and try again.'],400);
+            return response()->json(['message'=>'There are active users with this role/group. You can not delete this group/role. To delete this group assign the users to other group and try again.'],400);
          }else{
             $role->update([
                 'deleted_by'=>auth()->guard('admin')->id()
             ]);
             $role->delete();
-            return response()->json(['message'=>'Role/Group successfully deleted.']);
+            return response()->json(['message'=>'Group/Role successfully deleted.']);
 
          }
     }
 
+    /************************************************************************/
+    # Function to change status of role                                      #
+    # Function name    : change_status                                       #
+    # Created Date     : 06-10-2020                                          #
+    # Modified date    : 06-10-2020                                          #
+    # Purpose          : to change status of role                            #
+    # Param            : id                                                  #
     public function change_status($id){
         $role=Role::findOrFail($id);
         $change_status_to=($role->status=='A')?'I':'A';
@@ -242,9 +321,17 @@ class RoleController extends Controller
             'status'=>$change_status_to
         ]);
         //returning json success response
-        return response()->json(['message'=>'Role successfully '.$message.'.']);
+        return response()->json(['message'=>'Group/Role successfully '.$message.'.']);
     }
 
+    /************************************************************************/
+    # Function to check role name unique. Will call from jquery validator    #
+    # when adding remote rule to check role_name field in client validation  # 
+    # Function name    : ajax_check_role_name_unique                         #
+    # Created Date     : 06-10-2020                                          #
+    # Modified date    : 06-10-2020                                          #
+    # Purpose          : to check role name unique                           #
+    # Param            : Request $request,$role_id(mandatory during update)  #
     public function ajax_check_role_name_unique(Request $request,$role_id=null){
         if($role_id){
              $role= Role::where('id','!=',$role_id)
@@ -260,6 +347,13 @@ class RoleController extends Controller
         }
     }
 
+    /************************************************************************/
+    # Function to return parent role's module permissions with html          #
+    # Function name    : ajax_check_role_name_unique                         #
+    # Created Date     : 06-10-2020                                          #
+    # Modified date    : 06-10-2020                                          #
+    # Purpose          : to check role name unique                           #
+    # Param            : Request $request,$role_id(mandatory during update)  #
     public function ajax_parent_module_permissions(Request $request,$role_id=null){
 
         $parent_role_id=$request->parent_role_id;

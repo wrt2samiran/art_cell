@@ -29,23 +29,22 @@ $("#admin_roles_edit_form").validate({
     },
     messages: {
         role_name: {
-            required:  "Role name is required",
-            minlength: "Role name should have 3 characters",
-            maxlength: "Role name should not be more then 50 characters",
-            remote:"Role name alredy exist. Enter different name",
+            required:  "Group/Role name is required",
+            minlength: "Group/Role name should have 3 characters",
+            maxlength: "Group/Role name should not be more then 50 characters",
+            remote:"Group/Role name alredy exist. Enter different name",
         },
         role_description: {
-            required:  "Role description is required",
-            minlength: "Role description should have 3 characters",
-            maxlength: "Role description should not more then 255 characters"
+            required:  "Group/Role description is required",
+            minlength: "Group/Role description should have 3 characters",
+            maxlength: "Group/Role description should not more then 255 characters"
         },
         parent_role: {
-            required:  "Select the group for which you want  to create the role",
+            required:  "Select base group/role under which you want to create new group/role",
         },
         'functionalities[]':'Select atleast one permission'
     },
     errorPlacement: function (error, element) {
-        
         
         if(element.attr('name')=='functionalities[]'){
             error.appendTo($('#permissions_error'));

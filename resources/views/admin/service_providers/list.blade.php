@@ -9,12 +9,12 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Group/Role Management</h1>
+                <h1>Service Provider Management</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                   <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item active">Group/Roles</li>
+                  <li class="breadcrumb-item active">Service Providers</li>
                 </ol>
               </div>
             </div>
@@ -28,10 +28,10 @@
                         <div class="card">
 				            <div class="card-header">
 				                <div class="d-flex justify-content-between" >
-				                    <div><span>Group/Role List</span></div>
+				                    <div><span>Service Provider List</span></div>
 					                <div>
-						                <a class="btn btn-success" href="{{route('admin.roles.create')}}">
-						                 Create Group/Role
+						                <a class="btn btn-success" href="{{route('admin.service_providers.create')}}">
+						                 Create Service Provider
 						                </a>
 					                </div>
 				                </div>
@@ -55,8 +55,8 @@
                                     <thead>
                                         <tr>
                                             <th>Id</th>
-                                            <th>Role Name</th>
-                                            <th>Role Description</th>
+                                            <th>Name</th>
+                                            <th>Email</th>
                                             <th>Status</th>
                                             <th>Created At</th>
                                             <th>Action</th>
@@ -64,7 +64,7 @@
                                     </thead>
                                 </table>
                                 <!-- calling this url from datatable data which is inside public\js\admin\roles\list.js-->
-                                <input type="hidden" id="roles_data_url" value="{{route('admin.roles.list')}}">
+                                <input type="hidden" id="service_providers_data_url" value="{{route('admin.service_providers.list')}}">
                             </div>
                         </div>
                     </div>
@@ -77,7 +77,7 @@
 @endsection
 
 @push('custom-scripts')
-<script type="text/javascript" src="{{asset('js/admin/roles/list.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/admin/service_providers/list.js')}}"></script>
 @endpush
 
 
