@@ -30,18 +30,17 @@ class MessageController extends Controller
         $this->data['page_title']='Message List';
         if($request->ajax()){
 
-            $sqlMessage=Message::orderBy('id','Desc');
+            $sqlMessage=Message::orderBy('id','ASC')->orderBy('id','DESC');
             return Datatables::of($sqlMessage)
             ->editColumn('created_at', function ($sqlMessage) {
                 return $sqlMessage->created_at ? with(new Carbon($sqlMessage->created_at))->format('m/d/Y') : '';
             })
-            ->editColumn('description', function ($sqlMessage) {
-                return Str::limit($sqlMessage->description,100);
-            })
-            
+            // ->editColumn('role_description', function ($role) {
+            //     return Str::limit($country->role_description,100);
+            // })
             ->filterColumn('created_at', function ($query, $keyword) {
                 $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
-            })
+            })          
             ->addColumn('status',function($sqlMessage){
                
 
@@ -64,6 +63,7 @@ class MessageController extends Controller
             })
             ->rawColumns(['action','status'])
             ->make(true);
+
         }
 
 

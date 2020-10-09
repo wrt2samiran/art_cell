@@ -44,7 +44,6 @@
                                         <tr>
                                             <th>Id</th>
                                             <th>Message Title</th>
-                                            <!-- <th>Description</th> -->
                                             <th>Status</th>
                                             <th>Created At</th>
                                             <th>Action</th>

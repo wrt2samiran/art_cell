@@ -1,6 +1,6 @@
-$("#admin_service_create_form").validate({
+$("#admin_message_add_form").validate({
     rules: {
-        service_name: {
+        name: {
             required: true,
             minlength: 3,
             maxlength: 50,
@@ -12,7 +12,7 @@ $("#admin_service_create_form").validate({
 
     },
     messages: {
-        service_name: {
+        name: {
             required:  "Message Title is required",
             minlength: "Message Title should have 3 characters",
             maxlength: "Message Title should not be more then 50 characters",

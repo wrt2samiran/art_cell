@@ -8,7 +8,6 @@
         columns: [
             { data: 'id', name: 'id' },
             { data: 'name', name: 'name'},
-            // { data: 'description', name: rawColumns(['description']) },
             { data: 'status', name: 'status',orderable: false },
             { data: 'created_at', name: 'created_at' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
@@ -40,6 +39,7 @@
         type: "DELETE",
         data:{ "_token": $('meta[name="csrf-token"]').attr('content')},
         success: function (data) {
+          message_table.ajax.reload(null, false);
           $.LoadingOverlay("hide");
           toastr.success('Message successfully deleted.', 'Success', {timeOut: 5000});
         },
@@ -60,6 +60,8 @@
   });
 
  }
+
+
 
 //function to change status of gallery
  function change_status(url,activate_or_deactivate){
@@ -93,7 +95,7 @@
         }
      });
 
-     message_table.ajax.reload(null, false);
+      window.LaravelDataTables["message_table"].ajax.reload();
     // window.location.href=url;
     } 
   });

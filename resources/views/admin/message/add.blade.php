@@ -46,7 +46,7 @@
                   @endif
                   <div class="row justify-content-center">
                     <div class="col-md-10 col-sm-12">
-                      <form  method="post" id="admin_shared_service_add_form" action="{{route('admin.message.add')}}" method="post" enctype="multipart/form-data">
+                      <form  method="post" id="admin_message_add_form" action="{{route('admin.message.add')}}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div>
                           <div class="form-group required">

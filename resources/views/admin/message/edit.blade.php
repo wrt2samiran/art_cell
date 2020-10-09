@@ -46,7 +46,7 @@
                   @endif
                   <div class="row justify-content-center">
                     <div class="col-md-10 col-sm-12">
-                      <form  method="post" id="admin_shared_service_edit_form" action="{{route('admin.message.edit',$details->id)}}" method="post" >
+                      <form  method="post" id="admin_message_edit_form" action="{{route('admin.message.edit',$details->id)}}" method="post" >
                         @csrf
                         
                         <div>

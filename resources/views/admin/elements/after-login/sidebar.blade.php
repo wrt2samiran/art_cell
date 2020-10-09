@@ -64,7 +64,7 @@
 
                 <li class="nav-item has-treeview @if(Route::currentRouteName()=='admin.country.list' || Route::currentRouteName()=='admin.country.country.add' || Route::currentRouteName()=='admin.country.edit' || Route::currentRouteName()=='admin.country.show' ||
                 Route::currentRouteName()=='admin.state.list' || Route::currentRouteName()=='admin.state.country.add' || Route::currentRouteName()=='admin.state.show' ||
-                Route::currentRouteName()=='admin.state.edit' || Route::currentRouteName()=='admin.city.list' || Route::currentRouteName()=='admin.city.add' || Route::currentRouteName()=='admin.city.edit' || Route::currentRouteName()=='admin.city.show' || Route::currentRouteName()=='admin.spare-parts.list' || Route::currentRouteName()=='admin.spare-parts.edit' || Route::currentRouteName()=='admin.spare-parts.add' || Route::currentRouteName()=='admin.spare-parts.show' || Route::currentRouteName()=='admin.shared-service.list' || Route::currentRouteName()=='admin.shared-service.edit' || Route::currentRouteName()=='admin.shared-service.add' || Route::currentRouteName()=='admin.shared-service.show' || Route::currentRouteName()=='admin.property_types.list'||
+                Route::currentRouteName()=='admin.state.edit' || Route::currentRouteName()=='admin.city.list' || Route::currentRouteName()=='admin.city.add' || Route::currentRouteName()=='admin.city.edit' || Route::currentRouteName()=='admin.city.show' || Route::currentRouteName()=='admin.property_types.list'||
                         Route::currentRouteName()=='admin.property_types.create'||
                         Route::currentRouteName()=='admin.property_types.edit'||
                         Route::currentRouteName()=='admin.property_types.show'||
@@ -74,17 +74,7 @@
                         Route::currentRouteName()=='admin.services.show'
                 ){{'menu-open'}}@endif">
                     <a href="#"
-                       class="nav-link @if(Route::currentRouteName()=='admin.country.list' || Route::currentRouteName()=='admin.country.country.add' || Route::currentRouteName()=='admin.country.edit' || Route::currentRouteName()=='admin.country.show' ||
-                        Route::currentRouteName()=='admin.state.list' || Route::currentRouteName()=='admin.state.country.add' || Route::currentRouteName()=='admin.state.show' ||
-                        Route::currentRouteName()=='admin.state.edit' || Route::currentRouteName()=='admin.city.list' || Route::currentRouteName()=='admin.city.add' || Route::currentRouteName()=='admin.city.edit' || Route::currentRouteName()=='admin.city.show' || Route::currentRouteName()=='admin.spare-parts.list' || Route::currentRouteName()=='admin.spare-parts.edit' || Route::currentRouteName()=='admin.spare-parts.add' || Route::currentRouteName()=='admin.spare-parts.show' || Route::currentRouteName()=='admin.shared-service.list' || Route::currentRouteName()=='admin.shared-service.edit' || Route::currentRouteName()=='admin.shared-service.add' || Route::currentRouteName()=='admin.shared-service.show' || Route::currentRouteName()=='admin.property_types.list'||
-                        Route::currentRouteName()=='admin.property_types.create'||
-                        Route::currentRouteName()=='admin.property_types.edit'||
-                        Route::currentRouteName()=='admin.property_types.show'||
-                        Route::currentRouteName()=='admin.services.list'||
-                        Route::currentRouteName()=='admin.services.create'||
-                        Route::currentRouteName()=='admin.services.edit'||
-                        Route::currentRouteName()=='admin.services.show'
-                       ){{'active'}}@endif">
+                       class="nav-link {{(request()->is('admin/country/*','admin/country', 'admin/state/*','admin/state', 'admin/city/*','admin/city', 'admin/property-types/*','admin/property-types', 'admin/services/*','admin/services'))?'active':''}}">
                         <i class="nav-icon fas fa-bars"></i>
                         <p>
                             {{__('nav_link_text.master_modules')}}
@@ -92,18 +82,15 @@
                         </p>
                     </a>
                     
-                    <ul class="nav nav-treeview @if(Route::currentRouteName()=='admin.country.list' 
-                    || Route::currentRouteName()=='admin.country.edit' || Route::currentRouteName()=='admin.country.country.add'){{'style="display: block;"'}}@endif">
+                    <ul class="nav nav-treeview">
                         <li class="nav-item">
                             <a href="{{ route('admin.country.list') }}"
-                               class="nav-link @if(Route::currentRouteName()=='admin.country.list' || Route::currentRouteName()=='admin.country.edit' || Route::currentRouteName()=='admin.country.country.add' || Route::currentRouteName()=='admin.country.show'){{'active'}}@endif">
+                               class="nav-link {{(request()->is('admin/country/*','admin/country'))?'active':''}}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>{{__('nav_link_text.country_management')}}</p>
                             </a>
                         </li>
-                    </ul>
 
-                    <ul class="nav nav-treeview {{(request()->is('admin/state/*','admin/state'))?'style="display: block;"':''}}" >
                         <li class="nav-item">
                             <a href="{{ route('admin.state.list') }}"
                                class="nav-link {{(request()->is('admin/state/*','admin/state'))?'active':''}}">
@@ -111,8 +98,7 @@
                                 <p>{{__('nav_link_text.state_management')}}</p>
                             </a>
                         </li>
-                    </ul>
-                    <ul class="nav nav-treeview {{(request()->is('admin/city/*','admin/city'))?'style="display: block;"':''}}">
+
                         <li class="nav-item">
                             <a href="{{ route('admin.city.list') }}"
                                class="nav-link {{(request()->is('admin/city/*','admin/city'))?'active':''}}">
@@ -120,9 +106,6 @@
                                 <p>{{__('nav_link_text.city_management')}}</p>
                             </a>
                         </li>
-                    </ul>
-
-                    <ul class="nav nav-treeview">
                         <li class="nav-item">
                             <a href="{{ route('admin.property_types.list') }}"
                                class="nav-link {{(request()->is('admin/property-types/*','admin/property-types'))?'active':''}}">
@@ -141,8 +124,19 @@
                    
                     
                 </li>
-
-                <li class="nav-item has-treeview {{(request()->is('admin/spare-parts/*','admin/spare-parts'))?'menu-open':''}}">
+                <li class="nav-item has-treeview {{(request()->is('admin/message/*','admin/message'))?'menu-open':''}}">
+                    
+                    <li class="nav-item">
+                            <a href="{{ route('admin.message.list') }}" class="nav-link {{(request()->is('admin/message/*','admin/message'))?'active':''}}">
+                              
+                               
+                               
+                                <i class="nav-icon fas fa-envelope-open-text"></i>
+                                <p>{{__('nav_link_text.message_management')}}</p>
+                            </a>
+                        </li>
+                </li>
+                <li class="nav-item has-treeview {{(request()->is('admin/shared-service/*','admin/shared-service'))?'menu-open':''}}">
                     
                     <li class="nav-item">
                             <a href="{{ route('admin.shared-service.list') }}" class="nav-link {{(request()->is('admin/shared-service/*','admin/shared-service'))?'active':''}}">

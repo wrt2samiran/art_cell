@@ -30,7 +30,7 @@ class CountryController extends Controller
         $this->data['page_title']='Country List';
         if($request->ajax()){
 
-            $country=Country::orderBy('id','ASC')->orderBy('id','ASC');
+            $country=Country::orderBy('id','ASC')->orderBy('id','DESC');
             return Datatables::of($country)
             ->editColumn('created_at', function ($country) {
                 return $country->created_at ? with(new Carbon($country->created_at))->format('m/d/Y') : '';
