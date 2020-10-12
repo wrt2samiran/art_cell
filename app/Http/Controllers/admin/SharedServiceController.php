@@ -135,8 +135,7 @@ class SharedServiceController extends Controller
                     $save = $new->save();
                 
 					if ($save) {						
-						$request->session()->flash('alert-success', 'Shared Service has been added successfully');
-						return redirect()->route('admin.shared-service.list');
+                        return redirect()->route('admin.shared-service.list')->with('success','Shared Service successfully created.');
 					} else {
 						$request->session()->flash('alert-danger', 'An error occurred while adding the state');
 						return redirect()->back();
@@ -212,8 +211,8 @@ class SharedServiceController extends Controller
                     $details->updated_by = $logedin_user->id;
                     $save = $details->save();                        
                     if ($save) {
-                        $request->session()->flash('alert-success', 'Shared Service has been updated successfully');
-                        return redirect()->route('admin.shared-service.list');
+                        
+                        return redirect()->route('admin.shared-service.list')->with('success','Shared Service successfully updated.');
                     } else {
                         $request->session()->flash('alert-danger', 'An error occurred while updating the state');
                         return redirect()->back();

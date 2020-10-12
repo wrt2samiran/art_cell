@@ -39,6 +39,18 @@
 
                             <!-- /.card-header -->
                             <div class="card-body">
+                                @if(Session::has('success'))
+                                    <div class="alert alert-success alert-dismissable __web-inspector-hide-shortcut__">
+                                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                        {{ Session::get('success') }}
+                                    </div>
+                                @endif
+                                @if(Session::has('error'))
+                                    <div class="alert alert-danger alert-dismissable">
+                                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                        {{ Session::get('error') }}
+                                    </div>
+                                @endif
                                 <table class="table table-bordered" id="country_table">
                                     <thead>
                                         <tr>
@@ -64,6 +76,13 @@
 @endsection
 
 @push('custom-scripts')
+<!-- <script type="text/javascript">
+    $("document").ready(function(){
+    setTimeout(function(){
+        $(".alert-success").remove();
+    }, 5000 );
+});
+</script> -->
 <script type="text/javascript" src="{{asset('js/admin/country/list.js')}}"></script>
 @endpush
 

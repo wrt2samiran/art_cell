@@ -9,12 +9,12 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>City</h1>
+            <h1>City Management</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.city.list')}}">City</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.cities.list')}}">City</a></li>
               <li class="breadcrumb-item active">Create</li>
             </ol>
           </div>
@@ -46,7 +46,7 @@
                   @endif
                   <div class="row justify-content-center">
                     <div class="col-md-10 col-sm-12">
-                      <form  method="post" id="admin_city_add_form" action="{{route('admin.city.add')}}" method="post" enctype="multipart/form-data">
+                      <form  method="post" id="admin_city_add_form" action="{{route('admin.cities.add')}}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div>                        
 
@@ -87,7 +87,7 @@
                           
                         </div>
                         <div>
-                           <a href="{{route('admin.city.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
+                           <a href="{{route('admin.cities.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
                            <button type="submit" class="btn btn-success">Submit</button> 
                         </div>
                       </form>
@@ -107,7 +107,7 @@
   function onCountryChange(country_id){
      $.ajax({
        
-        url: "{{route('admin.city.getZone')}}",
+        url: "{{route('admin.cities.getStates')}}",
         type:'post',
         dataType: "json",
         data:{country_id:country_id,_token:"{{ csrf_token() }}"}
@@ -115,14 +115,14 @@
            
            console.log(response.status);
             if(response.status){
-             console.log(response.allZone);
-             var stringified = JSON.stringify(response.allZone);
-            var zonedata = JSON.parse(stringified);
-             var zone_list = '<option value=""> Select Zone</option>';
-             $.each(zonedata,function(index, zone_id){
-                    zone_list += '<option value="'+zone_id.id+'">'+ zone_id.name +'</option>';
+             console.log(response.allState);
+             var stringified = JSON.stringify(response.allStates);
+            var statedata = JSON.parse(stringified);
+             var state_list = '<option value=""> Select State</option>';
+             $.each(statedata,function(index, state_id){
+                    state_list += '<option value="'+state_id.id+'">'+ state_id.name +'</option>';
              });
-                $("#state_id").html(zone_list);
+                $("#state_id").html(state_list);
             }
         });
     }

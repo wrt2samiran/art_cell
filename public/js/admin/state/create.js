@@ -18,7 +18,7 @@
                 maxlength: "State name should not be more then 50 characters"
             },
             country_id: {
-                required:  "State code is required",
+                required:  "Country field is required",
             },
         },
 

@@ -204,15 +204,15 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 
             });
 
-            Route::group(['prefix' => 'city', 'as' => 'city.'], function () {
-                Route::get('/', 'CityController@list')->name('list');
-                Route::any('/add','CityController@cityAdd')->name('add');
-                Route::any('/edit/{encryptCode}', 'CityController@edit')->name('edit');
-                Route::put('/update', 'CityController@update')->name('update');
-                Route::get('/{id}/change-change', 'CityController@change_status')->name('change_status');
-                Route::delete('/{id}/delete', 'CityController@delete')->name('delete');
-                Route::get('/{id}', 'CityController@show')->name('show');
-                Route::post('/get-zone', 'CityController@getZone')->name('getZone');                
+            Route::group(['prefix' => 'cities', 'as' => 'cities.'], function () {
+                Route::get('/', 'CitiesController@list')->name('list');
+                Route::any('/add','CitiesController@cityAdd')->name('add');
+                Route::any('/edit/{encryptCode}', 'CitiesController@edit')->name('edit');
+                Route::put('/update', 'CitiesController@update')->name('update');
+                Route::get('/{id}/change-change', 'CitiesController@change_status')->name('change_status');
+                Route::delete('/{id}/delete', 'CitiesController@delete')->name('delete');
+                Route::get('/{id}', 'CitiesController@show')->name('show');
+                Route::post('/get-states', 'CitiesController@getStates')->name('getStates');                
             });
 
             Route::group(['prefix' => 'shared-service', 'as' => 'shared-service.'], function () {
@@ -241,6 +241,18 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::delete('/{id}/delete', 'MessageController@delete')->name('delete');
                 Route::get('/{id}', 'MessageController@show')->name('show');
             });
+
+            
+
+            Route::group(['prefix' => 'task_assign_labour', 'as' => 'task_assign_labour.'], function () {
+                Route::get('/', 'TaskAssignLabourController@list')->name('list');
+                Route::any('/add','TaskAssignLabourController@cityAdd')->name('add');
+                Route::any('/edit/{encryptCode}', 'TaskAssignLabourController@edit')->name('edit');
+                Route::get('/{id}/change-change', 'TaskAssignLabourController@change_status')->name('change_status');
+                Route::delete('/{id}/delete', 'TaskAssignLabourController@delete')->name('delete');
+                Route::get('/{id}', 'TaskAssignLabourController@show')->name('show');
+            });
+
         });
        
 });

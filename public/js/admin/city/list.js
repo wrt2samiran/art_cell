@@ -4,12 +4,12 @@
         "autoWidth": false,
         processing: true,
         serverSide: true,
-        ajax: baseUrl+'/admin/city',
+        ajax: baseUrl+'/admin/cities',
         columns: [
             { data: 'id', name: 'id' },
             { data: 'name', name: 'name'},
-            { data: 'country.name', name: 'country.name' },
             { data: 'state.name', name: 'state.name' },
+            { data: 'country.name', name: 'country.name' },
             { data: 'is_active', name: 'is_active' },
             { data: 'created_at', name: 'created_at' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
@@ -104,3 +104,9 @@
 
 
  }
+
+ $("document").ready(function(){
+    setTimeout(function(){
+        $(".alert-success").remove();
+    }, 5000 );
+});

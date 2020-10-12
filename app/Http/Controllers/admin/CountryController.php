@@ -30,7 +30,7 @@ class CountryController extends Controller
         $this->data['page_title']='Country List';
         if($request->ajax()){
 
-            $country=Country::orderBy('id','ASC')->orderBy('id','DESC');
+            $country=Country::orderBy('id','DESC');
             return Datatables::of($country)
             ->editColumn('created_at', function ($country) {
                 return $country->created_at ? with(new Carbon($country->created_at))->format('m/d/Y') : '';
@@ -116,8 +116,7 @@ class CountryController extends Controller
                     $save = $new->save();
                 
 					if ($save) {						
-						$request->session()->flash('alert-success', 'State has been added successfully');
-						return redirect()->route('admin.country.list');
+						return redirect()->route('admin.country.list')->with('success','Country successfully created.');
 					} else {
 						$request->session()->flash('alert-danger', 'An error occurred while adding the state');
 						return redirect()->back();
@@ -182,8 +181,7 @@ class CountryController extends Controller
                     $details->updated_at      = date('Y-m-d H:i:s');
                     $save = $details->save();                        
                     if ($save) {
-                        $request->session()->flash('alert-success', 'State has been updated successfully');
-                        return redirect()->route('admin.country.list');
+                        return redirect()->route('admin.country.list')->with('success','Country successfully updated.');
                     } else {
                         $request->session()->flash('alert-danger', 'An error occurred while updating the state');
                         return redirect()->back();

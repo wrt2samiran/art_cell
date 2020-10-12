@@ -30,7 +30,7 @@
 				                <div class="d-flex justify-content-between" >
 				                    <div><span>City List</span></div>
 					                <div>
-						                <a class="btn btn-success" href="{{route('admin.city.add')}}">
+						                <a class="btn btn-success" href="{{route('admin.cities.add')}}">
 						                 Create City
 						                </a>
 					                </div>
@@ -39,6 +39,18 @@
 
                             <!-- /.card-header -->
                             <div class="card-body">
+                                @if(Session::has('success'))
+                                    <div class="alert alert-success alert-dismissable __web-inspector-hide-shortcut__">
+                                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                        {{ Session::get('success') }}
+                                    </div>
+                                @endif
+                                @if(Session::has('error'))
+                                    <div class="alert alert-danger alert-dismissable">
+                                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                        {{ Session::get('error') }}
+                                    </div>
+                                @endif
                                 <table class="table table-bordered" id="city_table">
                                     <thead>
                                         <tr>

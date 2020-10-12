@@ -9,7 +9,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Sate</h1>
+            <h1>Sate Management</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -46,7 +46,7 @@
                   @endif
                   <div class="row justify-content-center">
                     <div class="col-md-10 col-sm-12">
-                      <form  method="post" id="admin_country_add_form" action="{{route('admin.state.edit', $details->id)}}" method="post" enctype="multipart/form-data">
+                      <form  method="post" id="admin_state_edit_form" action="{{route('admin.state.edit', $details->id)}}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div>
                           <div class="form-group required">
@@ -91,5 +91,5 @@
 </div>
 @endsection 
 @push('custom-scripts')
-<script type="text/javascript" src="{{asset('js/admin/country/create.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/admin/state/edit.js')}}"></script>
 @endpush

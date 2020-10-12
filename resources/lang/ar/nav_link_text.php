@@ -23,5 +23,6 @@ return [
 	'shared_service_management' => 'إدارة الخدمة المشتركة',
 	'spare_parts_management' => 'إدارة قطع الغيار',
 	'message_management' => 'إدارة الرسائل',
+	'Task Assign Labour' => 'مهمة تعيين العمل',
 
 ];

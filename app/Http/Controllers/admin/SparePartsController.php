@@ -136,8 +136,7 @@ class SparePartsController extends Controller
                     $save = $new->save();
                 
 					if ($save) {						
-						$request->session()->flash('alert-success', 'Spare Spart has been added successfully');
-						return redirect()->route('admin.spare-parts.list');
+                        return redirect()->route('admin.spare-parts.list')->with('success','Spare Parts successfully created.');
 					} else {
 						$request->session()->flash('alert-danger', 'An error occurred while adding the state');
 						return redirect()->back();
@@ -213,8 +212,7 @@ class SparePartsController extends Controller
                     $details->updated_by = $logedin_user->id;
                     $save = $details->save();                        
                     if ($save) {
-                        $request->session()->flash('alert-success', 'Spare Parts has been updated successfully');
-                        return redirect()->route('admin.spare-parts.list');
+                        return redirect()->route('admin.spare-parts.list')->with('success','Spare Parts successfully updated.');
                     } else {
                         $request->session()->flash('alert-danger', 'An error occurred while updating the state');
                         return redirect()->back();
