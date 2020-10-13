@@ -22,7 +22,7 @@ use Illuminate\Support\Str;
 use App\Models\{User,Role};
 use Carbon\Carbon;
 use App\Http\Requests\Admin\ServiceProvider\{CreateServiceProviderRequest,UpdateServiceProviderRequest};
-use App\Events\ServiceProvider\ServiceProviderCreated;
+use App\Events\User\UserCreated;
 class ServiceProviderController extends Controller
 {
     //defining the view path
@@ -130,8 +130,8 @@ class ServiceProviderController extends Controller
             'created_by'=>auth()->guard('admin')->id(),
             'updated_by'=>auth()->guard('admin')->id()
     	]);
-
-        event(new ServiceProviderCreated($user,$request->password));
+        $user->load('role');
+        event(new UserCreated($user,$request->password));
 
         return redirect()->route('admin.service_providers.list')->with('success','Service provider successfully created.');
 
@@ -197,7 +197,6 @@ class ServiceProviderController extends Controller
 
         $service_provider->update($update_data);
 
-        //event(new ServiceProviderCreated($user,$request->password));
 
         return redirect()->route('admin.service_providers.list')->with('success','Service provider successfully updated.');
 

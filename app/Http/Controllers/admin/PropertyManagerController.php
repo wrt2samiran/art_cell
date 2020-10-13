@@ -22,7 +22,7 @@ use Illuminate\Support\Str;
 use App\Models\{User,Role};
 use Carbon\Carbon;
 use App\Http\Requests\Admin\PropertyManager\{CreatePropertyManagerRequest,UpdatePropertyManagerRequest};
-use App\Events\PropertyManager\PropertyManagerCreated;
+use App\Events\User\UserCreated;
 class PropertyManagerController extends Controller
 {
     //defining the view path
@@ -129,8 +129,8 @@ class PropertyManagerController extends Controller
             'created_by'=>auth()->guard('admin')->id(),
             'updated_by'=>auth()->guard('admin')->id()
         ]);
-
-        event(new PropertyManagerCreated($user,$request->password));
+        $user->load('role');
+        event(new UserCreated($user,$request->password));
 
         return redirect()->route('admin.property_managers.list')->with('success','Property manager successfully created.');
 
@@ -196,7 +196,7 @@ class PropertyManagerController extends Controller
 
         $property_manager->update($update_data);
 
-        //event(new PropertyManagerCreated($user,$request->password));
+        
 
         return redirect()->route('admin.property_managers.list')->with('success','Property manager successfully updated.');
 

@@ -22,7 +22,7 @@ use Illuminate\Support\Str;
 use App\Models\{User,Role};
 use Carbon\Carbon;
 use App\Http\Requests\Admin\PropertyOwner\{CreatePropertyOwnerRequest,UpdatePropertyOwnerRequest};
-use App\Events\PropertyOwner\PropertyOwnerCreated;
+use App\Events\User\UserCreated;
 class PropertyOwnerController extends Controller
 {
     //defining the view path
@@ -129,8 +129,8 @@ class PropertyOwnerController extends Controller
             'created_by'=>auth()->guard('admin')->id(),
             'updated_by'=>auth()->guard('admin')->id()
     	]);
-
-        event(new PropertyOwnerCreated($user,$request->password));
+        $user->load('role');
+        event(new UserCreated($user,$request->password));
 
         return redirect()->route('admin.property_owners.list')->with('success','Property owner successfully created.');
 
@@ -196,7 +196,7 @@ class PropertyOwnerController extends Controller
 
         $property_owner->update($update_data);
 
-        //event(new PropertyOwnerCreated($user,$request->password));
+        
 
         return redirect()->route('admin.property_owners.list')->with('success','Property owner successfully updated.');
 

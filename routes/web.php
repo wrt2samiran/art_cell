@@ -11,9 +11,9 @@
 |
 */
 
-Route::get('/', function () {
-    return redirect()->route('admin.login');
-});
+// Route::get('/', function () {
+//     return redirect()->route('admin.login');
+// });
 
 Route::get('/language/{locale}','admin\DashboardController@changeLanguage')->name('changeLanguage');
 Route::get('/multi-lang','PostController@index');
@@ -47,8 +47,8 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             Route::get('/change-password','DashboardController@showChangePasswordForm')->name('changePassword');
             Route::post('/change-password','DashboardController@changePassword')->name('changePassword');
 
-            /*Routes for role/group management */
-            Route::group(['prefix'=>'roles','as'=>'roles.'],function(){
+            /*Routes for role/user groups management */
+            Route::group(['prefix'=>'user-groups','as'=>'roles.'],function(){
                 Route::get('/', 'RoleController@list')->name('list');
                 Route::get('/create', 'RoleController@create')->name('create');
                 Route::post('/store', 'RoleController@store')->name('store');

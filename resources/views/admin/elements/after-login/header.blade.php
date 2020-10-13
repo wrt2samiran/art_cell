@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>SMMS | {{ $page_title?$page_title:'' }}</title>
+    <title>SMMS | {{ (isset($page_title))?$page_title:'' }}</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -36,13 +36,14 @@
     <link rel="stylesheet" href="{{asset('assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
 
     <!--jquery-ui css datepicker (needed for datepicker)-->
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+    <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
     <!------>
 
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
     <!-- <link rel="stylesheet" href="{{asset('assets/css/styles.css')}}"> -->
     <link rel="stylesheet" type="text/css" href="{{asset('css/admin/custom.css')}}">
+   
 </head>
 <body class="hold-transition sidebar-mini layout-fixed text-sm lang_{{App::getLocale()}}">
 <div class="wrapper">

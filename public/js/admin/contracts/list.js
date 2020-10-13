@@ -1,19 +1,21 @@
 //initializing galleries datatable
-    var roles_table=$('#roles_table').DataTable({
+    var property_table=$('#property_table').DataTable({
         "responsive": true,
         "autoWidth": false,
         processing: true,
         serverSide: true,
-        ajax: $('#roles_data_url').val(),
+        ajax: $('#properties_data_url').val(),
         columns: [
             { data: 'id', name: 'id' },
-            { data: 'role_name', name: 'role_name'},
-            { data: 'role_description', name: 'role_description' },
-            { data: 'status', name: 'status',orderable: false },
+            { data: 'code', name: 'code'},
+            { data: 'property_name', name: 'property_name'},
+            { data: 'city.name', name: 'city.name'},
+            { data: 'no_of_units', name: 'no_of_units'},
+            { data: 'is_active', name: 'is_active',orderable: false },
             { data: 'created_at', name: 'created_at' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
-         order: [ [0, 'asc'] ],
+         order: [ [0, 'desc'] ],
         columnDefs: [
         {   "targets": [0],
             "visible": false,
@@ -23,10 +25,10 @@
     });
 
  //function to delete gallery
- function delete_role(url){
+ function delete_property(url){
   swal({
   title: "Are you sure?",
-  text: "Once deleted, you will not be able to recover this group!",
+  text: "Once deleted, you will not be able to recover this property!",
   icon: "warning",
   buttons: true,
   dangerMode: true,
@@ -40,9 +42,9 @@
         type: "DELETE",
         data:{ "_token": $('meta[name="csrf-token"]').attr('content')},
         success: function (data) {
-          roles_table.ajax.reload(null, false);
+          property_table.ajax.reload(null, false);
           $.LoadingOverlay("hide");
-          toastr.success('Group successfully deleted.', 'Success', {timeOut: 5000});
+          toastr.success('Property successfully deleted.', 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");
@@ -56,6 +58,7 @@
         }
      });
 
+
     } 
   });
 
@@ -65,7 +68,7 @@
  function change_status(url,activate_or_deactivate){
   swal({
   title: "Are you sure?",
-  text: "You want to "+activate_or_deactivate+" the role.",
+  text: "You want to "+activate_or_deactivate+" the property.",
   icon: "warning",
   buttons: true,
   dangerMode: true,
@@ -78,7 +81,7 @@
         type: "GET",
         data:{},
         success: function (data) {
-          roles_table.ajax.reload(null, false);
+          property_table.ajax.reload(null, false);
           $.LoadingOverlay("hide");
           toastr.success('Status successfully updated.', 'Success', {timeOut: 5000});
         },
@@ -94,7 +97,7 @@
         }
      });
 
-     
+   
     // window.location.href=url;
     } 
   });

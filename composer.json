@@ -10,6 +10,7 @@
     "require": {
         "php": "^7.2",
         "astrotomic/laravel-translatable": "^11.9",
+        "barryvdh/laravel-translation-manager": "^0.5.9",
         "fideloper/proxy": "^4.0",
         "kitetail/zttp": "^0.6.0",
         "laravel/framework": "^6.2",

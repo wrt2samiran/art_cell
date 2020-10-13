@@ -36,7 +36,5 @@ class SendAccountCreatedMailToUser
             'subject'=>'User Account Creation'
         ];
         Mail::to($event->user['email'])->send(new AccountCreationMailToUser($data));  
-
-     
     }
 }

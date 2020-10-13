@@ -29,18 +29,18 @@ $("#admin_roles_edit_form").validate({
     },
     messages: {
         role_name: {
-            required:  "Group/Role name is required",
-            minlength: "Group/Role name should have 3 characters",
-            maxlength: "Group/Role name should not be more then 50 characters",
-            remote:"Group/Role name alredy exist. Enter different name",
+            required:  "Group name is required",
+            minlength: "Group name should have 3 characters",
+            maxlength: "Group name should not be more then 50 characters",
+            remote:"Group name alredy exist. Enter different name",
         },
         role_description: {
-            required:  "Group/Role description is required",
-            minlength: "Group/Role description should have 3 characters",
-            maxlength: "Group/Role description should not more then 255 characters"
+            required:  "Group description is required",
+            minlength: "Group description should have 3 characters",
+            maxlength: "Group description should not more then 255 characters"
         },
         parent_role: {
-            required:  "Select base group/role under which you want to create new group/role",
+            required:  "Select user type",
         },
         'functionalities[]':'Select atleast one permission'
     },
@@ -73,7 +73,7 @@ $("#admin_roles_edit_form").validate({
 
 $('.parent_role_select2').select2({
   theme: 'bootstrap4',
-  placeholder:'Select a group'
+  placeholder:'Select user type'
 });
 
 async function onParentRoleChange(parent_role_id,url){
