@@ -11,6 +11,7 @@ return [
 	'service_providers'=>'مقدمي الخدمة',
 	'property_owners'=>'اصحاب العقارات',
 	'property_managers'=>'مدراء العقارات',
+	'properties'=>'الخصائص',
 	'quotations'=>'الاقتباسات',
 	'role_groups'=>'الأدوار / مجموعات المستخدمين',
 	'user_management'=>'إدارةالمستخدم',

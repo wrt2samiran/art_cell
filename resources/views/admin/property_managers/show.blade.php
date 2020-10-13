@@ -28,7 +28,7 @@
             <!-- Default box -->
             <div class="card card-success">
                 <div class="card-header">
-                  Property Manager Deatils
+                  Property Manager Details
                 </div> 
               <div class="card-body"> 
                  <table class="table table-bordered table-hover record-details-table" id="property-manager-details-table">

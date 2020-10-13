@@ -148,7 +148,7 @@ class ServiceProviderController extends Controller
 
     public function show($id){
         $service_provider=User::findOrFail($id);
-        $this->data['page_title']='Servicd Provider Details';
+        $this->data['page_title']='Service Provider Details';
         $this->data['service_provider']=$service_provider;
         return view($this->view_path.'.show',$this->data);
 

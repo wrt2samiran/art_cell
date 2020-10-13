@@ -18,13 +18,18 @@ class CreatePropertiesTable extends Migration
             $table->bigIncrements('id');
             $table->string('code',30)->index()->comment = 'System generated';
             $table->string('property_name')->index();
+            $table->unsignedBigInteger('property_type_id')->index();
             $table->text('description');
+            $table->unsignedBigInteger('country_id')->index();
+            $table->unsignedBigInteger('state_id')->index();
             $table->unsignedBigInteger('city_id')->index();
             $table->text('address');
             $table->text('location');
-            $table->integer('no_of_units');
-            $table->date('water_acount_date')->nullable();
-            $table->date('electricy_account_date')->nullable();
+            $table->string('contact_number',30)->nullable();
+            $table->string('contact_email',150)->nullable();
+            $table->integer('no_of_units')->nullable();
+            $table->integer('water_account_day')->nullable();
+            $table->integer('electricity_account_day')->nullable();
             $table->unsignedBigInteger('property_owner')->index()->nullable();
             $table->unsignedBigInteger('property_manager')->index()->nullable();
             $table->boolean('is_active')->index()->default(true);
@@ -34,8 +39,15 @@ class CreatePropertiesTable extends Migration
             $table->softDeletes();
             $table->timestamps();
 
+            $table->foreign('country_id')
+                ->references('id')->on('countries');
+            $table->foreign('state_id')
+                ->references('id')->on('states');
             $table->foreign('city_id')
                 ->references('id')->on('cities');
+
+            $table->foreign('property_type_id')
+                ->references('id')->on('property_types');
 
             $table->foreign('property_owner')
                 ->references('id')->on('users'); 

@@ -60,8 +60,13 @@
 <script src="{{asset('assets/dist/js/demo.js')}}"></script>
 <!-- Jquery form-validate -->
 <script src="{{asset('js/jquery.validate.js')}}"></script>
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="{{ asset('js/development-admin.js')}}"></script>
+
+<!-- InputMask -->
+
+<script src="{{asset('assets/plugins/inputmask/min/jquery.inputmask.bundle.min.js')}}"></script>
 
 <!-- Sweet alert -->
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>

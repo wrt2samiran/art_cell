@@ -28,7 +28,7 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Edit Proeprty Type</h3>
+                <h3 class="card-title">Edit Property Type</h3>
               </div>
               <div class="card-body">
                   @if(Session::has('success'))

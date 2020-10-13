@@ -11,6 +11,7 @@ return [
 	'service_providers'=>'Service Providers',
 	'property_owners'=>'Property Owners',
 	'property_managers'=>'Property Managers',
+	'properties'=>'Properties',
 	'quotations'=>'Quotations',
 	'role_groups'=>'Roles/User Groups',
 	'user_management'=>'User Management',

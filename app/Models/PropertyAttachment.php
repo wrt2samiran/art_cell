@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class PropertyAttachment extends Model
 {
-    //
+    protected $guarded=[];
 }

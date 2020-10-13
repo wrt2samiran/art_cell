@@ -201,9 +201,16 @@
                     </a>
                 </li>
                 <li class="nav-item ">
+                    <a href="{{route('admin.properties.list')}}"
+                    class="nav-link {{(request()->is('admin/properties/*','admin/properties'))?'active':''}}">
+                        <i class="nav-icon fas fa-igloo"></i>
+                        <p>{{__('nav_link_text.properties')}}</p>
+                    </a>
+                </li>
+                <li class="nav-item ">
                     <a href="{{route('admin.quotations.list')}}"
                     class="nav-link {{(request()->is('admin/quotations/*','admin/quotations'))?'active':''}}">
-                        <i class="nav-icon fas fa-quote-right"></i>
+                        <i class="nav-icon fas fa-sticky-note"></i>
                         <p>{{__('nav_link_text.quotations')}}</p>
                     </a>
                 </li>            
