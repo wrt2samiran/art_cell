@@ -16,7 +16,7 @@ class CreateTasksTable extends Migration
         Schema::disableForeignKeyConstraints();
         Schema::create('tasks', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('contarct_id');
+            $table->unsignedBigInteger('contract_id');
             $table->foreign('contarct_id')->references('id')->on('contracts')->onDelete('cascade');
             $table->string('task_name');
             $table->enum('task_type', ['O', 'M'])->comment = 'O=>One Time, M=>Maintenance';

@@ -100,8 +100,8 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="{{ route('admin.city.list') }}"
-                               class="nav-link {{(request()->is('admin/city/*','admin/city'))?'active':''}}">
+                            <a href="{{ route('admin.cities.list') }}"
+                               class="nav-link {{(request()->is('admin/cities/*','admin/cities'))?'active':''}}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>{{__('nav_link_text.city_management')}}</p>
                             </a>
@@ -212,6 +212,14 @@
                     class="nav-link {{(request()->is('admin/quotations/*','admin/quotations'))?'active':''}}">
                         <i class="nav-icon fas fa-sticky-note"></i>
                         <p>{{__('nav_link_text.quotations')}}</p>
+                    </a>
+                </li> 
+
+                <li class="nav-item ">
+                    <a href="{{route('admin.task_assign_labour.list')}}"
+                    class="nav-link {{(request()->is('admin/task_assign_labour/*','admin/task_assign_labour'))?'active':''}}">
+                        <i class="nav-icon fas fa-quote-right"></i>
+                        <p>{{__('nav_link_text.task_assign_labour')}}</p>
                     </a>
                 </li>            
 
