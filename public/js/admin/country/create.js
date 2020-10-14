@@ -1,11 +1,17 @@
     $("#admin_country_add_form").validate({
         rules: {
-            name: {
+            en_name: {
                 required: true,
                 minlength: 3,
                 maxlength: 50,
             },
            
+           ar_name: {
+                required: true,
+                minlength: 3,
+                maxlength: 50,
+            },
+
             country_code: {
                 required: true,
                 minlength: 2,
@@ -20,7 +26,12 @@
            
         },
         messages: {
-            name: {
+            en_name: {
+                required:  "Country name is required",
+                minlength: "Country name should have 3 characters",
+                maxlength: "Country name should not be more then 50 characters"
+            },
+            ar_name: {
                 required:  "Country name is required",
                 minlength: "Country name should have 3 characters",
                 maxlength: "Country name should not be more then 50 characters"

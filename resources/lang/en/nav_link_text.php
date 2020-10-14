@@ -23,5 +23,6 @@ return [
 	'shared_service_management' => 'Shared Service Management',
 	'spare_parts_management' => 'Spare Parts Management',
 	'message_management' => 'Message Management',
-	'task_assign_labour' => 'Task Assign Labour',
+	'task_management' => 'Task Management',
+	'service_management' => 'Service Management',
 ];

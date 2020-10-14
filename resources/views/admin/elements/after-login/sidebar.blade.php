@@ -209,10 +209,10 @@
                 </li> 
 
                 <li class="nav-item ">
-                    <a href="{{route('admin.task_assign_labour.list')}}"
-                    class="nav-link {{(request()->is('admin/task_assign_labour/*','admin/task_assign_labour'))?'active':''}}">
+                    <a href="{{route('admin.service_management.list')}}"
+                    class="nav-link {{(request()->is('admin/service_management/*','admin/service_management'))?'active':''}}">
                         <i class="nav-icon fas fa-quote-right"></i>
-                        <p>{{__('nav_link_text.task_assign_labour')}}</p>
+                        <p>{{__('nav_link_text.service_management')}}</p>
                     </a>
                 </li>            
 

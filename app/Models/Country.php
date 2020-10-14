@@ -3,18 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
+use Astrotomic\Translatable\Translatable;
 
-class Country extends Model
+class Country extends Model implements TranslatableContract
 {
-    public $timestamps = false;
-
-    /*****************************************************/
-    # User
-    # Function name : countryName
-    # Author        :
-    # Created Date  : 20-07-2020
-    # Purpose       : Relation between userProfile table
-    # Params        : 
-    /*****************************************************/
+    use Translatable;
+	public $translatedAttributes = ['name','country_code','dial_code'];
+    protected $fillable = ['author'];
    
 }
