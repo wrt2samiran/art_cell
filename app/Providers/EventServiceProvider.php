@@ -6,13 +6,8 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
-use App\Events\ServiceProvider\ServiceProviderCreated;
-use App\Listeners\ServiceProvider\SendAccountCreatedMailToUser;
-use App\Events\PropertyOwner\PropertyOwnerCreated;
-use App\Listeners\PropertyOwner\SendAccountCreatedMailToUser as PropertyOwnerSendAccountCreatedMailToUser;
-use App\Events\PropertyManager\PropertyManagerCreated;
-use App\Listeners\PropertyManager\SendAccountCreatedMailToUser as PropertyManagerSendAccountCreatedMailToUser;
-use App\Listeners\User\SendAccountCreatedMailToUser as UserSendAccountCreatedMailToUser;
+
+use App\Listeners\User\SendAccountCreatedMailToUser;
 
 use App\Events\User\UserCreated;
 class EventServiceProvider extends ServiceProvider
@@ -26,17 +21,8 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        ServiceProviderCreated::class=>[
-            SendAccountCreatedMailToUser::class
-        ],
-        PropertyOwnerCreated::class=>[
-            PropertyOwnerSendAccountCreatedMailToUser::class
-        ],
-        PropertyManagerCreated::class=>[
-            PropertyManagerSendAccountCreatedMailToUser::class
-        ],
         UserCreated::class=>[
-            UserSendAccountCreatedMailToUser::class
+            SendAccountCreatedMailToUser::class
         ]
 
     ];

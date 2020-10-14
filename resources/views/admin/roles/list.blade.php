@@ -9,12 +9,12 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Group/Role Management</h1>
+                <h1>User Groups Management</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                   <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item active">Group/Roles</li>
+                  <li class="breadcrumb-item active">User Groups</li>
                 </ol>
               </div>
             </div>
@@ -28,10 +28,10 @@
                         <div class="card">
 				            <div class="card-header">
 				                <div class="d-flex justify-content-between" >
-				                    <div><span>Group/Role List</span></div>
+				                    <div><span>Group List</span></div>
 					                <div>
 						                <a class="btn btn-success" href="{{route('admin.roles.create')}}">
-						                 Create Group/Role
+						                 Create Group
 						                </a>
 					                </div>
 				                </div>
@@ -55,8 +55,8 @@
                                     <thead>
                                         <tr>
                                             <th>Id</th>
-                                            <th>Role Name</th>
-                                            <th>Role Description</th>
+                                            <th>Group Name</th>
+                                            <th>Group Description</th>
                                             <th>Status</th>
                                             <th>Created At</th>
                                             <th>Action</th>

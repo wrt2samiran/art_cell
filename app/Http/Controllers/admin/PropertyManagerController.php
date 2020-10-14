@@ -22,7 +22,7 @@ use Illuminate\Support\Str;
 use App\Models\{User,Role};
 use Carbon\Carbon;
 use App\Http\Requests\Admin\PropertyManager\{CreatePropertyManagerRequest,UpdatePropertyManagerRequest};
-use App\Events\PropertyManager\PropertyManagerCreated;
+use App\Events\User\UserCreated;
 class PropertyManagerController extends Controller
 {
     //defining the view path
@@ -129,8 +129,8 @@ class PropertyManagerController extends Controller
             'created_by'=>auth()->guard('admin')->id(),
             'updated_by'=>auth()->guard('admin')->id()
         ]);
-
-        event(new PropertyManagerCreated($user,$request->password));
+        $user->load('role');
+        event(new UserCreated($user,$request->password));
 
         return redirect()->route('admin.property_managers.list')->with('success','Property manager successfully created.');
 
@@ -147,18 +147,18 @@ class PropertyManagerController extends Controller
 
     public function show($id){
         $property_manager=User::findOrFail($id);
-        $this->data['page_title']='Servicd Provider Details';
+        $this->data['page_title']='Property Manager Details';
         $this->data['property_manager']=$property_manager;
         return view($this->view_path.'.show',$this->data);
 
     }
 
     /************************************************************************/
-    # Function to load role edit page                                        #
+    # Function to load property manager edit page                            #
     # Function name    : edit                                                #
     # Created Date     : 15-05-2020                                          #
     # Modified date    : 15-05-2020                                          #
-    # Purpose          : to load role edit page                              #
+    # Purpose          : to load property manager edit page                  #
     # Param            : id                                                  #
     public function edit($id){
         $property_manager=User::findOrFail($id);
@@ -170,11 +170,11 @@ class PropertyManagerController extends Controller
     }
 
     /************************************************************************************/
-    # Function to update role data with module permissions                               #
+    # Function to update property manager                                                #
     # Function name    : update                                                          #
     # Created Date     : 06-10-2020                                                      #
     # Modified date    : 07-10-2020                                                      #
-    # Purpose          : to update role data with module permissions                     #
+    # Purpose          : to update property manager data                                 #
     # Param            : UpdatePropertyManagerRequest $request,id                        #
     public function update(UpdatePropertyManagerRequest $request,$id){
 
@@ -196,7 +196,7 @@ class PropertyManagerController extends Controller
 
         $property_manager->update($update_data);
 
-        //event(new PropertyManagerCreated($user,$request->password));
+        
 
         return redirect()->route('admin.property_managers.list')->with('success','Property manager successfully updated.');
 

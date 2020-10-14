@@ -428,5 +428,20 @@ class Helper
 
     }
 
+    /*****************************************************/
+    # Function name : ordinal                             #
+    # Created Date  : 24-09-2020                          #
+    # Purpose       : Generate ordinal suffix of a number #
+    # Params        : $number
+    /*****************************************************/
+    public static function Ordinal($number) {
+        $ends = array('th','st','nd','rd','th','th','th','th','th','th');
+        if ((($number % 100) >= 11) && (($number%100) <= 13))
+            return $number. 'th';
+        else
+            return $number. $ends[$number % 10];
+    }
+
+
 
 }

@@ -32,14 +32,14 @@ class CreateRoleRequest extends FormRequest
     }
     public function messages(){
         return [
-            'role_name.required' => 'Group/Role name is required',
-            'role_name.min'=>'Group/Role name should have 3 characters',
-            'role_name.max'=>'Group/Role name should not be more then 50 characters',
-            'role_name.unique'=>'Group/Role name alredy exist. Enter different name',
-            'role_description.min'=>'Group/Role description should have 3 characters',
-            'role_description.max'=>'Group/Role description should not more then 255 characters',
-            'role_description.required'  => 'Group/Role description is required',
-            'parent_role.required'=>'Select base group/role under which you want to create new group/role',
+            'role_name.required' => 'Group name is required',
+            'role_name.min'=>'Group name should have 3 characters',
+            'role_name.max'=>'Group name should not be more then 50 characters',
+            'role_name.unique'=>'Group name alredy exist. Enter different name',
+            'role_description.min'=>'Group description should have 3 characters',
+            'role_description.max'=>'Group description should not more then 255 characters',
+            'role_description.required'  => 'Group description is required',
+            'parent_role.required'=>'Select user type',
             'functionalities.required'=>'Select atleast one permission'
         ];
     }

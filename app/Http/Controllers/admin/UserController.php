@@ -40,11 +40,30 @@ class UserController extends Controller
 
     public function list(Request $request){
         $this->data['page_title']='User List';
+
+        $current_user=auth()->guard('admin')->user();
+
+        $hide_user_role_array=[];
+        //if user don't have service-provider-list permission then we will not fetch service providers from users table
+        if(!$current_user->hasAllPermission(['service-provider-list'])){
+             $hide_user_role_array[]='service-provider';
+        }
+        //if user don't have property-owner-list permission then we will not fetch property owners from users table
+        if(!$current_user->hasAllPermission(['property-owner-list'])){
+             $hide_user_role_array[]='property-owner';
+        }
+        //if user don't have property-manager-list permission then we will not fetch property manager from users table
+        if(!$current_user->hasAllPermission(['property-manager-list'])){
+             $hide_user_role_array[]='property-manager';
+        }
+
         if($request->ajax()){
 
             $users=User::with(['role'])
-            ->whereHas('role',function($q){
-                $q->whereNotIn('slug',['service-provider','property-owner','property-manager']);
+            ->whereHas('role',function($q) use ($hide_user_role_array){
+                if(count($hide_user_role_array)){
+                    $q->whereNotIn('slug',$hide_user_role_array);
+                } 
             })
             ->when($request->role_id,function($query) use($request){
                 $query->whereHas('role',function($sub_query)use ($request){
@@ -77,11 +96,18 @@ class UserController extends Controller
                 $details_url=route('admin.users.show',$user->id);
                 $edit_url=route('admin.users.edit',$user->id);
                 $action_buttons='';
-                //need to check permissions later
+                
+                // if($user->role->slug=='service-provider'){
+
+                // }elseif ($user->role->slug=='service-provider') {
+                //     # code...
+                // }
+
+
+
                 if(true){
                     $action_buttons=$action_buttons.'<a title="View Servide Provider Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
                 }
-
                 $has_edit_permission=(auth()->guard('admin')->id()==$user->id || $user->id=='1' )?false:true;
 
                 if($has_edit_permission){
@@ -98,8 +124,10 @@ class UserController extends Controller
             ->make(true);
         }
 
-        $roles=Role::whereStatus('A')->where(function($q){
-            $q->whereNotIn('slug',['service-provider','property-owner','property-manager']);
+        $roles=Role::whereStatus('A')->where(function($q)use($hide_user_role_array){
+            if(count($hide_user_role_array)){
+                $q->whereNotIn('slug',$hide_user_role_array);
+            } 
         })->orderBy('id','ASC')->get(); 
         $this->data['roles']=$roles;
         return view($this->view_path.'.list',$this->data);
@@ -114,7 +142,7 @@ class UserController extends Controller
     public function create(){
         $this->data['page_title']='Create user';
         $roles=Role::whereStatus('A')->where(function($q){
-            $q->whereNotIn('slug',['service-provider','property-owner','property-manager']);
+            // $q->whereNotIn('slug',['service-provider','property-owner','property-manager']);
         })->orderBy('id','ASC')->get();
         $this->data['roles']=$roles;
         return view($this->view_path.'.create',$this->data);
@@ -144,7 +172,7 @@ class UserController extends Controller
             'created_by'=>auth()->guard('admin')->id(),
             'updated_by'=>auth()->guard('admin')->id()
         ]);
-
+        $user->load('role');
         event(new UserCreated($user,$request->password));
 
         return redirect()->route('admin.users.list')->with('success','User successfully created.');
@@ -180,7 +208,7 @@ class UserController extends Controller
         $this->data['page_title']='Edit User';
         $this->data['user']=$user;
         $roles=Role::whereStatus('A')->where(function($q){
-            $q->whereNotIn('slug',['service-provider','property-owner','property-manager']);
+            // $q->whereNotIn('slug',['service-provider','property-owner','property-manager']);
         })->orderBy('id','ASC')->get();
         $this->data['roles']=$roles;
         return view($this->view_path.'.edit',$this->data);
@@ -234,7 +262,6 @@ class UserController extends Controller
         $user->delete();
         return response()->json(['message'=>'User successfully deleted.']);
 
-  
     }
 
     /************************************************************************/

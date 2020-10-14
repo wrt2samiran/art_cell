@@ -124,6 +124,15 @@
                    
                     
                 </li>
+                <li class="nav-item ">
+                    <a href="{{URL::to('/').'/admin/translations'}}"
+                    class="nav-link {{(request()->is('admin/translations/*','admin/translations'))?'active':''}}">
+                        <i class="nav-icon fas fa-globe"></i>
+                        <p>
+                             {{__('nav_link_text.translation_management')}}
+                        </p>
+                    </a>
+                </li>
                 <li class="nav-item has-treeview {{(request()->is('admin/message/*','admin/message'))?'menu-open':''}}">
                     
                     <li class="nav-item">
@@ -136,6 +145,8 @@
                             </a>
                         </li>
                 </li>
+
+
                 <li class="nav-item has-treeview {{(request()->is('admin/shared-service/*','admin/shared-service'))?'menu-open':''}}">
                     
                     <li class="nav-item">
@@ -162,7 +173,7 @@
                 
                 
                  <li class="nav-item">
-                    <a href="{{route('admin.roles.list')}}" class="nav-link {{(request()->is('admin/roles/*','admin/roles'))?'active':''}}">
+                    <a href="{{route('admin.roles.list')}}" class="nav-link {{(request()->is('admin/user-groups/*','admin/user-groups'))?'active':''}}">
                        <i class="nav-icon fas fa-users"></i>
                       <p>
                         {{__('nav_link_text.role_groups')}}
@@ -201,9 +212,16 @@
                     </a>
                 </li>
                 <li class="nav-item ">
+                    <a href="{{route('admin.properties.list')}}"
+                    class="nav-link {{(request()->is('admin/properties/*','admin/properties'))?'active':''}}">
+                        <i class="nav-icon fas fa-igloo"></i>
+                        <p>{{__('nav_link_text.properties')}}</p>
+                    </a>
+                </li>
+                <li class="nav-item ">
                     <a href="{{route('admin.quotations.list')}}"
                     class="nav-link {{(request()->is('admin/quotations/*','admin/quotations'))?'active':''}}">
-                        <i class="nav-icon fas fa-quote-right"></i>
+                        <i class="nav-icon fas fa-sticky-note"></i>
                         <p>{{__('nav_link_text.quotations')}}</p>
                     </a>
                 </li> 

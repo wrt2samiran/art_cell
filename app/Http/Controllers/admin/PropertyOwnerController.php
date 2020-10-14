@@ -22,7 +22,7 @@ use Illuminate\Support\Str;
 use App\Models\{User,Role};
 use Carbon\Carbon;
 use App\Http\Requests\Admin\PropertyOwner\{CreatePropertyOwnerRequest,UpdatePropertyOwnerRequest};
-use App\Events\PropertyOwner\PropertyOwnerCreated;
+use App\Events\User\UserCreated;
 class PropertyOwnerController extends Controller
 {
     //defining the view path
@@ -129,8 +129,8 @@ class PropertyOwnerController extends Controller
             'created_by'=>auth()->guard('admin')->id(),
             'updated_by'=>auth()->guard('admin')->id()
     	]);
-
-        event(new PropertyOwnerCreated($user,$request->password));
+        $user->load('role');
+        event(new UserCreated($user,$request->password));
 
         return redirect()->route('admin.property_owners.list')->with('success','Property owner successfully created.');
 
@@ -147,18 +147,18 @@ class PropertyOwnerController extends Controller
 
     public function show($id){
         $property_owner=User::findOrFail($id);
-        $this->data['page_title']='Servicd Provider Details';
+        $this->data['page_title']='Property Owner Details';
         $this->data['property_owner']=$property_owner;
         return view($this->view_path.'.show',$this->data);
 
     }
 
     /************************************************************************/
-    # Function to load role edit page                                        #
+    # Function to load property owner edit page                              #
     # Function name    : edit                                                #
     # Created Date     : 09-10-2020                                          #
     # Modified date    : 09-10-2020                                          #
-    # Purpose          : to load role edit page                              #
+    # Purpose          : to load property owner edit page                    #
     # Param            : id                                                  #
     public function edit($id){
         $property_owner=User::findOrFail($id);
@@ -170,11 +170,11 @@ class PropertyOwnerController extends Controller
     }
 
     /************************************************************************************/
-    # Function to update role data with module permissions                               #
+    # Function to update property owner data                                             #
     # Function name    : update                                                          #
     # Created Date     : 09-10-2020                                                      #
     # Modified date    : 09-10-2020                                                      #
-    # Purpose          : to update role data with module permissions                     #
+    # Purpose          : to update property owner data                                   #
     # Param            : UpdatePropertyOwnerRequest $request,id                          #
     public function update(UpdatePropertyOwnerRequest $request,$id){
 
@@ -196,7 +196,7 @@ class PropertyOwnerController extends Controller
 
         $property_owner->update($update_data);
 
-        //event(new PropertyOwnerCreated($user,$request->password));
+        
 
         return redirect()->route('admin.property_owners.list')->with('success','Property owner successfully updated.');
 

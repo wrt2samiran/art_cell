@@ -1,6 +1,7 @@
 <?php
 
-return [
+
+return array (
 	'home'=>'Home',
 	'dashboard'=>'Dashboard',
 	'roles_or_users_group'=>'Roles/User Groups',
@@ -25,4 +26,12 @@ return [
 	'message_management' => 'Message Management',
 	'task_management' => 'Task Management',
 	'service_management' => 'Service Management',
-];
+	'change_password' => 'Change Password',
+    'properties' => 'Properties', 
+    'task_assign_labour' => 'Task Assign Labour',
+    'translation_management' => 'Translation Management',
+);
+
+
+ 
+

@@ -1,6 +1,5 @@
 <?php
-
-return [
+return array (
 	'home'=>'الصفحة الرئيسية',
 	'dashboard'=>'وحة القيادة',
 	'roles_or_users_group'=>'الأدوار / مجموعات المستخدمين',
@@ -25,5 +24,10 @@ return [
 	'message_management' => 'إدارة الرسائل',
 	'task_management' => 'ادارة المهام',
 	'Service Management' => 'إدارة الخدمات',
+	'change_password' => 'تغيير كلمة المرور',
+	'properties' => 'الخصائص',
+	'translation_management' => 'Translation Management',
 
-];
+
+);
+

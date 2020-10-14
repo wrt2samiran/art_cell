@@ -11,9 +11,9 @@
 |
 */
 
-Route::get('/', function () {
-    return redirect()->route('admin.login');
-});
+// Route::get('/', function () {
+//     return redirect()->route('admin.login');
+// });
 
 Route::get('/language/{locale}','admin\DashboardController@changeLanguage')->name('changeLanguage');
 Route::get('/multi-lang','PostController@index');
@@ -47,8 +47,8 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             Route::get('/change-password','DashboardController@showChangePasswordForm')->name('changePassword');
             Route::post('/change-password','DashboardController@changePassword')->name('changePassword');
 
-            /*Routes for role/group management */
-            Route::group(['prefix'=>'roles','as'=>'roles.'],function(){
+            /*Routes for role/user groups management */
+            Route::group(['prefix'=>'user-groups','as'=>'roles.'],function(){
                 Route::get('/', 'RoleController@list')->name('list');
                 Route::get('/create', 'RoleController@create')->name('create');
                 Route::post('/store', 'RoleController@store')->name('store');
@@ -147,7 +147,7 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             
             /************************************/
 
-            /*Routes for property manager management */
+            /*Routes for users management */
             Route::group(['prefix'=>'users','as'=>'users.'],function(){
                 Route::get('/', 'UserController@list')->name('list');
                 Route::get('/create', 'UserController@create')->name('create');
@@ -158,6 +158,21 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::delete('/{id}/delete', 'UserController@delete')->name('delete');
                 Route::get('/{id}/change-change', 'UserController@change_status')->name('change_status');
   
+            });
+            
+            /************************************/
+
+            /*Routes for property management */
+            Route::group(['prefix'=>'properties','as'=>'properties.'],function(){
+                Route::get('/', 'PropertyController@list')->name('list');
+                Route::get('/create', 'PropertyController@create')->name('create');
+                Route::post('/store', 'PropertyController@store')->name('store');
+                Route::get('/{id}', 'PropertyController@show')->name('show');
+                Route::get('/{id}/edit', 'PropertyController@edit')->name('edit');
+                Route::put('/{id}', 'PropertyController@update')->name('update');
+                Route::delete('/{id}/delete', 'PropertyController@delete')->name('delete');
+                Route::get('/{id}/change-change', 'PropertyController@change_status')->name('change_status');
+                Route::get('attachment/{id}/download', 'PropertyController@download_attachment')->name('download_attachment');
             });
             
             /************************************/

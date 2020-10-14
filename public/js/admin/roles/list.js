@@ -26,7 +26,7 @@
  function delete_role(url){
   swal({
   title: "Are you sure?",
-  text: "Once deleted, you will not be able to recover this role!",
+  text: "Once deleted, you will not be able to recover this group!",
   icon: "warning",
   buttons: true,
   dangerMode: true,
@@ -42,7 +42,7 @@
         success: function (data) {
           roles_table.ajax.reload(null, false);
           $.LoadingOverlay("hide");
-          toastr.success('Role successfully deleted.', 'Success', {timeOut: 5000});
+          toastr.success('Group successfully deleted.', 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");

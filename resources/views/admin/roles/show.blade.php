@@ -9,12 +9,12 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Group/Role Management</h1>
+            <h1>User Groups Management</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.roles.list')}}">Group/Roles</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.roles.list')}}">Groups</a></li>
               <li class="breadcrumb-item active">Details</li>
             </ol>
           </div>
@@ -28,17 +28,17 @@
             <!-- Default box -->
             <div class="card card-success">
                 <div class="card-header">
-                  Group/Role Deatils
+                  Group Details
                 </div> 
               <div class="card-body"> 
                  <table class="table table-bordered table-hover record-details-table" id="role-details-table">
                       <tbody>
                         <tr>
-                          <td>Group/Role Name</td>
+                          <td>Group Name</td>
                           <td >{{$role->role_name}}</td>
                         </tr>
                         <tr>
-                          <td >Group/Role Description</td>
+                          <td >Group Description</td>
                           <td >{{$role->role_description}}</td>
                         </tr>
                         <tr>
@@ -51,23 +51,7 @@
                           <td >Total Users</td>
                           <td >{{$role->users()->count()}}</td>
                         </tr>
-                        <tr>
-                          <td >Parent Role/Group</td>
-                          <td >{{$role->parent? $role->parent->role_name:'--' }}</td>
-                        </tr>
-                        <tr>
-                          <td >Child Role/Groups</td>
-                          <td>
-                            @if($role->childrens->count())
-                              @foreach($role->childrens as $key=> $children)
-                              <span>{{($key!=0)?',':''}}{{$children->role_name}}</span>
-                              @endforeach
-                            @else
-                            No child groups
-                            @endif
-                            
-                          </td>
-                        </tr>
+
                         <tr>
                           <td >Module wise permissions</td>
                           <td>
