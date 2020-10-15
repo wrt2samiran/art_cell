@@ -5,7 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\Models\{User,Country,State,City,Tasks, Calendar};
+use App\Models\{User,Country,State,City,Tasks, Calendars};
 
 use App\Models\ModuleFunctionality;
 use Helper, AdminHelper, Image, Auth, Hash, Redirect, Validator, View, Config;
@@ -26,31 +26,35 @@ class TaskManagementController extends Controller
     # Purpose       : Showing City List
     # Params        : Request $request
     /*****************************************************/
-    
-
-    public function list(Request $request){
+       
+    public function list(Request $request, $id){
+        //dd($request->all());
         $this->data['page_title']='Task List';
         $logedInUser = \Auth::guard('admin')->user()->id;
 
         if($request->ajax()){
 
-            $Calendar=Calendar::orderBy('id','Desc');
+            $calendar=Calendars::orderBy('id','Desc');
             return Datatables::of($calendar)
             ->editColumn('created_at', function ($calendar) {
-                return $calendar->created_at ? with(new Carbon($city->created_at))->format('m/d/Y') : '';
+                return $calendar->created_at ? with(new Carbon($calendar->created_at))->format('m/d/Y') : '';
             })
             
             ->filterColumn('created_at', function ($query, $keyword) {
                 $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
             })
-            ->addColumn('is_active',function($calendar){
-                if($calendar->is_active=='1'){
-                   $message='deactivate';
-                   return '<a title="Click to deactivate the city" href="javascript:change_status('."'".route('admin.task_management.change_status',$calendar->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm">Active</a>';
+            ->addColumn('status',function($calendar){
+                if($calendar->status=='1'){
+                   //$message='deactivate';
+                   return '<span class="btn btn-block btn-outline-success btn-sm">Overdue</a>';
                     
-                }else{
-                   $message='activate';
-                   return '<a title="Click to activate the city" href="javascript:change_status('."'".route('admin.task_management.change_status',$calendar->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm">Inactive</a>';
+                }else if($calendar->status=='0'){
+                  // $message='activate';
+                   return '<span class="btn btn-block btn-outline-success btn-sm">Pending</a>';
+                }
+                else
+                {
+                    return '<span class="btn btn-block btn-outline-success btn-sm">Completed</a>';
                 }
             })
             ->addColumn('action',function($calendar){
@@ -61,27 +65,54 @@ class TaskManagementController extends Controller
                 return '<a title="View City Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>&nbsp;&nbsp;<a title="Add Task" href="'.$add_url.'"><i class="fas fa-plus text-success"></i></a>&nbsp;&nbsp;<a title="Delete city" href="javascript:delete_city('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
                 
             })
-            ->rawColumns(['action','is_active'])
+            ->rawColumns(['action','status'])
             ->make(true);
         }
 
         $service_list=Tasks::whereStatus('A')->where('work_status', '<>','2')->orderBy('id','ASC')->get();
 
-        //$country_list=Country::whereIsActive('1')->orderBy('id','ASC')->get();
-        //$property_list=Tasks::with('contracts')->whereServiceProviderId($logedInUser)->orderBy('id','ASC')->get();
-
-        // $property_list = DB::table('tasks')
-        // ->join('contracts', 'contracts.id', '=', 'tasks.contract_id')
-        // ->join('properties', 'properties.id', '=', 'contracts.property_id')
-        // ->where('tasks.service_provider_id', $logedInUser)
-        // ->get();
-
         $labour_list= User::whereStatus('A')->whereRoleId('5')->whereCreatedBy($logedInUser)->get();
 
+
         $this->data['service_list'] = $service_list;
-        //$this->data['country_list'] = $country_list;
+        $this->data['task_id'] = $id;
+        //$this->data['task_type'] = $sqlTask->task_type;
+
         //$this->data['property_list']= $property_list;
         $this->data['labour_list']  = $labour_list;
+        //$sqlCalendar=Calendars::whereTaskId($id)->orderBy('id','Desc')->get();
+
+        if ($request->has('search')) {
+            
+            $sqlCalendar = Calendars::where(function ($q) use ($request) {
+                
+                if ($request->has('user_labour_id')) {
+                   
+                    $q->where(function ($que) use ($request) {
+                        $que->where('user_id', $request->user_labour_id);
+                       
+                     });                   
+
+                    }
+
+                if ($request->has('task_status')) {
+                    
+                    $q->where(function ($que) use ($request) {
+                        $que->where('status', $request->task_status);
+                       
+                     });                   
+
+                    }    
+
+            })->get();
+
+        } else {
+            $sqlCalendar=Calendars::whereTaskId($id)->orderBy('id','Desc')->get();
+        }
+
+        $this->data['calendar_list']  = $sqlCalendar;
+        $this->data['request'] = $request;
+
        // return view($this->view_path.'.add',$this->data);
 
         return view($this->view_path.'.list',$this->data);
@@ -112,7 +143,7 @@ class TaskManagementController extends Controller
                     'country_id'    => 'required',
                     'state_id'      => 'required',
                     'city_id'       => 'required',
-                    'user_id'       => 'required',
+                    'labour_id'     => 'required',
                 );
                 $validationMessages = array(
                     'job_title.required'    => 'Please enter Job title',
@@ -123,29 +154,41 @@ class TaskManagementController extends Controller
                     'country_id.required'   => 'Please select country',
                     'state_id.required'     => 'Please select state',
                     'city_id.required'      => 'Please select city',
-                    'user_id.required'      => 'Please select user',
+                    'labour_id.required'    => 'Please select user',
                 );
 
                 $Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);
                 if ($Validator->fails()) {
-                    return redirect()->route('admin.task_management.taskAdd')->withErrors($Validator)->withInput();
+
+                    return redirect()->route('admin.task_management.list',$request->labour_id)->withErrors($Validator)->withInput();
+                    
                 } else {
                     
-                    $new = new Tasks;
-                    $new->name = trim($request->name, ' ');
-                    $new->country_id  = $request->country_id;
-                    $new->state_id    = $request->state_id;
+                    $rangeDate = (explode("-",$request->date_range));
+                    //dd($rangeDate);
+                    $new = new Calendars;
+                    $new->task_id = $request->service_id;   
+                    $new->property_id = $request->property_id;
+                    $new->country_id =$request->country_id;
+                    $new->state_id =$request->state_id;
+                    $new->city_id =$request->city_id;
+                    $new->user_id =$request->labour_id;
+                    $new->job_title =$request->job_title;
+                    $new->job_desc =$request->job_desc;
+                    $new->job_type ='1';
+                    $new->start_date = date("Y-m-d", strtotime($rangeDate[0]));
+                    $new->end_date = date("Y-m-d", strtotime($rangeDate[1]));
+                    $new->status ='0';
+                    $new->created_by =auth()->guard('admin')->id();
+                    $new->updated_by =auth()->guard('admin')->id();
 
                     $new->created_at = date('Y-m-d H:i:s');
                     $save = $new->save();
-                
-                    if ($save) {                        
+
+                                      
                         $request->session()->flash('alert-success', 'Task has been added successfully');
-                        return redirect()->route('admin.task_management.list');
-                    } else {
-                        $request->session()->flash('alert-danger', 'An error occurred while adding the Task');
-                        return redirect()->back();
-                    }
+                        return redirect()->route('admin.task_management.list',$request->labour_id);
+                    
                 }
             }
 
@@ -376,5 +419,29 @@ class TaskManagementController extends Controller
         $sqlCountry = Country::whereIsActive('1')->where('id', $sqlState->country_id)->first();
         
         return response()->json(['status'=>true, 'sqlProperty'=>$sqlProperty, 'sqlCity'=>$sqlCity, 'sqlState'=>$sqlState, 'sqlCountry'=>$sqlCountry],200);
+    }
+
+    
+    public function updateTask(Request $request)
+    {
+        $logedInUser = \Auth::guard('admin')->user()->id;
+         $validator = Validator::make($request->all(), [ 
+            'calendar_id' => 'required',
+            ]);
+
+           if ($validator->fails()) { 
+              return response()->json(['success' =>false,'message'=>$validator->errors()->first()], 200);
+            }
+
+         $sqlCalendar = Calendars::find($request->calendar_id);
+            $sqlCalendar->start_date  = date('Y-m-d h:i:s', strtotime($request->modified_start_date));
+            $sqlCalendar->end_date    = date('Y-m-d h:i:s', strtotime($request->modified_end_date));
+            $sqlCalendar->updated_at  = date('Y-m-d H:i:s');
+            $sqlCalendar->updated_by  = $logedInUser;
+            $save = $sqlCalendar->save();                     
+                    
+
+        
+        return response()->json(['status'=>true],200);
     }
 }

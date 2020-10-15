@@ -295,6 +295,8 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::any('/add','TaskManagementController@taskAdd')->name('taskAdd');
                 Route::post('/get-data', 'TaskManagementController@getData')->name('getData');
                 Route::post('/get-cities', 'TaskManagementController@getCities')->name('getCities');
+                Route::post('/update-task', 'TaskManagementController@updateTask')->name('updateTask');
+                
                 
                 
             });
