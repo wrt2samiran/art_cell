@@ -9,6 +9,7 @@ return array (
   'master_modules' => 'وحدات رئيسية',
   'message_management' => 'إدارة الرسائل',
   'properties' => 'الخصائص',
+  'contracts_management' => 'ادارة العقود',
   'property_managers' => 'مدراء العقارات',
   'property_owners' => 'اصحاب العقارات',
   'property_types' => 'أنواع العقارات',

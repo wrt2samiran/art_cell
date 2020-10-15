@@ -14,6 +14,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use File;
 class User extends Authenticatable
 {
     use Notifiable;
@@ -26,7 +27,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'first_name','last_name','name','phone','email', 'password','role_id','created_by','updated_by','status','created_from','deleted_by'
+        'first_name','last_name','name','phone','email', 'password','role_id','created_by','updated_by','status','created_from','deleted_by','profile_pic'
     ];
 
     /**
@@ -112,6 +113,15 @@ class User extends Authenticatable
 
     public function hasModulePermission($module_name){
         return in_array($module_name, $this->module_access_slug_array());
+    }
+
+    public function profile_image_url(){
+
+        if($this->profile_pic){
+            return asset('/uploads/profile_images/'.$this->profile_pic);
+        }else{
+             return asset('/uploads/profile_images/dummy_profile_image.png');
+        }
     }
 
 

@@ -22,7 +22,7 @@
 
     });
 
- //function to delete gallery
+ //function to delete service
  function delete_service(url){
   swal({
   title: "Are you sure?",

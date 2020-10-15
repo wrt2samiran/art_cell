@@ -41,7 +41,7 @@ class CreatePropertyOwnerRequest extends FormRequest
             'password.required' => 'Password is required',
             'password.min'=>'Password should have 6 characters',
             'password.max'=>'Password should not be more then 100 characters',
-            'phone.required' => 'Phone/Contact is required',
+            'phone.required' => 'Phone/Contact number is required',
             'phone.regex'=>'Phone/Contact number should be a valid number of size 8 to 20 characters'
         ];
     }

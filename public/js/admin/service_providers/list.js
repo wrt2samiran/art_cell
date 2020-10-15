@@ -21,7 +21,7 @@
         }]
     });
 
- //function to delete gallery
+ //function to delete sevice provider
  function delete_service_provider(url){
   swal({
   title: "Are you sure?",

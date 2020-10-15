@@ -33,7 +33,7 @@
         }
     });
 
- //function to delete gallery
+ //function to delete quotation
  function delete_quotation(url){
   swal({
   title: "Are you sure?",

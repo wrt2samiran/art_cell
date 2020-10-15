@@ -22,7 +22,7 @@
 
     });
 
- //function to delete gallery
+ //function to delete role
  function delete_role(url){
   swal({
   title: "Are you sure?",

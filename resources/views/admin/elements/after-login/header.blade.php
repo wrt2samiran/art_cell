@@ -43,6 +43,14 @@
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
     <!-- <link rel="stylesheet" href="{{asset('assets/css/styles.css')}}"> -->
     <link rel="stylesheet" type="text/css" href="{{asset('css/admin/custom.css')}}">
+    @php
+    if(App::getLocale()=='en'){
+        $lang_css_path=asset('css/admin/language_en.css');
+    }else if(App::getLocale()=='ar'){
+        $lang_css_path=asset('css/admin/language_ar.css');
+    }
+    @endphp
+    <link rel="stylesheet" type="text/css" href="{{$lang_css_path}}">
    
 </head>
 <body class="hold-transition sidebar-mini layout-fixed text-sm lang_{{App::getLocale()}}">
@@ -73,8 +81,11 @@
                     <i class="fa fa-caret-down"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-xs dropdown-menu-right">
-                    <a href="{{route('admin.changePassword')}}" class="dropdown-item btn btn-succes btn-sms">
+                    <a href="{{route('admin.profile.change_password')}}" class="dropdown-item btn btn-succes btn-sms">
                         <span class="float-right text-muted text-sm">{{__('nav_link_text.change_password')}}</span>
+                    </a>
+                    <a href="{{route('admin.profile.edit_profile')}}" class="dropdown-item btn btn-succes btn-sms">
+                        <span class="float-right text-muted text-sm">Edit Profile</span>
                     </a>
                     <a href="{{route('admin.logout')}}" class="dropdown-item btn btn-primary btn-sms">
                         <span class="float-right text-muted text-sm">{{__('nav_link_text.sign_out')}}</span>

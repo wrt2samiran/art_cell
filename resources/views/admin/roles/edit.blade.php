@@ -64,10 +64,10 @@
                              @endif
                           </div>
                    
-                          @if($role->parrent_id!=null)
+                        
                           <div class="form-group required">
                              <label for="parent_role">Select user type<span class="error">*</span></label>
-                              <select class="form-control parent_role_select2" onchange='onParentRoleChange(this.value,"{{route('admin.roles.ajax_parent_module_permissions',$role->id)}}")' style="width: 100%;" name="parent_role">
+                              <select class="form-control parent_role_select2" style="width: 100%;" name="parent_role">
                                 <option value="">Select a group</option>
                                 @forelse($parent_roles as $parent_role)
                                    <option value="{{$parent_role->id}}" 
@@ -81,7 +81,7 @@
                               <span class="text-danger">{{$errors->first('parent_role')}}</span>
                              @endif
                           </div>
-                          @endif
+                       
                         <div id="module_permissions_container">
                           <div class="row">
                             @if(count($modules))

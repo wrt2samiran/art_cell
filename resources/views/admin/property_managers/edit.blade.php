@@ -100,7 +100,7 @@
                               </select>
                           </div>
                         </div>
-                        <!--  this the url for remote validattion rule for role name -->
+                        <!--  this the url for remote validattion rule for user email -->
                         <input type="hidden" id="ajax_check_user_email_unique" value="{{route('ajax.check_user_email_unique',$property_manager->id)}}">
                         <div>
                            <a href="{{route('admin.property_managers.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>

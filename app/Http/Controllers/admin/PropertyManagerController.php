@@ -92,11 +92,11 @@ class PropertyManagerController extends Controller
     }
 
     /************************************************************************/
-    # Function to load property manager create view page                       #
+    # Function to load property manager create view page                     #
     # Function name    : create                                              #
     # Created Date     : 06-10-2020                                          #
     # Modified date    : 07-10-2020                                          #
-    # Purpose          : To load property manager  create view page            #
+    # Purpose          : To load property manager  create view page          #
     public function create(){
         $this->data['page_title']='Create Property manager ';
         $roles=Role::whereStatus('A')->whereNull('parrent_id')->where('slug','property-manager')->orderBy('id','ASC')->get();
@@ -110,7 +110,7 @@ class PropertyManagerController extends Controller
     # Created Date     : 09-10-2020                                                  #
     # Modified date    : 09-10-2020                                                  #
     # Purpose          : store property manager data                                 #
-    # Param            : CreatePropertyManagerRequest $request                                  #
+    # Param            : CreatePropertyManagerRequest $request                       #
 
     public function store(CreatePropertyManagerRequest $request){
 
@@ -203,11 +203,11 @@ class PropertyManagerController extends Controller
     }
 
     /************************************************************************/
-    # Function to delete property manager                                      #
+    # Function to delete property manager                                    #
     # Function name    : delete                                              #
     # Created Date     : 06-10-2020                                          #
     # Modified date    : 07-10-2020                                          #
-    # Purpose          : to delete property manager                            #
+    # Purpose          : to delete property manager                          #
     # Param            : id                                                  #
     public function delete($id){
         $user=User::findOrFail($id);
@@ -222,11 +222,11 @@ class PropertyManagerController extends Controller
     }
 
     /************************************************************************/
-    # Function to change status of property manager                            #
+    # Function to change status of property manager                          #
     # Function name    : change_status                                       #
     # Created Date     : 06-10-2020                                          #
     # Modified date    : 06-10-2020                                          #
-    # Purpose          : to change status of property manager                  #
+    # Purpose          : to change status of property manager                #
     # Param            : id                                                  #
     public function change_status($id){
         $property_manager=User::findOrFail($id);

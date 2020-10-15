@@ -65,8 +65,8 @@
                           </div>
                           <div class="form-group required">
                              <label for="parent_role">Select user type<span class="error">*</span></label>
-                              <select class="form-control parent_role_select2" onchange='onParentRoleChange(this.value,"{{route('admin.roles.ajax_parent_module_permissions')}}")' style="width: 100%;" name="parent_role">
-                                <option value="">Select a group</option>
+                              <select class="form-control parent_role_select2"  style="width: 100%;" name="parent_role">
+                                <option value="">Select user type</option>
                                 @forelse($parent_roles as $parent_role)
                                    <option value="{{$parent_role->id}}" {{(old('parent_role') && old('menu_category')== $parent_role->id)? 'selected':''}}>{{$parent_role->role_name}}</option>
                                 @empty
@@ -80,7 +80,31 @@
                           </div>
                           <div id="permissions_error"></div>
                           <div id="module_permissions_container">
-                            
+                              <div class="row">
+                                @if(count($modules))
+                                  @foreach($modules as $module)
+                                  <div class="col-sm-4">
+                                    <div class="card card-success">
+                                      <div  class="card-header">{{$module->module_name}}</div>
+                                      <div  class="card-body">
+                                        @if(count($module->functionalities))
+                                          @foreach($module->functionalities as $functionality)
+                                          <div class="custom-control custom-checkbox">
+                                            <input class="custom-control-input" type="checkbox" id="customCheckbox_{{$functionality->id}}" name="functionalities[]" value="{{$functionality->id}}">
+                                            <label for="customCheckbox_{{$functionality->id}}" class="custom-control-label">{{$functionality->function_name}}</label>
+                                          </div>
+                                          @endforeach
+                                        @endif
+                                      </div>
+                                    </div>
+                                  </div>
+                                  @endforeach
+                                @else
+                                <div class="col-sm-12">
+                                  <p>No Module Found</p>
+                                </div>
+                                @endif
+                              </div>
                           </div>
 
                         </div>

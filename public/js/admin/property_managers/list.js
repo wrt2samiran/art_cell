@@ -21,7 +21,7 @@
         }]
     });
 
- //function to delete gallery
+ //function to delete manager
  function delete_property_manager(url){
   swal({
   title: "Are you sure?",

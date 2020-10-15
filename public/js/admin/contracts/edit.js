@@ -1,100 +1,72 @@
 
-$("#admin_property_edit_form").validate({
+
+
+$("#admin_contract_edit_form").validate({
     rules: {
-        property_name:{
-            required: true,
-            minlength: 2,
-            maxlength: 100,  
-        },
-        property_type_id:{
-            required: true
-        },
+
+
         description:{
             required: true,
             maxlength: 1000,  
         },
-        no_of_units:{
-            required:true,
-            number:true
+        property:{
+            required: true
         },
-        city_id:{
+        service_provider:{
             required: true, 
-        },
-        address:{
-            required: true,
-            maxlength: 255,  
-        },
-        location:{
-            required: true,
-            maxlength: 255,  
         },
         property_owner:{
             required: true, 
         },
-        property_manager:{
+        start_date:{
+            required: true, 
+            maxlength: 10,
+        },
+        end_date:{
+            required: true,
+            maxlength: 10, 
+        },
+        contract_price:{
+            required: true, 
+            number:true
+        },
+        "services[]":{
             required: true, 
         },
-        contact_number:{
-            required: true,
-            minlength: 8,
-            maxlength: 20,
-            number:true  
-        },
-        contact_email:{
-            required: true,
-            email: true,
-            maxlength: 100,  
-        },
-        "property_files[]": {
+        "contract_files[]": {
             extension: "pdf",
-            accept: "application/pdf"
+            accept: "application/pdf",
         }
     },
     messages: {
-        property_name: {
-            required:  "Property name is required",
-            minlength: "Property name should have 2 characters",
-            maxlength: "Property name should not be more then 100 characters",
-        },
-        property_type_id:{
-            required:  "Select property type",
+
+        property:{
+            required:  "Select property",
         },
         description: {
-            required:  "Description is required",
-            maxlength: "Description should not be more then 1000 characters",
+            required:  "Contract info is required",
+            maxlength: "Info should not be more then 1000 characters",
         },
-        no_of_units:{
-             required:  "Please enter number of units of the property",
-        },
-        city_id: {
-            required:  "Please select city from dropdown list",
-        },
-        address: {
-            required:  "Address is required",
-            maxlength: "Address should not be more then 255 characters",
-        },
-        location:{
-            required:  "Location is required",
-            maxlength: "Location should not be more then 255 characters",
-        },
+
         property_owner: {
             required:  "Please select property owner",
         },
-        property_manager: {
-            required:  "Please select property manager",
+        service_provider:{
+            required:  "Please select service provider",
         },
-        contact_number: {
-            required:  "Contact number is required",
-            minlength: "Contact number should have minimum 8 characters",
-            maxlength: "Contact number should not be more then 20 characters",
-            number:"Only number allowed"
+        contract_price:{
+            required:  "Enter contract price",
         },
-        contact_email: {
-            required:  "Contact email is required",
-            email: "Please enter valid email address",
-            maxlength: "Email should not be more then 100 characters"
+        start_date:{
+            required:  "Enter start date in dd/mm/yyy format",
         },
-        "property_files[]":{
+        end_date:{
+            required:  "Enter end date in dd/mm/yyy format",
+        },
+        "services[]":{
+            required:  "Select services required for the contract",
+        },
+        "contract_files[]":{
             extension:'Please upload only PDF files',
             accept:'Please upload only PDF files'
         }
@@ -115,24 +87,8 @@ $("#admin_property_edit_form").validate({
     }
 });
 
-$('#city_id').select2({
-    theme: 'bootstrap4',
-    placeholder:'Select city'
-});
 
-$('#property_type_id').select2({
-    theme: 'bootstrap4',
-    placeholder:'Select property type'
-});
 
-$('#electricity_account_day').select2({
-    theme: 'bootstrap4',
-    placeholder:'Select electricity account day'
-});
-$('#water_acount_day').select2({
-    theme: 'bootstrap4',
-    placeholder:'Select water account day'
-});
 
 
 $('#property_owner').select2({
@@ -148,12 +104,38 @@ $('#property_owner').select2({
     },
 });
 
-$('#property_manager').select2({
+$('#property').select2({
     theme: 'bootstrap4',
-    placeholder:'Select property manager',
+    placeholder:'Select property',
+    "language": {
+       "noResults": function(){
+           return "No Property Found";
+       }
+    },
+    escapeMarkup: function(markup) {
+      return markup;
+    },
+});
+
+$('#services').select2({
+    theme: 'bootstrap4',
+    placeholder:'Select services',
+    "language": {
+       "noResults": function(){
+           return "No Service Found";
+       }
+    },
+    escapeMarkup: function(markup) {
+      return markup;
+    },
+});
+
+$('#property').select2({
+    theme: 'bootstrap4',
+    placeholder:'Select property',
     "language": {
         "noResults": function(){
-            return "No Property Manager Found <a href='"+$('#property_manager_create_url').val()+"' target='_blank' class='btn btn-success'>Create New One</a>";
+            return "No Property Found <a href='"+$('#property_create_url').val()+"' target='_blank' class='btn btn-success'>Create New One</a>";
         }
     },
     escapeMarkup: function(markup) {
@@ -161,10 +143,29 @@ $('#property_manager').select2({
     },
 });
 
+$('#service_provider').select2({
+    theme: 'bootstrap4',
+    placeholder:'Select property',
+    "language": {
+        "noResults": function(){
+            return "No Service Provider Found <a href='"+$('#service_provider_create_url').val()+"' target='_blank' class='btn btn-success'>Create New One</a>";
+        }
+    },
+    escapeMarkup: function(markup) {
+        return markup;
+    },
+});
 
-$('#property_files').on('change',function(){
+$('#start_date').datepicker({
+    dateFormat:'dd/mm/yy'
+});
+$('#end_date').datepicker({
+    dateFormat:'dd/mm/yy'
+});
+
+$('#contract_files').on('change',function(){
     
-    var files = document.getElementById("property_files").files;
+    var files = document.getElementById("contract_files").files;
     var file_size_error=false;
     var file_type_error=false;
     for (var i = 0; i < files.length; i++)
@@ -183,7 +184,7 @@ $('#property_files').on('change',function(){
     }
 
     if(file_size_error==true || file_type_error==true){
-        reset($('#property_files'));
+        reset($('#contract_files'));
 
         var error_message='';
 
@@ -208,4 +209,93 @@ window.reset = function (e) {
     e.wrap('<form>').closest('form').get(0).reset();
     e.unwrap();
 }
+
+
+
+$('.datepicker').datepicker({
+    dateFormat:'dd/mm/yy'
+});
+
+
+
+$('#add_installment_button').click(function(){ 
+  let random_string = String(Math.random(10)).substring(2,14); 
+
+var row=`<input type="hidden" name="installment_id[]" value=""><div class="row" id="row`+random_string+`">
+        <div class="col-sm-5">
+              <div class="form-group required">
+                <label for="amount_`+random_string+`">Amount<span class="error">*</span></label>
+
+                <input type="number" min="1" name="amount[]" class="form-control amount_input_list"  id="amount_`+random_string+`"  placeholder="Amount">
+
+              </div>
+        </div>
+        <div class="col-sm-5">
+              <div class="form-group required">
+                <label for="due_date_`+random_string+`">Due Date<span class="error">*</span></label>
+
+                <input type="text" name="due_date[]" class="form-control due_date_input_list datepicker"  id="due_date_`+random_string+`"  placeholder="Due Date">
+              </div>
+        </div>
+        <div class="col-sm-2">
+              <div class="form-group ">
+                <label for="">&nbsp;</label>
+      
+                  <div class="installment_input_add" >
+                    <button type="button"  name="remove" id="`+random_string+`" class="btn btn-danger btn_installment_remove">X</button>
+                  </div> 
+              </div>
+        </div>
+      </div>`;
+  $('#installment_input_container').append(row); 
+  $('.datepicker').datepicker({
+        dateFormat:'dd/mm/yy'
+  });
+}); 
+
+$(document).on('click', '.btn_installment_remove', function(){  
+
+var button_id = $(this).attr("id");   
+    $('#row'+button_id+'').remove();  
+});
+
+
+$('#in_installment').on('change',function(){
+    if(this.checked) { 
+        $('#installment_input_container').show();
+    } else { 
+        $('#installment_input_container').hide(); 
+    } 
+});
+
+
+
+  $('.amount_input_list').each(function(i, obj) {
+
+        $("#"+$(this).attr('id')).rules("add", {
+           required: true,
+           maxlength: 100,
+           number:true,
+           messages: {
+             required: "Enter price amount",
+             maxlength: "Maximum 100 characters allowed",
+           }
+        });
+
+   });
+
+
+  $('.due_date_input_list').each(function(i, obj) {
+
+        $("#"+$(this).attr('id')).rules("add", {
+           required: true,
+           maxlength: 10,
+           messages: {
+             required: "Please enter due date in dd/mm/yyyy format",
+             maxlength: "Maximum 10 characters allowed",
+           }
+        });
+
+   });
+
 

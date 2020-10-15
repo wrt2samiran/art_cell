@@ -9,12 +9,12 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Property Management</h1>
+            <h1>Contract Management</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.properties.list')}}">Properties</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.contracts.list')}}">Contracts</a></li>
               <li class="breadcrumb-item active">Create</li>
             </ol>
           </div>
@@ -28,7 +28,7 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Create Property</h3>
+                <h3 class="card-title">Create Contract</h3>
               </div>
               <div class="card-body">
 
@@ -47,81 +47,27 @@
                   @endif
                   <div class="row justify-content-center">
                     <div class="col-md-10 col-sm-12">
-                      <form  method="post" id="admin_property_create_form" action="{{route('admin.properties.store')}}" method="post" enctype="multipart/form-data">
+                      <form  method="post" id="admin_contract_create_form" action="{{route('admin.contracts.store')}}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div>
                           <div class="form-group required">
-                            <label for="property_name">Property Name <span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('property_name')?old('property_name'):''}}" name="property_name" id="property_name"  placeholder="Property Name">
-                            @if($errors->has('property_name'))
-                            <span class="text-danger">{{$errors->first('property_name')}}</span>
-                            @endif
-                          </div>
-                          <div class="form-group required">
-                             <label for="property_type_id">Property Types <span class="error">*</span></label>
-                              <select class="form-control " id="property_type_id" name="property_type_id" style="width: 100%;">
-                                <option value="">Select property type</option>
-                                @forelse($property_types as $property_type)
-                                   <option value="{{$property_type->id}}" >{{$property_type->type_name}}</option>
-                                @empty
-                                <option value="">No Property Type Found</option>
-                                @endforelse
-                              </select>
-                          </div>
-                          <div class="form-group required">
-                            <label for="description">Description <span class="error">*</span></label>
+                            <label for="description">Contract Info <span class="error">*</span></label>
                             <textarea class="form-control" name="description" id="description"  placeholder="Description">{!!old('description')?old('description'):''!!}</textarea>
                             @if($errors->has('description'))
                             <span class="text-danger">{{$errors->first('description')}}</span>
                             @endif
                           </div>
-                          <div class="form-group ">
-                            <label for="no_of_units">Number Of Units <span class="error">*</span></label>
-                            <input type="number" min="1" class="form-control" value="{{old('no_of_units')?old('no_of_units'):''}}" name="no_of_units" id="no_of_units"  placeholder="Number Of Units">
-                            @if($errors->has('no_of_units'))
-                            <span class="text-danger">{{$errors->first('no_of_units')}}</span>
-                            @endif
-                          </div>
                           <div class="form-group required">
-                             <label for="city_id">City <span class="error">*</span></label>
-                              <select class="form-control " id="city_id" name="city_id" style="width: 100%;">
-                                <option value="">Select city</option>
-                                @forelse($cities as $city)
-                                   <option value="{{$city->id}}" >{{$city->name}}</option>
+                             <label for="services">Services required for the contract <span class="error">*</span></label>
+                              <select class="form-control " multiple name="services[]" id="services" style="width: 100%;">
+                                <option value="">Select services</option>
+                                @forelse($services as $service)
+                                   <option value="{{$service->id}}" >{{$service->service_name}} </option>
                                 @empty
-                                <option value="">No City Found</option>
-                                @endforelse
+                                <option value="">No Service Found</option>
+                                @endforelse                                
                               </select>
                           </div>
-                          <div class="form-group required">
-                            <label for="address">Address <span class="error">*</span></label>
-                            <textarea class="form-control" name="address" id="address"  placeholder="address">{!!old('address')?old('address'):''!!}</textarea>
-                            @if($errors->has('address'))
-                            <span class="text-danger">{{$errors->first('address')}}</span>
-                            @endif
-                          </div>                           
-                          <div class="form-group required">
-                            <label for="location">Location <span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('location')?old('location'):''}}" name="location" id="location"  placeholder="Property Name">
-                            @if($errors->has('location'))
-                            <span class="text-danger">{{$errors->first('location')}}</span>
-                            @endif
-                          </div>
-                          <div class="form-group required">
-                            <label for="contact_number">Contact Number <span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('contact_number')?old('contact_number'):''}}" name="contact_number" id="contact_number"  placeholder="Contact Number">
-                            @if($errors->has('contact_number'))
-                            <span class="text-danger">{{$errors->first('contact_number')}}</span>
-                            @endif
-                          </div>
-                          <div class="form-group required">
-                            <label for="contact_email">Contact Email <span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('contact_email')?old('contact_email'):''}}" name="contact_email" id="contact_email"  placeholder="Contact Email">
-                            @if($errors->has('contact_email'))
-                            <span class="text-danger">{{$errors->first('contact_email')}}</span>
-                            @endif
-                          </div>
-
                           <div class="form-group required">
                              <label for="property_owner">Property Owner <span class="error">*</span></label>
                               <select class="form-control " name="property_owner" id="property_owner" style="width: 100%;">
@@ -134,70 +80,140 @@
                               </select>
                           </div>
                           <div class="form-group required">
-                             <label for="property_manager">Property Manager <span class="error">*</span></label>
-                              <select class="form-control " id="property_manager" name="property_manager" style="width: 100%;">
-                                <option value="">Select property manager</option>
-                                @forelse($property_managers as $property_manager)
-                                   <option value="{{$property_manager->id}}" >{{$property_manager->name}} ({{$property_manager->email}})</option>
+                             <label for="property">Select Property <span class="error">*</span></label>
+                              <select class="form-control " id="property" name="property" style="width: 100%;">
+                                <option value="">Select property</option>
+                                @forelse($properties as $property)
+                                   <option value="{{$property->id}}" >{{$property->property_name}}({{$property->code}})</option>
                                 @empty
-                                <option value="">No Property Manager Found</option>
+                                <option value="">No Property Found</option>
+                                @endforelse
+                              </select>
+                          </div>
+
+                          <div class="form-group required">
+                             <label for="service_provider">Select service provider <span class="error">*</span></label>
+                              <select class="form-control " id="service_provider" name="service_provider" style="width: 100%;">
+                                <option value="">Select service provider</option>
+                                @forelse($service_providers as $service_provider)
+                                   <option value="{{$service_provider->id}}" >{{$service_provider->name}} ({{$service_provider->email}})</option>
+                                @empty
+                                <option value="">No Service Provider Found</option>
                                 @endforelse 
                               </select>
                           </div>
 
-
-                          <div class="form-group">
-                            <label for="electricity_account_day">Electricity Account Day</label>
-                            <select class="form-control " id="electricity_account_day" name="electricity_account_day" style="width: 100%;">
-                              <option value="">Select electricity account day</option>
-                              @forelse($days_array as $day)
-                                  <option value="{{$day}}" >{{App\Http\Helpers\Helper::Ordinal($day)}} day of every month</option>
-                              @empty
-                              <option value="">No Day Found</option>
-                              @endforelse 
-                            </select>
-                            @if($errors->has('electricity_account_day'))
-                            <span class="text-danger">{{$errors->first('electricity_account_day')}}</span>
+                          <div class="form-group required">
+                            <label for="start_date">Start Date <span class="error">*</span></label>
+                            <input type="text" class="form-control" value="{{old('start_date')?old('start_date'):''}}" name="start_date" id="start_date"  placeholder="Start Date">
+                            @if($errors->has('start_date'))
+                            <span class="text-danger">{{$errors->first('start_date')}}</span>
                             @endif
                           </div>
-
-                          <div class="form-group">
-                            <label for="water_account_day">Water Account Day</label>
-                            <select class="form-control " id="water_account_day" name="water_account_day" style="width: 100%;">
-                              <option value="">Select water account day</option>
-                              @forelse($days_array as $day)
-                                 <option value="{{$day}}" >{{App\Http\Helpers\Helper::Ordinal($day)}} day of every month</option>
-                              @empty
-                              <option value="">No Day Found</option>
-                              @endforelse 
-                            </select>
-                            @if($errors->has('water_account_day'))
-                            <span class="text-danger">{{$errors->first('water_account_day')}}</span>
+                          <div class="form-group required">
+                            <label for="end_date">End Date <span class="error">*</span></label>
+                            <input type="text" class="form-control" value="{{old('end_date')?old('end_date'):''}}" name="end_date" id="end_date"  placeholder="End Date">
+                            @if($errors->has('end_date'))
+                            <span class="text-danger">{{$errors->first('end_date')}}</span>
                             @endif
                           </div>
+                         <div class="form-group required">
+                            <label for="contract_price">Contract Price<span class="error">*</span></label>
+                            <input type="text" class="form-control" value="{{old('contract_price')?old('contract_price'):''}}" name="contract_price" id="contract_price"  placeholder="Contract Price">
+                            @if($errors->has('contract_price'))
+                            <span class="text-danger">{{$errors->first('contract_price')}}</span>
+                            @endif
+                          </div>
+  
+                          <div class="custom-control custom-checkbox">
+                            <input class="custom-control-input" type="checkbox" id="in_installment" name="in_installment" value="true">
+                            <label for="in_installment" class="custom-control-label">Payment In Installment ?</label>
+                          </div>
 
+                          <div  id="installment_input_container" class="mt-2" style="display: none">  
+                              <div class="row">
+                                <div class="col-sm-12">
+                                  <div class="form-group required">
+                                    <label for="notify_installment_before_days">Notify user about due payment before how many days from due date ? <span class="error">*</span></label>
+                                    <input type="text" class="form-control" value="{{old('notify_installment_before_days')?old('notify_installment_before_days'):''}}" name="notify_installment_before_days" id="notify_installment_before_days"  placeholder="Notify user about due payment before how many days from due date">
+                                    @if($errors->has('notify_installment_before_days'))
+                                    <span class="text-danger">{{$errors->first('notify_installment_before_days')}}</span>
+                                    @endif
+                                  </div>
+                                </div>
+                              </div>
+                              @php
+                               $number_of_installment=(session('number_of_installment')) ? session('number_of_installment'):1;
+                              @endphp
+                              
+                              @for($i=1;$i<=$number_of_installment;$i++)
+                              <div class="row" id="row{{$i}}">
+                                <div class="col-sm-5">
+                                      <div class="form-group required">
+                                        <label for="amount_{{$i}}">Amount<span class="error">*</span></label>
+
+                                        <input type="number" min="1" name="amount[]" class="form-control amount_input_list" value="{{old('amount.'.($i-1))}}" id="amount_{{$i}}"  placeholder="Amount">
+
+                                        @if($errors->has('amount.'.($i-1)))
+                                            <span class="text-danger">{{$errors->first('amount.'.($i-1))}}</span>
+                                        @endif
+                                      </div>
+                                </div>
+                                <div class="col-sm-5">
+                                      <div class="form-group required">
+                                        <label for="contract_price">Due Date<span class="error">*</span></label>
+
+                                        <input type="text" name="due_date[]" class="form-control due_date_input_list datepicker" value="{{old('due_date.'.($i-1))}}" id="due_date_{{$i}}"  placeholder="Amount">
+
+                                        @if($errors->has('due_date.'.($i-1)))
+                                            <span class="text-danger">{{$errors->first('due_date.'.($i-1))}}</span>
+                                        @endif
+                                      </div>
+                                </div>
+                                <div class="col-sm-2">
+                                      <div class="form-group ">
+                                        <label for="">&nbsp;</label>
+                                         @if($i=='1')
+                                          <div class="installment_input_add" >
+                                            <button type="button"  id="add_installment_button" class="btn btn-success btn-add-speaker">+</button>
+                                          </div> 
+                                         @else
+                                          <div class="installment_input_add" >
+                                            <button type="button"  name="remove" id="{{$i}}" class="btn btn-danger btn_installment_remove">X</button>
+                                          </div> 
+                                         @endif
+                                      </div>
+                                </div>
+                              </div>
+                              @endfor
+                          </div> 
+      
+
+
+                          <hr>
                           <div class="form-group">
-                            <label for="property_files">Attach Files</label>
+                            <label for="contract_files">Attach Files</label>
                             <input  type="file" multiple class="form-control"
-                            name="property_files[]" id="property_files" aria-describedby="propertyFilesHelp" >
+                            name="contract_files[]" id="contract_files" aria-describedby="propertyFilesHelp" >
 
                             <small id="propertyFilesHelp" class="form-text text-muted">Upload PDF files of max. 1mb</small>
-                            @if($errors->get('property_files.*'))
+                            @if($errors->get('contract_files.*'))
                             
-                             @foreach($errors->get('property_files.*') as $err)
+                             @foreach($errors->get('contract_files.*') as $err)
                               <span class="text-danger">{{$err[0]}}</span><br>
                               @break
                              @endforeach
                            
                             @endif
                           </div>
+                          <input type="hidden" id="property_create_url" value="{{route('admin.properties.create')}}">
 
-                          <input type="hidden" id="property_manager_create_url" value="{{route('admin.property_managers.create')}}">
+                          <input type="hidden" id="service_provider_create_url" value="{{route('admin.service_providers.create')}}">
+
                           <input type="hidden" id="property_owner_create_url" value="{{route('admin.property_owners.create')}}">
-
                         </div>
                         <div>
-                           <a href="{{route('admin.properties.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
+                           <a href="{{route('admin.contracts.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
                            <button type="submit" class="btn btn-success">Submit</button> 
                         </div>
                       </form>
@@ -212,5 +228,5 @@
 @endsection
 
 @push('custom-scripts')
-<script type="text/javascript" src="{{asset('js/admin/properties/create.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/admin/contracts/create.js')}}"></script>
 @endpush

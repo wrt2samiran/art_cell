@@ -22,7 +22,7 @@
 
     });
 
- //function to delete gallery
+ //function to delete property type
  function delete_property_type(url){
   swal({
   title: "Are you sure?",

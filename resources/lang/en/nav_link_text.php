@@ -9,6 +9,7 @@ return array (
   'master_modules' => 'Master Modules',
   'message_management' => 'Message Management',
   'properties' => 'Properties',
+  'contracts_management' => 'Contract Management',
   'property_managers' => 'Property Managers',
   'property_owners' => 'Property Owners',
   'property_types' => 'Property Types',

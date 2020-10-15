@@ -17,8 +17,11 @@
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
-                <img src="{{asset('assets/dist/img/user2-160x160.jpg')}}" class="img-circle elevation-2"
+               <!--  <img src="{{asset('assets/dist/img/user2-160x160.jpg')}}" class="img-circle elevation-2"
+                     alt="User Image"> -->
+                <img style="height:30px;width: 30px" src="{{auth()->guard('admin')->user()->profile_image_url()}}" class="img-circle elevation-2"
                      alt="User Image">
+
             </div>
             <div class="info">
                 <a href="#" class="d-block">{{ $admin->name }}</a>
@@ -218,6 +221,14 @@
                         <p>{{__('nav_link_text.properties')}}</p>
                     </a>
                 </li>
+                <li class="nav-item ">
+                    <a href="{{route('admin.contracts.list')}}"
+                    class="nav-link {{(request()->is('admin/contracts/*','admin/contracts'))?'active':''}}">
+                        <i class="nav-icon fas fa-igloo"></i>
+                        <p>{{__('nav_link_text.contracts_management')}}</p>
+                    </a>
+                </li>
+                
                 <li class="nav-item ">
                     <a href="{{route('admin.quotations.list')}}"
                     class="nav-link {{(request()->is('admin/quotations/*','admin/quotations'))?'active':''}}">

@@ -91,30 +91,48 @@ class UserController extends Controller
                 }
             })
 
-            ->addColumn('action',function($user){
+            ->addColumn('action',function($user) use ($current_user){
                 $delete_url=route('admin.users.delete',$user->id);
                 $details_url=route('admin.users.show',$user->id);
                 $edit_url=route('admin.users.edit',$user->id);
                 $action_buttons='';
                 
-                // if($user->role->slug=='service-provider'){
+                if($user->role->slug=='service-provider'){
+                    $has_details_permission=($current_user->hasAllPermission(['service-provider-details']))?true:false;
+                    $has_edit_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['service-provider-edit']))?true:false;
 
-                // }elseif ($user->role->slug=='service-provider') {
-                //     # code...
-                // }
+                    $has_delete_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['service-provider-delete']))?true:false;
+
+                }elseif ($user->role->slug=='property-owner') {
+                    $has_details_permission=($current_user->hasAllPermission(['property-owner-details']))?true:false;
+                    $has_edit_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['property-owner-edit']))?true:false;
+
+                    $has_delete_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['property-owner-delete']))?true:false;
+                
+                }elseif ($user->role->slug=='property-manager') {
+                    $has_details_permission=($current_user->hasAllPermission(['property-manager-details']))?true:false;
+                    $has_edit_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['property-manager-edit']))?true:false;
+
+                    $has_delete_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['property-manager-delete']))?true:false;
+
+                }else{
+                    $has_details_permission=($current_user->hasAllPermission(['user-details']))?true:false;
+                    $has_edit_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['user-edit']))?true:false;
+                    $has_delete_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['user-delete']))?true:false;
+                }
 
 
 
-                if(true){
+                if($has_details_permission){
                     $action_buttons=$action_buttons.'<a title="View Servide Provider Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
                 }
-                $has_edit_permission=(auth()->guard('admin')->id()==$user->id || $user->id=='1' )?false:true;
+
 
                 if($has_edit_permission){
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Servide Provider" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
                 }
 
-                $has_delete_permission=(auth()->guard('admin')->id()==$user->id || $user->id=='1' )?false:true;
+
                 if($has_delete_permission){
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete user" href="javascript:delete_user('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
                 }
@@ -141,8 +159,28 @@ class UserController extends Controller
     # Purpose          : To load role create view page                       #
     public function create(){
         $this->data['page_title']='Create user';
-        $roles=Role::whereStatus('A')->where(function($q){
-            // $q->whereNotIn('slug',['service-provider','property-owner','property-manager']);
+
+        $current_user=auth()->guard('admin')->user();
+
+        $hide_user_role_array=[];
+        //if user don't have service-provider-list permission then we will not fetch service providers role
+        if(!$current_user->hasAllPermission(['service-provider-list'])){
+             $hide_user_role_array[]='service-provider';
+        }
+        //if user don't have property-owner-list permission then we will not fetch property owners role
+        if(!$current_user->hasAllPermission(['property-owner-list'])){
+             $hide_user_role_array[]='property-owner';
+        }
+        //if user don't have property-manager-list permission then we will not fetch property manager role
+        if(!$current_user->hasAllPermission(['property-manager-list'])){
+             $hide_user_role_array[]='property-manager';
+        }
+
+
+        $roles=Role::whereStatus('A')->where(function($q)use($hide_user_role_array){
+            if(count($hide_user_role_array)){
+                $q->whereNotIn('slug',$hide_user_role_array);
+            } 
         })->orderBy('id','ASC')->get();
         $this->data['roles']=$roles;
         return view($this->view_path.'.create',$this->data);
@@ -207,8 +245,26 @@ class UserController extends Controller
         $user=User::findOrFail($id);
         $this->data['page_title']='Edit User';
         $this->data['user']=$user;
-        $roles=Role::whereStatus('A')->where(function($q){
-            // $q->whereNotIn('slug',['service-provider','property-owner','property-manager']);
+        
+        $hide_user_role_array=[];
+        //if user don't have service-provider-list permission then we will not fetch service providers role
+        if(!$current_user->hasAllPermission(['service-provider-list'])){
+             $hide_user_role_array[]='service-provider';
+        }
+        //if user don't have property-owner-list permission then we will not fetch property owners role
+        if(!$current_user->hasAllPermission(['property-owner-list'])){
+             $hide_user_role_array[]='property-owner';
+        }
+        //if user don't have property-manager-list permission then we will not fetch property manager role
+        if(!$current_user->hasAllPermission(['property-manager-list'])){
+             $hide_user_role_array[]='property-manager';
+        }
+
+
+        $roles=Role::whereStatus('A')->where(function($q)use($hide_user_role_array){
+            if(count($hide_user_role_array)){
+                $q->whereNotIn('slug',$hide_user_role_array);
+            } 
         })->orderBy('id','ASC')->get();
         $this->data['roles']=$roles;
         return view($this->view_path.'.edit',$this->data);

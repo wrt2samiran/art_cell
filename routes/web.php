@@ -47,15 +47,22 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             Route::get('/change-password','DashboardController@showChangePasswordForm')->name('changePassword');
             Route::post('/change-password','DashboardController@changePassword')->name('changePassword');
 
+            Route::group(['prefix'=>'profile','as' => 'profile.'],function(){
+                Route::get('/edit-profile','ProfileController@edit_profile')->name('edit_profile');
+                Route::put('/update-profile','ProfileController@update_profile')->name('update_profile');
+                Route::get('/change-password','ProfileController@change_password')->name('change_password');
+                Route::put('/update-password','ProfileController@update_password')->name('update_password');
+            });
+
             /*Routes for role/user groups management */
             Route::group(['prefix'=>'user-groups','as'=>'roles.'],function(){
-                Route::get('/', 'RoleController@list')->name('list');
-                Route::get('/create', 'RoleController@create')->name('create');
-                Route::post('/store', 'RoleController@store')->name('store');
-                Route::get('/{id}', 'RoleController@show')->name('show');
-                Route::get('/{id}/edit', 'RoleController@edit')->name('edit');
-                Route::put('/{id}', 'RoleController@update')->name('update');
-                Route::delete('/{id}/delete', 'RoleController@delete')->name('delete');
+                Route::get('/', 'RoleController@list')->name('list')->middleware('check_permissions:group-list');
+                Route::get('/create', 'RoleController@create')->name('create')->middleware('check_permissions:group-create');
+                Route::post('/store', 'RoleController@store')->name('store')->middleware('check_permissions:group-create');
+                Route::get('/{id}', 'RoleController@show')->name('show')->middleware('check_permissions:group-details');
+                Route::get('/{id}/edit', 'RoleController@edit')->name('edit')->middleware('check_permissions:group-edit');
+                Route::put('/{id}', 'RoleController@update')->name('update')->middleware('check_permissions:group-edit');
+                Route::delete('/{id}/delete', 'RoleController@delete')->name('delete')->middleware('check_permissions:group-delete');
                 Route::get('/{id}/change-status', 'RoleController@change_status')->name('change_status');
                 Route::post('/ajax/check_role_name_unique/{role_id?}', 'RoleController@ajax_check_role_name_unique')
                 ->name('ajax_check_role_name_unique');
@@ -177,6 +184,20 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             
             /************************************/
 
+            /*Routes for property management */
+            Route::group(['prefix'=>'contracts','as'=>'contracts.'],function(){
+                Route::get('/', 'ContractController@list')->name('list');
+                Route::get('/create', 'ContractController@create')->name('create');
+                Route::post('/store', 'ContractController@store')->name('store');
+                Route::get('/{id}', 'ContractController@show')->name('show');
+                Route::get('/{id}/edit', 'ContractController@edit')->name('edit');
+                Route::put('/{id}', 'ContractController@update')->name('update');
+                Route::delete('/{id}/delete', 'ContractController@delete')->name('delete');
+                Route::get('attachment/{id}/download', 'ContractController@download_attachment')->name('download_attachment');
+            });
+            
+            /************************************/
+
 
             Route::group(['prefix' => 'module-management', 'as' => 'module-management.'], function () {
                 Route::get('/list', 'ModuleManagementController@moduleList')->name('module.list');
@@ -273,4 +294,4 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
 });
 
 
-Route::get('/{any}', 'Controller@callFrontendRoute')->where('any', '.*');
+

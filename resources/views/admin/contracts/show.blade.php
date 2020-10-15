@@ -9,12 +9,12 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Property Management</h1>
+            <h1>Contract Management</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.properties.list')}}">Properties</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.contracts.list')}}">Contracts</a></li>
               <li class="breadcrumb-item active">Details</li>
             </ol>
           </div>
@@ -28,104 +28,88 @@
             <!-- Default box -->
             <div class="card card-success">
                 <div class="card-header">
-                  Property Details
+                  Contract Details
                 </div> 
               <div class="card-body"> 
-                 <table class="table table-bordered table-hover record-details-table" id="property-details-table">
+                 <table class="table table-bordered table-hover record-details-table" id="contract-details-table">
                       <tbody>
                         <tr>
-                          <td>Property Code</td>
-                          <td >{{$property->code}}</td>
+                          <td>Contract Code</td>
+                          <td >{{$contract->code}}</td>
                         </tr>
                         <tr>
-                          <td>Property Name</td>
-                          <td >{{$property->property_name}}</td>
+                          <td>Contract Info</td>
+                          <td >{{$contract->description}}</td>
+                        </tr>
+                        <tr>
+                          <td>Services Required</td>
+                          <td>{!!
+                              $contract->services->map(function($service) {
+                                  return $service->service_name;
+                              })->implode(',<br>')
+                              !!}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Start Date</td>
+                          <td >{{Carbon\Carbon::createFromFormat('Y-m-d', $contract->start_date)->format('d/m/Y')}}</td>
+                        </tr>
+                        <tr>
+                          <td>End Date</td>
+                          <td >{{Carbon\Carbon::createFromFormat('Y-m-d', $contract->end_date)->format('d/m/Y')}}</td>
+                        </tr>
+                        <tr>
+                          <td>Customer</td>
+                          <td>
+                            @if($customer=$contract->customer()->withTrashed()->first())
+                              @if($customer->deleted_at)
+                                <span class="text-danger"><del>{{$customer->name}} </del>(user deleted)</span>
+                              @else
+                                <a target="_blank" href="{{route('admin.property_owners.show',$customer->id)}}">{{$customer->name}}</a>
+                              @endif
+                            @else
+                            N/A
+                            @endif
+                          </td>
+                        </tr>
+                        <tr>
+                          <td >Service Provider</td>
+                          <td>
+                            @if($service_provider=$contract->service_provider()->withTrashed()->first())
+                              @if($service_provider->deleted_at)
+                                <span class="text-danger"><del>{{$service_provider->name}} </del>(user deleted)</span>
+                              @else
+                                <a target="_blank" href="{{route('admin.service_providers.show',$service_provider->id)}}">{{$service_provider->name}}</a>
+                              @endif
+                            @else
+                            N/A
+                            @endif
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Property</td>
+                          <td >{{$contract->property->property_name}}</td>
                         </tr>
                         <tr>
                           <td>Property Type</td>
-                          <td >{{($property->property_type)?$property->property_type->type_name:'N/A'}}</td>
+                          <td >{{$contract->property->property_type->type_name}}</td>
                         </tr>
                         <tr>
-                          <td>Description</td>
-                          <td >{{$property->description}}</td>
-                        </tr>
-                        </tr>
-                        <tr>
-                          <td>Addeess</td>
-                          <td >{{$property->address}}</td>
+                          <td>Location/Landmark</td>
+                          <td >{{$contract->property->location}}</td>
                         </tr>
                         <tr>
-                          <td>City</td>
-                          <td >{{$property->city->name}}</td>
+                          <td>No. of Units</td>
+                          <td >{{$contract->property->no_of_units}}</td>
                         </tr>
-                        <tr>
-                          <td>Location</td>
-                          <td >{{$property->location}}</td>
-                        </tr>
-                        <tr>
-                          <td >Contact Number</td>
-                          <td >{{$property->contact_number}}</td>
-                        </tr>
-                        <tr>
-                          <td >Contact Email</td>
-                          <td >{{$property->contact_email}}</td>
-                        </tr>
-                        <tr>
-                          <td>Property Owner</td>
-                          <td>
-                            @if($property_owner=$property->owner_details()->withTrashed()->first())
-                              @if($property_owner->deleted_at)
-                                <span class="text-danger"><del>{{$property_owner->name}} </del>(user deleted)</span>
-                              @else
-                                <a target="_blank" href="{{route('admin.property_owners.show',$property_owner->id)}}">{{$property_owner->name}}</a>
-                              @endif
-                            @else
-                            N/A
-                            @endif
-                          </td>
-                        </tr>
-                        <tr>
-                          <td >Property Manager</td>
-                          <td>
-                            @if($property_manager=$property->manager_details()->withTrashed()->first())
-                              @if($property_manager->deleted_at)
-                                <span class="text-danger"><del>{{$property_manager->name}} </del>(user deleted)</span>
-                              @else
-                                <a target="_blank" href="{{route('admin.property_owners.show',$property_manager->id)}}">{{$property_manager->name}}</a>
-                              @endif
-                            @else
-                            N/A
-                            @endif
-                          </td>
-                        </tr>
+
                         <tr>
                           <td>Status</td>
                           <td>
-                            <button role="button" class="btn btn-{{($property->is_active)?'success':'danger'}}">{{($property->is_active)?'Active':'Inactive'}}</button>
-                          </td>
-                        </tr>
-
-                        <tr>
-                          <td >Electricity Account Due Date</td>
-                          <td >
-                            @if($property->electricity_account_day)
-                              {{App\Http\Helpers\Helper::Ordinal($property->electricity_account_day)}} day of every month
+                            @if($contract->status=='Ongoing')
+                              <span class="text-success">{{$contract->status}}</span>
                             @else
-                            N/A
-                            @endif
-                            
-                          </td>
-                        </tr>
-
-                        <tr>
-                          <td >Water Account Due Date</td>
-                          <td >
-             
-
-                            @if($property->water_account_day)
-                              {{App\Http\Helpers\Helper::Ordinal($property->water_account_day)}} day of every month
-                            @else
-                            N/A
+                              <span class="text-danger">{{$contract->status}}</span>
                             @endif
                           </td>
                         </tr>
@@ -133,10 +117,10 @@
                           <td>Downloadable Files</td>
                           <td>
                             <div class="row">
-                              @if(count($files=$property->property_attachments))
+                              @if(count($files=$contract->contract_attachments))
                                 @foreach($files as $file)
                                   <div class="col-sm-1 col-xs-1">
-                                    <a href="{{route('admin.properties.download_attachment',$file->id)}}"><i style="color: red;" class="far fa-file-pdf"></i></a>
+                                    <a href="{{route('admin.contracts.download_attachment',$file->id)}}"><i style="color: red;" class="far fa-file-pdf"></i></a>
                                   </div>
                                 @endforeach
                               @else
@@ -145,16 +129,15 @@
                             </div>
                           </td>
                         </tr>
-                        
 
                         <tr>
                           <td>Created At</td>
-                          <td>{{$property->created_at->format('d/m/Y')}}</td>
+                          <td>{{$contract->created_at->format('d/m/Y')}}</td>
                         </tr>
                       </tbody>
                       <tfoot>
                         <tr>
-                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.properties.list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
+                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.contracts.list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
                         </tr>
                       </tfoot>
                   </table>

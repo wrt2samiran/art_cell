@@ -58,7 +58,7 @@ class RoleController extends Controller
             })
             ->addColumn('status',function($role){
 
-                $disabled=($role->parrent_id==null)?'disabled':'';
+                $disabled='';
                 if($role->status=='A'){
                    $message='deactivate';
                    return '<a title="Click to deactivate the role" href="javascript:change_status('."'".route('admin.roles.change_status',$role->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm '.$disabled.'" >Active</a>';
@@ -75,17 +75,14 @@ class RoleController extends Controller
 
                 $action_buttons='';
 
-                if(true){
+             
                     $action_buttons=$action_buttons.'<a title="View Role Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
-                }
 
-                if(!$role->parrent_id==null){
+                
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Role" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
-                }
-
-                if(!$role->parrent_id==null){
+        
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete role" href="javascript:delete_role('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
-                }
+               
 
                 return $action_buttons;
                 
@@ -104,9 +101,12 @@ class RoleController extends Controller
     # Modified date    : 07-10-2020                                          #
     # Purpose          : To load role create view page                       #
     public function create(){
-        $this->data['page_title']='Role Create';
+        $this->data['page_title']='Create Group';
         $parent_roles=Role::whereStatus('A')->whereNull('parrent_id')->orderBy('id','ASC')->get();
         $this->data['parent_roles']=$parent_roles;
+        $modules=Module::with(['functionalities'])->orderBy('created_at','ASC')->get();
+        $this->data['modules']=$modules;
+      
         return view($this->view_path.'.create',$this->data);
     }
 
@@ -153,7 +153,7 @@ class RoleController extends Controller
         }
         //insert new records
         RolePermission::insert($role_permission_data_array);
-        return redirect()->route('admin.roles.list')->with('success','Group/Role successfully created.');
+        return redirect()->route('admin.roles.list')->with('success','Group successfully created.');
     }
 
     /************************************************************************/
@@ -194,34 +194,11 @@ class RoleController extends Controller
         $this->data['page_title']='Role Edit';
         $this->data['role']=$role;
 
-
         $parent_roles=Role::whereStatus('A')->whereNull('parrent_id')->orderBy('id','ASC')->get();
         $this->data['parent_roles']=$parent_roles;
 
-        if($role->parrent_id==null){
-            $modules_id_array=RolePermission::where('role_id',$role->id)->pluck('module_id')->toArray();
-            $modules_id_array=array_unique($modules_id_array);
-
-            $functionalities_id_array=RolePermission::where('role_id',$role->id)->pluck('module_functionality_id')->toArray();
-
-            $modules=Module::with('functionalities')->orderBy('created_at','ASC')->get();
-        }else{
-
-            $parent_role=$role->parent;
-
-            $modules_id_array=RolePermission::where('role_id',$parent_role->id)->pluck('module_id')->toArray();
-            $modules_id_array=array_unique($modules_id_array);
-
-            $functionalities_id_array=RolePermission::where('role_id',$parent_role->id)->pluck('module_functionality_id')->toArray();
-
-            $modules=Module::whereIn('id',$modules_id_array)
-            ->with(['functionalities'=>function($q)use($functionalities_id_array) {
-                $q->whereIn('id',$functionalities_id_array);
-            }])->orderBy('created_at','ASC')->get();
-
-        }
-
-
+        $modules=Module::with('functionalities')->orderBy('created_at','ASC')->get();
+     
         $this->data['current_functionalities_id_array']=RolePermission::where('role_id',$role->id)->pluck('module_functionality_id')->toArray();
 
         $this->data['modules']=$modules;
@@ -278,7 +255,7 @@ class RoleController extends Controller
         //insert new records
         RolePermission::insert($role_permission_data_array);
 
-        return redirect()->route('admin.roles.list')->with('success','Group/Role successfully updated');
+        return redirect()->route('admin.roles.list')->with('success','Group successfully updated');
     }
 
     /************************************************************************/
@@ -299,7 +276,7 @@ class RoleController extends Controller
                 'deleted_by'=>auth()->guard('admin')->id()
             ]);
             $role->delete();
-            return response()->json(['message'=>'Group/Role successfully deleted.']);
+            return response()->json(['message'=>'Group successfully deleted.']);
 
          }
     }
@@ -321,7 +298,7 @@ class RoleController extends Controller
             'status'=>$change_status_to
         ]);
         //returning json success response
-        return response()->json(['message'=>'Group/Role successfully '.$message.'.']);
+        return response()->json(['message'=>'Group successfully '.$message.'.']);
     }
 
     /************************************************************************/

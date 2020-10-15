@@ -39,9 +39,7 @@ class Controller extends BaseController
         // dd($settingObj);
         return (object)$settingObj;
     }
-    public function callFrontendRoute(){
-        return view('welcome');
-    }
+
     function generatePrCopyTicket() {
         $ticketPrefix='PR-00000';
         $lastIDofPRCopywriter =PrCopywriter::select('id')->orderBy('id','desc')->first()->id;
