@@ -47,7 +47,7 @@
                   <div class="row justify-content-center">
                     <div class="col-md-10 col-sm-12">
                       <form  method="post" id="admin_country_edit_form" action="{{route('admin.country.edit', $details->id)}}" method="post" enctype="multipart/form-data">
-                        @csrf
+                        <!-- @csrf
                         <div>
                           <div class="form-group required">
                             <label for="name">Country Name <span class="error">*</span></label>
@@ -72,6 +72,56 @@
                           </div>
                           
                           
+                        </div> -->
+
+                        <ul class="nav nav-tabs nav-justified nav-inline">
+                           
+                            <li class="active">&nbsp;&nbsp;&nbsp;<a href="#primary" data-toggle="tab">English  </a>&nbsp;&nbsp;&nbsp;</li>|
+                            <li >&nbsp;&nbsp;&nbsp;<a href="#secondary" data-toggle="tab">Arabic</a></li>
+                           
+                        </ul>
+                        @csrf
+                        <div class="tab-content tab-validate" style="margin-top:20px;">
+
+                            <?php //dd($details->name);?>
+                            <div class="tab-pane active" id="primary">
+                                <div class="form-group">
+                                    <label class="required" for="en_title">Country Name (ENGLISH)</label>
+                                    <input class="form-control {{ $errors->has('en_name') ? 'is-invalid' : '' }}" type="text" name="en_name" id="en_name" value="@if(isset($details->name)){{$details->translate('en')->name}}@endif" >
+                                    @if($errors->has('en_name'))
+                                        <div class="invalid-feedback">
+                                            {{ $errors->first('en_name') }}
+                                        </div>
+                                    @endif
+                                    <span class="help-block"></span>
+                                </div>
+                                <div class="form-group required">
+                                  <label for="country_code">Code <span class="error">*</span></label>
+                                  <input type="text" class="form-control" value="@if(isset($details->country_code)){{$details->country_code}}@endif" name="country_code" id="country_code"  placeholder="Please Enter Code">
+                                  @if($errors->has('country_code'))
+                                    <span class="text-danger">{{$errors->first('country_code')}}</span>
+                                  @endif
+                              </div>
+                              <div class="form-group required">
+                                  <label for="dial_code">Dial Code <span class="error">*</span></label>
+                                  <input type="text" class="form-control" value="@if(isset($details->dial_code)){{$details->dial_code}}@endif" name="dial_code" id="dial_code"  placeholder="Please Enter Dial Code">
+                                  @if($errors->has('dial_code'))
+                                      <span class="text-danger">{{$errors->first('dial_code')}}</span>
+                                  @endif
+                              </div>
+                            </div>
+                            <div class="tab-pane" id="secondary">
+                                   <div class="form-group">
+                                    <label class="required" for="title">Country Name (ARABIC)</label>
+                                    <input class="form-control {{ $errors->has('ar_name') ? 'is-invalid' : '' }}" type="text" name="ar_name" id="ar_title" value="@if(isset($details->name)){{$details->translate('ar')->name}}@endif" >
+                                    @if($errors->has('ar_name'))
+                                        <div class="invalid-feedback">
+                                            {{ $errors->first('ar_name') }}
+                                        </div>
+                                    @endif
+                                    <span class="help-block"></span>
+                                </div>
+                            </div>
                         </div>
                         <div>
                            <input type="hidden" name="country_id" id="country_id" value="{{$details->id}}">

@@ -47,15 +47,24 @@
                   <div class="row justify-content-center">
                     <div class="col-md-10 col-sm-12">
                       <form  method="post" id="admin_country_add_form" action="{{route('admin.country.country.add')}}" method="post" enctype="multipart/form-data">
-                        @csrf
+                        <!-- @csrf
                         <div>
                           <div class="form-group required">
-                            <label for="name">Country Name <span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('name')?old('name'):''}}" name="name" id="name"  placeholder="Please Enter Country Name">
-                            @if($errors->has('name'))
-                            <span class="text-danger">{{$errors->first('name')}}</span>
+                            <label for="ar_name">Country Name (Arabic)<span class="error">*</span></label>
+                            <input type="text" class="form-control" value="{{old('ar_name')?old('ar_name'):''}}" name="ar_name" id="ar_name"  placeholder="Please Enter Country Name">
+                            @if($errors->has('ar_name'))
+                            <span class="text-danger">{{$errors->first('ar_name')}}</span>
                             @endif
                           </div>
+
+                          <div class="form-group required">
+                            <label for="en_name">Country Name (English)<span class="error">*</span></label>
+                            <input type="text" class="form-control" value="{{old('en_name')?old('en_name'):''}}" name="en_name" id="en_name"  placeholder="Please Enter Country Name">
+                            @if($errors->has('en_name'))
+                            <span class="text-danger">{{$errors->first('en_name')}}</span>
+                            @endif
+                          </div>
+
                           <div class="form-group required">
                             <label for="country_code">Code <span class="error">*</span></label>
                             <input type="text" class="form-control" value="{{old('country_code')?old('country_code'):''}}" name="country_code" id="country_code"  placeholder="Please Enter Code">
@@ -72,6 +81,56 @@
                           </div>
                           
                           
+                        </div> -->
+
+                        <ul class="nav nav-tabs nav-justified nav-inline">
+                           
+                            <li class="active">&nbsp;&nbsp;&nbsp;<a href="#primary" data-toggle="tab">English  </a>&nbsp;&nbsp;&nbsp;</li>|
+                            <li >&nbsp;&nbsp;&nbsp;<a href="#secondary" data-toggle="tab">Arabic</a></li>
+                           
+                        </ul>
+                        @csrf
+                        <div class="tab-content tab-validate" style="margin-top:20px;">
+
+                            
+                            <div class="tab-pane active" id="primary">
+                                <div class="form-group">
+                                    <label class="required" for="en_title">Country Name (ENGLISH)</label>
+                                    <input class="form-control {{ $errors->has('en_name') ? 'is-invalid' : '' }}" type="text" name="en_name" id="en_name" value="{{ old('en_name', '') }}" >
+                                    @if($errors->has('en_name'))
+                                        <div class="invalid-feedback">
+                                            {{ $errors->first('en_name') }}
+                                        </div>
+                                    @endif
+                                    <span class="help-block"></span>
+                                </div>
+                                <div class="form-group required">
+                                  <label for="country_code">Code <span class="error">*</span></label>
+                                  <input type="text" class="form-control" value="{{old('country_code')?old('country_code'):''}}" name="country_code" id="country_code"  placeholder="Please Enter Code">
+                                  @if($errors->has('country_code'))
+                                    <span class="text-danger">{{$errors->first('country_code')}}</span>
+                                  @endif
+                              </div>
+                              <div class="form-group required">
+                                  <label for="dial_code">Dial Code <span class="error">*</span></label>
+                                  <input type="text" class="form-control" value="{{old('dial_code')?old('dial_code'):''}}" name="dial_code" id="dial_code"  placeholder="Please Enter Dial Code">
+                                  @if($errors->has('dial_code'))
+                                      <span class="text-danger">{{$errors->first('dial_code')}}</span>
+                                  @endif
+                              </div>
+                            </div>
+                            <div class="tab-pane" id="secondary">
+                                   <div class="form-group">
+                                    <label class="required" for="title">Country Name (ARABIC)</label>
+                                    <input class="form-control {{ $errors->has('ar_name') ? 'is-invalid' : '' }}" type="text" name="ar_name" id="ar_title" value="{{ old('ar_name', '') }}" >
+                                    @if($errors->has('ar_name'))
+                                        <div class="invalid-feedback">
+                                            {{ $errors->first('ar_name') }}
+                                        </div>
+                                    @endif
+                                    <span class="help-block"></span>
+                                </div>
+                            </div>
                         </div>
                         <div>
                            <a href="{{route('admin.country.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>

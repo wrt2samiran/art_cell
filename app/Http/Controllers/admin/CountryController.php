@@ -35,9 +35,7 @@ class CountryController extends Controller
             ->editColumn('created_at', function ($country) {
                 return $country->created_at ? with(new Carbon($country->created_at))->format('m/d/Y') : '';
             })
-            // ->editColumn('role_description', function ($role) {
-            //     return Str::limit($country->role_description,100);
-            // })
+            
             ->filterColumn('created_at', function ($query, $keyword) {
                 $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
             })
@@ -85,14 +83,14 @@ class CountryController extends Controller
         	if ($request->isMethod('POST'))
         	{
 				$validationCondition = array(
-                    'name'          => 'required|min:2|max:255|unique:'.(new Country)->getTable().',name',
-                    'country_code'  => 'required|min:2|max:8|unique:'.(new Country)->getTable().',country_code',
+                    'en_name'          => 'required|min:2|max:255',
+                    'country_code'  => 'required|min:2|max:8',
                     'dial_code'     => 'required|min:2|max:5',
 				);
 				$validationMessages = array(
-					'name.required'         => 'Please enter name',
-					'name.min'              => 'Name should be should be at least 2 characters',
-                    'name.max'              => 'Name should not be more than 255 characters',
+					'en_name.required'      => 'Please enter name',
+					'en_name.min'           => 'Name should be should be at least 2 characters',
+                    'en_name.max'           => 'Name should not be more than 255 characters',
                     'country_code.required' => 'Please enter country code',
                     'country_code.min'      => 'Country code should be should be at least 2 characters',
                     'country_code.max'      => 'Country code should not be more than 8 characters',
@@ -108,19 +106,29 @@ class CountryController extends Controller
 					return redirect()->route('admin.country.country.add')->withErrors($Validator)->withInput();
 				} else {
                     
-                    $new = new Country;
-                    $new->name = trim($request->name, ' ');
-                    $new->country_code  = $request->country_code;
-                    $new->dial_code  = $request->dial_code;
-                    $new->created_at = date('Y-m-d H:i:s');
-                    $save = $new->save();
-                
-					if ($save) {						
-						return redirect()->route('admin.country.list')->with('success','Country successfully created.');
-					} else {
-						$request->session()->flash('alert-danger', 'An error occurred while adding the state');
-						return redirect()->back();
-					}
+                    $post_data = [
+                       'en' => [
+                           'name'       => $request->input('en_name'),
+                           'country_code' => $request->input('country_code'),
+                           'dial_code' => $request->input('dial_code')
+                       ],
+                       'author'=>'author'
+                    ];
+
+                    if($request->input('ar_name')){
+                        $post_data['ar']=[
+                           'name'       => $request->input('ar_name'),
+                           'country_code' => $request->input('country_code'),
+                           'dial_code' => $request->input('dial_code')
+                       ];
+                    }
+
+                  
+
+                    Country::create($post_data);
+                  				
+					return redirect()->route('admin.country.list')->with('success','Country successfully created.');
+					
 				}
             }
 			return view('admin.country.add', $data);
@@ -143,8 +151,6 @@ class CountryController extends Controller
 
         try
         {           
-            //$pageNo = Session::get('pageNo') ? Session::get('pageNo') : '';
-           // $data['pageNo'] = $pageNo;
            
             $details = Country::find($id);
             $data['id'] = $id;
@@ -155,30 +161,50 @@ class CountryController extends Controller
                     return redirect()->route('admin.country.list');
                 }
                 $validationCondition = array(
-                    'name'          => 'required|min:2|max:255|unique:' .(new Country)->getTable().',name,'.$id.'',
-                    'country_code'  => 'required|min:2|max:8|unique:'.(new Country)->getTable().',country_code,'.$id.'',
+                    'en_name'          => 'required|min:2|max:255',
+                    'country_code'  => 'required|min:2|max:8',
                     'dial_code'     => 'required|min:2|max:5',
                 );
                 $validationMessages = array(
-                    'name.required'         => 'Please enter name',
-                    'name.min'              => 'Name should be should be at least 2 characters',
-                    'name.max'              => 'Name should not be more than 255 characters',
+                    'en_name.required'      => 'Please enter name',
+                    'en_name.min'           => 'Name should be should be at least 2 characters',
+                    'en_name.max'           => 'Name should not be more than 255 characters',
                     'country_code.required' => 'Please enter country code',
                     'country_code.min'      => 'Country code should be should be at least 2 characters',
                     'country_code.max'      => 'Country code should not be more than 8 characters',
                     'dial_code.required'    => 'Please enter dial code',
                     'dial_code.min'         => 'Dial code should be should be at least 2 characters',
                     'dial_code.max'         => 'Dial code should not be more than 5 characters',
+
+               
                 );
                 
                 $Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);
                 if ($Validator->fails()) {
                     return redirect()->back()->withErrors($Validator)->withInput();
                 } else {
-                    $details->name        = trim($request->name, ' ');
-                    $details->country_code    = $request->country_code;
-                    $details->dial_code       = $request->dial_code;
-                    $details->updated_at      = date('Y-m-d H:i:s');
+                    // $details->name        = trim($request->name, ' ');
+                    // $details->country_code    = $request->country_code;
+                    // $details->dial_code       = $request->dial_code;
+                    // $details->updated_at      = date('Y-m-d H:i:s');
+
+                    $post = [
+                       'en' => [
+                           $details->translate('en')->name = $request->input('en_name'),
+                           $details->translate('en')->country_code = $request->input('country_code'),
+                           $details->translate('en')->dial_code = $request->input('dial_code'),
+                       ],
+                       'author'=>'author'
+                    ];
+
+                    if($request->input('ar_name')){
+                        $post['ar']=[
+                           $details->translate('ar')->name = $request->input('ar_name'),
+                           $details->translate('ar')->country_code = $request->input('country_code'),
+                           $details->translate('ar')->dial_code = $request->input('dial_code'),
+                       ];
+                    }
+
                     $save = $details->save();                        
                     if ($save) {
                         return redirect()->route('admin.country.list')->with('success','Country successfully updated.');

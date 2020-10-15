@@ -18,6 +18,8 @@ class CreateTasksTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('contract_id');
             $table->foreign('contarct_id')->references('id')->on('contracts')->onDelete('cascade');
+            $table->unsignedBigInteger('service_provider_id');
+            $table->foreign('service_provider_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('task_name');
             $table->enum('task_type', ['O', 'M'])->comment = 'O=>One Time, M=>Maintenance';
             $table->string('pre_reminder_frequency');
@@ -27,6 +29,7 @@ class CreateTasksTable extends Migration
             $table->integer('task_total_days');
             $table->date('task_end_date');
             $table->enum('status', ['A', 'I', 'D'])->comment = 'A-active,I-inactive,D-delete';
+            $table->enum('work_status', ['0', '1', '2'])->comment = '0-Pending,1-Overdue,2-Completed';
             $table->enum('po_continue_service', ['Y', 'N'])->default('N')->comment = 'Y-yes,N-no';
             $table->enum('admin_continue_service', ['Y', 'N'])->default('N')->comment = 'Y-yes,N-no';           
             $table->timestamps();

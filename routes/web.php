@@ -280,15 +280,26 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
 
             
 
-            Route::group(['prefix' => 'task_assign_labour', 'as' => 'task_assign_labour.'], function () {
-                Route::get('/', 'TaskAssignLabourController@list')->name('list');
-                Route::any('/add','TaskAssignLabourController@cityAdd')->name('add');
-                Route::any('/edit/{encryptCode}', 'TaskAssignLabourController@edit')->name('edit');
-                Route::get('/{id}/change-change', 'TaskAssignLabourController@change_status')->name('change_status');
-                Route::delete('/{id}/delete', 'TaskAssignLabourController@delete')->name('delete');
-                Route::get('/{id}', 'TaskAssignLabourController@show')->name('show');
+            Route::group(['prefix' => 'service_management', 'as' => 'service_management.'], function () {
+                Route::get('/', 'ServiceManagementController@list')->name('list');
+                Route::any('/add','ServiceManagementController@cityAdd')->name('add');
+                Route::any('/edit/{encryptCode}', 'ServiceManagementController@edit')->name('edit');
+                Route::get('/{id}/change-change', 'ServiceManagementController@change_status')->name('change_status');
+                Route::delete('/{id}/delete', 'ServiceManagementController@delete')->name('delete');
+                Route::get('/{id}', 'ServiceManagementController@show')->name('show');
             });
 
+
+            Route::group(['prefix' => 'task_management', 'as' => 'task_management.'], function () {
+                Route::get('/list/{encryptCode}', 'TaskManagementController@list')->name('list');
+                Route::any('/add','TaskManagementController@taskAdd')->name('taskAdd');
+                Route::post('/get-data', 'TaskManagementController@getData')->name('getData');
+                Route::post('/get-cities', 'TaskManagementController@getCities')->name('getCities');
+                
+                
+            });
+
+            
         });
        
 });
