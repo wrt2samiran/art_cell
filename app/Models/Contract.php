@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 class Contract extends Model
 {
-<<<<<<< HEAD
+
     use SoftDeletes;
     protected $guarded=[];
 
@@ -39,9 +39,5 @@ class Contract extends Model
         }
         return $array;
     }
-=======
-   
 
-	
->>>>>>> master
 }
