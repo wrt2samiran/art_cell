@@ -23,272 +23,229 @@
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-				            <div class="card-header">
-				                <div class="d-flex justify-content-between" >
-				                    <div><span>Task List</span></div>
-					                <div>
-						                <!-- <a class="btn btn-success" href="{{route('admin.cities.add')}}">
-						                 Create City
-						                </a> -->
-					                </div>
-				                </div>
-				            </div>
+              <form  method="get" id="task_list" action="{{route('admin.task_management.list', $task_id)}}" method="post" enctype="multipart/form-data">
+                       <input type="hidden" name="search" value="search">
+                        <select name="user_labour_id" id="user_labour_id" class="select2-selection__rendered">
+                          <option  value="">Select Labour</option>
+                          @foreach($labour_list as $labour_data)
+                             <option value="{{$labour_data->id}}" @if($request->user_labour_id==$labour_data->id) selected @endif >{{@$labour_data->name}}</option>
+                          @endforeach  
+                        </select>
 
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                @if(Session::has('success'))
-                                    <div class="alert alert-success alert-dismissable __web-inspector-hide-shortcut__">
-                                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-                                        {{ Session::get('success') }}
-                                    </div>
-                                @endif
-                                @if(Session::has('error'))
-                                    <div class="alert alert-danger alert-dismissable">
-                                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-                                        {{ Session::get('error') }}
-                                    </div>
-                                @endif
-                                <table class="table table-bordered" id="task_management_table">
-                                    <thead>
-                                        <tr>
-                                            <th>Id</th>
-                                            <th>Task Name</th>
-                                            <th>User Id</th>
-                                            <th>Job Title</th>
-                                            <th>Status</th>
-                                            <th>Created At</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                        <select name="task_status" id="task_status" class="select2-selection__rendered">
+                          <option  value="">Select Status</option>
+                          
+                             <option value="0" @if($request->task_status==0) selected @endif>Pending </option>
+                             <option value="1" @if($request->task_status==1) selected @endif>Overdue</option>
+                             <option value="2" @if($request->task_status==2) selected @endif>Completed</option>
+                          
+                        </select>
 
+                        <input type="submit" name="submit" value="Submit">
+                
+              </form>
+                
                 <section class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-md-3">
-            <div class="sticky-top mb-3">
-              <div class="card">
-                <div class="card-header">
-                  <h4 class="card-title">Draggable Events</h4>
-                </div>
-                <div class="card-body">
-                  <!-- the events -->
-                  <div id="external-events">
-                    <div class="external-event bg-success">Lunch</div>
-                    <div class="external-event bg-warning">Go home</div>
-                    <div class="external-event bg-info">Do homework</div>
-                    <div class="external-event bg-primary">Work on UI design</div>
-                    <div class="external-event bg-danger">Sleep tight</div>
-                    <div class="checkbox">
-                      <label for="drop-remove">
-                        <input type="checkbox" id="drop-remove">
-                        remove after drop
-                      </label>
-                    </div>
-                  </div>
-                </div>
-                <!-- /.card-body -->
-              </div>
-              <!-- /.card -->
-              <div class="card">
-                <div class="card-header">
-                  <h3 class="card-title">Create Event</h3>
-                </div>
-                <div class="card-body">
-                  <div class="btn-group" style="width: 100%; margin-bottom: 10px;">
-                    <!--<button type="button" id="color-chooser-btn" class="btn btn-info btn-block dropdown-toggle" data-toggle="dropdown">Color <span class="caret"></span></button>-->
-                    <ul class="fc-color-picker" id="color-chooser">
-                      <li><a class="text-primary" href="#"><i class="fas fa-square"></i></a></li>
-                      <li><a class="text-warning" href="#"><i class="fas fa-square"></i></a></li>
-                      <li><a class="text-success" href="#"><i class="fas fa-square"></i></a></li>
-                      <li><a class="text-danger" href="#"><i class="fas fa-square"></i></a></li>
-                      <li><a class="text-muted" href="#"><i class="fas fa-square"></i></a></li>
-                    </ul>
-                  </div>
-                  <!-- /btn-group -->
-                  <div class="input-group">
-                    <input id="new-event" type="text" class="form-control" placeholder="Event Title">
+                  <div class="container-fluid">
+                    <div class="row">
+                      
+                      <!-- /.col -->
+                      <div class="col-md-9">
+                        <div class="card card-primary">
+                          <div class="card-body p-0">
+                            <!-- THE CALENDAR -->
+                            <div id="calendar"></div>
+                          </div>
 
-                    <div class="input-group-append">
-                      <button id="add-new-event" type="button" class="btn btn-primary">Add</button>
-                    </div>
-                    <!-- /btn-group -->
-                  </div>
-                  <!-- /input-group -->
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- /.col -->
-          <div class="col-md-9">
-            <div class="card card-primary">
-              <div class="card-body p-0">
-                <!-- THE CALENDAR -->
-                <div id="calendar"></div>
-              </div>
-              <!-- /.card-body -->
-            </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
-        </div>
-        <!-- /.row -->
-      </div><!-- /.container-fluid -->
-    </section>
-    <div class="modal fade" id="addTaskModal" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          
-          <h4 class="modal-title">Add Task</h4>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-        </div>
-        <div class="modal-body">
-          <div class="card-body">
-                  @if(Session::has('success'))
-                    <div class="alert alert-success alert-dismissable __web-inspector-hide-shortcut__">
-                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-                        {{ Session::get('success') }}
-                    </div>
-                  @endif
-
-                  @if(Session::has('error'))
-                    <div class="alert alert-danger alert-dismissable">
-                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-                        {{ Session::get('error') }}
-                    </div>
-                  @endif
-                  <div class="row justify-content-center">
-                    <div class="col-md-10 col-sm-12">
-                      <form  method="post" id="admin_labour_task_add_form" action="{{route('admin.task_management.taskAdd')}}" method="post" enctype="multipart/form-data">
-                        @csrf
-                              <div>                        
-                                <div class="form-group required">
-                                  <label for="service_id">Service <span class="error">*</span></label>
-                                  <?php //dd($property_list);?>
-                                  <select class="form-control parent_role_select2" onchange='onServiceChange(this.value)' style="width: 100%;" name="service_id" id="service_id">
-                                      <option value="">Select a Service</option>
-                                      @forelse($service_list as $service_data)
-                                         <option value="{{$service_data->id}}" {{(old('service_id')== $service_data->id)? 'selected':''}}>{{@$service_data->task_name}}</option>
-                                      @empty
-                                     <option value="">No Service Found</option>
-                                      @endforelse
-                  
-                                    </select>
-                                  @if($errors->has('service_id'))
-                                  <span class="text-danger">{{$errors->first('service_id')}}</span>
-                                  @endif
-                                </div>
-                                
-                                <div class="form-group required">
-                                  <label for="property_id">Property <span class="error">*</span></label>
-                                  <?php //dd($property_list);?>
-                                  <select class="form-control parent_role_select2" style="width: 100%;" name="property_id" id="property_id">
-                                      <option value="">Select a Property</option>
-                                    </select>
-                                  @if($errors->has('property_id'))
-                                  <span class="text-danger">{{$errors->first('property_id')}}</span>
-                                  @endif
-                                </div>
-
-                                <div class="form-group required">
-                                  <label for="country_id">Country <span class="error">*</span></label>
-                                    <select class="form-control parent_role_select2" style="width: 100%;" name="country_id" id="country_id">
-                                      <option value="">Select a Country</option>
-                                    </select>
-                                  @if($errors->has('country_id'))
-                                  <span class="text-danger">{{$errors->first('country_id')}}</span>
-                                  @endif
-                                </div>
-
-                                <div class="form-group required">
-                                  <label for="country_id">State <span class="error">*</span></label>
-                                   <select name="state_id" id="state_id" class="form-control">
-                                          <option value=""> Select State</option>
-                                   </select>
-                                    @if($errors->has('state_id'))
-                                      <span class="text-danger">{{$errors->first('state_id')}}</span>
-                                    @endif
-                                </div>
-
-                                <div class="form-group required">
-                                  <label for="name">City Name <span class="error">*</span></label>
-                                  <select name="city_id" id="city_id" class="form-control">
-                                          <option value=""> Select City</option>
-                                  </select>
-                                   @if($errors->has('city_id'))
-                                      <span class="text-danger">{{$errors->first('city_id')}}</span>
-                                   @endif
-                                </div>
-                                <div class="form-group required">
-                                  <label for="service_id">Labour <span class="error">*</span></label>
-                                  <?php //dd($property_list);?>
-                                  <select class="form-control parent_role_select2" style="width: 100%;" name="labour_id" id="labour_id">
-                                      <option value="">Select a Labour</option>
-                                      @forelse($labour_list as $labour_data)
-                                         <option value="{{$labour_data->id}}" {{(old('labour_id')== $labour_data->id)? 'selected':''}}>{{@$labour_data->name}}</option>
-                                      @empty
-                                     <option value="">No Labour Found</option>
-                                      @endforelse
-                  
-                                    </select>
-                                  @if($errors->has('labour_id'))
-                                  <span class="text-danger">{{$errors->first('labour_id')}}</span>
-                                  @endif
-                                </div>
-
-                                <div class="form-group required">
-                                  <label for="service_id">Task Title <span class="error">*</span></label>
-                                  <input type="text" class="form-control float-right" id="job_title" name="job_title">
-                                   @if($errors->has('job_title'))
-                                    <span class="text-danger">{{$errors->first('job_title')}}</span>
-                                   @endif
-                                </div>
-
-                                <div class="form-group">
-                                  <label for="service_id">Task Description</label>
-                                  <textarea class="form-control float-right" name="job_desc" id="job_desc">{{old('job_desc')}}</textarea>
-                                </div>
-
-                                <div class="form-group">
-                                  <label>Date range:</label>
-
-                                  <div class="input-group">
-                                    <div class="input-group-prepend">
-                                      <span class="input-group-text">
-                                        <i class="far fa-calendar-alt"></i>
-                                      </span>
-                                    </div>
-                                    <input type="text" class="form-control float-right" id="date_range" name="date_range">
-                                  </div>
-                                  <!-- /.input group -->
-                                </div>
-
-                                
-                            <div>
-                           <button type="submit" class="btn btn-success">Submit</button> 
+                          <!-- /.card-body -->
                         </div>
-                      </form>
+                        <!-- /.card -->
+                      </div>
+                      <div class="col-md-3">
+                        <div class="sticky-top mb-3">
+                          <div class="card" style="width: 125px">
+                            <div class="card-header">
+                              <h4 class="card-title">Color Details</h4>
+                            </div>
+                            <div class="card-body">
+                              <!-- the events -->
+                              <div id="external-events" style="width: 88px">
+                                <div class="external-event bg-success">Completed</div>
+                                <div class="external-event bg-warning">Pending</div>
+                                <div class="external-event bg-danger">Overdue</div>
+                              </div>
+                            </div>
+                            <!-- /.card-body -->
+                          </div>
+                          <!-- /.card -->
+                         
+                        </div>
+                      </div>
+                      <!-- /.col -->
+                    </div>
+                    <!-- /.row -->
+                  </div><!-- /.container-fluid -->
+                </section>
+                <div class="modal fade" id="addTaskModal" role="dialog">
+                <div class="modal-dialog">
+                
+                  <!-- Modal content-->
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      
+                      <h4 class="modal-title">Add Task</h4>
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="card-body">
+                              @if(Session::has('success'))
+                                <div class="alert alert-success alert-dismissable __web-inspector-hide-shortcut__">
+                                    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                    {{ Session::get('success') }}
+                                </div>
+                              @endif
+
+                              @if(Session::has('error'))
+                                <div class="alert alert-danger alert-dismissable">
+                                    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                    {{ Session::get('error') }}
+                                </div>
+                              @endif
+
+
+                              <div class="row justify-content-center">
+                                <div class="col-md-10 col-sm-12">
+                                  <form  method="post" id="admin_labour_task_add_form" action="{{route('admin.task_management.taskAdd')}}" method="post" enctype="multipart/form-data">
+                                    @csrf
+                                          <div>  
+                                            <input type="hidden" name="task_id" id="task_id" value="{{$task_id}}"> 
+                                           
+                                                               
+                                            <div class="form-group required">
+                                              <label for="service_id">Service <span class="error">*</span></label>
+                                              <?php //dd($calendar_list);?>
+                                              <select class="form-control parent_role_select2" onchange='onServiceChange(this.value)' style="width: 100%;" name="service_id" id="service_id">
+                                                  <option value="">Select a Service</option>
+                                                  @forelse($service_list as $service_data)
+                                                     <option value="{{$service_data->id}}" {{(old('service_id')== $service_data->id)? 'selected':''}}>{{@$service_data->task_name}}</option>
+                                                  @empty
+                                                 <option value="">No Service Found</option>
+                                                  @endforelse
+                              
+                                                </select>
+                                              @if($errors->has('service_id'))
+                                              <span class="text-danger">{{$errors->first('service_id')}}</span>
+                                              @endif
+                                            </div>
+                                            
+                                            <div class="form-group required">
+                                              <label for="property_id">Property <span class="error">*</span></label>
+                                              <?php //dd($property_list);?>
+                                              <select class="form-control parent_role_select2" style="width: 100%;" name="property_id" id="property_id">
+                                                  <option value="">Select a Property</option>
+                                                </select>
+                                              @if($errors->has('property_id'))
+                                              <span class="text-danger">{{$errors->first('property_id')}}</span>
+                                              @endif
+                                            </div>
+
+                                            <div class="form-group required">
+                                              <label for="country_id">Country <span class="error">*</span></label>
+                                                <select class="form-control parent_role_select2" style="width: 100%;" name="country_id" id="country_id">
+                                                  <option value="">Select a Country</option>
+                                                </select>
+                                              @if($errors->has('country_id'))
+                                              <span class="text-danger">{{$errors->first('country_id')}}</span>
+                                              @endif
+                                            </div>
+
+                                            <div class="form-group required">
+                                              <label for="country_id">State <span class="error">*</span></label>
+                                               <select name="state_id" id="state_id" class="form-control">
+                                                      <option value=""> Select State</option>
+                                               </select>
+                                                @if($errors->has('state_id'))
+                                                  <span class="text-danger">{{$errors->first('state_id')}}</span>
+                                                @endif
+                                            </div>
+
+                                            <div class="form-group required">
+                                              <label for="name">City Name <span class="error">*</span></label>
+                                              <select name="city_id" id="city_id" class="form-control">
+                                                      <option value=""> Select City</option>
+                                              </select>
+                                               @if($errors->has('city_id'))
+                                                  <span class="text-danger">{{$errors->first('city_id')}}</span>
+                                               @endif
+                                            </div>
+                                            <div class="form-group required">
+                                              <label for="service_id">Labour <span class="error">*</span></label>
+                                              <select class="form-control parent_role_select2" style="width: 100%;" name="labour_id" id="labour_id">
+                                                  <option value="">Select a Labour</option>
+                                                  @forelse($labour_list as $labour_data)
+                                                     <option value="{{$labour_data->id}}" {{(old('labour_id')== $labour_data->id)? 'selected':''}}>{{@$labour_data->name}}</option>
+                                                  @empty
+                                                 <option value="">No Labour Found</option>
+                                                  @endforelse
+                              
+                                                </select>
+                                              @if($errors->has('labour_id'))
+                                              <span class="text-danger">{{$errors->first('labour_id')}}</span>
+                                              @endif
+                                            </div>
+                                            <div class="form-group">
+                                              <label>Date range:</label>
+
+                                              <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text">
+                                                    <i class="far fa-calendar-alt"></i>
+                                                  </span>
+                                                </div>
+                                                <input type="text" class="form-control float-right" id="date_range" name="date_range">
+                                              </div>
+                                              <!-- /.input group -->
+                                            </div>
+                                            <div class="form-group required">
+                                              <label for="service_id">Task Title <span class="error">*</span></label>
+                                              <input type="text" class="form-control float-right" id="job_title" name="job_title">
+                                               @if($errors->has('job_title'))
+                                                <span class="text-danger">{{$errors->first('job_title')}}</span>
+                                               @endif
+                                            </div>
+
+                                            <div class="form-group">
+                                              <label for="service_id">Task Description</label>
+                                              <textarea class="form-control float-right" name="job_desc" id="job_desc">{{old('job_desc')}}</textarea>
+                                            </div>
+
+                                            
+
+                                            
+                                        <div>
+                                       <button type="submit" class="btn btn-success">Submit</button> 
+                                    </div>
+                                  </form>
+                                </div>
+                              </div>
+                          </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>
                   </div>
-              </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-      
-    </div>
-    </div>
+                  
+                </div>
+                </div>
+
+<?php $list = json_encode($calendar_list);
+
+$filtered = array();
+foreach($calendar_list as $value) {
+    $filtered[] = $value;
+}
+$list = json_encode($filtered);
+?>
 
 @endsection
 
@@ -361,6 +318,15 @@
         };
       }
     });
+     const colors = <?=$list?>;
+
+function iterate(item, index) {
+  console.log(`${item} has index ${index}`);
+}
+
+colors.forEach(iterate);
+
+
 
     var calendar = new Calendar(calendarEl, {
       plugins: [ 'bootstrap', 'interaction', 'dayGrid', 'timeGrid' ],
@@ -372,54 +338,93 @@
       'themeSystem': 'bootstrap',
       //Random default events
       events    : [
+       
+       <?php foreach($calendar_list as $calendar_data){ 
+
+            $user = $calendar_data->userDetails->name;
+            if($calendar_data->status==1)
+            {
+              $color = '#dc3545';
+            }
+            else if($calendar_data->status==0)
+            {
+              $color = '#ffc107';
+            }
+            else
+            {
+              $color = '#28a745';
+            }
+
+        ?>
+
+
         {
-          title          : 'All Day Event',
-          start          : new Date(y, m, 1),
-          backgroundColor: '#f56954', //red
-          borderColor    : '#f56954', //red
+          title          : '<?=$calendar_data->job_title?>(<?=$user?>)',
+          start          : '<?=$calendar_data->start_date?>',
+          end            : '<?=$calendar_data->end_date?>',
+          backgroundColor: '<?=$color?>', //red
+          borderColor    : '<?=$color?>', //red
+          url            : '<?=$calendar_data->id?>',
           allDay         : true
         },
-        {
-          title          : 'Long Event',
-          start          : new Date(y, m, d - 5),
-          end            : new Date(y, m, d - 2),
-          backgroundColor: '#f39c12', //yellow
-          borderColor    : '#f39c12' //yellow
-        },
-        {
-          title          : 'Meeting',
-          start          : new Date(y, m, d, 10, 30),
-          allDay         : false,
-          backgroundColor: '#0073b7', //Blue
-          borderColor    : '#0073b7' //Blue
-        },
-        {
-          title          : 'Lunch',
-          start          : new Date(y, m, d, 12, 0),
-          end            : new Date(y, m, d, 14, 0),
-          allDay         : false,
-          backgroundColor: '#00c0ef', //Info (aqua)
-          borderColor    : '#00c0ef' //Info (aqua)
-        },
-        {
-          title          : 'Birthday Party',
-          start          : new Date(y, m, d + 1, 19, 0),
-          end            : new Date(y, m, d + 1, 22, 30),
-          allDay         : false,
-          backgroundColor: '#00a65a', //Success (green)
-          borderColor    : '#00a65a' //Success (green)
-        },
-        {
-          title          : 'Click for Google',
-          start          : new Date(y, m, 28),
-          end            : new Date(y, m, 29),
-          url            : 'http://google.com/',
-          backgroundColor: '#3c8dbc', //Primary (light-blue)
-          borderColor    : '#3c8dbc' //Primary (light-blue)
-        }
+
+        <?php } ?>
+
+        // {
+        //   title          : 'Long Event',
+        //   start          : new Date(y, m, d - 5),
+        //   end            : new Date(y, m, d - 2),
+        //   backgroundColor: '#f39c12', //yellow
+        //   borderColor    : '#f39c12' //yellow
+        // },
+        // {
+        //   title          : 'Meeting',
+        //   start          : new Date(y, m, d, 10, 30),
+        //   allDay         : false,
+        //   backgroundColor: '#0073b7', //Blue
+        //   borderColor    : '#0073b7' //Blue
+        // },
+        // {
+        //   title          : 'Lunch',
+        //   start          : new Date(y, m, d, 12, 0),
+        //   end            : new Date(y, m, d, 14, 0),
+        //   allDay         : false,
+        //   backgroundColor: '#00c0ef', //Info (aqua)
+        //   borderColor    : '#00c0ef' //Info (aqua)
+        // },
+        // {
+        //   title          : 'Birthday Party',
+        //   start          : new Date(y, m, d + 1, 19, 0),
+        //   end            : new Date(y, m, d + 1, 22, 30),
+        //   allDay         : false,
+        //   backgroundColor: '#00a65a', //Success (green)
+        //   borderColor    : '#00a65a' //Success (green)
+        // },
+        // {
+        //   title          : 'Click for Google',
+        //   start          : new Date(y, m, 28),
+        //   end            : new Date(y, m, 29),
+        //   url            : 'http://google.com/',
+        //   backgroundColor: '#3c8dbc', //Primary (light-blue)
+        //   borderColor    : '#3c8dbc' //Primary (light-blue)
+        // }
       ],
       editable  : true,
       droppable : true, // this allows things to be dropped onto the calendar !!!
+      eventDrop: function(info) {
+    
+
+   
+    if (confirm("Are you sure about this change?")) {
+      onTaskChange(info.event.url,  info.event.start,  info.event.end );
+    }
+    else
+    {
+      info.revert();
+    }
+    
+    
+  },
       drop      : function(info) {
         // is the "remove after drop" checkbox checked?
         if (checkbox.checked) {
@@ -473,15 +478,6 @@
   });
 
 
-// $(".fc-day").on("click", function(){ alert('called');})
-
-// $('.fc-day').on({
-
-//         click: function() { 
-//             alert('Clicked on: ');  
-//         },
-
-//     });
 
 $(document).on('click', 'td.fc-today,td.fc-future', function() {
     alert('called');
@@ -525,6 +521,32 @@ function onServiceChange(service_id){
         });
     }
 
+   
+
+
+function onTaskChange(calendar_id, start_date, end_date){
+  //alert(start_date+ ' TO '+end_date);
+
+  let modified_start_date = JSON.stringify(start_date);
+  modified_start_date = modified_start_date.slice(1,11);
+
+  let modified_end_date = JSON.stringify(end_date)
+  modified_end_date = modified_end_date.slice(1,11)
+
+     $.ajax({
+       
+        url: "{{route('admin.task_management.updateTask')}}",
+        type:'post',
+        dataType: "json",
+        data:{calendar_id:calendar_id,modified_start_date:modified_start_date,modified_end_date:modified_end_date,_token:"{{ csrf_token() }}"}
+        }).done(function(response) {
+           
+           console.log(response.status);
+            if(response.status){
+             console.log(response.sqlProperty);
+            }
+        });
+    }    
 
 
 //Date range picker

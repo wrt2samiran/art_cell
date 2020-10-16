@@ -23,7 +23,10 @@ $("#admin_labour_task_add_form").validate({
             city_id: {
                 required: true,
             },
-            user_id: {
+            labour_id: {
+                required: true,
+            },
+            date_range: {
                 required: true,
             },
 
@@ -50,9 +53,13 @@ $("#admin_labour_task_add_form").validate({
             city_id: {
                 required:  "Please select city",
             },
-            user_id: {
+            labour_id: {
                 required:  "Please select user",
             },
+            date_range: {
+                required:  "Please select date range",
+            },
+
         },
 
         errorPlacement: function (error, element) {
@@ -82,7 +89,7 @@ $("#admin_labour_task_add_form").validate({
             { data: 'task_name', name: 'task_name'},
             { data: 'contract_id', name: 'contract_id' },
             { data: 'service_provider_id', name: 'service_provider_id' },
-            { data: 'status', name: 'Pnding' },
+            { data: 'status', name: 'status' },
             { data: 'created_at', name: 'created_at' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
