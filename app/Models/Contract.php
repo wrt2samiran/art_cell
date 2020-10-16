@@ -40,4 +40,8 @@ class Contract extends Model
         return $array;
     }
 
+    public function contract_status(){
+        return $this->belongsTo(ContractStatus::class);
+    }
+
 }

@@ -183,6 +183,30 @@
                             @endif
                           </div>
 
+                          <div class="row attachment_files_container">
+                            <div class="col-sm-12 mb-1">
+                              <b>Find already attached files</b>
+                            </div>
+                            @if(count($files=$property->property_attachments))
+                              @foreach($files as $file)
+                                <div class="col-sm-1 col-xs-1 attachment_files" id="attachment_file_{{$file->id}}" style="height:55px">
+                                  <div class="d-flex align-items-start" >
+                                   <div>
+                                    <a title="Click to download the file" href="{{route('admin.properties.download_attachment',$file->id)}}">
+                                      <i style="color: red;" class="fa-4x far fa-file-pdf"></i>
+                                    </a>
+                                   </div>
+                                   <div class="ml-1">
+                                     <a title="Click to delete the file" href="javascript:delete_attach_file('{{route('admin.properties.delete_attachment_through_ajax',$file->id)}}','{{$file->id}}')"><i style="color: red;" class="fas fa-window-close"></i></a>
+                                   </div>
+                                  </div>
+                                </div>
+                              @endforeach
+                            @else
+                            <div class="col-md-12 text-muted">No files attached to this property</div>
+                            @endif
+                          </div>
+                          <hr>
                           <div class="form-group">
                             <label for="property_files">Attach Files</label>
                             <input  type="file" multiple class="form-control"

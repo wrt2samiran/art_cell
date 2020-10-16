@@ -237,7 +237,30 @@
 
                           </div> 
       
-
+                          <hr>
+                          <div class="row attachment_files_container">
+                            <div class="col-sm-12 mb-1">
+                              <b>Find already attached files</b>
+                            </div>
+                            @if(count($files=$contract->contract_attachments))
+                              @foreach($files as $file)
+                                <div class="col-sm-1 col-xs-1 attachment_files" id="attachment_file_{{$file->id}}" style="height:55px">
+                                  <div class="d-flex align-items-start" >
+                                   <div>
+                                    <a title="Click to download the file" href="{{route('admin.contracts.download_attachment',$file->id)}}">
+                                      <i style="color: red;" class="fa-4x far fa-file-pdf"></i>
+                                    </a>
+                                   </div>
+                                   <div class="ml-1">
+                                     <a title="Click to delete the file" href="javascript:delete_attach_file('{{route('admin.contracts.delete_attachment_through_ajax',$file->id)}}','{{$file->id}}')"><i style="color: red;" class="fas fa-window-close"></i></a>
+                                   </div>
+                                  </div>
+                                </div>
+                              @endforeach
+                            @else
+                            <div class="col-md-12 text-muted">No files attached to this property</div>
+                            @endif
+                          </div>
                           <hr>
                           <div class="form-group">
                             <label for="contract_files">Attach Files</label>
@@ -254,6 +277,19 @@
                            
                             @endif
                           </div>
+                          @if(auth()->guard('admin')->user()->hasAllPermission(['contract-status-change']))
+                          <div class="form-group required">
+                             <label for="contract_status_id">Contract Status<span class="error">*</span></label>
+                              <select class="form-control " id="contract_status_id" name="contract_status_id" style="width: 100%;">
+                                <option value="">Select status</option>
+                                @forelse($contract_statuses as $contract_status)
+                                   <option value="{{$contract_status->id}}" {{($contract->contract_status_id==$contract_status->id)?'selected':''}}>{{$contract_status->status_name}} </option>
+                                @empty
+                                <option value="">No Status Found</option>
+                                @endforelse 
+                              </select>
+                          </div>
+                          @endif
                           <input type="hidden" id="property_create_url" value="{{route('admin.properties.create')}}">
 
                           <input type="hidden" id="service_provider_create_url" value="{{route('admin.service_providers.create')}}">

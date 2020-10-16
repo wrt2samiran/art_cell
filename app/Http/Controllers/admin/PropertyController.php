@@ -11,6 +11,7 @@
 #    7. delete                                            #
 #    8. change_status                                     #
 #    9. download_attachment                               #
+#    10. delete_attachment_through_ajax                   #
 # Created Date   : 12-10-2020                             #
 # Purpose        : Property management                    #
 /*********************************************************/
@@ -24,6 +25,7 @@ use Yajra\Datatables\Datatables;
 use App\Models\{Country,State,City,User,PropertyType,PropertyAttachment};
 use App\Http\Requests\Admin\Property\{CreatePropertyRequest,UpdatePropertyRequest};
 use Illuminate\Support\Str;
+use File;
 class PropertyController extends Controller
 {
     //defining the view path
@@ -47,10 +49,10 @@ class PropertyController extends Controller
             $properties=Property::whereHas('city')->whereHas('property_type')->with('city')->select('properties.*');
             return Datatables::of($properties)
             ->editColumn('created_at', function ($property) {
-                return $property->created_at ? with(new Carbon($property->created_at))->format('m/d/Y') : '';
+                return $property->created_at ? with(new Carbon($property->created_at))->format('d/m/Y') : '';
             })
             ->filterColumn('created_at', function ($query, $keyword) {
-                $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
+                $query->whereRaw("DATE_FORMAT(created_at,'%d/%m/%Y') like ?", ["%$keyword%"]);
             })
             ->addColumn('is_active',function($property)use ($current_user){
 
@@ -83,6 +85,10 @@ class PropertyController extends Controller
                 if($has_delete_permission){
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete Property" href="javascript:delete_property('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
                 }
+
+                if($action_buttons==''){
+                    $action_buttons=$action_buttons.'<span class="text-muted">No access</span>';
+                } 
                 return $action_buttons;
             })
             ->rawColumns(['action','is_active'])
@@ -162,19 +168,16 @@ class PropertyController extends Controller
 
          foreach ($request->file('property_files')  as $key=>$property_file) {
           
-
             $file_name = time().$key.'.'.$property_file->getClientOriginalExtension();
          
             $destinationPath = public_path('/uploads/property_attachments');
          
             $property_file->move($destinationPath, $file_name);
-            
             PropertyAttachment::create([
              'property_id'=>$property->id,
              'file_name'=>$file_name,
              'created_by'=>auth()->guard('admin')->id()
             ]);
-
          }
         }
 
@@ -201,8 +204,8 @@ class PropertyController extends Controller
     /************************************************************************/
     # Function to load property edit page                                    #
     # Function name    : edit                                                #
-    # Created Date     : 15-05-2020                                          #
-    # Modified date    : 15-05-2020                                          #
+    # Created Date     : 12-10-2020                                          #
+    # Modified date    : 12-10-2020                                          #
     # Purpose          : to load property edit page                          #
     # Param            : id                                                  #
     public function edit($id){
@@ -333,6 +336,24 @@ class PropertyController extends Controller
         $file_data=PropertyAttachment::findOrFail($id);
         $file_path=public_path().'/uploads/property_attachments/'.$file_data->file_name;
         return response()->download($file_path,$file_data->file_name);
+    }
+
+
+    /************************************************************************/
+    # Function to delete attachment by file id                               #
+    # Function name    : delete_attachment_through_ajax                      #
+    # Created Date     : 16-10-2020                                          #
+    # Modified date    : 16-10-2020                                          #
+    # Purpose          : to delete attachment by file id                     #
+    # Param            : id                                                  #
+    public function delete_attachment_through_ajax($id){
+        $file_data=PropertyAttachment::findOrFail($id);
+        $file_path=public_path().'/uploads/property_attachments/'.$file_data->file_name;
+        if(File::exists($file_path)){
+            File::delete($file_path);
+        }
+        $file_data->delete();
+        return response()->json(['message'=>'Attachement file successfully deleted']);
     }
 
 

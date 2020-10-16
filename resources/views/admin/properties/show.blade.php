@@ -135,8 +135,8 @@
                             <div class="row">
                               @if(count($files=$property->property_attachments))
                                 @foreach($files as $file)
-                                  <div class="col-sm-1 col-xs-1">
-                                    <a href="{{route('admin.properties.download_attachment',$file->id)}}"><i style="color: red;" class="far fa-file-pdf"></i></a>
+                                  <div style="height: 55px" class="col-sm-1 col-xs-1">
+                                    <a title="Click to download" href="{{route('admin.properties.download_attachment',$file->id)}}"><i style="color: red;" class="fa-4x far fa-file-pdf"></i></a>
                                   </div>
                                 @endforeach
                               @else

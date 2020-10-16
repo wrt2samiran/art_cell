@@ -10,6 +10,7 @@
 #    6. update                                            #
 #    7. delete                                            #
 #    8. download_attachment                               #
+#    9. delete_attachment_through_ajax                    #
 # Created Date   : 14-10-2020                             #
 # Purpose        : Contract management                    #
 /*********************************************************/
@@ -17,11 +18,12 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\{Contract,User,Property,Service,ContractAttachment,ContractInstallment};
+use App\Models\{ContractStatus,Contract,User,Property,Service,ContractAttachment,ContractInstallment};
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Http\Requests\Admin\Contract\{CreateContractRequest,UpdateContractRequest};
+use File;
 class ContractController extends Controller
 {
     //defining the view path
@@ -41,18 +43,25 @@ class ContractController extends Controller
         $this->data['page_title']='Contract List';
         $current_user=auth()->guard('admin')->user();
         if($request->ajax()){
-            $contracts=Contract::with(['property','customer','service_provider','services'])
+            $contracts=Contract::with(['property','customer','service_provider','services','contract_status'])
             ->whereHas('property')
             ->whereHas('customer')
             ->whereHas('service_provider')
             ->whereHas('services')
+            ->whereHas('contract_status')
             ->select('contracts.*');
             return Datatables::of($contracts)
             ->editColumn('created_at', function ($contract) {
-                return $contract->created_at ? with(new Carbon($contract->created_at))->format('m/d/Y') : '';
+                return $contract->created_at ? with(new Carbon($contract->created_at))->format('d/m/Y') : '';
             })
             ->filterColumn('created_at', function ($query, $keyword) {
-                $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
+                $query->whereRaw("DATE_FORMAT(created_at,'%d/%m/%Y') like ?", ["%$keyword%"]);
+            })
+            ->editColumn('start_date', function ($contract) {
+                return $contract->start_date ? with(new Carbon($contract->start_date))->format('d/m/Y') : '';
+            })
+            ->filterColumn('start_date', function ($query, $keyword) {
+                $query->whereRaw("DATE_FORMAT(start_date,'%d/%m/%Y') like ?", ["%$keyword%"]);
             })
             ->addColumn('action',function($contract) use ($current_user){
             	$delete_url=route('admin.contracts.delete',$contract->id);
@@ -72,6 +81,10 @@ class ContractController extends Controller
                 if($has_delete_permission){
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete contract" href="javascript:delete_contract('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
                 }
+
+                if($action_buttons==''){
+                    $action_buttons=$action_buttons.'<span class="text-muted">No access</span>';
+                } 
                 return $action_buttons;
             })
             ->rawColumns(['action','is_active'])
@@ -117,6 +130,12 @@ class ContractController extends Controller
     	$contract_code='CONT'.Carbon::now()->timestamp;
     	$start_date=Carbon::createFromFormat('d/m/Y', $request->start_date)->format('Y-m-d');
     	$end_date=Carbon::createFromFormat('d/m/Y', $request->end_date)->format('Y-m-d');
+
+        $default_contract_status=ContractStatus::where('is_default_status',true)->first();
+        if(!$default_contract_status){
+            return redirect()->back()->with('error','No default status found for contract. Please add default status for contract.');
+        }
+
         $contract=Contract::create([
         	'code'=>$contract_code,
         	'description'=>$request->description,
@@ -130,7 +149,7 @@ class ContractController extends Controller
         	'is_paid'=>false,
         	'in_installment'=>($request->in_installment)?true:false,
         	'notify_installment_before_days'=>$request->notify_installment_before_days,
-        	'status'=>'Ongoing',
+            'contract_status_id'=>$default_contract_status->id,
         	'created_by'=>$current_user->id,
         	'updated_by'=>$current_user->id
         ]);
@@ -223,7 +242,7 @@ class ContractController extends Controller
 
         $this->data['properties']=Property::whereIsActive(true)->get();
         $this->data['services']=Service::whereIsActive(true)->get();
-
+        $this->data['contract_statuses']=ContractStatus::where('is_active',true)->get();
         return view($this->view_path.'.edit',$this->data);
     }
 
@@ -255,7 +274,7 @@ class ContractController extends Controller
             'is_paid'=>false,
             'in_installment'=>($request->in_installment)?true:false,
             'notify_installment_before_days'=>$request->notify_installment_before_days,
-            'status'=>'Ongoing',
+            'contract_status_id'=>($request->contract_status_id)?$request->contract_status_id:$contract->contract_status_id,
             'updated_by'=>$current_user->id
         ]);
 
@@ -352,6 +371,24 @@ class ContractController extends Controller
         $file_data=ContractAttachment::findOrFail($id);
         $file_path=public_path().'/uploads/contract_attachments/'.$file_data->file_name;
         return response()->download($file_path,$file_data->file_name);
+    }
+
+    /************************************************************************/
+    # Function to delete attachment by file id                               #
+    # Function name    : delete_attachment_through_ajax                      #
+    # Created Date     : 16-10-2020                                          #
+    # Modified date    : 16-10-2020                                          #
+    # Purpose          : to delete attachment by file id                     #
+    # Param            : id                                                  #
+    public function delete_attachment_through_ajax($id){
+        $file_data=ContractAttachment::findOrFail($id);
+        
+        $file_path=public_path().'/uploads/contract_attachments/'.$file_data->file_name;
+        if(File::exists($file_path)){
+            File::delete($file_path);
+        }
+        $file_data->delete();
+        return response()->json(['message'=>'Attachement file successfully deleted']);
     }
 
 

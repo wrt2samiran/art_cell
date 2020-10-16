@@ -47,14 +47,13 @@ class PropertyManagerController extends Controller
             ->whereHas('role',function($q){
                 $q->where('slug','property-manager');
             })
-            ->whereNull('deleted_at')
             ->select('users.*');
             return Datatables::of($property_managers)
             ->editColumn('created_at', function ($property_manager) {
-                return $property_manager->created_at ? with(new Carbon($property_manager->created_at))->format('m/d/Y') : '';
+                return $property_manager->created_at ? with(new Carbon($property_manager->created_at))->format('d/m/Y') : '';
             })
             ->filterColumn('created_at', function ($query, $keyword) {
-                $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
+                $query->whereRaw("DATE_FORMAT(created_at,'%d/%m/%Y') like ?", ["%$keyword%"]);
             })
             ->addColumn('status',function($property_manager)use ($current_user){
 
@@ -88,6 +87,10 @@ class PropertyManagerController extends Controller
                 if($has_delete_permission){
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete Property Manager" href="javascript:delete_property_manager('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
                 }
+
+                if($action_buttons==''){
+                    $action_buttons=$action_buttons.'<span class="text-muted">No access</span>';
+                } 
                 return $action_buttons;
             })
             ->rawColumns(['action','status'])

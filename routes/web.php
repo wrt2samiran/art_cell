@@ -180,11 +180,13 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::delete('/{id}/delete', 'PropertyController@delete')->name('delete')->middleware('check_permissions:property-delete');
                 Route::get('/{id}/change-change', 'PropertyController@change_status')->name('change_status')->middleware('check_permissions:property-status-change');
                 Route::get('attachment/{id}/download', 'PropertyController@download_attachment')->name('download_attachment');
+
+                Route::delete('attachment/{id}/delete_attachment_through_ajax', 'PropertyController@delete_attachment_through_ajax')->name('delete_attachment_through_ajax');
             });
             
             /************************************/
 
-            /*Routes for property management */
+            /*Routes for contracts management */
             Route::group(['prefix'=>'contracts','as'=>'contracts.'],function(){
                 Route::get('/', 'ContractController@list')->name('list')->middleware('check_permissions:contract-list');
                 Route::get('/create', 'ContractController@create')->name('create')->middleware('check_permissions:contract-create');
@@ -194,6 +196,8 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::put('/{id}', 'ContractController@update')->name('update')->middleware('check_permissions:contract-edit');
                 Route::delete('/{id}/delete', 'ContractController@delete')->name('delete')->middleware('check_permissions:contract-delete');
                 Route::get('attachment/{id}/download', 'ContractController@download_attachment')->name('download_attachment');
+                
+                Route::delete('attachment/{id}/delete_attachment_through_ajax', 'ContractController@delete_attachment_through_ajax')->name('delete_attachment_through_ajax');
             });
             
             /************************************/

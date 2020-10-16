@@ -86,12 +86,12 @@
                                   <div class="col-sm-4">
                                     <div class="card card-success">
                                       <div  class="card-header">{{$module->module_name}}</div>
-                                      <div  class="card-body">
+                                      <div  class="card-body" id="module_no_{{$module->id}}">
                                         @if(count($module->functionalities))
                                           @foreach($module->functionalities as $functionality)
                                           <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="customCheckbox_{{$functionality->id}}" name="functionalities[]" value="{{$functionality->id}}">
-                                            <label for="customCheckbox_{{$functionality->id}}" class="custom-control-label">{{$functionality->function_name}}</label>
+                                            <input  class="custom-control-input permission_checkbox" type="checkbox" id="permission_{{$module->id}}_{{$functionality->slug}}" name="functionalities[]" value="{{$functionality->id}}">
+                                            <label for="permission_{{$module->id}}_{{$functionality->slug}}" class="custom-control-label">{{$functionality->function_name}}</label>
                                           </div>
                                           @endforeach
                                         @endif

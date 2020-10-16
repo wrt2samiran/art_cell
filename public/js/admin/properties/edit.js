@@ -209,3 +209,58 @@ window.reset = function (e) {
     e.unwrap();
 }
 
+
+
+
+
+ //function to delete quotation
+ function delete_attach_file(url,file_id){
+  swal({
+  title: "Are you sure?",
+  text: "Once deleted, you will not be able to recover this file!",
+  icon: "warning",
+  buttons: true,
+  dangerMode: true,
+  })
+  .then((willDelete) => {
+    if (willDelete) {
+        
+      $.LoadingOverlay("show");
+      $.ajax({
+        url: url,
+        type: "DELETE",
+        data:{ "_token": $('meta[name="csrf-token"]').attr('content')},
+        success: function (data) {
+
+          $('#attachment_file_'+file_id).remove();
+
+          var NumberOfFilePresent = $('.attachment_files').length;
+          if(NumberOfFilePresent=='0'){
+            $('.attachment_files_container').append('<div class="col-md-12 text-muted">No files attached to this property</div>');
+          }
+       
+          $.LoadingOverlay("hide");
+          toastr.success('File successfully deleted.', 'Success', {timeOut: 5000});
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+           $.LoadingOverlay("hide");
+           var response=jqXHR.responseJSON;
+           var status=jqXHR.status;
+           if(status=='404'){
+            toastr.error('Invalid URL', 'Error', {timeOut: 5000});
+           }
+           else if(status=='403'){
+              toastr.error('You do not have permission to perform this action.', 'Error', {timeOut: 5000});
+           }
+           else{
+             toastr.error('Internal server error.', 'Error', {timeOut: 5000});
+           }
+        }
+     });
+
+     
+    } 
+  });
+
+ }
+

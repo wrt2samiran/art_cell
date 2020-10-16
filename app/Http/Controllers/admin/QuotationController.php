@@ -32,13 +32,13 @@ class QuotationController extends Controller
             ->select('quotations.*');
             return Datatables::of($quotations)
             ->editColumn('created_at', function ($quotation) {
-                return $quotation->created_at ? with(new Carbon($quotation->created_at))->format('m/d/Y') : '';
+                return $quotation->created_at ? with(new Carbon($quotation->created_at))->format('d/m/Y') : '';
             })
             ->editColumn('details', function ($quotation) {
                 return Str::limit($quotation->details,50);
             })
             ->filterColumn('created_at', function ($query, $keyword) {
-                $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
+                $query->whereRaw("DATE_FORMAT(created_at,'%d/%m/%Y') like ?", ["%$keyword%"]);
             })
             ->editColumn('first_name', function ($quotation) {
                 return $quotation->first_name.' '.$quotation->last_name ;
@@ -67,6 +67,10 @@ class QuotationController extends Controller
                 if(true){
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete quotation" href="javascript:delete_quotation('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
                 }
+                
+                if($action_buttons==''){
+                    $action_buttons=$action_buttons.'<span class="text-muted">No access</span>';
+                } 
                 return $action_buttons;
             })
             ->rawColumns(['action','services','property_types'])

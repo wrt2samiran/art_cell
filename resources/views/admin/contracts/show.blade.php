@@ -106,10 +106,10 @@
                         <tr>
                           <td>Status</td>
                           <td>
-                            @if($contract->status=='Ongoing')
-                              <span class="text-success">{{$contract->status}}</span>
+                            @if($status=$contract->contract_status)
+                              <span style="color: {{$status->color_code}}">{{$status->status_name}}</span>
                             @else
-                              <span class="text-danger">{{$contract->status}}</span>
+                              <span>Status not found</span>
                             @endif
                           </td>
                         </tr>
@@ -119,8 +119,8 @@
                             <div class="row">
                               @if(count($files=$contract->contract_attachments))
                                 @foreach($files as $file)
-                                  <div class="col-sm-1 col-xs-1">
-                                    <a href="{{route('admin.contracts.download_attachment',$file->id)}}"><i style="color: red;" class="far fa-file-pdf"></i></a>
+                                  <div style="height: 55px" class="col-sm-1 col-xs-1">
+                                    <a title="Click to download" href="{{route('admin.contracts.download_attachment',$file->id)}}"><i style="color: red;" class="fa-4x far fa-file-pdf"></i></a>
                                   </div>
                                 @endforeach
                               @else

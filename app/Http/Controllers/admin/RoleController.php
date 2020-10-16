@@ -48,13 +48,13 @@ class RoleController extends Controller
             $roles=Role::select('roles.*');
             return Datatables::of($roles)
             ->editColumn('created_at', function ($role) {
-                return $role->created_at ? with(new Carbon($role->created_at))->format('m/d/Y') : '';
+                return $role->created_at ? with(new Carbon($role->created_at))->format('d/m/Y') : '';
             })
             ->editColumn('role_description', function ($role) {
                 return Str::limit($role->role_description,50);
             })
             ->filterColumn('created_at', function ($query, $keyword) {
-                $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
+                $query->whereRaw("DATE_FORMAT(created_at,'%d/%m/%Y') like ?", ["%$keyword%"]);
             })
             ->addColumn('status',function($role){
                 $current_user=auth()->guard('admin')->user();
@@ -100,6 +100,10 @@ class RoleController extends Controller
 
                 if($has_delete_permission){
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete Group" href="javascript:delete_role('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';   
+                }
+
+                if($action_buttons==''){
+                    $action_buttons=$action_buttons.'<span class="text-muted">No access</span>';
                 }            
                 return $action_buttons;
                 

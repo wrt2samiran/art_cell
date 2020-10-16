@@ -21,13 +21,13 @@ class PropertyTypeController extends Controller
             $property_types=PropertyType::select('property_types.*');
             return Datatables::of($property_types)
             ->editColumn('created_at', function ($property_type) {
-                return $property_type->created_at ? with(new Carbon($property_type->created_at))->format('m/d/Y') : '';
+                return $property_type->created_at ? with(new Carbon($property_type->created_at))->format('d/m/Y') : '';
             })
             ->editColumn('description', function ($property_type) {
                 return Str::limit($property_type->description,50);
             })
             ->filterColumn('created_at', function ($query, $keyword) {
-                $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
+                $query->whereRaw("DATE_FORMAT(created_at,'%d/%m/%Y') like ?", ["%$keyword%"]);
             })
             ->addColumn('is_active',function($property_type){
 

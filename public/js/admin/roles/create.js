@@ -89,3 +89,29 @@ async function onParentRoleChange(parent_role_id,url){
 
 
 
+
+$('.permission_checkbox').on('change',function(){
+    
+    var element_id=$(this).attr('id');
+    var element_id_split=element_id.split('_');
+    var module_id=element_id_split[1];
+    var permission_slug=element_id_split[2];
+
+    var permission_slug_split=permission_slug.split('-');
+    var action_name=permission_slug_split[permission_slug_split.length-1];
+
+    if(this.checked){
+        if(['details','edit','delete','change','create'].includes(action_name)){
+            //alert('ok');
+            // if($("#permission_"+module_id+'_'+permission_slug_split[0]+'-list').length){
+            //     alert('ok');
+            // }
+        }
+    }else{
+
+    }
+    
+    
+});
+
+
