@@ -41,6 +41,7 @@ class PropertyController extends Controller
 
     public function list(Request $request){
         $this->data['page_title']='Property List';
+        $current_user=auth()->guard('admin')->user();
         if($request->ajax()){
 
             $properties=Property::whereHas('city')->whereHas('property_type')->with('city')->select('properties.*');
@@ -51,9 +52,9 @@ class PropertyController extends Controller
             ->filterColumn('created_at', function ($query, $keyword) {
                 $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
             })
-            ->addColumn('is_active',function($property){
+            ->addColumn('is_active',function($property)use ($current_user){
 
-                $disabled='';
+                $disabled=(!$current_user->hasAllPermission(['property-status-change']))?'disabled':'';
                 if($property->is_active){
                    $message='deactivate';
                    return '<a title="Click to deactivate the property" href="javascript:change_status('."'".route('admin.properties.change_status',$property->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm '.$disabled.'" >Active</a>';
@@ -63,20 +64,23 @@ class PropertyController extends Controller
                    return '<a title="Click to activate the property" href="javascript:change_status('."'".route('admin.properties.change_status',$property->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm '.$disabled.'">Inactive</a>';
                 }
             })
-            ->addColumn('action',function($property){
+            ->addColumn('action',function($property)use ($current_user){
                 $delete_url=route('admin.properties.delete',$property->id);
                 $details_url=route('admin.properties.show',$property->id);
                 $edit_url=route('admin.properties.edit',$property->id);
                 $action_buttons='';
-                //need to check permissions later
-                if(true){
+
+                $has_details_permission=($current_user->hasAllPermission(['property-details']))?true:false;
+                if($has_details_permission){
                     $action_buttons=$action_buttons.'<a title="View Proprty Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
                 }
-
-                if(true){
+                $has_edit_permission=($current_user->hasAllPermission(['property-edit']))?true:false;
+                if($has_edit_permission){
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Property" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
                 }
-                if(true){
+
+                $has_delete_permission=($current_user->hasAllPermission(['property-delete']))?true:false;
+                if($has_delete_permission){
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete Property" href="javascript:delete_property('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
                 }
                 return $action_buttons;

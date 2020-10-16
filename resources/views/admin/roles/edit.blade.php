@@ -58,30 +58,31 @@
                           </div>
                           <div class="form-group required">
                              <label for="role_description">Group Description <span class="error">*</span></label>
-                             <textarea rows="5" class="form-control"  name="role_description" id="role_description"  placeholder="Group/Role Description">{{old('role_description')?old('role_description'):$role->role_description}}</textarea>
+                             <textarea rows="5" class="form-control"  name="role_description" id="role_description"  placeholder="Group Description">{{old('role_description')?old('role_description'):$role->role_description}}</textarea>
                              @if($errors->has('role_description'))
                               <span class="text-danger">{{$errors->first('role_description')}}</span>
                              @endif
                           </div>
-                   
                         
+                        @if($role->parrent_id)
                           <div class="form-group required">
                              <label for="parent_role">Select user type<span class="error">*</span></label>
                               <select class="form-control parent_role_select2" style="width: 100%;" name="parent_role">
-                                <option value="">Select a group</option>
+                                <option value="">Select user type</option>
                                 @forelse($parent_roles as $parent_role)
                                    <option value="{{$parent_role->id}}" 
                                     {{($parent_role->id==$role->parrent_id)?'selected':''}}
                                     >{{$parent_role->role_name}}</option>
                                 @empty
-                               <option value="">No Parent Group Found</option>
+                               <option value="">No user type found</option>
                                 @endforelse
                               </select>
                              @if($errors->has('parent_role'))
                               <span class="text-danger">{{$errors->first('parent_role')}}</span>
                              @endif
                           </div>
-                       
+                        @endif
+                        <div id="permissions_error" class="text-danger"></div>
                         <div id="module_permissions_container">
                           <div class="row">
                             @if(count($modules))

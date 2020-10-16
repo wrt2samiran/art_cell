@@ -51,6 +51,7 @@
         type: "DELETE",
         data:{ "_token": $('meta[name="csrf-token"]').attr('content')},
         success: function (data) {
+          quotations_table.ajax.reload(null, false);
           $.LoadingOverlay("hide");
           toastr.success('Service successfully deleted.', 'Success', {timeOut: 5000});
         },
@@ -60,13 +61,17 @@
            var status=jqXHR.status;
            if(status=='404'){
             toastr.error('Invalid URL', 'Error', {timeOut: 5000});
-           }else{
+           }
+           else if(status=='403'){
+              toastr.error('You do not have permission to perform this action.', 'Error', {timeOut: 5000});
+           }
+           else{
              toastr.error('Internal server error.', 'Error', {timeOut: 5000});
            }
         }
      });
 
-     quotations_table.ajax.reload(null, false);
+     
     } 
   });
 

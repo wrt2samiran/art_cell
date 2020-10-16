@@ -13,7 +13,7 @@
 #    9. ajax_check_role_name_unique                       #
 #    10.ajax_parent_module_permissions                    #
 # Created Date   : 15-05-2020                             #
-# Purpose        : Role/User group management             #
+# Purpose        : User group management                  #
 /*********************************************************/
 namespace App\Http\Controllers\admin;
 
@@ -42,7 +42,7 @@ class RoleController extends Controller
     # Purpose          : For role list and returning datatable ajax response #
 
     public function list(Request $request){
-        $this->data['page_title']='Role List';
+        $this->data['page_title']='Group List';
         
         if($request->ajax()){
             $roles=Role::select('roles.*');
@@ -57,33 +57,50 @@ class RoleController extends Controller
                 $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
             })
             ->addColumn('status',function($role){
-
-                $disabled='';
+                $current_user=auth()->guard('admin')->user();
+                $disabled=(!$current_user->hasAllPermission(['group-status-change']))?'disabled':'';
                 if($role->status=='A'){
                    $message='deactivate';
-                   return '<a title="Click to deactivate the role" href="javascript:change_status('."'".route('admin.roles.change_status',$role->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm '.$disabled.'" >Active</a>';
+                   return '<a title="Click to deactivate the group" href="javascript:change_status('."'".route('admin.roles.change_status',$role->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm '.$disabled.'" >Active</a>';
                     
                 }else{
                    $message='activate';
-                   return '<a title="Click to activate the role" href="javascript:change_status('."'".route('admin.roles.change_status',$role->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm '.$disabled.'">Inactive</a>';
+                   return '<a title="Click to activate the group" href="javascript:change_status('."'".route('admin.roles.change_status',$role->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm '.$disabled.'">Inactive</a>';
                 }
             })
             ->addColumn('action',function($role){
+                $current_user=auth()->guard('admin')->user();
                 $delete_url=route('admin.roles.delete',$role->id);
                 $details_url=route('admin.roles.show',$role->id);
                 $edit_url=route('admin.roles.edit',$role->id);
 
                 $action_buttons='';
 
-             
-                    $action_buttons=$action_buttons.'<a title="View Role Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
+                $has_details_permission=($current_user->hasAllPermission(['group-details']))?true:false;
+                               
+                if($role->slug=='super-admin' || $role->id==$current_user->role_id || !$current_user->hasAllPermission(['group-edit'])){
+                    $has_edit_permission=false;
+                }else{
+                    $has_edit_permission=true;
+                }
 
+                if($role->parrent_id==null || $role->id==$current_user->role_id || !$current_user->hasAllPermission(['group-delete'])){
+                    $has_delete_permission=false;
+                }else{
+                    $has_delete_permission=true;
+                }
                 
-                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Role" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
-        
-                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete role" href="javascript:delete_role('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
-               
+                
+                if($has_details_permission){
+                    $action_buttons=$action_buttons.'<a title="View Group Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
+                }
+                if($has_edit_permission){
+                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Group" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';                  
+                }    
 
+                if($has_delete_permission){
+                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete Group" href="javascript:delete_role('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';   
+                }            
                 return $action_buttons;
                 
             })
@@ -166,7 +183,7 @@ class RoleController extends Controller
 
     public function show($id){
         $role=Role::findOrFail($id);
-        $this->data['page_title']='Role Details';
+        $this->data['page_title']='Group Details';
         $this->data['role']=$role;
 
         $modules_id_array=RolePermission::where('role_id',$role->id)->pluck('module_id')->toArray();
@@ -191,7 +208,7 @@ class RoleController extends Controller
     # Param            : id                                                  #
     public function edit($id){
         $role=Role::findOrFail($id);
-        $this->data['page_title']='Role Edit';
+        $this->data['page_title']='Group Edit';
         $this->data['role']=$role;
 
         $parent_roles=Role::whereStatus('A')->whereNull('parrent_id')->orderBy('id','ASC')->get();
@@ -270,7 +287,7 @@ class RoleController extends Controller
          $users=User::where('role_id',$id)->whereStatus('A')->first();
 
          if($users){
-            return response()->json(['message'=>'There are active users with this role/group. You can not delete this group/role. To delete this group assign the users to other group and try again.'],400);
+            return response()->json(['message'=>'There are active users with this group. You can not delete this group. To delete this group assign the users to other group and try again.'],400);
          }else{
             $role->update([
                 'deleted_by'=>auth()->guard('admin')->id()

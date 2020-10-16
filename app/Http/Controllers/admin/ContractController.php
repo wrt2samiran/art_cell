@@ -39,6 +39,7 @@ class ContractController extends Controller
 
     public function list(Request $request){
         $this->data['page_title']='Contract List';
+        $current_user=auth()->guard('admin')->user();
         if($request->ajax()){
             $contracts=Contract::with(['property','customer','service_provider','services'])
             ->whereHas('property')
@@ -53,20 +54,22 @@ class ContractController extends Controller
             ->filterColumn('created_at', function ($query, $keyword) {
                 $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
             })
-            ->addColumn('action',function($contract){
+            ->addColumn('action',function($contract) use ($current_user){
             	$delete_url=route('admin.contracts.delete',$contract->id);
                 $details_url=route('admin.contracts.show',$contract->id);
                 $edit_url=route('admin.contracts.edit',$contract->id);
                 $action_buttons='';
-                //need to check permissions later
-                if(true){
+                $has_details_permission=($current_user->hasAllPermission(['contract-details']))?true:false;
+                if($has_details_permission){
                     $action_buttons=$action_buttons.'<a title="View Contract Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
                 }
 
-                if(true){
+                $has_edit_permission=($current_user->hasAllPermission(['contract-edit']))?true:false;
+                if($has_edit_permission){
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit contract" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
                 }
-                if(true){
+                $has_delete_permission=($current_user->hasAllPermission(['contract-delete']))?true:false;
+                if($has_delete_permission){
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete contract" href="javascript:delete_contract('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
                 }
                 return $action_buttons;

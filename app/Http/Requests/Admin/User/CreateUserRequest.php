@@ -23,7 +23,8 @@ class CreateUserRequest extends FormRequest
             'last_name'=>'required|min:2|max:100',
             'email'=>'required|email|max:100|unique:users',
             'password'=>'required|min:6|max:100',
-            'phone'=>'required|regex:/[0-9]{8,20}/'
+            'phone'=>'required|regex:/[0-9]{8,20}/',
+            'role_id'=>'required'
         ];
     }
     public function messages(){
@@ -42,7 +43,8 @@ class CreateUserRequest extends FormRequest
             'password.min'=>'Password should have 6 characters',
             'password.max'=>'Password should not be more then 100 characters',
             'phone.required' => 'Phone/Contact number is required',
-            'phone.regex'=>'Phone/Contact number should be a valid number of size 8 to 20 characters'
+            'phone.regex'=>'Phone/Contact number should be a valid number of size 8 to 20 characters',
+            'role_id.required'=>'Select a group'
         ];
     }
 }

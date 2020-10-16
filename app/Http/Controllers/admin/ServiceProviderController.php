@@ -40,6 +40,7 @@ class ServiceProviderController extends Controller
 
     public function list(Request $request){
         $this->data['page_title']='Service Provider List';
+        $current_user=auth()->guard('admin')->user();
         if($request->ajax()){
 
             $service_providers=User::with(['role'])
@@ -55,9 +56,9 @@ class ServiceProviderController extends Controller
             ->filterColumn('created_at', function ($query, $keyword) {
                 $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
             })
-            ->addColumn('status',function($service_provider){
+            ->addColumn('status',function($service_provider) use($current_user){
 
-                $disabled='';
+                $disabled=(!$current_user->hasAllPermission(['service-provider-status-change']))?'disabled':'';
                 if($service_provider->status=='A'){
                    $message='deactivate';
                    return '<a title="Click to deactivate the service provider" href="javascript:change_status('."'".route('admin.service_providers.change_status',$service_provider->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm '.$disabled.'" >Active</a>';
@@ -68,20 +69,27 @@ class ServiceProviderController extends Controller
                 }
             })
 
-            ->addColumn('action',function($service_provider){
+            ->addColumn('action',function($service_provider)use($current_user){
                 $delete_url=route('admin.service_providers.delete',$service_provider->id);
                 $details_url=route('admin.service_providers.show',$service_provider->id);
                 $edit_url=route('admin.service_providers.edit',$service_provider->id);
                 $action_buttons='';
-                //need to check permissions later
-                if(true){
+               
+
+                $has_details_permission=($current_user->hasAllPermission(['service-provider-details']))?true:false;
+
+                if($has_details_permission){
                     $action_buttons=$action_buttons.'<a title="View Servide Provider Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
                 }
 
-                if(true){
+                $has_edit_permission=($current_user->hasAllPermission(['service-provider-edit']))?true:false;
+
+                if($has_edit_permission){
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Servide Provider" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
                 }
-                if(true){
+
+                $has_delete_permission=($current_user->hasAllPermission(['service-provider-delete']))?true:false;
+                if($has_delete_permission){
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete service provider" href="javascript:delete_service_provider('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
                 }
                 return $action_buttons;

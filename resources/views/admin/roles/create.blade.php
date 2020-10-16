@@ -51,14 +51,14 @@
                         <div>
                           <div class="form-group required">
                             <label for="role_name">Group Name <span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('role_name')?old('role_name'):''}}" name="role_name" id="role_name"  placeholder="Group/Role Name">
+                            <input type="text" class="form-control" value="{{old('role_name')?old('role_name'):''}}" name="role_name" id="role_name"  placeholder="Group Name">
                             @if($errors->has('role_name'))
                             <span class="text-danger">{{$errors->first('role_name')}}</span>
                             @endif
                           </div>
                           <div class="form-group required">
                              <label for="role_description">Group Description <span class="error">*</span></label>
-                             <textarea rows="5" class="form-control"  name="role_description" id="role_description"  placeholder="Group/Role Description">{{old('role_description')?old('role_description'):''}}</textarea>
+                             <textarea rows="5" class="form-control"  name="role_description" id="role_description"  placeholder="Group Description">{{old('role_description')?old('role_description'):''}}</textarea>
                              @if($errors->has('role_description'))
                               <span class="text-danger">{{$errors->first('role_description')}}</span>
                              @endif
@@ -78,7 +78,7 @@
                               <span class="text-danger">{{$errors->first('parent_role')}}</span>
                              @endif
                           </div>
-                          <div id="permissions_error"></div>
+                          <div id="permissions_error" class="text-danger"></div>
                           <div id="module_permissions_container">
                               <div class="row">
                                 @if(count($modules))

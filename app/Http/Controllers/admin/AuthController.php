@@ -86,7 +86,7 @@ class   AuthController extends Controller
                                 'email' => $email,
                                 'status' => 'A',
                             ))->where(function ($query) {
-                            $query->where('usertype', 'S')->orWhere('usertype', 'SA');
+                            //$query->where('usertype', 'S')->orWhere('usertype', 'SA');
                         })->count();
 
 

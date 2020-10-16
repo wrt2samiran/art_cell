@@ -89,9 +89,9 @@
                             @endif
                           </div>
                           <div class="form-group required">
-                             <label for="parent_role">Group/Role</label>
+                             <label for="parent_role">Group</label>
                               <select class="form-control " id="role_id" name="role_id" style="width: 100%;">
-                                <option value="">Select a group/role</option>
+                                <option value="">Select a group</option>
                                 @forelse($roles as $role)
                                    <option value="{{$role->id}}" {{($role->id==$user->role_id)?'selected':''}}>{{$role->role_name}}</option>
                                 @empty

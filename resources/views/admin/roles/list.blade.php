@@ -30,9 +30,11 @@
 				                <div class="d-flex justify-content-between" >
 				                    <div><span>Group List</span></div>
 					                <div>
+                                        @if(auth()->guard('admin')->user()->hasAllPermission(['group-create']))
 						                <a class="btn btn-success" href="{{route('admin.roles.create')}}">
 						                 Create Group
 						                </a>
+                                        @endif
 					                </div>
 				                </div>
 				            </div>

@@ -60,6 +60,7 @@ class UserController extends Controller
         if($request->ajax()){
 
             $users=User::with(['role'])
+            ->where('id','!=',$current_user->id)
             ->whereHas('role',function($q) use ($hide_user_role_array){
                 if(count($hide_user_role_array)){
                     $q->whereNotIn('slug',$hide_user_role_array);
@@ -78,9 +79,22 @@ class UserController extends Controller
             ->filterColumn('created_at', function ($query, $keyword) {
                 $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
             })
-            ->addColumn('status',function($user){
+            ->addColumn('status',function($user)use ($current_user){
 
-                $disabled='';
+                
+                if($user->role->slug=='service-provider'){
+                    $disabled=(!$current_user->hasAllPermission(['property-owne-status-change']))?'disabled':'';
+                }elseif ($user->role->slug=='property-owner') {
+                    $disabled=(!$current_user->hasAllPermission(['service-provider-status-change']))?'disabled':'';
+                
+                }elseif ($user->role->slug=='property-manager') {
+
+                    $disabled=(!$current_user->hasAllPermission(['property-manager-status-change']))?'disabled':'';
+                }else{
+                    $disabled=(!$current_user->hasAllPermission(['user-status-change']))?'disabled':'';
+                }
+
+
                 if($user->status=='A'){
                    $message='deactivate';
                    return '<a title="Click to deactivate the user" href="javascript:change_status('."'".route('admin.users.change_status',$user->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm '.$disabled.'" >Active</a>';
@@ -120,7 +134,6 @@ class UserController extends Controller
                     $has_edit_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['user-edit']))?true:false;
                     $has_delete_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['user-delete']))?true:false;
                 }
-
 
 
                 if($has_details_permission){
@@ -245,7 +258,7 @@ class UserController extends Controller
         $user=User::findOrFail($id);
         $this->data['page_title']='Edit User';
         $this->data['user']=$user;
-        
+        $current_user=auth()->guard('admin')->user();
         $hide_user_role_array=[];
         //if user don't have service-provider-list permission then we will not fetch service providers role
         if(!$current_user->hasAllPermission(['service-provider-list'])){

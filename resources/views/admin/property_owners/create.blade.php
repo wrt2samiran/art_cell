@@ -86,7 +86,7 @@
                             @endif
                           </div>
                           <div class="form-group required">
-                             <label for="parent_role">Group/Role</label>
+                             <label for="parent_role">Group</label>
                               <select class="form-control " disabled style="width: 100%;">
                                 <option value="">Select a group</option>
                                 @forelse($roles as $role)

@@ -49,7 +49,7 @@ return [
      *        'de',
      *    )
      */
-    'exclude_langs'  => ['_json','auth','pagination','password','validation'],
+    'exclude_langs'  => [],
 
     /**
      * Export translations with keys output alphabetically.

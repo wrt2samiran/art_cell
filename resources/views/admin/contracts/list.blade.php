@@ -29,10 +29,13 @@
 				            <div class="card-header">
 				                <div class="d-flex justify-content-between" >
 				                    <div><span>Contract List</span></div>
+
 					                <div>
+                                        @if(auth()->guard('admin')->user()->hasAllPermission(['contract-create']))
 						                <a class="btn btn-success" href="{{route('admin.contracts.create')}}">
 						                 Create Contract
 						                </a>
+                                        @endif
 					                </div>
 				                </div>
 				            </div>

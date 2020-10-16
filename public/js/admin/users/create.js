@@ -70,7 +70,7 @@ $("#admin_user_create_form").validate({
             number:"Only number allowed"
         },
         role_id:{
-            required:'Select a group/role'
+            required:'Select a group'
         }
     },
     errorPlacement: function (error, element) {

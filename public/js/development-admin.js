@@ -675,7 +675,7 @@ $(document).ready(function () {
            
             password: {
                 required: true,
-                valid_password:true  
+                // valid_password:true  
                
             }
             
@@ -689,7 +689,7 @@ $(document).ready(function () {
             },
             password: {
                 required:  "This field is required",
-                valid_password: "Please enter valid password"
+                // valid_password: "Please enter valid password"
                
             }
           

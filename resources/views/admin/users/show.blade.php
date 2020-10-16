@@ -50,7 +50,7 @@
                           <td >{{$user->phone}}</td>
                         </tr>
                         <tr>
-                          <td >Group/Role</td>
+                          <td >Group</td>
                           <td >{{$user->role->role_name}}</td>
                         </tr>
                         <tr>

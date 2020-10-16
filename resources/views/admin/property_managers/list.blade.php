@@ -30,9 +30,11 @@
 				                <div class="d-flex justify-content-between" >
 				                    <div><span>Property Manager List</span></div>
 					                <div>
+                                        @if(auth()->guard('admin')->user()->hasAllPermission(['property-manager-create']))
 						                <a class="btn btn-success" href="{{route('admin.property_managers.create')}}">
 						                 Create Property Manager
 						                </a>
+                                        @endif
 					                </div>
 				                </div>
 				            </div>

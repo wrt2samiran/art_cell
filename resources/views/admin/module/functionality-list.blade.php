@@ -33,11 +33,11 @@
                         
                             <div class="card-header">
                                 <h3 class="card-title">{{$panel_title}}
-                                @if(checkFunctionPermission('module-management.function.add'))
+                                
                                 <a href="{{route('admin.module-management.function.add')}}"
                                                                            class="btn btn-success btn-xs">Functionality
                                         Create</a>
-                                        @endif
+                                     
                                         </h3>
                             </div>
                            

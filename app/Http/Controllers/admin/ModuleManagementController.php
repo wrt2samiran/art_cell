@@ -51,20 +51,13 @@ class ModuleManagementController extends Controller
         $finalResponse= Datatables::of($data)
             ->addColumn('status', function ($model) {
                 $modulestatuslink= route('admin.module-management.reset-module-status',  encrypt($model->id, Config::get('Constant.ENC_KEY')));
-                if(checkFunctionPermission("module-management.reset-module-status")){
+                
                     if($model->status == 'A'){
                         $statusHtml= '<button type="button" class="btn btn-block btn-success btn-xs changeStatus" data-redirect-url='.$modulestatuslink.' id="status'.$model->id.'">Active</button>';
                     } else{
                         $statusHtml= '<button type="button" class="btn btn-block btn-warning btn-xs changeStatus" data-redirect-url='.$modulestatuslink.' id="status'.$model->id.'">Inactive</button>';
                     }
-                }else{
-                    if($model->status == 'A'){
-                        $statusHtml= '<button type="button" class="btn btn-block btn-success btn-xs">Active</button>';
-                    } else{
-                        $statusHtml= '<button type="button" class="btn btn-block btn-warning btn-xs">Inactive</button>';
-                    }
-
-                }  
+ 
                 return  $statusHtml;
             })
             ->addColumn('action', function ($model) {
@@ -75,26 +68,17 @@ class ModuleManagementController extends Controller
                 
                 
                 $actions='<div class="btn-group btn-group-sm ">';
-                if(checkFunctionPermission("module-management.edit")){
+       
                     $actions .='<a href="' . $link1 . '" class="btn btn-info" id=""><i class="fas fa-edit"></i></a>';
-                }
-                if(checkFunctionPermission("module-management.module-delete")){
+             
+                
                     $actions .='<a href="javascript:void(0)" data-redirect-url="'.$link2.'" class="btn btn-danger delete-alert" id="button"><i class="fas fa-trash"></i></a>';
-                }
+                
                 $actions .='</div>';
                 return $actions;
                 
                 
-                // '<div class="btn-group btn-group-sm ">
-                //    if(checkFunctionPermission("module-management.edit")){
-                
-                //   <a href="' . $link1 . '" class="btn btn-info" id=""><i class="fas fa-edit"></i></a>"
-                //     }
-                //     if(checkFunctionPermission("module-management.module-delete")){
-                
-                // <a href="javascript:void(0)" data-redirect-url="'.$link2.'" class="btn btn-danger delete-alert" id="button"><i class="fas fa-trash"></i></a>
-                // }
-                // </div>';
+      
                 
             
                 
@@ -146,7 +130,7 @@ class ModuleManagementController extends Controller
 
             ->addColumn('status', function ($model) {
                 $functionstatuslink= route('admin.module-management.reset-function-status',  encrypt($model->id, Config::get('Constant.ENC_KEY')));
-                if(checkFunctionPermission("module-management.reset-function-status")){
+                
                     if($model->status == 'A'){
                         $fstatusHtml= '<button type="button" class="btn btn-block btn-success btn-xs fchangeStatus" data-redirect-url='.$functionstatuslink.' id="status'.$model->id.'">Active</button>';
                    
@@ -154,37 +138,25 @@ class ModuleManagementController extends Controller
                             $fstatusHtml= '<button type="button" class="btn btn-block btn-warning btn-xs fchangeStatus" data-redirect-url='.$functionstatuslink.' id="status'.$model->id.'">Inactive</button>';
                         }
 
-                    }else{
-                        if($model->status == 'A'){
-                            $fstatusHtml= '<button type="button" class="btn btn-block btn-success btn-xs">Active</button>';
-                       
-                        } else{
-                                $fstatusHtml= '<button type="button" class="btn btn-block btn-warning btn-xs">Inactive</button>';
-                            }
-
-                    }
-                        return  $fstatusHtml;
+                   return  $fstatusHtml;
             })
             ->addColumn('action', function ($model) {
                 $link3 = route('admin.module-management.functionality-edit',  encrypt($model->id, Config::get('Constant.ENC_KEY')));
                 $link4 = route('admin.module-management.function-delete',  encrypt($model->id, Config::get('Constant.ENC_KEY')));
 
                 $factions='<div class="btn-group btn-group-sm ">';
-                if(checkFunctionPermission("module-management.functionality-edit")){
+                
                     $factions .='<a href="' . $link3 . '" class="btn btn-info" id=""><i class="fas fa-edit"></i></a>';
-                }
-                if(checkFunctionPermission("module-management.function-delete")){
+              
+
                     $factions .='<a href="javascript:void(0)" data-redirect-url="'.$link4.'" class="btn btn-danger delete-alert" id="button"><i class="fas fa-trash"></i></a>';
-                }
+             
                 $factions .='</div>';
                 return $factions;
 
                 
 
-            //      '<div class="btn-group btn-group-sm ">
-            //     <a href="' . $link3 . '" class="btn btn-info"><i class="fas fa-edit"></i></a>
-            //     <a href="javascript:void(0)" data-redirect-url="'.$link4.'" class="btn btn-danger delete-alert"><i class="fas fa-trash"></i></a>
-            //   </div>';
+       
             })
             ->rawColumns(['action','status'])
             ->make(true);

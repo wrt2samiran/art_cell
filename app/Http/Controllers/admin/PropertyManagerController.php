@@ -40,6 +40,7 @@ class PropertyManagerController extends Controller
 
     public function list(Request $request){
         $this->data['page_title']='Property Manager List';
+        $current_user=auth()->guard('admin')->user();
         if($request->ajax()){
 
             $property_managers=User::with(['role'])
@@ -55,9 +56,9 @@ class PropertyManagerController extends Controller
             ->filterColumn('created_at', function ($query, $keyword) {
                 $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
             })
-            ->addColumn('status',function($property_manager){
+            ->addColumn('status',function($property_manager)use ($current_user){
 
-                $disabled='';
+                $disabled=(!$current_user->hasAllPermission(['property-manager-status-change']))?'disabled':'';
                 if($property_manager->status=='A'){
                    $message='deactivate';
                    return '<a title="Click to deactivate the property manager" href="javascript:change_status('."'".route('admin.property_managers.change_status',$property_manager->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm '.$disabled.'" >Active</a>';
@@ -67,21 +68,25 @@ class PropertyManagerController extends Controller
                    return '<a title="Click to activate the property manager" href="javascript:change_status('."'".route('admin.property_managers.change_status',$property_manager->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm '.$disabled.'">Inactive</a>';
                 }
             })
-            ->addColumn('action',function($property_manager){
+            ->addColumn('action',function($property_manager)use ($current_user){
                 $delete_url=route('admin.property_managers.delete',$property_manager->id);
                 $details_url=route('admin.property_managers.show',$property_manager->id);
                 $edit_url=route('admin.property_managers.edit',$property_manager->id);
                 $action_buttons='';
-                //need to check permissions later
-                if(true){
-                    $action_buttons=$action_buttons.'<a title="View Servide Provider Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
+
+                $has_details_permission=($current_user->hasAllPermission(['property-manager-details']))?true:false;
+                if($has_details_permission){
+                    $action_buttons=$action_buttons.'<a title="View Property Manager Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
                 }
 
-                if(true){
-                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Servide Provider" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
+                $has_edit_permission=($current_user->hasAllPermission(['property-manager-edit']))?true:false;
+                if($has_edit_permission){
+                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Property Manager" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
                 }
-                if(true){
-                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete property manager" href="javascript:delete_property_manager('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
+
+                $has_delete_permission=($current_user->hasAllPermission(['property-manager-delete']))?true:false;
+                if($has_delete_permission){
+                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete Property Manager" href="javascript:delete_property_manager('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
                 }
                 return $action_buttons;
             })

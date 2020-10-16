@@ -64,10 +64,10 @@
                     </ul>
                     
                 </li>
-
+                @if(auth()->guard('admin')->user()->hasModulePermission('master-modules'))
                 <li class="nav-item has-treeview @if(Route::currentRouteName()=='admin.country.list' || Route::currentRouteName()=='admin.country.country.add' || Route::currentRouteName()=='admin.country.edit' || Route::currentRouteName()=='admin.country.show' ||
                 Route::currentRouteName()=='admin.state.list' || Route::currentRouteName()=='admin.state.country.add' || Route::currentRouteName()=='admin.state.show' ||
-                Route::currentRouteName()=='admin.state.edit' || Route::currentRouteName()=='admin.city.list' || Route::currentRouteName()=='admin.city.add' || Route::currentRouteName()=='admin.city.edit' || Route::currentRouteName()=='admin.city.show' || Route::currentRouteName()=='admin.property_types.list'||
+                Route::currentRouteName()=='admin.state.edit' || Route::currentRouteName()=='admin.cities.list' || Route::currentRouteName()=='admin.cities.add' || Route::currentRouteName()=='admin.cities.edit' || Route::currentRouteName()=='admin.cities.show' || Route::currentRouteName()=='admin.property_types.list'||
                         Route::currentRouteName()=='admin.property_types.create'||
                         Route::currentRouteName()=='admin.property_types.edit'||
                         Route::currentRouteName()=='admin.property_types.show'||
@@ -77,7 +77,7 @@
                         Route::currentRouteName()=='admin.services.show'
                 ){{'menu-open'}}@endif">
                     <a href="#"
-                       class="nav-link {{(request()->is('admin/country/*','admin/country', 'admin/state/*','admin/state', 'admin/city/*','admin/city', 'admin/property-types/*','admin/property-types', 'admin/services/*','admin/services'))?'active':''}}">
+                       class="nav-link {{(request()->is('admin/country/*','admin/country', 'admin/state/*','admin/state', 'admin/cities/*','admin/cities', 'admin/property-types/*','admin/property-types', 'admin/services/*','admin/services'))?'active':''}}">
                         <i class="nav-icon fas fa-bars"></i>
                         <p>
                             {{__('nav_link_text.master_modules')}}
@@ -86,6 +86,7 @@
                     </a>
                     
                     <ul class="nav nav-treeview">
+                        @if(auth()->guard('admin')->user()->hasAllPermission(['manage-country']))
                         <li class="nav-item">
                             <a href="{{ route('admin.country.list') }}"
                                class="nav-link {{(request()->is('admin/country/*','admin/country'))?'active':''}}">
@@ -93,7 +94,8 @@
                                 <p>{{__('nav_link_text.country_management')}}</p>
                             </a>
                         </li>
-
+                        @endif
+                        @if(auth()->guard('admin')->user()->hasAllPermission(['manage-state']))
                         <li class="nav-item">
                             <a href="{{ route('admin.state.list') }}"
                                class="nav-link {{(request()->is('admin/state/*','admin/state'))?'active':''}}">
@@ -101,7 +103,8 @@
                                 <p>{{__('nav_link_text.state_management')}}</p>
                             </a>
                         </li>
-
+                        @endif
+                        @if(auth()->guard('admin')->user()->hasAllPermission(['manage-city']))
                         <li class="nav-item">
                             <a href="{{ route('admin.cities.list') }}"
                                class="nav-link {{(request()->is('admin/cities/*','admin/cities'))?'active':''}}">
@@ -109,6 +112,8 @@
                                 <p>{{__('nav_link_text.city_management')}}</p>
                             </a>
                         </li>
+                        @endif
+                        @if(auth()->guard('admin')->user()->hasAllPermission(['manage-property-type']))
                         <li class="nav-item">
                             <a href="{{ route('admin.property_types.list') }}"
                                class="nav-link {{(request()->is('admin/property-types/*','admin/property-types'))?'active':''}}">
@@ -116,6 +121,8 @@
                                 <p>{{__('nav_link_text.property_types')}}</p>
                             </a>
                         </li>
+                        @endif
+                        @if(auth()->guard('admin')->user()->hasAllPermission(['manage-services']))
                         <li class="nav-item">
                             <a href="{{ route('admin.services.list') }}"
                                class="nav-link {{(request()->is('admin/services/*','admin/services'))?'active':''}}">
@@ -123,10 +130,13 @@
                                 <p>{{__('nav_link_text.services')}}</p>
                             </a>
                         </li>
+                        @endif
                     </ul>
                    
                     
                 </li>
+                @endif
+                @if(auth()->guard('admin')->user()->hasAllPermission(['manage-translations']))
                 <li class="nav-item ">
                     <a href="{{URL::to('/').'/admin/translations'}}"
                     class="nav-link {{(request()->is('admin/translations/*','admin/translations'))?'active':''}}">
@@ -136,6 +146,7 @@
                         </p>
                     </a>
                 </li>
+                @endif
                 <li class="nav-item has-treeview {{(request()->is('admin/message/*','admin/message'))?'menu-open':''}}">
                     
                     <li class="nav-item">
@@ -174,8 +185,8 @@
                 
                
                 
-                
-                 <li class="nav-item">
+                @if(auth()->guard('admin')->user()->hasAllPermission(['group-list']))
+                <li class="nav-item">
                     <a href="{{route('admin.roles.list')}}" class="nav-link {{(request()->is('admin/user-groups/*','admin/user-groups'))?'active':''}}">
                        <i class="nav-icon fas fa-users"></i>
                       <p>
@@ -183,7 +194,8 @@
                       </p>
                     </a>
                 </li>
-                
+                @endif
+                @if(auth()->guard('admin')->user()->hasAllPermission(['user-list']))
                 <li class="nav-item ">
                     <a href="{{route('admin.users.list')}}"
                     class="nav-link {{(request()->is('admin/users/*','admin/users'))?'active':''}}">
@@ -193,6 +205,9 @@
                         </p>
                     </a>
                 </li>
+                @endif
+
+                @if(auth()->guard('admin')->user()->hasAllPermission(['service-provider-list']))
                 <li class="nav-item">
                     <a href="{{route('admin.service_providers.list')}}"
                     class="nav-link {{(request()->is('admin/service-providers/*','admin/service-providers'))?'active':''}}">
@@ -200,6 +215,8 @@
                         <p>{{__('nav_link_text.service_providers')}}</p>
                     </a>
                 </li>
+                @endif
+                @if(auth()->guard('admin')->user()->hasAllPermission(['property-owner-list']))
                 <li class="nav-item ">
                     <a href="{{route('admin.property_owners.list')}}"
                     class="nav-link {{(request()->is('admin/property-owners/*','admin/property-owners'))?'active':''}}">
@@ -207,6 +224,8 @@
                         <p>{{__('nav_link_text.property_owners')}}</p>
                     </a>
                 </li>
+                @endif
+                @if(auth()->guard('admin')->user()->hasAllPermission(['property-manager-list']))
                 <li class="nav-item ">
                     <a href="{{route('admin.property_managers.list')}}"
                     class="nav-link {{(request()->is('admin/property-managers/*','admin/property-managers'))?'active':''}}">
@@ -214,6 +233,9 @@
                         <p>{{__('nav_link_text.property_managers')}}</p>
                     </a>
                 </li>
+                @endif
+
+                @if(auth()->guard('admin')->user()->hasAllPermission(['property-list']))
                 <li class="nav-item ">
                     <a href="{{route('admin.properties.list')}}"
                     class="nav-link {{(request()->is('admin/properties/*','admin/properties'))?'active':''}}">
@@ -221,6 +243,8 @@
                         <p>{{__('nav_link_text.properties')}}</p>
                     </a>
                 </li>
+                @endif
+                @if(auth()->guard('admin')->user()->hasAllPermission(['contract-list']))
                 <li class="nav-item ">
                     <a href="{{route('admin.contracts.list')}}"
                     class="nav-link {{(request()->is('admin/contracts/*','admin/contracts'))?'active':''}}">
@@ -228,7 +252,8 @@
                         <p>{{__('nav_link_text.contracts_management')}}</p>
                     </a>
                 </li>
-                
+                @endif
+                @if(auth()->guard('admin')->user()->hasAllPermission(['quotation-list']))
                 <li class="nav-item ">
                     <a href="{{route('admin.quotations.list')}}"
                     class="nav-link {{(request()->is('admin/quotations/*','admin/quotations'))?'active':''}}">
@@ -236,6 +261,7 @@
                         <p>{{__('nav_link_text.quotations')}}</p>
                     </a>
                 </li> 
+                @endif
 
                 <li class="nav-item ">
                     <a href="{{route('admin.service_management.list')}}"
