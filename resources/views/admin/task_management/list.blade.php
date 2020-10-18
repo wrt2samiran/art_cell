@@ -23,25 +23,42 @@
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
+              @if(Session::has('error'))
+                  <div class="alert alert-danger alert-dismissable">
+                      <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                      {{ Session::get('error') }}
+                  </div>
+              @endif
               <form  method="get" id="task_list" action="{{route('admin.task_management.list', $task_id)}}" method="post" enctype="multipart/form-data">
-                       <input type="hidden" name="search" value="search">
-                        <select name="user_labour_id" id="user_labour_id" class="select2-selection__rendered">
-                          <option  value="">Select Labour</option>
-                          @foreach($labour_list as $labour_data)
-                             <option value="{{$labour_data->id}}" @if($request->user_labour_id==$labour_data->id) selected @endif >{{@$labour_data->name}}</option>
-                          @endforeach  
-                        </select>
-
-                        <select name="task_status" id="task_status" class="select2-selection__rendered">
-                          <option  value="">Select Status</option>
+                    <div class="row">
+                      <div class="call-lg-3">
+                          <input type="hidden" name="search" value="search">
+                          <select name="user_labour_id" id="user_labour_id" class=" form-control select2-selection__rendered">
+                            <option  value="">Select Labour</option>
+                            @foreach($labour_list as $labour_data)
+                               <option value="{{$labour_data->id}}" @if($request->user_labour_id==$labour_data->id) selected @endif >{{@$labour_data->name}}</option>
+                            @endforeach  
+                          </select>
+                      </div>
+                      <div class="call-lg-3">
+                          <select name="task_status" id="task_status" class="form-control select2-selection__rendered">
+                             <option  value="">Select Status</option>
                           
-                             <option value="0" @if($request->task_status==0) selected @endif>Pending </option>
+                             <option value="3" @if($request->task_status==0) selected @endif>Pending </option>
                              <option value="1" @if($request->task_status==1) selected @endif>Overdue</option>
                              <option value="2" @if($request->task_status==2) selected @endif>Completed</option>
-                          
-                        </select>
+                          </select>
+                      </div>
+                      <div class="call-lg-3">
+                        <input type="submit" class="form-control" name="submit" value="Submit">
+                      </div>
 
-                        <input type="submit" name="submit" value="Submit">
+                    </div>
+                       
+
+                        
+
+                        
                 
               </form>
                 
@@ -86,6 +103,9 @@
                     <!-- /.row -->
                   </div><!-- /.container-fluid -->
                 </section>
+
+                
+
                 <div class="modal fade" id="addTaskModal" role="dialog">
                 <div class="modal-dialog">
                 
@@ -123,14 +143,13 @@
                                                                
                                             <div class="form-group required">
                                               <label for="service_id">Service <span class="error">*</span></label>
-                                              <?php //dd($calendar_list);?>
                                               <select class="form-control parent_role_select2" onchange='onServiceChange(this.value)' style="width: 100%;" name="service_id" id="service_id">
-                                                  <option value="">Select a Service</option>
-                                                  @forelse($service_list as $service_data)
-                                                     <option value="{{$service_data->id}}" {{(old('service_id')== $service_data->id)? 'selected':''}}>{{@$service_data->task_name}}</option>
-                                                  @empty
-                                                 <option value="">No Service Found</option>
-                                                  @endforelse
+                                                 
+                                                  @if($service_data)
+                                                     <option value="{{$service_data->id}}" {{(old('service_id')== $service_data->id)? 'selected':''}}>{{@$service_data->service_name}}</option>
+                                                  @else
+                                                     <option value="">No Service Found</option>
+                                                  @endif
                               
                                                 </select>
                                               @if($errors->has('service_id'))
@@ -142,7 +161,11 @@
                                               <label for="property_id">Property <span class="error">*</span></label>
                                               <?php //dd($property_list);?>
                                               <select class="form-control parent_role_select2" style="width: 100%;" name="property_id" id="property_id">
-                                                  <option value="">Select a Property</option>
+                                                  @if($property_data)
+                                                     <option value="{{$property_data->id}}" {{(old('property_id')== $property_data->id)? 'selected':''}}>{{@$property_data->property_name}}</option>
+                                                  @else
+                                                      <option value="">No Property Found</option>
+                                                  @endif
                                                 </select>
                                               @if($errors->has('property_id'))
                                               <span class="text-danger">{{$errors->first('property_id')}}</span>
@@ -152,7 +175,11 @@
                                             <div class="form-group required">
                                               <label for="country_id">Country <span class="error">*</span></label>
                                                 <select class="form-control parent_role_select2" style="width: 100%;" name="country_id" id="country_id">
-                                                  <option value="">Select a Country</option>
+                                                  @if($country_data)
+                                                     <option value="{{$country_data->id}}" {{(old('country_id')== $country_data->id)? 'selected':''}}>{{@$country_data->name}}</option>
+                                                  @else
+                                                      <option value="">No Country Found</option>
+                                                  @endif
                                                 </select>
                                               @if($errors->has('country_id'))
                                               <span class="text-danger">{{$errors->first('country_id')}}</span>
@@ -162,7 +189,11 @@
                                             <div class="form-group required">
                                               <label for="country_id">State <span class="error">*</span></label>
                                                <select name="state_id" id="state_id" class="form-control">
-                                                      <option value=""> Select State</option>
+                                                  @if($state_data)
+                                                     <option value="{{$state_data->id}}" {{(old('state_id')== $state_data->id)? 'selected':''}}>{{@$state_data->name}}</option>
+                                                  @else
+                                                      <option value="">No State Found</option>
+                                                  @endif
                                                </select>
                                                 @if($errors->has('state_id'))
                                                   <span class="text-danger">{{$errors->first('state_id')}}</span>
@@ -172,7 +203,11 @@
                                             <div class="form-group required">
                                               <label for="name">City Name <span class="error">*</span></label>
                                               <select name="city_id" id="city_id" class="form-control">
-                                                      <option value=""> Select City</option>
+                                                  @if($city_data)
+                                                     <option value="{{$city_data->id}}" {{(old('city_id')== $city_data->id)? 'selected':''}}>{{@$city_data->name}}</option>
+                                                  @else
+                                                      <option value="">No State Found</option>
+                                                  @endif
                                               </select>
                                                @if($errors->has('city_id'))
                                                   <span class="text-danger">{{$errors->first('city_id')}}</span>
@@ -208,9 +243,9 @@
                                             </div>
                                             <div class="form-group required">
                                               <label for="service_id">Task Title <span class="error">*</span></label>
-                                              <input type="text" class="form-control float-right" id="job_title" name="job_title">
-                                               @if($errors->has('job_title'))
-                                                <span class="text-danger">{{$errors->first('job_title')}}</span>
+                                              <input type="text" class="form-control float-right" id="task_title" name="task_title">
+                                               @if($errors->has('task_title'))
+                                                <span class="text-danger">{{$errors->first('task_title')}}</span>
                                                @endif
                                             </div>
 
@@ -238,10 +273,10 @@
                 </div>
                 </div>
 
-<?php $list = json_encode($calendar_list);
+<?php $list = json_encode($tasks_list);
 
 $filtered = array();
-foreach($calendar_list as $value) {
+foreach($tasks_list as $value) {
     $filtered[] = $value;
 }
 $list = json_encode($filtered);
@@ -339,14 +374,14 @@ colors.forEach(iterate);
       //Random default events
       events    : [
        
-       <?php foreach($calendar_list as $calendar_data){ 
+       <?php foreach($tasks_list as $task_data){ 
 
-            $user = $calendar_data->userDetails->name;
-            if($calendar_data->status==1)
+            $user = $task_data->userDetails->name;
+            if($task_data->status==1)
             {
               $color = '#dc3545';
             }
-            else if($calendar_data->status==0)
+            else if($task_data->status==0)
             {
               $color = '#ffc107';
             }
@@ -359,12 +394,12 @@ colors.forEach(iterate);
 
 
         {
-          title          : '<?=$calendar_data->job_title?>(<?=$user?>)',
-          start          : '<?=$calendar_data->start_date?>',
-          end            : '<?=$calendar_data->end_date?>',
+          title          : '<?=$task_data->job_title?>(<?=$user?>)',
+          start          : '<?=$task_data->start_date?>',
+          end            : '<?=$task_data->end_date?>',
           backgroundColor: '<?=$color?>', //red
           borderColor    : '<?=$color?>', //red
-          url            : '<?=$calendar_data->id?>',
+          url            : '<?=$task_data->id?>',
           allDay         : true
         },
 
@@ -480,11 +515,11 @@ colors.forEach(iterate);
 
 
 $(document).on('click', 'td.fc-today,td.fc-future', function() {
-    alert('called');
 $('#addTaskModal').modal('show');
  });
 
 function onServiceChange(service_id){
+  
      $.ajax({
        
         url: "{{route('admin.task_management.getData')}}",
@@ -524,7 +559,10 @@ function onServiceChange(service_id){
    
 
 
-function onTaskChange(calendar_id, start_date, end_date){
+function onTaskChange(task_id, start_date, end_date){
+
+  alert(task_id);
+  
   //alert(start_date+ ' TO '+end_date);
 
   let modified_start_date = JSON.stringify(start_date);
@@ -538,22 +576,38 @@ function onTaskChange(calendar_id, start_date, end_date){
         url: "{{route('admin.task_management.updateTask')}}",
         type:'post',
         dataType: "json",
-        data:{calendar_id:calendar_id,modified_start_date:modified_start_date,modified_end_date:modified_end_date,_token:"{{ csrf_token() }}"}
+        data:{task_id:task_id,modified_start_date:modified_start_date,modified_end_date:modified_end_date,_token:"{{ csrf_token() }}"}
         }).done(function(response) {
            
            console.log(response.status);
-            if(response.status){
-             console.log(response.sqlProperty);
+            if(response.status=='false'){
+             location.reload();
+            }
+            else
+            { 
+              
+              console.log(response.status);
+              location.reload();
             }
         });
     }    
 
 
+    setTimeout(function() {
+        $('.alert-dismissable').fadeOut('fast');
+    }, 3000); 
+
 //Date range picker
     $('#date_range').daterangepicker()
 
 </script>
-
+@if(Session::has('welcome_msg'))        
+<script>
+$(function() {
+$('#addTaskModal').modal('show');
+});
+</script>
+@endif
 
 <script type="text/javascript" src="{{asset('js/admin/service_management/list.js')}}"></script>
 @endpush

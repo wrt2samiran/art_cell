@@ -86,11 +86,12 @@ $("#admin_labour_task_add_form").validate({
         ajax: baseUrl+'/admin/service_management',
         columns: [
             { data: 'id', name: 'id' },
-            { data: 'task_name', name: 'task_name'},
-            { data: 'contract_id', name: 'contract_id' },
-            { data: 'service_provider_id', name: 'service_provider_id' },
-            { data: 'status', name: 'status' },
-            { data: 'created_at', name: 'created_at' },
+            { data: 'service_name', name: 'service_name'},
+            { data: 'property.property_name', name: 'property.property_name'},
+            { data: 'service_start_date', name: 'service_start_date'},
+            { data: 'service_end_date', name: 'service_end_date'},
+            { data: 'work_status', name: 'work_status' },
+           
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
          order: [ [0, 'asc'] ],
@@ -102,47 +103,7 @@ $("#admin_labour_task_add_form").validate({
 
     });
 
- //function to delete city
- function delete_city(url){
-  swal({
-  title: "Are you sure?",
-  text: "Once deleted, you will not be able to recover this city!",
-  icon: "warning",
-  buttons: true,
-  dangerMode: true,
-  })
-  .then((willDelete) => {
-    if (willDelete) {
 
-      $.LoadingOverlay("show");
-      $.ajax({
-        url: url,
-        type: "DELETE",
-        
-        data:{ "_token": $('meta[name="csrf-token"]').attr('content')},
-        success: function (data) {
-          $.LoadingOverlay("hide");
-          toastr.success('City successfully deleted.', 'Success', {timeOut: 5000});
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-           $.LoadingOverlay("hide");
-           var response=jqXHR.responseJSON;
-           var status=jqXHR.status;
-           if(status=='404'){
-            toastr.error('Invalid URL', 'Error', {timeOut: 5000});
-           }else{
-             toastr.error('Internal server error.', 'Error', {timeOut: 5000});
-           }
-        }
-     });
-
-     service_management_table.ajax.reload(null, false);
-
-
-    } 
-  });
-
- }
 
 //function to change status of gallery
  function change_status(url,activate_or_deactivate){

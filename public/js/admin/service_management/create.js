@@ -2,7 +2,7 @@
         rules: {
 
             
-            job_title: {
+            task_title: {
                 required: true,
                 minlength: 3,
                 maxlength: 50,
@@ -30,10 +30,10 @@
 
         },
         messages: {
-            job_title: {
-                required:  "Job title is required",
-                minlength: "Job title should have 3 characters",
-                maxlength: "Job title should not be more then 50 characters"
+            task_title: {
+                required:  "Task title is required",
+                minlength: "Task title should have 3 characters",
+                maxlength: "Task title should not be more then 50 characters"
             },
             service_id: {
                 required:  "Please select service",

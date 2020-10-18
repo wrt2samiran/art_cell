@@ -5,12 +5,13 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\Models\{Country,State,City,Tasks};
+use App\Models\{Country,State,City,Tasks, ServiceAllocationManagement};
 
 use App\Models\ModuleFunctionality;
 use Helper, AdminHelper, Image, Auth, Hash, Redirect, Validator, View, Config;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
+use DB;
 
 class ServiceManagementController extends Controller
 {
@@ -28,38 +29,44 @@ class ServiceManagementController extends Controller
     
 
     public function list(Request $request){
-        $this->data['page_title']='City List';
+
+        $this->data['page_title']='Servicee Management List';
+        $logedInUser = \Auth::guard('admin')->user()->id;
         if($request->ajax()){
 
-            $tasks=Tasks::orderBy('id','Desc');
-            return Datatables::of($tasks)
-            ->editColumn('created_at', function ($tasks) {
-                return $tasks->created_at ? with(new Carbon($city->created_at))->format('m/d/Y') : '';
+            $srvalmnm=ServiceAllocationManagement::with('property')->orderBy('id','Desc');
+           
+            return Datatables::of($srvalmnm)
+            ->editColumn('created_at', function ($srvalmnm) {
+                return $srvalmnm->created_at ? with(new Carbon($v->created_at))->format('m/d/Y') : '';
             })
             
             ->filterColumn('created_at', function ($query, $keyword) {
                 $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
             })
-            ->addColumn('is_active',function($tasks){
-                if($tasks->is_active=='1'){
-                   $message='deactivate';
-                   return '<a title="Click to deactivate the city" href="javascript:change_status('."'".route('admin.service_management.change_status',$tasks->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm">Active</a>';
+            ->addColumn('work_status',function($srvalmnm){
+                if($srvalmnm->work_status=='0'){
+                   $message='Pending';
+                    return '<a title="Click to deactivate the city" href="" class="btn btn-block btn-outline-warning btn-sm">Pending</a>';
                     
-                }else{
-                   $message='activate';
-                   return '<a title="Click to activate the city" href="javascript:change_status('."'".route('admin.service_management.change_status',$tasks->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm">Inactive</a>';
+                }elseif($srvalmnm->work_status=='1'){
+                   $message='Overdue';
+                   return '<a title="Click to deactivate the city" href="" class="btn btn-block btn-outline-success btn-sm">Overdue</a>';
+                   
+                }
+                else{
+                    $message='Completed';
+                    return '<a title="Click to deactivate the city" href="" class="btn btn-block btn-outline-success btn-sm">Completed</a>';
                 }
             })
-            ->addColumn('action',function($tasks){
-                $delete_url=route('admin.service_management.delete',$tasks->id);
-                $details_url=route('admin.service_management.show',$tasks->id);
-               // $add_url=route('admin.task_management.list',$tasks->id);
-                $edit_url=route('admin.task_management.list',$tasks->id);
+            ->addColumn('action',function($srvalmnm){
+                
+                $edit_url=route('admin.task_management.list',$srvalmnm->id);
 
-                return '<a title="View City Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>&nbsp;&nbsp;<a title="Add Task" href="'.$edit_url.'"><i class="fas fa-plus text-success"></i></a>&nbsp;&nbsp;<a title="Delete city" href="javascript:delete_city('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
+                return '<a title="Add Task" href="'.$edit_url.'"><i class="fas fa-plus text-success"></i></a>';
                 
             })
-            ->rawColumns(['action','is_active'])
+            ->rawColumns(['action','work_status'])
             ->make(true);
         }
 
@@ -213,14 +220,14 @@ class ServiceManagementController extends Controller
             }
             $details = Tasks::where('id', $id)->first();
             if ($details != null) {
-                if ($details->is_active == 1) {
+                if ($details->status == 'A') {
                     
-                    $details->is_active = '0';
+                    $details->status = 'I';
                     $details->save();
                         
                     $request->session()->flash('alert-success', 'Status updated successfully');                 
-                     } else if ($details->status == 0) {
-                    $details->is_active = '1';
+                     } else if ($details->status == 'I') {
+                    $details->status = 'A';
                     $details->save();
                     $request->session()->flash('alert-success', 'Status updated successfully');
                    
@@ -281,12 +288,12 @@ class ServiceManagementController extends Controller
     # Params        : Request $request
     /*****************************************************/
 
-    public function show($id){
-        $city=City::findOrFail($id);
-        $this->data['page_title']='Country Details';
-        $this->data['city']=$city;
-        return view($this->view_path.'.show',$this->data);
-    }
+    // public function show($id){
+    //     $city=City::findOrFail($id);
+    //     $this->data['page_title']='Country Details';
+    //     $this->data['city']=$city;
+    //     return view($this->view_path.'.show',$this->data);
+    // }
     /*****************************************************/
     # CityController
     # Function name : getState
