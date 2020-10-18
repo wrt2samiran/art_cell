@@ -5,7 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\Models\{User,Country,State,City,Tasks, TaskDetails, ServiceAllocationManagement, Property};
+use App\Models\{User,Country,State,City,TaskLists, TaskDetails, ServiceAllocationManagement, Property};
 
 use App\Models\ModuleFunctionality;
 use Helper, AdminHelper, Image, Auth, Hash, Redirect, Validator, View, Config;
@@ -34,7 +34,7 @@ class TaskManagementController extends Controller
 
         if($request->ajax()){
 
-            $task_list=Tasks::orderBy('id','Desc');
+            $task_list=TaskLists::orderBy('id','Desc');
             return Datatables::of($task_list)
             ->editColumn('created_at', function ($task_list) {
                 return $task_list->created_at ? with(new Carbon($task_list->created_at))->format('m/d/Y') : '';
@@ -96,7 +96,7 @@ class TaskManagementController extends Controller
 
         if ($request->has('search')) {
             
-            $sqlCalendar = Tasks::where(function ($q) use ($request) {
+            $sqlCalendar = TaskLists::where(function ($q) use ($request) {
                 
                 if ($request->has('user_labour_id')) {
                    
@@ -124,7 +124,7 @@ class TaskManagementController extends Controller
             })->get();
 
         } else {
-            $sqlTask=Tasks::whereServiceAllocationId($id)->orderBy('id','Desc')->get();
+            $sqlTask=TaskLists::whereServiceAllocationId($id)->orderBy('id','Desc')->get();
         }
 
         //dd($sqlCalendar);
@@ -214,7 +214,7 @@ class TaskManagementController extends Controller
                     }
                   //  print_r($arr_days);
                  
-                    $new = new Tasks;
+                    $new = new TaskLists;
                     $new->service_allocation_id = $request->service_id;   
                     $new->property_id = $request->property_id;
                     $new->country_id =$request->country_id;
@@ -293,7 +293,7 @@ class TaskManagementController extends Controller
         try
         {           
 
-            $details = Tasks::find($id);
+            $details = TaskLists::find($id);
             $data['id'] = $id;
 
             if ($request->isMethod('POST')) {
@@ -361,7 +361,7 @@ class TaskManagementController extends Controller
             if ($id == null) {
                 return redirect()->route('admin.service_management.list');
             }
-            $details = Tasks::where('id', $id)->first();
+            $details = TaskLists::where('id', $id)->first();
             if ($details != null) {
                 if ($details->is_active == 1) {
                     
@@ -403,7 +403,7 @@ class TaskManagementController extends Controller
                 return redirect()->route('admin.service_management.list');
             }
 
-            $details = Tasks::where('id', $id)->first();
+            $details = TaskLists::where('id', $id)->first();
             if ($details != null) {
                     $delete = $details->delete();
                     if ($delete) {
@@ -485,11 +485,11 @@ class TaskManagementController extends Controller
            if ($validator->fails()) { 
               return response()->json(['success' =>false,'message'=>$validator->errors()->first()], 200);
             }
-        $sqlProperty = DB::table('tasks')
-        ->join('contracts', 'contracts.id', '=', 'tasks.contract_id')
+        $sqlProperty = DB::table('task_lists')
+        ->join('contracts', 'contracts.id', '=', 'task_lists.contract_id')
         ->join('properties', 'properties.id', '=', 'contracts.property_id')
-        ->where('tasks.service_provider_id', $logedInUser)
-        ->where('tasks.id', $request->service_id)
+        ->where('task_lists.service_provider_id', $logedInUser)
+        ->where('task_lists.id', $request->service_id)
         ->first();
 
         $sqlCity    = City::whereIsActive('1')->where('id', $sqlProperty->city_id)->first();
@@ -525,7 +525,7 @@ class TaskManagementController extends Controller
             }
 
          
-         $sqlTask =  Tasks::whereId($request->task_id)->first();    
+         $sqlTask =  TaskLists::whereId($request->task_id)->first();    
 
          
 

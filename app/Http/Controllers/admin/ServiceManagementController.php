@@ -5,7 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\Models\{Country,State,City,Tasks, ServiceAllocationManagement};
+use App\Models\{Country,State,City,TaskLists, ServiceAllocationManagement};
 
 use App\Models\ModuleFunctionality;
 use Helper, AdminHelper, Image, Auth, Hash, Redirect, Validator, View, Config;
@@ -109,7 +109,7 @@ class ServiceManagementController extends Controller
                     return redirect()->route('admin.city.add')->withErrors($Validator)->withInput();
                 } else {
                     
-                    $new = new Tasks;
+                    $new = new TaskLists;
                     $new->name = trim($request->name, ' ');
                     $new->country_id  = $request->country_id;
                     $new->state_id    = $request->state_id;
@@ -150,7 +150,7 @@ class ServiceManagementController extends Controller
         try
         {           
 
-            $details = Tasks::find($id);
+            $details = TaskLists::find($id);
             $data['id'] = $id;
 
             if ($request->isMethod('POST')) {
@@ -218,7 +218,7 @@ class ServiceManagementController extends Controller
             if ($id == null) {
                 return redirect()->route('admin.service_management.list');
             }
-            $details = Tasks::where('id', $id)->first();
+            $details = TaskLists::where('id', $id)->first();
             if ($details != null) {
                 if ($details->status == 'A') {
                     
@@ -260,7 +260,7 @@ class ServiceManagementController extends Controller
                 return redirect()->route('admin.service_management.list');
             }
 
-            $details = Tasks::where('id', $id)->first();
+            $details = TaskLists::where('id', $id)->first();
             if ($details != null) {
                     $delete = $details->delete();
                     if ($delete) {
