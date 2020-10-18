@@ -561,9 +561,6 @@ function onServiceChange(service_id){
 
 function onTaskChange(task_id, start_date, end_date){
 
-  alert(task_id);
-  
-  //alert(start_date+ ' TO '+end_date);
 
   let modified_start_date = JSON.stringify(start_date);
   modified_start_date = modified_start_date.slice(1,11);

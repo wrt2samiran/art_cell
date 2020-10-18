@@ -19,11 +19,11 @@ class TaskManagementController extends Controller
     private $view_path='admin.task_management';
 
     /*****************************************************/
-    # CityController
+    # TaskManagementController
     # Function name : List
     # Author        :
-    # Created Date  : 06-10-2020
-    # Purpose       : Showing City List
+    # Created Date  : 16-10-2020
+    # Purpose       : Showing Task List
     # Params        : Request $request
     /*****************************************************/
        
@@ -137,7 +137,7 @@ class TaskManagementController extends Controller
     }
 
    /*****************************************************/
-    # CityController
+    # TaskManagementController
     # Function name : taskAdd
     # Author        :
     # Created Date  : 14-10-2020
@@ -279,11 +279,11 @@ class TaskManagementController extends Controller
     }
 
     /*****************************************************/
-    # CityController
-    # Function name : cityEdit
+    # TaskManagementController
+    # Function name : taskEdit
     # Author        :
-    # Created Date  : 13-08-2020
-    # Purpose       : Showing subAdminList of users
+    # Created Date  : 14-10-2020
+    # Purpose       : Editing task
     # Params        : Request $request
     /*****************************************************/
     public function edit(Request $request, $id = null) {
@@ -347,11 +347,11 @@ class TaskManagementController extends Controller
     }
 
     /*****************************************************/
-    # CityController
+    # TaskManagementController
     # Function name : change_status
     # Author        :
-    # Created Date  : 07-10-2020
-    # Purpose       : Change city status
+    # Created Date  : 16-10-2020
+    # Purpose       : Change task status
     # Params        : Request $request
     /*****************************************************/
     public function change_status(Request $request, $id = null)
@@ -388,11 +388,11 @@ class TaskManagementController extends Controller
     }
 
     /*****************************************************/
-    # CityController
-    # Function name : cityDelete
+    # TaskManagementController
+    # Function name : taskDelete
     # Author        :
-    # Created Date  : 13-08-2020
-    # Purpose       : Showing subAdminList of users
+    # Created Date  : 16-10-2020
+    # Purpose       : delete task
     # Params        : Request $request
     /*****************************************************/
     public function delete(Request $request, $id = null)
@@ -423,11 +423,11 @@ class TaskManagementController extends Controller
     
 
     /*****************************************************/
-    # CityController
+    # TaskManagementController
     # Function name : show
     # Author        :
-    # Created Date  : 06-10-2020
-    # Purpose       : Showing Country details
+    # Created Date  : 16-10-2020
+    # Purpose       : Showing Task details
     # Params        : Request $request
     /*****************************************************/
 
@@ -438,10 +438,10 @@ class TaskManagementController extends Controller
         return view($this->view_path.'.show',$this->data);
     }
     /*****************************************************/
-    # CityController
+    # TaskManagementController
     # Function name : getCities
     # Author        :
-    # Created Date  : 12-10-2020
+    # Created Date  : 16-10-2020
     # Purpose       : Get State wise City List
     # Params        : Request $request
     /*****************************************************/
@@ -465,11 +465,11 @@ class TaskManagementController extends Controller
     
 
     /*****************************************************/
-    # CityController
+    # TaskManagementController
     # Function name : getData
     # Author        :
     # Created Date  : 14-10-2020
-    # Purpose       : Get Service Related Data List
+    # Purpose       : Get Task Related Data List
     # Params        : Request $request
     /*****************************************************/
 
@@ -498,6 +498,17 @@ class TaskManagementController extends Controller
         
         return response()->json(['status'=>true, 'sqlProperty'=>$sqlProperty, 'sqlCity'=>$sqlCity, 'sqlState'=>$sqlState, 'sqlCountry'=>$sqlCountry],200);
     }
+
+
+    /*****************************************************/
+    # TaskManagementController
+    # Function name : updateTask
+    # Author        :
+    # Created Date  : 16-10-2020
+    # Purpose       : Update Task Data
+    # Params        : Request $request
+    /*****************************************************/
+
 
     
     public function updateTask(Request $request)
@@ -546,9 +557,6 @@ class TaskManagementController extends Controller
 
                             session()->flash('error', 'Task already been added for this user on '.date("o-m-d",$day_to_display).' for this Service.');
 
-                            //Request::session()->flash('error', 'Task already been added for this user on '.date("o-m-d",$day_to_display).' for this Service.');
-
-                            //return redirect()->route('admin.task_management.list',$sqlTask->service_allocation_id)->with('error', 'Task already been added for this user on '.date("o-m-d",$day_to_display).' for this Service.');
 
                             return response()->json(['status'=>false],200);
 
@@ -564,12 +572,7 @@ class TaskManagementController extends Controller
                     $sqlTask->updated_by  = $logedInUser;
                     $save = $sqlTask->save(); 
                  
-                   
 
-                    
-                     
-                    
-                    //$arr_days []= date('o-m-d',$date_from);
                     
                     $sqlTaskDetails = TaskDetails::whereServiceId($sqlTask->service_allocation_id)->whereTaskId($request->task_id)->whereUserId($sqlTask->user_id)->delete();
 
@@ -599,14 +602,6 @@ class TaskManagementController extends Controller
                         $tempTaskDetails->created_by = auth()->guard('admin')->id();
                         $tempTaskDetails->save();
                     }
-
-         // $sqlCalendar = Calendars::find($request->calendar_id);
-         //    $sqlCalendar->start_date  = date('Y-m-d h:i:s', strtotime($request->modified_start_date));
-         //    $sqlCalendar->end_date    = date('Y-m-d h:i:s', strtotime($request->modified_end_date));
-         //    $sqlCalendar->updated_at  = date('Y-m-d H:i:s');
-         //    $sqlCalendar->updated_by  = $logedInUser;
-         //    $save = $sqlCalendar->save();                     
-                    
 
         
         return response()->json(['status'=>true],200);
