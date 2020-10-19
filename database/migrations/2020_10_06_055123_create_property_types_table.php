@@ -16,9 +16,7 @@ class CreatePropertyTypesTable extends Migration
         Schema::disableForeignKeyConstraints();
         Schema::create('property_types', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('type_name')->index();
             $table->string('slug');
-            $table->text('description')->nullable();
             $table->boolean('is_active')->default(true);
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by');

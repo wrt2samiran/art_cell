@@ -29,6 +29,19 @@ class ServiceController extends Controller
             ->filterColumn('created_at', function ($query, $keyword) {
                 $query->whereRaw("DATE_FORMAT(created_at,'%d/%m/%Y') like ?", ["%$keyword%"]);
             })
+            ->filterColumn('service_name', function ($query, $keyword) {
+                $query->whereTranslationLike('service_name', "%{$keyword}%");
+            })
+            ->orderColumn('service_name', function ($query, $order) {
+                 $query->orderByTranslation('service_name',$order);
+            })
+
+            ->filterColumn('description', function ($query, $keyword) {
+                $query->whereTranslationLike('description', "%{$keyword}%");
+            })
+            ->orderColumn('description', function ($query, $order) {
+                 $query->orderByTranslation('description',$order);
+            })
             ->addColumn('is_active',function($service){
 
                 
@@ -77,13 +90,22 @@ class ServiceController extends Controller
 
     public function store(CreateServiceRequest $request){
         $current_user=auth()->guard('admin')->user();
-        Service::create([
-            'service_name'=>$request->service_name,
+
+        $service_data = [
+            'en' => [
+               'service_name'=>$request->en_service_name,
+               'description' =>$request->en_description,
+            ],
+            'ar' => [
+               'service_name'=>$request->ar_service_name,
+               'description' =>$request->ar_description,
+            ],
             'slug'=>Str::slug($request->service_name),
-            'description'=>$request->description,
             'created_by'=>$current_user->id,
             'updated_by'=>$current_user->id
-        ]);
+        ];
+
+        Service::create($service_data);
 
         return redirect()->route('admin.services.list')->with('success','Service successfully created.');
     }
@@ -102,12 +124,21 @@ class ServiceController extends Controller
     public function update(EditServiceRequest $request,$id){
         $service=Service::findOrFail($id);
         $current_user=auth()->guard('admin')->user();
-        $service->update([
-            'service_name'=>$request->service_name,
+
+        $service_data = [
+            'en' => [
+               'service_name'=>$request->en_service_name,
+               'description' =>$request->en_description,
+            ],
+            'ar' => [
+               'service_name'=>$request->ar_service_name,
+               'description' =>$request->ar_description,
+            ],
             'slug'=>Str::slug($request->service_name),
-            'description'=>$request->description,
             'updated_by'=>$current_user->id
-        ]);
+        ];
+
+        $service->update($service_data);
 
         return redirect()->route('admin.services.list')->with('success','Service successfully updated.');
     }
@@ -137,9 +168,9 @@ class ServiceController extends Controller
     public function ajax_check_service_name_unique(Request $request,$service_id=null){
         if($service_id){
              $service= Service::where('id','!=',$service_id)
-             ->where('service_name',$request->service_name)->first();
+             ->whereTranslation('service_name',$request->service_name,$request->locale)->first();
         }else{
-             $service= Service::where('service_name',$request->service_name)->first();
+             $service= Service::whereTranslation('service_name',$request->service_name,$request->locale)->first();
         }
      
         if($service){

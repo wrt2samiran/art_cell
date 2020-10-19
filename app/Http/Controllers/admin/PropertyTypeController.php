@@ -29,6 +29,20 @@ class PropertyTypeController extends Controller
             ->filterColumn('created_at', function ($query, $keyword) {
                 $query->whereRaw("DATE_FORMAT(created_at,'%d/%m/%Y') like ?", ["%$keyword%"]);
             })
+
+            ->filterColumn('type_name', function ($query, $keyword) {
+                $query->whereTranslationLike('type_name', "%{$keyword}%");
+            })
+            ->orderColumn('type_name', function ($query, $order) {
+                 $query->orderByTranslation('type_name',$order);
+            })
+
+            ->filterColumn('description', function ($query, $keyword) {
+                $query->whereTranslationLike('description', "%{$keyword}%");
+            })
+            ->orderColumn('description', function ($query, $order) {
+                 $query->orderByTranslation('description',$order);
+            })
             ->addColumn('is_active',function($property_type){
 
                 
@@ -75,13 +89,23 @@ class PropertyTypeController extends Controller
 
     public function store(CreatePropertyTypeRequest $request){
         $current_user=auth()->guard('admin')->user();
-        PropertyType::create([
-            'type_name'=>$request->type_name,
+
+        $property_type_data = [
+            'en' => [
+               'type_name'=>$request->en_type_name,
+               'description' =>$request->en_description,
+            ],
+            'ar' => [
+               'type_name'=>$request->ar_type_name,
+               'description' =>$request->ar_description,
+            ],
             'slug'=>Str::slug($request->type_name),
-            'description'=>$request->description,
             'created_by'=>$current_user->id,
             'updated_by'=>$current_user->id
-        ]);
+        ];
+
+        PropertyType::create($property_type_data);
+
         return redirect()->route('admin.property_types.list')->with('success','Property type successfully created.');
     }
     public function show($id){
@@ -99,12 +123,20 @@ class PropertyTypeController extends Controller
     public function update(Request $request,$id){
         $property_type=PropertyType::findOrFail($id);
         $current_user=auth()->guard('admin')->user();
-        $property_type->update([
-            'type_name'=>$request->type_name,
+       
+        $property_type_data = [
+            'en' => [
+               'type_name'=>$request->en_type_name,
+               'description' =>$request->en_description,
+            ],
+            'ar' => [
+               'type_name'=>$request->ar_type_name,
+               'description' =>$request->ar_description,
+            ],
             'slug'=>Str::slug($request->type_name),
-            'description'=>$request->description,
             'updated_by'=>$current_user->id
-        ]);
+        ];
+        $property_type->update($property_type_data);
 
         return redirect()->route('admin.property_types.list')->with('success','Property type successfully updated.');
     }
@@ -132,11 +164,12 @@ class PropertyTypeController extends Controller
     }
 
     public function ajax_check_type_name_unique(Request $request,$property_type_id=null){
+
         if($property_type_id){
              $property_type= PropertyType::where('id','!=',$property_type_id)
-             ->where('type_name',$request->type_name)->first();
+             ->whereTranslation('type_name',$request->type_name,$request->locale)->first();
         }else{
-             $property_type= PropertyType::where('type_name',$request->type_name)->first();
+             $property_type= PropertyType::whereTranslation('type_name',$request->type_name,$request->locale)->first();
         }
      
         if($property_type){

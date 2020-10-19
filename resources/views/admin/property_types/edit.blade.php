@@ -49,20 +49,56 @@
                       <form  method="post" id="admin_property_type_edit_form" action="{{route('admin.property_types.update',$property_type->id)}}" method="post" >
                         @csrf
                         @method('PUT')
-                        <div>
-                          <div class="form-group required">
-                            <label for="type_name">Type Name <span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('type_name')?old('type_name'):$property_type->type_name}}" name="type_name" id="type_name"  placeholder="Type Name">
-                            @if($errors->has('type_name'))
-                            <span class="text-danger">{{$errors->first('type_name')}}</span>
-                            @endif
+                        <ul class="nav nav-tabs" role="tablist">
+                          <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#english" role="tab">English</a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#arabic" role="tab">Arabic</a>
+                          </li>
+                        </ul><!-- Tab panes -->
+                        <div class="tab-content tab-validate pt-3">
+                          <div class="tab-pane active" id="english" role="tabpanel">
+                            <div>
+                              <div class="form-group required">
+                                <label for="en_type_name">Type Name (EN)<span class="error">*</span></label>
+                                <input type="text" class="form-control" value="{{old('en_type_name')?old('en_type_name'):(($property_type->translate('en'))?$property_type->translate('en')->type_name:'')}}" 
+
+                                name="en_type_name" id="en_type_name"  placeholder="Type Name in English">
+                                @if($errors->has('en_type_name'))
+                                <span class="text-danger">{{$errors->first('en_type_name')}}</span>
+                                @endif
+                              </div>
+                              <div class="form-group required">
+                                 <label for="en_description">Description (EN)<span class="error">*</span></label>
+                                 <textarea rows="5" class="form-control"  name="en_description" id="en_description"  placeholder="Description in English">{{old('en_description')?old('en_description'):(($property_type->translate('en'))?$property_type->translate('en')->description :'')}}</textarea>
+                                 @if($errors->has('en_description'))
+                                  <span class="text-danger">{{$errors->first('en_description')}}</span>
+                                 @endif
+                              </div>
+
+                            </div>
+                            
                           </div>
-                          <div class="form-group required">
-                             <label for="description">Description <span class="error">*</span></label>
-                             <textarea rows="5" class="form-control"  name="description" id="description"  placeholder="Description">{{old('description')?old('description'):$property_type->description}}</textarea>
-                             @if($errors->has('description'))
-                              <span class="text-danger">{{$errors->first('description')}}</span>
-                             @endif
+                          <div class="tab-pane" id="arabic" role="tabpanel">
+                            <div>
+                              <div class="form-group required">
+                                <label for="ar_type_name">Type Name (AR)<span class="error">*</span></label>
+                                <input type="text" class="form-control" value="{{old('ar_type_name')?old('ar_type_name'):(($property_type->translate('ar'))?$property_type->translate('ar')->type_name:'')}}" name="ar_type_name" id="ar_type_name"  placeholder="Type Name in Arabic">
+                                @if($errors->has('ar_type_name'))
+                                <span class="text-danger">{{$errors->first('ar_type_name')}}</span>
+                                @endif
+                              </div>
+                              <div class="form-group required">
+                                 <label for="ar_description">Description (AR)<span class="error">*</span></label>
+                                 <textarea rows="5" class="form-control"  name="ar_description" id="ar_description"  placeholder="Description in Arabic">{{old('ar_description')?old('ar_description'):(($property_type->translate('ar'))?$property_type->translate('ar')->description :'')}}</textarea>
+                                 @if($errors->has('ar_description'))
+                                  <span class="text-danger">{{$errors->first('ar_description')}}</span>
+                                 @endif
+                              </div>
+
+                            </div>
+
                           </div>
 
                         </div>

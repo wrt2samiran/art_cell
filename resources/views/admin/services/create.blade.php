@@ -48,20 +48,54 @@
                     <div class="col-md-10 col-sm-12">
                       <form  method="post" id="admin_service_create_form" action="{{route('admin.services.store')}}" method="post" >
                         @csrf
-                        <div>
-                          <div class="form-group required">
-                            <label for="service_name">Service Name <span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('service_name')?old('service_name'):''}}" name="service_name" id="service_name"  placeholder="Type Name">
-                            @if($errors->has('service_name'))
-                            <span class="text-danger">{{$errors->first('service_name')}}</span>
-                            @endif
+                        <ul class="nav nav-tabs" role="tablist">
+                          <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#english" role="tab">English</a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#arabic" role="tab">Arabic</a>
+                          </li>
+                        </ul><!-- Tab panes -->
+                        <div class="tab-content tab-validate pt-3">
+                          <div class="tab-pane active" id="english" role="tabpanel">
+                            <div>
+                              <div class="form-group required">
+                                <label for="en_service_name">Service Name (EN)<span class="error">*</span></label>
+                                <input type="text" class="form-control" value="{{old('en_service_name')?old('en_service_name'):''}}" name="en_service_name" id="en_service_name"  placeholder="Service Name in English">
+                                @if($errors->has('en_service_name'))
+                                <span class="text-danger">{{$errors->first('en_service_name')}}</span>
+                                @endif
+                              </div>
+                              <div class="form-group required">
+                                 <label for="en_description">Description (EN)<span class="error">*</span></label>
+                                 <textarea rows="5" class="form-control"  name="en_description" id="en_description"  placeholder="Description in English">{{old('en_description')?old('en_description'):''}}</textarea>
+                                 @if($errors->has('en_description'))
+                                  <span class="text-danger">{{$errors->first('en_description')}}</span>
+                                 @endif
+                              </div>
+
+                            </div>
+                            
                           </div>
-                          <div class="form-group required">
-                             <label for="description">Description <span class="error">*</span></label>
-                             <textarea rows="5" class="form-control"  name="description" id="description"  placeholder="Description">{{old('description')?old('description'):''}}</textarea>
-                             @if($errors->has('description'))
-                              <span class="text-danger">{{$errors->first('description')}}</span>
-                             @endif
+                          <div class="tab-pane" id="arabic" role="tabpanel">
+                            <div>
+                              <div class="form-group required">
+                                <label for="ar_service_name">Service Name (AR)<span class="error">*</span></label>
+                                <input type="text" class="form-control" value="{{old('ar_service_name')?old('ar_service_name'):''}}" name="ar_service_name" id="ar_service_name"  placeholder="Service Name in Arabic">
+                                @if($errors->has('ar_service_name'))
+                                <span class="text-danger">{{$errors->first('ar_service_name')}}</span>
+                                @endif
+                              </div>
+                              <div class="form-group required">
+                                 <label for="ar_description">Description (AR)<span class="error">*</span></label>
+                                 <textarea rows="5" class="form-control"  name="ar_description" id="ar_description"  placeholder="Description in Arabic">{{old('ar_description')?old('ar_description'):''}}</textarea>
+                                 @if($errors->has('ar_description'))
+                                  <span class="text-danger">{{$errors->first('ar_description')}}</span>
+                                 @endif
+                              </div>
+
+                            </div>
+
                           </div>
 
                         </div>

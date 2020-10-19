@@ -16,9 +16,7 @@ class CreateServicesTable extends Migration
         Schema::disableForeignKeyConstraints();
         Schema::create('services', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('service_name')->index();
             $table->string('slug');
-            $table->text('description')->nullable();
             $table->boolean('is_active')->default(true);
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by');

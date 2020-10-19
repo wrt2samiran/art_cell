@@ -18,19 +18,29 @@ class CreatePropertyTypeRequest extends FormRequest
     public function rules()
     {
         return [
-            'type_name'=>'required|min:3|max:50|unique:property_types',
-            'description'=>'required|max:255',
+            'en_type_name'=>'required|min:3|max:50',
+            'en_description'=>'required|max:255',
+            'ar_type_name'=>'required|min:3|max:50',
+            'ar_description'=>'required|max:255',
         ];
     }
     public function messages(){
         return [
-            'type_name.required' => 'Type name is required',
-            'type_name.min'=>'Type name should have 3 characters',
-            'type_name.max'=>'Type name should not be more then 50 characters',
-            'type_name.unique'=>'Type name alredy exist. Enter different name',
-            'description.min'=>'Description should have 3 characters',
-            'role_description.max'=>'Description should not more then 255 characters',
-            'description.required'  => 'Description is required',
+            'en_type_name.required' => 'Type name is required',
+            'en_type_name.min'=>'Type name should have 3 characters',
+            'en_type_name.max'=>'Type name should not be more then 50 characters',
+            'en_type_name.unique'=>'Type name alredy exist. Enter different name',
+            'en_description.min'=>'Description should have 3 characters',
+            'en_description.max'=>'Description should not more then 255 characters',
+            'en_description.required'  => 'Description is required',
+
+            'ar_type_name.required' => 'Type name is required',
+            'ar_type_name.min'=>'Type name should have 3 characters',
+            'ar_type_name.max'=>'Type name should not be more then 50 characters',
+            'ar_type_name.unique'=>'Type name alredy exist. Enter different name',
+            'ar_description.min'=>'Description should have 3 characters',
+            'ar_description.max'=>'Description should not more then 255 characters',
+            'ar_description.required'  => 'Description is required',
         ];
     }
 }
