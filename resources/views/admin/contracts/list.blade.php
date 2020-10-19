@@ -54,6 +54,49 @@
                                         {{ Session::get('error') }}
                                     </div>
                                 @endif
+                                <div class="filter-area ">
+                                    <div class="row">
+                                        <div class="col-sm-4" id="status-filter-container">
+                                            <select class="form-control status-filter"  name="contract_status_id" id="contract_status_id">
+                                                <option value="">Filter by Status</option>
+                                                @forelse($ContractStatus as $status)
+                                                   <option value="{{$status->id}}">{{$status->status_name}}</option>
+                                                @empty
+                                                <option value="">No Service Found</option>
+                                                @endforelse
+                                           </select>
+                                           <div class="cursor-poiner" title="Click to clear filter" style="display: none;" id="status-filter-clear"><span class="badge badge-danger">Clear Filter<i class="fas fa-times"></i></span></div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                
+                                                <div class="input-group">
+                                                    <div class="input-group-addon">
+                                                        <i class="fa fa-clock-o"></i>
+                                                    </div>
+                                                    <input class="form-control" type="text" name="contract_duration" id="contract_duration" placeholder="Search By Date">
+                                                
+
+                                                    <input type="hidden" name="daterange" id="daterange" placeholder="Search By Date">
+
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                </div>
+                                                <div class="cursor-poiner" title="Click to clear filter" style="display: none;" id="contract_duration-filter-clear"><span class="badge badge-danger">Clear Filter<i class="fas fa-times"></i></span></div>
+                                                
+                                                                        
+                                            </div>
+                                        </div>
+                                        <!-- <div class="col-sm-4">  
+                                <a class="btn btn-primary modal-action-btn" href="{{ route('admin.contracts.list') }}" style="margin-top:20px;">Reset</a>
+                                
+                                    </div> -->
+                                    </div>
+                                </div>
+                                <hr class="mt-3 mb-3"/>
                                 <table class="table table-bordered" id="contract_table">
                                     <thead>
                                         <tr>
@@ -61,6 +104,7 @@
                                             <th>Contract Code</th>
                                             <th>Info</th>
                                             <th>Start Date</th>
+                                            <th>End Date</th>
                                             <th>Location</th>
                                             <th>Status</th>
                                             <th>Created At</th>

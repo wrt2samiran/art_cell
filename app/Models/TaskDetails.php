@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Calendars extends Model
+class TaskDetails extends Model
 {
  	use SoftDeletes;
 

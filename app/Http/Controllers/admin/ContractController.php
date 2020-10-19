@@ -49,7 +49,29 @@ class ContractController extends Controller
             ->whereHas('service_provider')
             ->whereHas('services')
             ->whereHas('contract_status')
+            ->when($request->contract_status_id,function($query) use($request){
+            	$query->where('contract_status_id',$request->contract_status_id);
+            })
+            ->when($request->daterange,function($query) use($request){
+                $daterange_arr=explode('_',$request->daterange);
+                $start_date = $daterange_arr[0];
+                $end_date   = $daterange_arr[1];
+                $query->where(function($q) use ($start_date,$end_date){
+                    $q->where(function($q) use ($start_date,$end_date){
+                      $q->where('end_date','>=',$start_date)->where('start_date','<=',$start_date);
+                    })
+                    ->orWhere(function($q) use ($start_date,$end_date){
+                      $q->where('end_date','>=',$end_date)->where('start_date','<=',$end_date);
+                    })
+                    ->orWhere(function($q) use ($start_date,$end_date){
+                      $q->where('end_date','<=',$end_date)->where('start_date','>=',$start_date);
+                    });
+                });
+            })
+            
+            
             ->select('contracts.*');
+
             return Datatables::of($contracts)
             ->editColumn('created_at', function ($contract) {
                 return $contract->created_at ? with(new Carbon($contract->created_at))->format('d/m/Y') : '';
@@ -59,6 +81,9 @@ class ContractController extends Controller
             })
             ->editColumn('start_date', function ($contract) {
                 return $contract->start_date ? with(new Carbon($contract->start_date))->format('d/m/Y') : '';
+            })
+            ->editColumn('end_date', function ($contract) {
+                return $contract->end_date ? with(new Carbon($contract->end_date))->format('d/m/Y') : '';
             })
             ->filterColumn('start_date', function ($query, $keyword) {
                 $query->whereRaw("DATE_FORMAT(start_date,'%d/%m/%Y') like ?", ["%$keyword%"]);
@@ -89,6 +114,18 @@ class ContractController extends Controller
             })
             ->rawColumns(['action','is_active'])
             ->make(true);
+        }
+        $this->data['ContractStatus']=ContractStatus::whereIsActive(true)->get();
+        $contracts=Contract::whereNull('deleted_at');
+        $this->data['contractDuration'] = $contractDuration = isset($request->contract_duration)?$request->contract_duration:'';
+        if ($contractDuration != '') {
+            if ($contractDuration != '') {
+                if (strpos($contractDuration, ' - ') !== false) {
+                    $explodedContractDuration = explode(" - ",$contractDuration);
+                    $contracts = $contracts->where('start_date', '>=', strtotime($explodedContractDuration[0]))->where('end_date', '<=', strtotime($explodedContractDuration[1]));
+                    
+                }
+            }
         }     
         return view($this->view_path.'.list',$this->data);
     }

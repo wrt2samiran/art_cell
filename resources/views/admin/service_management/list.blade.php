@@ -55,11 +55,12 @@
                                     <thead>
                                         <tr>
                                             <th>Id</th>
-                                            <th>Task Name</th>
-                                            <th>Contract Id</th>
-                                            <th>Service Provider Name</th>
+                                            <th>Service Name</th>
+                                            <th>Property Name</th>
+                                            <th>Service Start Date</th>
+                                            <th>Service End Date</th>
                                             <th>Status</th>
-                                            <th>Created At</th>
+                                            
                                             <th>Action</th>
                                         </tr>
                                     </thead>
