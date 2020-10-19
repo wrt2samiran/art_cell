@@ -189,6 +189,7 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             /*Routes for contracts management */
             Route::group(['prefix'=>'contracts','as'=>'contracts.'],function(){
                 Route::get('/', 'ContractController@list')->name('list')->middleware('check_permissions:contract-list');
+                
                 Route::get('/create', 'ContractController@create')->name('create')->middleware('check_permissions:contract-create');
                 Route::post('/store', 'ContractController@store')->name('store')->middleware('check_permissions:contract-create');
                 Route::get('/{id}', 'ContractController@show')->name('show')->middleware('check_permissions:contract-details');
