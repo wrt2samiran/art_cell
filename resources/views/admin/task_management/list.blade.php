@@ -146,7 +146,7 @@
                                               <select class="form-control parent_role_select2" onchange='onServiceChange(this.value)' style="width: 100%;" name="service_id" id="service_id">
                                                  
                                                   @if($service_data)
-                                                     <option value="{{$service_data->id}}" {{(old('service_id')== $service_data->id)? 'selected':''}}>{{@$service_data->service_name}}</option>
+                                                     <option value="{{$service_data->id}}" {{(old('service_id')== $service_data->id)? 'selected':''}}>{{@$service_data->service->service_name}}</option>
                                                   @else
                                                      <option value="">No Service Found</option>
                                                   @endif
@@ -595,7 +595,12 @@ function onTaskChange(task_id, start_date, end_date){
     }, 3000); 
 
 //Date range picker
-    $('#date_range').daterangepicker()
+    $('#date_range').daterangepicker({
+       minDate: new Date('<?=$service_data->service_start_date?>'),
+       maxDate: new Date('<?=$service_data->service_end_date?>'),
+       startDate: new Date('<?=$service_data->service_start_date?>'),
+       endDate: new Date('<?=$service_data->service_end_date?>'),
+    })
 
 </script>
 @if(Session::has('welcome_msg'))        

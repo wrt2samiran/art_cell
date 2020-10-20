@@ -86,7 +86,7 @@ $("#admin_labour_task_add_form").validate({
         ajax: baseUrl+'/admin/service_management',
         columns: [
             { data: 'id', name: 'id' },
-            { data: 'service_name', name: 'service_name'},
+            { data: 'service.service_name', name: 'service.service_name'},
             { data: 'property.property_name', name: 'property.property_name'},
             { data: 'service_start_date', name: 'service_start_date'},
             { data: 'service_end_date', name: 'service_end_date'},
