@@ -7,10 +7,17 @@
         ajax: baseUrl+'/admin/task_management',
         columns: [
             { data: 'id', name: 'id' },
-            { data: 'task_id', name: 'task_id'},
-            { data: 'job_title', name: 'job_title' },
-            { data: 'status', name: 'Pnding' },
-            { data: 'created_at', name: 'created_at' },
+            { data: 'task_title', name: 'task_title'},
+            { data: 'property.property_name', name: 'property.property_name' },
+            { data: 'service.service_name', name: 'service.service_name' },
+            { data: 'country.name', name: 'country.name' },
+            { data: 'state.name', name: 'state.name' },
+            { data: 'city.name', name: 'city.name' },
+
+            { data: 'start_date', name: 'start_date' },
+            { data: 'end_date', name: 'end_date' },
+
+            { data: 'status', name: 'ststus' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
          order: [ [0, 'asc'] ],

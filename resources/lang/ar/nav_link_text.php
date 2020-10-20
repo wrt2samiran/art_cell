@@ -24,8 +24,8 @@ return array (
   'sign_out' => 'خروج',
   'spare_parts_management' => 'إدارة قطع الغيار',
   'state_management' => 'إدارة الدولة',
-  'task_assign_labour' => 'Task Assign Labour',
+  'task_assign_labour' => 'مهمة تعيين العمل',
   'task_management' => 'ادارة المهام',
-  'translation_management' => 'Translation Management',
+  'translation_management' => 'إدارة الترجمة',
   'user_management' => 'إدارةالمستخدم',
 );

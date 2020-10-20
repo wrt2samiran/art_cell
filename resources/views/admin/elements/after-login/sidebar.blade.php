@@ -161,6 +161,7 @@
                 </li>
 
 
+
                 <li class="nav-item has-treeview {{(request()->is('admin/shared-service/*','admin/shared-service'))?'menu-open':''}}">
                     
                     <li class="nav-item">
@@ -262,7 +263,7 @@
                     </a>
                 </li> 
                 @endif
-
+               
                 <li class="nav-item ">
                     <a href="{{route('admin.service_management.list')}}"
                     class="nav-link {{(request()->is('admin/service_management/*','admin/service_management'))?'active':''}}">
@@ -270,7 +271,27 @@
                         <p>{{__('nav_link_text.service_management')}}</p>
                     </a>
                 </li>            
+                
 
+                <!-- @if(auth()->guard('admin')->user()->hasAllPermission(['task-list']))
+                <li class="nav-item ">
+                    <a href="{{route('admin.service_management.list')}}"
+                    class="nav-link {{(request()->is('admin/service_management/*','admin/service_management'))?'active':''}}">
+                        <i class="nav-icon fas fa-quote-right"></i>
+                        <p>{{__('nav_link_text.service_management')}}</p>
+                    </a>
+                </li>            
+                @endif -->
+
+                @if(auth()->guard('admin')->user()->hasAllPermission(['task-list']))
+                <li class="nav-item ">
+                    <a href="{{route('admin.task_management.list')}}"
+                    class="nav-link {{(request()->is('admin/task_management/*','admin/task_management'))?'active':''}}">
+                        <i class="nav-icon fas fa-quote-right"></i>
+                        <p>{{__('nav_link_text.task_management')}}</p>
+                    </a>
+                </li>            
+                @endif
             </ul>
 
         </nav>

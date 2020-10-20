@@ -20,16 +20,16 @@ class TaskManagementController extends Controller
 
     /*****************************************************/
     # TaskManagementController
-    # Function name : List
+    # Function name : Calendar
     # Author        :
     # Created Date  : 16-10-2020
-    # Purpose       : Showing Task List
+    # Purpose       : Showing Task Calendar
     # Params        : Request $request
     /*****************************************************/
        
-    public function list(Request $request, $id){
+    public function calendar(Request $request, $id){
         //dd($request->all());
-        $this->data['page_title']='Task List';
+        $this->data['page_title']='Task calendar';
         $logedInUser = \Auth::guard('admin')->user()->id;
 
         if($request->ajax()){
@@ -60,7 +60,7 @@ class TaskManagementController extends Controller
             ->addColumn('action',function($task_list){
                 $delete_url=route('admin.task_management.delete',$task_list->id);
                 $details_url=route('admin.task_management.show',$task_list->id);
-                $add_url=route('admin.task_management.list',$task_list->id);
+                $add_url=route('admin.task_management.calendar',$task_list->id);
 
                 return '<a title="View City Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>&nbsp;&nbsp;<a title="Add Task" href="'.$add_url.'"><i class="fas fa-plus text-success"></i></a>&nbsp;&nbsp;<a title="Delete city" href="javascript:delete_city('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
                 
@@ -91,6 +91,7 @@ class TaskManagementController extends Controller
         $this->data['city_data'] = $sqlCity;
         $this->data['state_data'] = $sqlState;
         $this->data['country_data'] = $sqlCountry;
+        $this->data['service_allocation_id'] = $id;
 
         $this->data['labour_list']  = $labour_list;
 
@@ -132,6 +133,89 @@ class TaskManagementController extends Controller
         $this->data['request'] = $request;
 
        // return view($this->view_path.'.add',$this->data);
+
+        return view($this->view_path.'.calendar',$this->data);
+    }
+
+
+
+    /*****************************************************/
+    # TaskManagementController
+    # Function name : List
+    # Author        :
+    # Created Date  : 20-10-2020
+    # Purpose       : Showing Task List
+    # Params        : Request $request
+    /*****************************************************/
+    
+
+    public function list(Request $request){
+
+        $this->data['page_title']='Task Management List';
+        $logedInUser = \Auth::guard('admin')->user()->id;
+        if($request->ajax()){
+
+            $tasks=TaskLists::with('property')->with('service')->with('country')->with('state')->with('city')->where('created_by', $logedInUser)->orWhere('user_id', $logedInUser)->orderBy('id','Desc');
+            
+            return Datatables::of($tasks)
+            ->editColumn('created_at', function ($tasks) {
+                return $tasks->created_at ? with(new Carbon($tasks->created_at))->format('m/d/Y') : '';
+            })
+            
+            ->filterColumn('created_at', function ($query, $keyword) {
+                $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
+            })
+            ->addColumn('status',function($tasks){
+                if($tasks->status=='0'){
+                   $message='Pending';
+                    return '<a href="" class="btn btn-block btn-outline-warning btn-sm">Pending</a>';
+                    
+                }elseif($tasks->status=='1'){
+                   $message='Overdue';
+                   return '<a  href="" class="btn btn-block btn-outline-success btn-sm">Overdue</a>';
+                   
+                }
+                else{
+                    $message='Completed';
+                    return '<a href="" class="btn btn-block btn-outline-success btn-sm">Completed</a>';
+                }
+            })
+            ->addColumn('action',function($tasks)use ($logedInUser){
+                $action_buttons='';
+               
+             
+                if($logedInUser==$tasks->service_provider_id){
+                     $add_url=route('admin.task_management.list',$tasks->id);
+
+                     $action_buttons =$action_buttons.'<a title="Add Task" href="'.$add_url.'"><i class="fas fa-plus text-success"></i></a>';
+                }
+                
+                if($logedInUser==$tasks->created_by){
+                    $details_url = route('admin.task_management.show',$tasks->id);
+                    $action_buttons=$action_buttons.'<a title="View Service Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
+                }
+
+                if($logedInUser==$tasks->created_by and isset($tasks->tasks_list)==''){
+                    $edit_url = route('admin.task_management.edit',$tasks->id);
+                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit service" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
+                }
+                if($logedInUser==$tasks->created_by and isset($tasks->tasks_list)==''){
+                    $delete_url=route('admin.task_management.delete',$tasks->id);
+                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete contract" href="javascript:delete_service('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
+                }
+
+                if($action_buttons==''){
+                    $action_buttons=$action_buttons.'<span class="text-muted">No access</span>';
+                } 
+                return $action_buttons;
+
+               
+                
+            })
+            ->rawColumns(['action','status'])
+            ->make(true);
+        }
+
 
         return view($this->view_path.'.list',$this->data);
     }
@@ -178,7 +262,7 @@ class TaskManagementController extends Controller
                 $Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);
                 if ($Validator->fails()) {
 
-                    return redirect()->route('admin.task_management.list',$request->service_id)->withErrors($Validator)->withInput();
+                    return redirect()->route('admin.task_management.calendar',$request->service_allocation_id)->withErrors($Validator)->withInput();
                     
                 } else {
                     
@@ -207,7 +291,7 @@ class TaskManagementController extends Controller
                         
                         else
                         {
-                            return redirect()->route('admin.task_management.list',$request->service_id)->with('error', 'Task already been added for this user on '.date("o-m-d",$day_to_display).' for this Service.');
+                            return redirect()->route('admin.task_management.calendar',$request->service_allocation_id)->with('error', 'Task already been added for this user on '.date("o-m-d",$day_to_display).' for this Service.');
                         }
                         
                          
@@ -215,7 +299,8 @@ class TaskManagementController extends Controller
                   //  print_r($arr_days);
                  
                     $new = new TaskLists;
-                    $new->service_allocation_id = $request->service_id;   
+                    $new->service_allocation_id = $request->service_allocation_id;
+                    $new->service_id =  $request->service_id;
                     $new->property_id = $request->property_id;
                     $new->country_id =$request->country_id;
                     $new->state_id =$request->state_id;
@@ -265,7 +350,7 @@ class TaskManagementController extends Controller
                     }
 
                         $request->session()->flash('alert-success', 'Task has been added successfully');
-                        return redirect()->route('admin.task_management.list',$request->service_id);
+                        return redirect()->route('admin.task_management.calendar',$request->service_allocation_id);
                     
                 }
             }
@@ -274,7 +359,7 @@ class TaskManagementController extends Controller
             $this->data['country_list']=$country_list;
             return view($this->view_path.'.add',$this->data);
         } catch (Exception $e) {
-            return redirect()->route('admin.task_management.list')->with('error', $e->getMessage());
+            return redirect()->route('admin.task_management.calendar')->with('error', $e->getMessage());
         }
     }
 
@@ -300,7 +385,7 @@ class TaskManagementController extends Controller
 
                 
                 if ($id == null) {
-                    return redirect()->route('admin.service_management.list');
+                    return redirect()->route('admin.service_management.calendar');
                 }
                 $validationCondition = array(
                     'name'          => 'required|min:2|max:255|unique:' .(new City)->getTable().',name,'.$id.'',
@@ -327,7 +412,7 @@ class TaskManagementController extends Controller
                     $save = $details->save();                        
                     if ($save) {
                         $request->session()->flash('alert-success', 'City has been updated successfully');
-                        return redirect()->route('admin.service_management.list');
+                        return redirect()->route('admin.service_management.calendar');
                     } else {
                         $request->session()->flash('alert-danger', 'An error occurred while updating the city');
                         return redirect()->back();
@@ -342,7 +427,7 @@ class TaskManagementController extends Controller
             return view($this->view_path.'.edit',$this->data)->with(['details' => $details]);
 
         } catch (Exception $e) {
-            return redirect()->route('admin.service_management.list')->with('error', $e->getMessage());
+            return redirect()->route('admin.service_management.calendar')->with('error', $e->getMessage());
         }
     }
 
@@ -359,7 +444,7 @@ class TaskManagementController extends Controller
         try
         {
             if ($id == null) {
-                return redirect()->route('admin.service_management.list');
+                return redirect()->route('admin.service_management.calendar');
             }
             $details = TaskLists::where('id', $id)->first();
             if ($details != null) {
@@ -380,10 +465,10 @@ class TaskManagementController extends Controller
                 }
                 return redirect()->back();
             } else {
-                return redirect()->route('admin.service_management.list')->with('error', 'Invalid city');
+                return redirect()->route('admin.service_management.calendar')->with('error', 'Invalid city');
             }
         } catch (Exception $e) {
-            return redirect()->route('admin.service_management.list')->with('error', $e->getMessage());
+            return redirect()->route('admin.service_management.calendar')->with('error', $e->getMessage());
         }
     }
 
@@ -400,7 +485,7 @@ class TaskManagementController extends Controller
         try
         {
             if ($id == null) {
-                return redirect()->route('admin.service_management.list');
+                return redirect()->route('admin.service_management.calendar');
             }
 
             $details = TaskLists::where('id', $id)->first();
@@ -417,7 +502,7 @@ class TaskManagementController extends Controller
             }
             return redirect()->back();
         } catch (Exception $e) {
-            return redirect()->route('admin.service_management.list')->with('error', $e->getMessage());
+            return redirect()->route('admin.service_management.calendar')->with('error', $e->getMessage());
         }
     }
     

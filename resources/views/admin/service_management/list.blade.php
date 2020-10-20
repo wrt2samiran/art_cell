@@ -55,6 +55,8 @@
                                     <thead>
                                         <tr>
                                             <th>Id</th>
+                                            <th>Contract Code</th>
+                                            <th>Contract Info</th>
                                             <th>Service Name</th>
                                             <th>Property Name</th>
                                             <th>Service Start Date</th>

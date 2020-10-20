@@ -14,7 +14,7 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.cities.list')}}">City</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.service_management.list')}}">Service</a></li>
               <li class="breadcrumb-item active">Add</li>
             </ol>
           </div>
@@ -196,15 +196,18 @@
 
             }
         });
+
+
     }
 
-
-    $('#service_start_date').datepicker({
+$('#service_start_date').datepicker({
     dateFormat:'dd/mm/yy'
 });
 $('#service_end_date').datepicker({
     dateFormat:'dd/mm/yy'
 });
+
+    
 </script>
 
 <script type="text/javascript" src="{{asset('js/admin/service_management/create.js')}}">

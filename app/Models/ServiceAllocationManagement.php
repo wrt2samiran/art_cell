@@ -19,4 +19,12 @@ class ServiceAllocationManagement extends Model
 		return $this->belongsTo('\App\Models\TaskLists', 'service_name', 'service_allocation_id');
 	}
 
+	public function service_provider(){
+    	return $this->belongsTo(User::class,'service_provider_id','id');
+    }
+
+	public function contract() {
+		return $this->belongsTo('\App\Models\Contract', 'contract_id', 'id');
+	}
+
 }
