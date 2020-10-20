@@ -30,7 +30,7 @@ class UpdatePropertyRequest extends FormRequest
             'contact_number'=>'required|regex:/[0-9]{8,20}/',
             'contact_email'=>'required|email|max:100',
             'property_files.*' => [
-                'mimes:pdf',
+                'mimetypes:application/pdf,image/jpeg,image/png,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword',
                 'max:1024',
             ],
         ];

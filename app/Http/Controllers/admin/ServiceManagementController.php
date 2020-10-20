@@ -5,7 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\Models\{Country,State,City,TaskLists, ServiceAllocationManagement};
+use App\Models\{Country,State,City,Contract, TaskLists, ServiceAllocationManagement, ContractService, Property};
 
 use App\Models\ModuleFunctionality;
 use Helper, AdminHelper, Image, Auth, Hash, Redirect, Validator, View, Config;
@@ -19,11 +19,11 @@ class ServiceManagementController extends Controller
     private $view_path='admin.service_management';
 
     /*****************************************************/
-    # CityController
+    # ServiceManagementController
     # Function name : List
     # Author        :
-    # Created Date  : 06-10-2020
-    # Purpose       : Showing City List
+    # Created Date  : 19-10-2020
+    # Purpose       : Showing Service List
     # Params        : Request $request
     /*****************************************************/
     
@@ -34,11 +34,11 @@ class ServiceManagementController extends Controller
         $logedInUser = \Auth::guard('admin')->user()->id;
         if($request->ajax()){
 
-            $srvalmnm=ServiceAllocationManagement::with('property')->orderBy('id','Desc');
-           
+            $srvalmnm=ServiceAllocationManagement::with('tasks_list')->with('contract')->with('property')->with('service')->orderBy('id','Desc');
+            
             return Datatables::of($srvalmnm)
             ->editColumn('created_at', function ($srvalmnm) {
-                return $srvalmnm->created_at ? with(new Carbon($v->created_at))->format('m/d/Y') : '';
+                return $srvalmnm->created_at ? with(new Carbon($srvalmnm->created_at))->format('m/d/Y') : '';
             })
             
             ->filterColumn('created_at', function ($query, $keyword) {
@@ -47,23 +47,48 @@ class ServiceManagementController extends Controller
             ->addColumn('work_status',function($srvalmnm){
                 if($srvalmnm->work_status=='0'){
                    $message='Pending';
-                    return '<a title="Click to deactivate the city" href="" class="btn btn-block btn-outline-warning btn-sm">Pending</a>';
+                    return '<a href="" class="btn btn-block btn-outline-warning btn-sm">Pending</a>';
                     
                 }elseif($srvalmnm->work_status=='1'){
                    $message='Overdue';
-                   return '<a title="Click to deactivate the city" href="" class="btn btn-block btn-outline-success btn-sm">Overdue</a>';
+                   return '<a  href="" class="btn btn-block btn-outline-success btn-sm">Overdue</a>';
                    
                 }
                 else{
                     $message='Completed';
-                    return '<a title="Click to deactivate the city" href="" class="btn btn-block btn-outline-success btn-sm">Completed</a>';
+                    return '<a href="" class="btn btn-block btn-outline-success btn-sm">Completed</a>';
                 }
             })
-            ->addColumn('action',function($srvalmnm){
-                
-                $edit_url=route('admin.task_management.list',$srvalmnm->id);
+            ->addColumn('action',function($srvalmnm)use ($logedInUser){
+                $action_buttons='';
+               
+             
+                if($logedInUser==$srvalmnm->service_provider_id){
+                     $add_url=route('admin.task_management.calendar',$srvalmnm->id);
 
-                return '<a title="Add Task" href="'.$edit_url.'"><i class="fas fa-plus text-success"></i></a>';
+                     $action_buttons =$action_buttons.'<a title="Add Task" href="'.$add_url.'"><i class="fas fa-plus text-success"></i></a>';
+                }
+
+                //if($logedInUser==$srvalmnm->created_by and $logedInUser!=$srvalmnm->service_provider_id){
+                    $details_url = route('admin.service_management.show',$srvalmnm->id);
+                    $action_buttons=$action_buttons.'&nbsp;&nbsp<a title="View Service Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
+               // }
+
+                if(($logedInUser==$srvalmnm->created_by and $logedInUser!=$srvalmnm->service_provider_id) and isset($srvalmnm->tasks_list)=='' ){
+                    $edit_url = route('admin.service_management.edit',$srvalmnm->id);
+                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit service" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
+                }
+                if(($logedInUser==$srvalmnm->created_by and $logedInUser!=$srvalmnm->service_provider_id) and isset($srvalmnm->tasks_list)==''){
+                    $delete_url=route('admin.service_management.delete',$srvalmnm->id);
+                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete contract" href="javascript:delete_service('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
+                }
+
+                if($action_buttons==''){
+                    $action_buttons=$action_buttons.'<span class="text-muted">No access</span>';
+                } 
+                return $action_buttons;
+
+               
                 
             })
             ->rawColumns(['action','work_status'])
@@ -75,51 +100,80 @@ class ServiceManagementController extends Controller
     }
 
    /*****************************************************/
-    # CityController
-    # Function name : cityAdd
+    # ServiceManagementController
+    # Function name : addService
     # Author        :
-    # Created Date  : 06-10-2020
-    # Purpose       : Adding new City
+    # Created Date  : 19-10-2020
+    # Purpose       : Adding new Service
     # Params        : Request $request
     /*****************************************************/
-    public function cityAdd(Request $request) {
+    public function addService(Request $request) {
 
-        $this->data['page_title']     = 'Add City';
-        $this->data['panel_title']    = 'Add City';
+
+        $this->data['page_title']     = 'Add Service';
+        
+        $logedInUser = \Auth::guard('admin')->user()->id;
+
+        
+
+        $sqlService = ServiceAllocationManagement::pluck('contract_id');
+       // $this->data['contract_list'] = Contract::whereStatus('Ongoing')->orWhere('status','active')->whereIsActive(1)->whereNotIn('id', $sqlService)->get();
+
+        $this->data['contract_list'] = Contract::whereNotIn('id', $sqlService)->get();
+
+          // $sqlService =  $sqlService->pluck('service_name');
+       // $contract_service = ContractService::with('service')->whereNotIn('service_id', $sqlService)->where('contract_id',$request->contract_id)->get();
+
+
+        $this->data['contract_service'] = Contract::whereStatus('Ongoing')->whereIsActive(1)->get();
+
+    
     
         try
         {
             if ($request->isMethod('POST'))
             {
                 $validationCondition = array(
-                    'name'          => 'required|min:2|max:255|unique:'.(new City)->getTable().',name',
-                    'country_id'    => 'required',
-                    'state_id'      => 'required',
+                    'contract_id'          => 'required',
+                    'property_id'          => 'required',
+                    'service_provider_id'  => 'required',
+                    'service_id'           => 'required',
+                    'service_start_date'   => 'required',
+                    'service_end_date'     => 'required',
                 );
                 $validationMessages = array(
-                    'name.required'         => 'Please enter name',
-                    'name.min'              => 'Name should be should be at least 2 characters',
-                    'name.max'              => 'Name should not be more than 255 characters',
-                    'country_id'            => 'Please select country',
-                    'state_id.required'     => 'Please select state',
+                    'contract_id.required'         => 'Please enter name',
+                    'property_id.required'         => 'Please select country',
+                    'service_provider_id.required' => 'Please select state',
+                    'service_id.required'          => 'Please select country',
+                    'service_start_date.required'  => 'Please select state',
+                    'service_end_date.required'    => 'Please select state',
                 );
 
                 $Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);
                 if ($Validator->fails()) {
-                    return redirect()->route('admin.city.add')->withErrors($Validator)->withInput();
+                    
+                    return redirect()->route('admin.service_management.addService')->withErrors($Validator)->withInput();
                 } else {
                     
-                    $new = new TaskLists;
-                    $new->name = trim($request->name, ' ');
-                    $new->country_id  = $request->country_id;
-                    $new->state_id    = $request->state_id;
 
-                    $new->created_at = date('Y-m-d H:i:s');
-                    $save = $new->save();
+                    $start_date=Carbon::createFromFormat('d/m/Y', $request->service_start_date)->format('Y-m-d');
+                    $end_date=Carbon::createFromFormat('d/m/Y', $request->service_end_date)->format('Y-m-d');
+                     
+                    $newService = new ServiceAllocationManagement;
+                    $newService->contract_id            = $request->contract_id;
+                    $newService->property_id            = $request->property_id;
+                    $newService->service_provider_id    = $request->service_provider_id;
+                    $newService->service_name           = $request->service_id;
+                    $newService->service_start_date     = $start_date;
+                    $newService->service_end_date       = $end_date;
+                    $newService->created_at             = date('Y-m-d H:i:s');
+                    $newService->created_by             = $logedInUser;
+                    $save = $newService->save();
                 
                     if ($save) {                        
-                        $request->session()->flash('alert-success', 'City has been added successfully');
-                        return redirect()->route('admin.city.list');
+                        $request->session()->flash('alert-success', 'Service has been added successfully');
+                        return redirect()->route('admin.service_management.list');
                     } else {
                         $request->session()->flash('alert-danger', 'An error occurred while adding the city');
                         return redirect()->back();
@@ -127,12 +181,45 @@ class ServiceManagementController extends Controller
                 }
             }
 
-            $country_list=Country::whereIsActive('1')->orderBy('id','ASC')->get();
-            $this->data['country_list']=$country_list;
+           
             return view($this->view_path.'.add',$this->data);
         } catch (Exception $e) {
-            return redirect()->route('admin.city.list')->with('error', $e->getMessage());
+            return redirect()->route('admin.service_management.list')->with('error', $e->getMessage());
         }
+    }
+
+    /*****************************************************/
+    # ServiceManagementController
+    # Function name : getData
+    # Author        :
+    # Created Date  : 19-10-2020
+    # Purpose       : Get Contract Related Data List
+    # Params        : Request $request
+    /*****************************************************/
+
+   
+
+    public function getData(Request $request)
+    {
+        $logedInUser = \Auth::guard('admin')->user()->id;
+        $validator = Validator::make($request->all(), [ 
+            'contract_id' => 'required',
+            ]);
+
+           if ($validator->fails()) { 
+              return response()->json(['success' =>false,'message'=>$validator->errors()->first()], 200);
+            }
+       
+           $sqlService = ServiceAllocationManagement::where('contract_id',$request->contract_id)->get();
+
+           $sqlService =  $sqlService->pluck('service_name');
+        $contract_service = ContractService::with('service')->whereNotIn('service_id', $sqlService)->where('contract_id',$request->contract_id)->get();
+
+        $sqlProperty   = Contract::with('property')->whereId($request->contract_id)->first();
+
+        $sqlServiceProvider   = Contract::with('service_provider')->whereId($request->contract_id)->first();
+        
+        return response()->json(['status'=>true,  'contract_service'=>$contract_service, 'sqlProperty'=>$sqlProperty, 'sqlServiceProvider'=>$sqlServiceProvider],200);
     }
 
     /*****************************************************/
@@ -144,13 +231,20 @@ class ServiceManagementController extends Controller
     # Params        : Request $request
     /*****************************************************/
     public function edit(Request $request, $id = null) {
-        $this->data['page_title']     = 'Edit City';
-        $this->data['panel_title']    = 'Edit City';
+        $this->data['page_title']     = 'Edit Service';
+        $logedInUser = \Auth::guard('admin')->user()->id;
+
+         $service_data = ServiceAllocationManagement::whereId($id)->where('status', '<>', 'D')->first();
+
+         $this->data['service_data'] = $service_data;
+
+        $this->data['contract_list'] = Contract::whereIsActive(1)->get();
+
 
         try
         {           
 
-            $details = TaskLists::find($id);
+            $details = ServiceAllocationManagement::find($id);
             $data['id'] = $id;
 
             if ($request->isMethod('POST')) {
@@ -159,28 +253,39 @@ class ServiceManagementController extends Controller
                 if ($id == null) {
                     return redirect()->route('admin.service_management.list');
                 }
-                $validationCondition = array(
-                    'name'          => 'required|min:2|max:255|unique:' .(new City)->getTable().',name,'.$id.'',
-                    'country_id'    => 'required',
-                    'state_id'      => 'required',
+                 $validationCondition = array(
+                    'contract_id'          => 'required',
+                    'property_id'          => 'required',
+                    'service_provider_id'  => 'required',
+                    'service_id'           => 'required',
+                    'service_start_date'   => 'required',
+                    'service_end_date'     => 'required',
                 );
                 $validationMessages = array(
-                    'name.required'         => 'Please enter name',
-                    'name.min'              => 'Name should be should be at least 2 characters',
-                    'name.max'              => 'Name should not be more than 255 characters',
-                    'country_id.required'   => 'Please select country',
-                    'state_id.required'     => 'Please select state',
-
+                    'contract_id.required'         => 'Please enter name',
+                    'property_id.required'         => 'Please select country',
+                    'service_provider_id.required' => 'Please select state',
+                    'service_id.required'          => 'Please select country',
+                    'service_start_date.required'  => 'Please select state',
+                    'service_end_date.required'    => 'Please select state',
                 );
                 
                 $Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);
                 if ($Validator->fails()) {
                     return redirect()->back()->withErrors($Validator)->withInput();
                 } else {
-                    $details->name        = trim($request->name, ' ');
-                    $details->country_id  = $request->country_id;
-                    $details->state_id    = $request->state_id;
-                    $details->updated_at  = date('Y-m-d H:i:s');
+
+                    $start_date=Carbon::createFromFormat('d/m/Y', $request->service_start_date)->format('Y-m-d');
+                    $end_date=Carbon::createFromFormat('d/m/Y', $request->service_end_date)->format('Y-m-d');
+
+                    $details->contract_id            = $request->contract_id;
+                    $details->property_id            = $request->property_id;
+                    $details->service_provider_id    = $request->service_provider_id;
+                    $details->service_name           = $request->service_id;
+                    $details->service_start_date     = $start_date;
+                    $details->service_end_date       = $end_date;
+                    $details->created_at             = date('Y-m-d H:i:s');
+                    $details->created_by             = $logedInUser;
                     $save = $details->save();                        
                     if ($save) {
                         $request->session()->flash('alert-success', 'City has been updated successfully');
@@ -192,9 +297,18 @@ class ServiceManagementController extends Controller
                 }
             }
             
-            $country_list=Country::whereIsActive('1')->orderBy('id','ASC')->get();
+           // $this->data['contract_list']=Country::whereIsActive('1')->orderBy('id','ASC')->get();
+            //$this->data['property']   = Contract::with('property')->whereId($id)->first();
+            $this->data['property']   = Contract::with('property')->whereId($service_data->contract_id)->first();
+
+            $sqlService = ServiceAllocationManagement::where('contract_id',$service_data->contract_id)->where('id', '<>', $id)->get();
+
+           $sqlService =  $sqlService->pluck('service_name');
+           $this->data['contract_service'] = ContractService::with('service')->whereNotIn('service_id', $sqlService)->where('contract_id',$service_data->contract_id)->get();
+
+
+            $this->data['sqlServiceProvider']   = Contract::with('service_provider')->whereId($service_data->contract_id)->first();
             $state_list=State::whereIsActive('1')->whereCountryId($details->country_id)->orderBy('id','ASC')->get();
-            $this->data['country_list']=$country_list;
             $this->data['state_list']=$state_list;
             return view($this->view_path.'.edit',$this->data)->with(['details' => $details]);
 
@@ -260,16 +374,16 @@ class ServiceManagementController extends Controller
                 return redirect()->route('admin.service_management.list');
             }
 
-            $details = TaskLists::where('id', $id)->first();
+            $details = ServiceAllocationManagement::where('id', $id)->first();
             if ($details != null) {
                     $delete = $details->delete();
                     if ($delete) {
-                        $request->session()->flash('alert-danger', 'City has been deleted successfully');
+                        $request->session()->flash('alert-danger', 'Service has been deleted successfully');
                     } else {
                         $request->session()->flash('alert-danger', 'An error occurred while deleting the city');
                     }
             } else {
-                $request->session()->flash('alert-danger', 'Invalid city');
+                $request->session()->flash('alert-danger', 'Invalid Service');
                 
             }
             return redirect()->back();
@@ -288,12 +402,18 @@ class ServiceManagementController extends Controller
     # Params        : Request $request
     /*****************************************************/
 
-    // public function show($id){
-    //     $city=City::findOrFail($id);
-    //     $this->data['page_title']='Country Details';
-    //     $this->data['city']=$city;
-    //     return view($this->view_path.'.show',$this->data);
-    // }
+    public function show($id){
+      //  $sqlService=ServiceAllocationManagement::findOrFail($id);
+        $sqlService=ServiceAllocationManagement::with(['contract','property','service_provider','service'])
+            ->whereHas('contract')
+            ->whereHas('property')
+            ->whereHas('service_provider')
+            ->whereHas('service')->findOrFail($id);
+
+        $this->data['page_title']='Service Details';
+        $this->data['service_allocation_data']=$sqlService;
+        return view($this->view_path.'.show',$this->data);
+    }
     /*****************************************************/
     # CityController
     # Function name : getState

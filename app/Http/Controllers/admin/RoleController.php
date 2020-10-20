@@ -11,7 +11,6 @@
 #    7. delete                                            #
 #    8. change_status                                     #
 #    9. ajax_check_role_name_unique                       #
-#    10.ajax_parent_module_permissions                    #
 # Created Date   : 15-05-2020                             #
 # Purpose        : User group management                  #
 /*********************************************************/
@@ -84,7 +83,7 @@ class RoleController extends Controller
                     $has_edit_permission=true;
                 }
 
-                if($role->parrent_id==null || $role->id==$current_user->role_id || !$current_user->hasAllPermission(['group-delete'])){
+                if($role->id==$current_user->role_id || !$current_user->hasAllPermission(['group-delete']) ||in_array($role->role_type,['super-admin','property-owner','property-manager','service-provider','labour'])  ){
                     $has_delete_permission=false;
                 }else{
                     $has_delete_permission=true;
@@ -140,11 +139,10 @@ class RoleController extends Controller
     # Param            : CreateRoleRequest $request                                  #
 
     public function store(CreateRoleRequest $request){
-        $parent_role_details=Role::findOrFail($request->parent_role);
+
         $current_user=auth()->guard('admin')->user();
         $new_role=Role::create([
-            'parrent_id'=>$parent_role_details->id,
-            'role_type'=>$parent_role_details->role_type,
+            'role_type'=>'group-user',
             'role_name'=>$request->role_name,
             'role_description'=>$request->role_description,
             'slug'=>Str::slug($request->role_name, '-'),
@@ -215,8 +213,6 @@ class RoleController extends Controller
         $this->data['page_title']='Group Edit';
         $this->data['role']=$role;
 
-        $parent_roles=Role::whereStatus('A')->whereNull('parrent_id')->orderBy('id','ASC')->get();
-        $this->data['parent_roles']=$parent_roles;
 
         $modules=Module::with('functionalities')->orderBy('created_at','ASC')->get();
      
@@ -237,15 +233,8 @@ class RoleController extends Controller
         $role=Role::findOrFail($id);
         $current_user=auth()->guard('admin')->user();
 
-        if($request->parent_role){
-            $parent_role_details=Role::findOrFail($request->parent_role);  
-        }else{
-            $parent_role_details=null;
-        }
-        
+
         $role->update([
-            'parrent_id'=>($parent_role_details)?$parent_role_details->id:$role->parrent_id,
-            'role_type'=>($parent_role_details)?$parent_role_details->role_type:$role->role_type,
             'role_name'=>$request->role_name,
             'role_description'=>$request->role_description,
             'slug'=>Str::slug($request->role_name, '-')
@@ -345,47 +334,7 @@ class RoleController extends Controller
         }
     }
 
-    /************************************************************************/
-    # Function to return parent role's module permissions with html          #
-    # Function name    : ajax_check_role_name_unique                         #
-    # Created Date     : 06-10-2020                                          #
-    # Modified date    : 06-10-2020                                          #
-    # Purpose          : to check role name unique                           #
-    # Param            : Request $request,$role_id(mandatory during update)  #
-    public function ajax_parent_module_permissions(Request $request,$role_id=null){
 
-        $parent_role_id=$request->parent_role_id;
-        $this->data['parent_role']=$parent_role=Role::find($parent_role_id);
-
-        $modules_id_array=RolePermission::where('role_id',$parent_role->id)->pluck('module_id')->toArray();
-        $modules_id_array=array_unique($modules_id_array);
-
-        $functionalities_id_array=RolePermission::where('role_id',$parent_role->id)->pluck('module_functionality_id')->toArray();
-
-        $modules=Module::whereIn('id',$modules_id_array)
-        ->with(['functionalities'=>function($q)use($functionalities_id_array) {
-            $q->whereIn('id',$functionalities_id_array);
-        }])->orderBy('created_at','ASC')->get();
-
-        $this->data['modules_id_array']=$modules_id_array;
-        $this->data['functionalities_id_array']=$functionalities_id_array;
-
-
-        if($role_id){
-           $this->data['editing_role']=Role::find($role_id);
-           $this->data['edit']=true; 
-           $this->data['current_functionalities_id_array']=RolePermission::where('role_id',$role_id)->pluck('module_functionality_id')->toArray();
-        }else{
-           $this->data['edit']=false;  
-           $this->data['editing_role']=null;
-
-           $this->data['current_functionalities_id_array']=[];
-        }
-
-        $this->data['modules']=$modules;
-        return view($this->view_path.'.ajax.module_permissions',$this->data)->render();
-
-    }
 
 
 

@@ -77,6 +77,48 @@ $("#admin_labour_task_add_form").validate({
         }
     });
 
+ //function to delete service
+ function delete_service(url){
+  swal({
+  title: "Are you sure?",
+  text: "Once deleted, you will not be able to recover this city!",
+  icon: "warning",
+  buttons: true,
+  dangerMode: true,
+  })
+  .then((willDelete) => {
+    if (willDelete) {
+      $.LoadingOverlay("show");
+      $.ajax({
+        url: url,
+        type: "GET",
+        
+        data:{ "_token": $('meta[name="csrf-token"]').attr('content')},
+        success: function (data) {
+          $.LoadingOverlay("hide");
+          toastr.success('Service successfully deleted.', 'Success', {timeOut: 5000});
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+           $.LoadingOverlay("hide");
+           var response=jqXHR.responseJSON;
+           var status=jqXHR.status;
+           if(status=='404'){
+            toastr.error('Invalid URL', 'Error', {timeOut: 5000});
+           }else{
+             toastr.error('Internal server error.', 'Error', {timeOut: 5000});
+           }
+        }
+     });
+
+     service_management_table.ajax.reload(null, false);
+
+
+    } 
+  });
+
+ }
+ 
+
 //initializing galleries datatable
     var service_management_table=$('#service_management_table').DataTable({
         "responsive": true,
@@ -86,7 +128,10 @@ $("#admin_labour_task_add_form").validate({
         ajax: baseUrl+'/admin/service_management',
         columns: [
             { data: 'id', name: 'id' },
-            { data: 'service_name', name: 'service_name'},
+            { data: 'contract.code', name: 'service.code'},
+            { data: 'contract.description', name: 'contract.description'},
+            
+            { data: 'service.service_name', name: 'service.service_name'},
             { data: 'property.property_name', name: 'property.property_name'},
             { data: 'service_start_date', name: 'service_start_date'},
             { data: 'service_end_date', name: 'service_end_date'},

@@ -1,31 +1,55 @@
-    $("#admin_country_edit_form").validate({
+    $("#admin_service_management_edit_form").validate({
         rules: {
-            name: {
-                required: true,
-                minlength: 3,
-                maxlength: 50,
-            },
-           
-            country_id: {
-                required: true,
-            },
-            state_id: {
-                required: true,
-            },           
-           
+
+        
+        contract_id:{
+            required: true
+        },   
+        property_id:{
+            required: true
         },
-        messages: {
-            name: {
-                required:  "City name is required",
-                minlength: "City name should have 3 characters",
-                maxlength: "City name should not be more then 50 characters"
-            },
-            country_id: {
-                required:  "Country name is required",
-            },
-            state_id: {
-                required:  "State name is required",
-            },
+        service_provider_id:{
+            required: true, 
+        },
+        property_owner:{
+            required: true, 
+        },
+        service_id:{
+            required: true, 
+        },
+        service_start_date:{
+            required: true, 
+            maxlength: 10,
+        },
+        service_end_date:{
+            required: true,
+            maxlength: 10, 
+        }
+        
+    },
+    messages: {
+
+        contract_id:{
+            required:  "Please Select a contract",
+        },
+        
+        property_id: {
+            required:  "Please select property",
+        },
+
+        service_provider_id:{
+            required:  "Please select service provider",
+        },
+        service_id:{
+            required:  "Please select service",
+        },
+       
+        service_start_date:{
+            required:  "Enter start date in dd/mm/yyy format",
+        },
+        service_end_date:{
+            required:  "Enter end date in dd/mm/yyy format",
+        }
         },
 
         errorPlacement: function (error, element) {

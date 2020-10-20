@@ -9,7 +9,7 @@
             { data: 'id', name: 'id' },
             { data: 'name', name: 'name'},
             { data: 'email', name: 'email' },
-            { data: 'status', name: 'status',orderable: false },
+
             { data: 'created_at', name: 'created_at' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],

@@ -197,15 +197,30 @@ class ContractController extends Controller
 
             foreach ($request->file('contract_files')  as $key=>$contract_file) {
 
-	            $file_name = time().$key.'.'.$contract_file->getClientOriginalExtension();
+	            $file_name = 'contract-file-'.time().$key.'.'.$contract_file->getClientOriginalExtension();
 	         
 	            $destinationPath = public_path('/uploads/contract_attachments');
 	         
 	            $contract_file->move($destinationPath, $file_name);
 	            
+                
+                $mime_type=$contract_file->getClientMimeType();
+
+                if(in_array($mime_type,['image/jpeg','image/png','image/jpg'])){
+                    $file_type='image';
+                }elseif (in_array($mime_type,['application/pdf'])) {
+                    $file_type='pdf';
+                }elseif (in_array($mime_type,['application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/msword'])) {
+                    $file_type='doc';
+                }elseif(in_array($mime_type,['text/plain'])){
+                     $file_type='text';
+                }else{
+                     $file_type='file';
+                }
 	            ContractAttachment::create([
 	             'contract_id'=>$contract->id,
 	             'file_name'=>$file_name,
+                 'file_type'=>$file_type,
 	             'created_by'=>auth()->guard('admin')->id()
 	            ]);
 
@@ -321,17 +336,31 @@ class ContractController extends Controller
 
             foreach ($request->file('contract_files')  as $key=>$contract_file) {
 
-                $file_name = time().$key.'.'.$contract_file->getClientOriginalExtension();
+                $file_name = 'contract-file-'.time().$key.'.'.$contract_file->getClientOriginalExtension();
              
                 $destinationPath = public_path('/uploads/contract_attachments');
              
                 $contract_file->move($destinationPath, $file_name);
-                
+                $mime_type=$contract_file->getClientMimeType();
+
+                if(in_array($mime_type,['image/jpeg','image/png','image/jpg'])){
+                    $file_type='image';
+                }elseif (in_array($mime_type,['application/pdf'])) {
+                    $file_type='pdf';
+                }elseif (in_array($mime_type,['application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/msword'])) {
+                    $file_type='doc';
+                }elseif(in_array($mime_type,['text/plain'])){
+                     $file_type='text';
+                }else{
+                     $file_type='file';
+                }
                 ContractAttachment::create([
                  'contract_id'=>$contract->id,
                  'file_name'=>$file_name,
+                 'file_type'=>$file_type,
                  'created_by'=>auth()->guard('admin')->id()
                 ]);
+
 
             }
         }

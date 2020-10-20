@@ -45,10 +45,7 @@ $("#admin_property_edit_form").validate({
             email: true,
             maxlength: 100,  
         },
-        "property_files[]": {
-            extension: "pdf",
-            accept: "application/pdf"
-        }
+
     },
     messages: {
         property_name: {
@@ -94,10 +91,7 @@ $("#admin_property_edit_form").validate({
             email: "Please enter valid email address",
             maxlength: "Email should not be more then 100 characters"
         },
-        "property_files[]":{
-            extension:'Please upload only PDF files',
-            accept:'Please upload only PDF files'
-        }
+
     },
     errorPlacement: function (error, element) {
         error.addClass('invalid-feedback');
@@ -176,7 +170,16 @@ $('#property_files').on('change',function(){
            file_size_error=true; 
         }
 
-        if(file_type!='application/pdf'){
+        var allowed_file_types=['application/pdf',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/msword',
+        'application/jpeg',
+        'application/jpg',
+        'application/png',
+        'text/plain'
+        ];
+
+        if(!allowed_file_types.includes(file_type)){
             file_type_error=true;
         }
 
@@ -188,11 +191,11 @@ $('#property_files').on('change',function(){
         var error_message='';
 
         if(file_size_error==true && file_type_error==true){
-            error_message="Please upload only PDF files of max size 1mb";
+            error_message="Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files of max size 1mb";
         }else if(file_size_error==true && file_type_error==false){
             error_message="File size should not be more than 1 mb";
         }else{
-            error_message="Please upload only PDF files";
+            error_message="Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files";
         }
 
         swal(error_message);

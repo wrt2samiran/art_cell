@@ -63,21 +63,7 @@
                               <span class="text-danger">{{$errors->first('role_description')}}</span>
                              @endif
                           </div>
-                          <div class="form-group required">
-                             <label for="parent_role">Select user type<span class="error">*</span></label>
-                              <select class="form-control parent_role_select2"  style="width: 100%;" name="parent_role">
-                                <option value="">Select user type</option>
-                                @forelse($parent_roles as $parent_role)
-                                   <option value="{{$parent_role->id}}" {{(old('parent_role') && old('menu_category')== $parent_role->id)? 'selected':''}}>{{$parent_role->role_name}}</option>
-                                @empty
-                               <option value="">No data found</option>
-                                @endforelse
-            
-                              </select>
-                             @if($errors->has('parent_role'))
-                              <span class="text-danger">{{$errors->first('parent_role')}}</span>
-                             @endif
-                          </div>
+
                           <div id="permissions_error" class="text-danger"></div>
                           <div id="module_permissions_container">
                               <div class="row">

@@ -67,8 +67,7 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::post('/ajax/check_role_name_unique/{role_id?}', 'RoleController@ajax_check_role_name_unique')
                 ->name('ajax_check_role_name_unique');
                 
-                Route::post('/ajax/ajax_parent_module_permissions/{role_id?}', 'RoleController@ajax_parent_module_permissions')
-                ->name('ajax_parent_module_permissions');
+          
 
             });
             /************************************/
@@ -115,13 +114,9 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             /*Routes for service management */
             Route::group(['prefix'=>'service-providers','as'=>'service_providers.'],function(){
                 Route::get('/', 'ServiceProviderController@list')->name('list')->middleware('check_permissions:service-provider-list');
-                Route::get('/create', 'ServiceProviderController@create')->name('create')->middleware('check_permissions:service-provider-create');
-                Route::post('/store', 'ServiceProviderController@store')->name('store')->middleware('check_permissions:service-provider-create');
+
                 Route::get('/{id}', 'ServiceProviderController@show')->name('show')->middleware('check_permissions:service-provider-details');
-                Route::get('/{id}/edit', 'ServiceProviderController@edit')->name('edit')->middleware('check_permissions:service-provider-edit');
-                Route::put('/{id}', 'ServiceProviderController@update')->name('update')->middleware('check_permissions:service-provider-edit');
-                Route::delete('/{id}/delete', 'ServiceProviderController@delete')->name('delete')->middleware('check_permissions:service-provider-delete');
-                Route::get('/{id}/change-change', 'ServiceProviderController@change_status')->name('change_status')->middleware('check_permissions:service-provider-status-change');
+   
 
             });
             /************************************/
@@ -129,27 +124,17 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             /*Routes for property owner management */
             Route::group(['prefix'=>'property-owners','as'=>'property_owners.'],function(){
                 Route::get('/', 'PropertyOwnerController@list')->name('list')->middleware('check_permissions:property-owner-list');
-                Route::get('/create', 'PropertyOwnerController@create')->name('create')->middleware('check_permissions:property-owner-create');
-                Route::post('/store', 'PropertyOwnerController@store')->name('store')->middleware('check_permissions:property-owner-create');
+
                 Route::get('/{id}', 'PropertyOwnerController@show')->name('show')->middleware('check_permissions:property-owner-details');
-                Route::get('/{id}/edit', 'PropertyOwnerController@edit')->name('edit')->middleware('check_permissions:property-owner-edit');
-                Route::put('/{id}', 'PropertyOwnerController@update')->name('update')->middleware('check_permissions:property-owner-edit');
-                Route::delete('/{id}/delete', 'PropertyOwnerController@delete')->name('delete')->middleware('check_permissions:property-owner-delete');;
-                Route::get('/{id}/change-change', 'PropertyOwnerController@change_status')->name('change_status')->middleware('check_permissions:property-status-change');;
   
             });
             /************************************/
             /*Routes for property manager management */
             Route::group(['prefix'=>'property-managers','as'=>'property_managers.'],function(){
                 Route::get('/', 'PropertyManagerController@list')->name('list')->middleware('check_permissions:property-manager-list');
-                Route::get('/create', 'PropertyManagerController@create')->name('create')->middleware('check_permissions:property-manager-create');
-                Route::post('/store', 'PropertyManagerController@store')->name('store')->middleware('check_permissions:property-manager-create');
+
                 Route::get('/{id}', 'PropertyManagerController@show')->name('show')->middleware('check_permissions:property-manager-details');
-                Route::get('/{id}/edit', 'PropertyManagerController@edit')->name('edit')->middleware('check_permissions:property-manager-edit');
-                Route::put('/{id}', 'PropertyManagerController@update')->name('update')->middleware('check_permissions:property-manager-edit');
-                Route::delete('/{id}/delete', 'PropertyManagerController@delete')->name('delete')->middleware('check_permissions:property-manager-delete');
-                Route::get('/{id}/change-change', 'PropertyManagerController@change_status')->name('change_status')->middleware('check_permissions:property-manager-status-change');
-  
+
             });
             
             /************************************/
@@ -285,16 +270,19 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
 
             Route::group(['prefix' => 'service_management', 'as' => 'service_management.'], function () {
                 Route::get('/', 'ServiceManagementController@list')->name('list');
+                Route::any('/add-service','ServiceManagementController@addService')->name('addService');
+                Route::post('/get-data', 'ServiceManagementController@getData')->name('getData');
                 Route::any('/add','ServiceManagementController@cityAdd')->name('add');
                 Route::any('/edit/{encryptCode}', 'ServiceManagementController@edit')->name('edit');
                 Route::get('/{id}/change-change', 'ServiceManagementController@change_status')->name('change_status');
-                Route::delete('/{id}/delete', 'ServiceManagementController@delete')->name('delete');
+                Route::any('/{id}/delete', 'ServiceManagementController@delete')->name('delete');
                 Route::get('/{id}', 'ServiceManagementController@show')->name('show');
             });
 
 
             Route::group(['prefix' => 'task_management', 'as' => 'task_management.'], function () {
-                Route::get('/list/{encryptCode}', 'TaskManagementController@list')->name('list');
+                Route::get('/calendar/{encryptCode}', 'TaskManagementController@calendar')->name('calendar');
+                Route::get('/', 'TaskManagementController@list')->name('list');
                 Route::any('/add','TaskManagementController@taskAdd')->name('taskAdd');
                 Route::post('/get-data', 'TaskManagementController@getData')->name('getData');
                 Route::post('/get-cities', 'TaskManagementController@getCities')->name('getCities');

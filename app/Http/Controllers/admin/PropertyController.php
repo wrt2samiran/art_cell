@@ -166,19 +166,35 @@ class PropertyController extends Controller
 
        if($request->hasFile('property_files')){
 
-         foreach ($request->file('property_files')  as $key=>$property_file) {
-          
-            $file_name = time().$key.'.'.$property_file->getClientOriginalExtension();
-         
-            $destinationPath = public_path('/uploads/property_attachments');
-         
-            $property_file->move($destinationPath, $file_name);
-            PropertyAttachment::create([
-             'property_id'=>$property->id,
-             'file_name'=>$file_name,
-             'created_by'=>auth()->guard('admin')->id()
-            ]);
-         }
+            foreach ($request->file('property_files')  as $key=>$property_file) {
+              
+                    $file_name = 'property-file-'.time().$key.'.'.$property_file->getClientOriginalExtension();
+                 
+                    $destinationPath = public_path('/uploads/property_attachments');
+                 
+                    $property_file->move($destinationPath, $file_name);
+                    
+                    $mime_type=$property_file->getClientMimeType();
+
+                    if(in_array($mime_type,['image/jpeg','image/png','image/jpg'])){
+                        $file_type='image';
+                    }elseif (in_array($mime_type,['application/pdf'])) {
+                        $file_type='pdf';
+                    }elseif (in_array($mime_type,['application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/msword'])) {
+                        $file_type='doc';
+                    }elseif(in_array($mime_type,['text/plain'])){
+                         $file_type='text';
+                    }else{
+                         $file_type='file';
+                    }
+
+                    PropertyAttachment::create([
+                     'property_id'=>$id,
+                     'file_name'=>$file_name,
+                     'file_type'=>$file_type,
+                     'created_by'=>auth()->guard('admin')->id()
+                    ]);
+            }
         }
 
     	return redirect()->route('admin.properties.list')->with('success','Property successfully created');
@@ -247,7 +263,6 @@ class PropertyController extends Controller
            return redirect()->back()->with('error','City not found.'); 
         }
 
-
     	$property->update([
             'property_name'=>$request->property_name,
             'property_type_id'=>$request->property_type_id,
@@ -271,15 +286,31 @@ class PropertyController extends Controller
 
             foreach ($request->file('property_files')  as $key=>$property_file) {
           
-                $file_name = time().$key.'.'.$property_file->getClientOriginalExtension();
+                $file_name = 'property-file-'.time().$key.'.'.$property_file->getClientOriginalExtension();
              
                 $destinationPath = public_path('/uploads/property_attachments');
              
                 $property_file->move($destinationPath, $file_name);
                 
+                $mime_type=$property_file->getClientMimeType();
+
+                if(in_array($mime_type,['image/jpeg','image/png','image/jpg'])){
+                    $file_type='image';
+                }elseif (in_array($mime_type,['application/pdf'])) {
+                    $file_type='pdf';
+                }elseif (in_array($mime_type,['application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/msword'])) {
+                    $file_type='doc';
+                }elseif(in_array($mime_type,['text/plain'])){
+                     $file_type='text';
+                }else{
+                     $file_type='file';
+                }
+
+
                 PropertyAttachment::create([
                  'property_id'=>$id,
                  'file_name'=>$file_name,
+                 'file_type'=>$file_type,
                  'created_by'=>auth()->guard('admin')->id()
                 ]);
             }

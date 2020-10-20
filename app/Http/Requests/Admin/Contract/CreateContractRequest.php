@@ -35,7 +35,7 @@ class CreateContractRequest extends FormRequest
             'contract_price'=>'required',
             'services'=>'required',
             'contract_files.*' => [
-                'mimes:pdf',
+                'mimetypes:application/pdf,image/jpeg,image/png,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword',
                 'max:1024',
             ],
         ];

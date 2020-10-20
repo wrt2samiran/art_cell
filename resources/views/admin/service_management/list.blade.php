@@ -30,9 +30,9 @@
 				                <div class="d-flex justify-content-between" >
 				                    <div><span>Service List</span></div>
 					                <div>
-						                <!-- <a class="btn btn-success" href="{{route('admin.cities.add')}}">
-						                 Create City
-						                </a> -->
+						                <a class="btn btn-success" href="{{route('admin.service_management.addService')}}">
+						                 Add Service
+						                </a>
 					                </div>
 				                </div>
 				            </div>
@@ -55,6 +55,8 @@
                                     <thead>
                                         <tr>
                                             <th>Id</th>
+                                            <th>Contract Code</th>
+                                            <th>Contract Info</th>
                                             <th>Service Name</th>
                                             <th>Property Name</th>
                                             <th>Service Start Date</th>
