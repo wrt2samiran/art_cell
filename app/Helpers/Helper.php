@@ -20,7 +20,7 @@ class Helper
 
     public const WEBSITE_DEFAULT_LANGUAGE = 'en';
 
-    public const WEBITE_LANGUAGES = ['en']; // Admin language array
+    public const WEBITE_LANGUAGES = ['en','ar']; // Admin language array
 
     public const UPLOADED_PROFILE_IMAGE_FILE_TYPES = ['jpeg', 'jpg', 'png', 'svg']; //Uploaded image file types
 

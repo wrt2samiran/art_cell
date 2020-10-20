@@ -83,17 +83,17 @@
                           
                         </div> -->
 
-                        <ul class="nav nav-tabs nav-justified nav-inline">
-                           
-                            <li class="active">&nbsp;&nbsp;&nbsp;<a href="#primary" data-toggle="tab">English  </a>&nbsp;&nbsp;&nbsp;</li>|
-                            <li >&nbsp;&nbsp;&nbsp;<a href="#secondary" data-toggle="tab">Arabic</a></li>
-                           
-                        </ul>
+                        <ul class="nav nav-tabs" role="tablist">
+                          <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#english" role="tab">English</a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#arabic" role="tab">Arabic</a>
+                          </li>
+                        </ul><!-- Tab panes -->
                         @csrf
-                        <div class="tab-content tab-validate" style="margin-top:20px;">
-
-                            
-                            <div class="tab-pane active" id="primary">
+                        <div class="tab-content tab-validate pt-3">
+                          <div class="tab-pane active" id="english" role="tabpanel">
                                 <div class="form-group">
                                     <label class="required" for="en_title">Country Name (ENGLISH)</label>
                                     <input class="form-control {{ $errors->has('en_name') ? 'is-invalid' : '' }}" type="text" name="en_name" id="en_name" value="{{ old('en_name', '') }}" >
@@ -119,7 +119,7 @@
                                   @endif
                               </div>
                             </div>
-                            <div class="tab-pane" id="secondary">
+                            <div class="tab-pane" id="arabic" role="tabpanel">
                                    <div class="form-group">
                                     <label class="required" for="title">Country Name (ARABIC)</label>
                                     <input class="form-control {{ $errors->has('ar_name') ? 'is-invalid' : '' }}" type="text" name="ar_name" id="ar_title" value="{{ old('ar_name', '') }}" >

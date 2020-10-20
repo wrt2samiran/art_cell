@@ -11,6 +11,9 @@
             },
             state_id: {
                 required: true,
+            },
+            ar_name: {
+                required: true,
             },           
            
         },
@@ -26,6 +29,9 @@
             state_id: {
                 required:  "State name is required",
             },
+            ar_name: {
+                required:  "City arabic name is required",
+            },
         },
 
         errorPlacement: function (error, element) {
@@ -37,6 +43,16 @@
         },
         unhighlight: function (element, errorClass, validClass) {
         	$(element).removeClass('is-invalid');
+        },
+        invalidHandler: function() {
+            setTimeout(function() {
+                $('.nav-tabs a small.text-danger').remove();
+                var validatePane = $('.tab-content.tab-validate .tab-pane:has(.is-invalid)').each(function() {
+                    var id = $(this).attr('id');
+                    $('.nav-tabs').find('a[href^="#' + id + '"]').append(' <small class="text-danger">**</small>');
+    
+                });
+            });            
         },
         submitHandler: function(form) {
             form.submit();

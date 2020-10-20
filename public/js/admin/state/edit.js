@@ -9,7 +9,9 @@
             country_id: {
                 required: true,
             },           
-           
+            ar_name: {
+                required: true,
+            },
         },
         messages: {
             name: {
@@ -19,6 +21,9 @@
             },
             country_id: {
                 required:  "Country field is required",
+            },
+            ar_name: {
+                required:  "State arabic name is required",
             },
         },
 
@@ -31,6 +36,16 @@
         },
         unhighlight: function (element, errorClass, validClass) {
         	$(element).removeClass('is-invalid');
+        },
+        invalidHandler: function() {
+            setTimeout(function() {
+                $('.nav-tabs a small.text-danger').remove();
+                var validatePane = $('.tab-content.tab-validate .tab-pane:has(.is-invalid)').each(function() {
+                    var id = $(this).attr('id');
+                    $('.nav-tabs').find('a[href^="#' + id + '"]').append(' <small class="text-danger">**</small>');
+    
+                });
+            });            
         },
         submitHandler: function(form) {
             form.submit();

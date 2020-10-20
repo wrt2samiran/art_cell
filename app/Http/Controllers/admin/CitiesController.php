@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use App\Models\Country;
 use App\Models\State;
 use App\Models\City;
+use App\Models\CityTranslation;
 use App\Models\ModuleFunctionality;
 use Helper, AdminHelper, Image, Auth, Hash, Redirect, Validator, View, Config;
 use Yajra\Datatables\Datatables;
@@ -88,29 +89,48 @@ class CitiesController extends Controller
                     'name'          => 'required|min:2|max:255|unique:'.(new City)->getTable().',name',
                     'country_id'    => 'required',
                     'state_id'      => 'required',
+                    'ar_name'       =>'required|min:2|max:255',
                 );
                 $validationMessages = array(
-                    'name.required'         => 'Please enter name',
-                    'name.min'              => 'Name should be should be at least 2 characters',
-                    'name.max'              => 'Name should not be more than 255 characters',
-                    'country_id'            => 'Please select country',
-                    'state_id.required'     => 'Please select state',
+                    'name.required'            => 'Please enter name',
+                    'name.min'                 => 'Name should be should be at least 2 characters',
+                    'name.max'                 => 'Name should not be more than 255 characters',
+                    'country_id'               => 'Please select country',
+                    'state_id.required'        => 'Please select state',
+                    'ar_name.required'         => 'Please enter arabic name',
+                    'ar_name.min'              => 'Arabic Name should be should be at least 2 characters',
+                    'ar_name.max'              => 'Arabic Name should not be more than 255 characters',
                 );
 
                 $Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);
                 if ($Validator->fails()) {
-                    return redirect()->route('admin.city.add')->withErrors($Validator)->withInput();
+                    return redirect()->route('admin.cities.add')->withErrors($Validator)->withInput();
                 } else {
                     
                     $new = new City;
-                    $new->name = trim($request->name, ' ');
+                    $new->name        = trim($request->name, ' ');
                     $new->country_id  = $request->country_id;
                     $new->state_id    = $request->state_id;
 
                     $new->created_at = date('Y-m-d H:i:s');
                     $save = $new->save();
                 
-                    if ($save) {                        
+                    if ($save) { 
+                        $insertedId = $new->id;
+
+                        $languages = \Helper::WEBITE_LANGUAGES;
+                        foreach ($languages as $language) {
+                            $newLocal                   = new CityTranslation;
+                            $newLocal->city_id          = $insertedId;
+                            $newLocal->locale           = $language;
+                            if ($language == 'en') {
+                                $newLocal->name        = trim($request->name, ' ');
+                                
+                            } else{
+                                $newLocal->name        = trim($request->ar_name, ' ');
+                            } 
+                            $saveLocal = $newLocal->save();
+                        }                       
                        
                         return redirect()->route('admin.cities.list')->with('success','City successfully created.');
                     } else {
@@ -150,19 +170,23 @@ class CitiesController extends Controller
 
                 
                 if ($id == null) {
-                    return redirect()->route('admin.city.list');
+                    return redirect()->route('admin.cities.list');
                 }
                 $validationCondition = array(
                     'name'          => 'required|min:2|max:255|unique:' .(new City)->getTable().',name,'.$id.'',
                     'country_id'    => 'required',
                     'state_id'      => 'required',
+                    'ar_name'       =>'required|min:2|max:255',
                 );
                 $validationMessages = array(
-                    'name.required'         => 'Please enter name',
-                    'name.min'              => 'Name should be should be at least 2 characters',
-                    'name.max'              => 'Name should not be more than 255 characters',
-                    'country_id.required'   => 'Please select country',
-                    'state_id.required'     => 'Please select state',
+                    'name.required'            => 'Please enter name',
+                    'name.min'                 => 'Name should be should be at least 2 characters',
+                    'name.max'                 => 'Name should not be more than 255 characters',
+                    'country_id.required'      => 'Please select country',
+                    'state_id.required'        => 'Please select state',
+                    'ar_name.required'         => 'Please enter arabic name',
+                    'ar_name.min'              => 'Arabic Name should be should be at least 2 characters',
+                    'ar_name.max'              => 'Arabic Name should not be more than 255 characters',
 
                 );
                 
@@ -176,6 +200,21 @@ class CitiesController extends Controller
                     $details->updated_at  = date('Y-m-d H:i:s');
                     $save = $details->save();                        
                     if ($save) {
+
+                        CityTranslation::where('city_id', $id)->delete();
+                        $languages = \Helper::WEBITE_LANGUAGES;
+                        foreach($languages as $language){
+                            $newLocal                   = new CityTranslation;
+                            $newLocal->city_id          = $id;
+                            $newLocal->locale           = $language;
+                            if ($language == 'en') {
+                                $newLocal->name        = trim($request->name, ' ');
+                                
+                            } else {
+                                $newLocal->name        = trim($request->ar_name, ' ');
+                            }
+                            $saveLocal = $newLocal->save();
+                        }
                         
                         return redirect()->route('admin.cities.list')->with('success','City successfully updated.');
                     } else {

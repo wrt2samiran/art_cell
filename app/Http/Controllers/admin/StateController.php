@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\Country;
 use App\Models\State;
+use App\Models\StateTranslation;
 use App\Models\ModuleFunctionality;
 use Helper, AdminHelper, Image, Auth, Hash, Redirect, Validator, View, Config;
 use Yajra\Datatables\Datatables;
@@ -86,12 +87,16 @@ class StateController extends Controller
                 $validationCondition = array(
                     'name'          => 'required|min:2|max:255|unique:'.(new State)->getTable().',name',
                     'country_id'    => 'required',
+                    'ar_name'       =>'required|min:2|max:255',
                 );
                 $validationMessages = array(
-                    'name.required'         => 'Please enter name',
-                    'name.min'              => 'Name should be should be at least 2 characters',
-                    'name.max'              => 'Name should not be more than 255 characters',
-                    'country_id.required'   => 'Please select country',
+                    'name.required'            => 'Please enter name',
+                    'name.min'                 => 'Name should be should be at least 2 characters',
+                    'name.max'                 => 'Name should not be more than 255 characters',
+                    'country_id.required'      => 'Please select country',
+                    'ar_name.required'         => 'Please enter arabic name',
+                    'ar_name.min'              => 'Arabic Name should be should be at least 2 characters',
+                    'ar_name.max'              => 'Arabic Name should not be more than 255 characters',
                 );
 
                 $Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);
@@ -106,7 +111,23 @@ class StateController extends Controller
                     $new->created_at = date('Y-m-d H:i:s');
                     $save = $new->save();
                 
-                    if ($save) {                        
+                    if ($save) {
+                        
+                        $insertedId = $new->id;
+
+                        $languages = \Helper::WEBITE_LANGUAGES;
+                        foreach ($languages as $language) {
+                            $newLocal                   = new StateTranslation;
+                            $newLocal->state_id          = $insertedId;
+                            $newLocal->locale           = $language;
+                            if ($language == 'en') {
+                                $newLocal->name        = trim($request->name, ' ');
+                                
+                            } else{
+                                $newLocal->name        = trim($request->ar_name, ' ');
+                            } 
+                            $saveLocal = $newLocal->save();
+                        }
                         return redirect()->route('admin.state.list')->with('success','State successfully created.');
                     } else {
                         $request->session()->flash('alert-danger', 'An error occurred while adding the state');
@@ -149,13 +170,17 @@ class StateController extends Controller
                 }
                 $validationCondition = array(
                     'name'          => 'required|min:2|max:255|unique:' .(new State)->getTable().',name,'.$id.'',
-                    'country_id'  => 'required',
+                    'country_id'    => 'required',
+                    'ar_name'       =>'required|min:2|max:255',
                 );
                 $validationMessages = array(
-                    'name.required'         => 'Please enter name',
-                    'name.min'              => 'Name should be should be at least 2 characters',
-                    'name.max'              => 'Name should not be more than 255 characters',
-                    'country_id.required'   => 'Please select country',
+                    'name.required'            => 'Please enter name',
+                    'name.min'                 => 'Name should be should be at least 2 characters',
+                    'name.max'                 => 'Name should not be more than 255 characters',
+                    'country_id.required'      => 'Please select country',
+                    'ar_name.required'         => 'Please enter arabic name',
+                    'ar_name.min'              => 'Arabic Name should be should be at least 2 characters',
+                    'ar_name.max'              => 'Arabic Name should not be more than 255 characters',
 
                 );
                 
@@ -168,6 +193,20 @@ class StateController extends Controller
                     $details->updated_at      = date('Y-m-d H:i:s');
                     $save = $details->save();                        
                     if ($save) {
+                        StateTranslation::where('state_id', $id)->delete();
+                        $languages = \Helper::WEBITE_LANGUAGES;
+                        foreach($languages as $language){
+                            $newLocal                   = new StateTranslation;
+                            $newLocal->state_id          = $id;
+                            $newLocal->locale           = $language;
+                            if ($language == 'en') {
+                                $newLocal->name        = trim($request->name, ' ');
+                                
+                            } else {
+                                $newLocal->name        = trim($request->ar_name, ' ');
+                            }
+                            $saveLocal = $newLocal->save();
+                        }
                         return redirect()->route('admin.state.list')->with('success','State successfully updated.');
                     } else {
                         $request->session()->flash('alert-danger', 'An error occurred while updating the state');
