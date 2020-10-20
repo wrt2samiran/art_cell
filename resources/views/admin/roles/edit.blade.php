@@ -64,24 +64,7 @@
                              @endif
                           </div>
                         
-                        @if($role->parrent_id)
-                          <div class="form-group required">
-                             <label for="parent_role">Select user type<span class="error">*</span></label>
-                              <select class="form-control parent_role_select2" style="width: 100%;" name="parent_role">
-                                <option value="">Select user type</option>
-                                @forelse($parent_roles as $parent_role)
-                                   <option value="{{$parent_role->id}}" 
-                                    {{($parent_role->id==$role->parrent_id)?'selected':''}}
-                                    >{{$parent_role->role_name}}</option>
-                                @empty
-                               <option value="">No user type found</option>
-                                @endforelse
-                              </select>
-                             @if($errors->has('parent_role'))
-                              <span class="text-danger">{{$errors->first('parent_role')}}</span>
-                             @endif
-                          </div>
-                        @endif
+
                         <div id="permissions_error" class="text-danger"></div>
                         <div id="module_permissions_container">
                           <div class="row">
@@ -90,14 +73,16 @@
                               <div class="col-sm-4">
                                 <div class="card card-success">
                                   <div  class="card-header">{{$module->module_name}}</div>
-                                  <div  class="card-body">
+                                  <div  class="card-body" id="module_no_{{$module->id}}">
                                     @if(count($module->functionalities))
                                       @foreach($module->functionalities as $functionality)
                                       <div class="custom-control custom-checkbox">
-                                        <input class="custom-control-input"
-                                         {{(in_array($functionality->id,$current_functionalities_id_array))?'checked':''}}
-                                          type="checkbox" id="customCheckbox_{{$functionality->id}}" name="functionalities[]" value="{{$functionality->id}}">
-                                        <label for="customCheckbox_{{$functionality->id}}" class="custom-control-label">{{$functionality->function_name}}</label>
+                         
+                                        <input  class="custom-control-input permission_checkbox" type="checkbox" id="permission_{{$module->id}}_{{$functionality->slug}}" name="functionalities[]" value="{{$functionality->id}}"
+                                        {{(in_array($functionality->id,$current_functionalities_id_array))?'checked':''}}
+                                        >
+                                        <label for="permission_{{$module->id}}_{{$functionality->slug}}" class="custom-control-label">{{$functionality->function_name}}</label>
+
                                       </div>
                                       @endforeach
                                     @endif

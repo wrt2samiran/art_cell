@@ -30,11 +30,6 @@
 				                <div class="d-flex justify-content-between" >
 				                    <div><span>Service Provider List</span></div>
 					                <div>
-                                        @if(auth()->guard('admin')->user()->hasAllPermission(['service-provider-create']))
-						                <a class="btn btn-success" href="{{route('admin.service_providers.create')}}">
-						                 Create Service Provider
-						                </a>
-                                        @endif
 					                </div>
 				                </div>
 				            </div>
@@ -59,7 +54,6 @@
                                             <th>Id</th>
                                             <th>Name</th>
                                             <th>Email</th>
-                                            <th>Status</th>
                                             <th>Created At</th>
                                             <th>Action</th>
                                         </tr>

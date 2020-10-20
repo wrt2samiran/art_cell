@@ -20,9 +20,6 @@ $("#admin_roles_create_form").validate({
             minlength: 3,
             maxlength: 255,
         },
-        parent_role: {
-            required: true,
-        },
         'functionalities[]':'required'
     },
     messages: {
@@ -37,9 +34,7 @@ $("#admin_roles_create_form").validate({
             minlength: "Group description should have 3 characters",
             maxlength: "Group description should not more then 255 characters"
         },
-        parent_role: {
-            required:  "Select user type",
-        },
+
         'functionalities[]':'Select atleast one permission'
     },
     errorPlacement: function (error, element) {
@@ -100,14 +95,58 @@ $('.permission_checkbox').on('change',function(){
     var permission_slug_split=permission_slug.split('-');
     var action_name=permission_slug_split[permission_slug_split.length-1];
 
+    if(action_name=='change'){
+       permission_slug_split.splice(-2,permission_slug_split.length - 1);
+    }else{
+       permission_slug_split.splice(-1,permission_slug_split.length - 1);
+    }
+
+    var module_name=permission_slug_split.join('-');
+
+    var list_permission_checkbox=$("#permission_"+module_id+'_'+module_name+'-list');
+
     if(this.checked){
         if(['details','edit','delete','change','create'].includes(action_name)){
-            //alert('ok');
-            // if($("#permission_"+module_id+'_'+permission_slug_split[0]+'-list').length){
-            //     alert('ok');
-            // }
+
+            if(list_permission_checkbox.length){
+                
+                list_permission_checkbox.prop("checked", true);
+            }
         }
     }else{
+
+        var dependent_checkbox_array=['create','edit','details','delete','status-change'];
+        var dependent_checkbox_checked=false;
+
+        dependent_checkbox_array.forEach(function(dependent_checkbox){
+
+            var checkbox=$("#permission_"+module_id+'_'+module_name+'-'+dependent_checkbox);
+
+            if(checkbox.length && checkbox.prop("checked")){
+                dependent_checkbox_checked=true;
+            }
+        });
+
+
+
+
+        if(['details','edit','delete','change','create'].includes(action_name)){
+
+            if(dependent_checkbox_checked==false){
+                if(list_permission_checkbox.length &&  list_permission_checkbox.prop("checked")){
+                    list_permission_checkbox.prop("checked", false);
+                }
+            }
+        }else if(action_name=='list'){
+
+            if(dependent_checkbox_checked){
+                swal("You need to give list permission along with create/edit/details/delete/status-change because list page is dpependent on that functionality"); 
+                if(list_permission_checkbox.length){
+                    list_permission_checkbox.prop("checked", true);
+                }
+            }
+           
+        }
 
     }
     

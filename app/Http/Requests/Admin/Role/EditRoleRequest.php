@@ -29,10 +29,7 @@ class EditRoleRequest extends FormRequest
             'functionalities'=>'required'
         ];
 
-        $role=Role::find(request()->route('id'));
-        if($role && $role->parrent_id!=null){
-            $rules_array['parent_role']='required';
-        }
+
 
         return $rules_array;
     }
@@ -45,7 +42,6 @@ class EditRoleRequest extends FormRequest
             'role_description.min'=>'Group description should have 3 characters',
             'role_description.max'=>'Group description should not more then 255 characters',
             'role_description.required'  => 'Group description is required',
-            'parent_role.required'=>'Select user type',
             'functionalities.required'=>'Select atleast one permission'
         ];
     }

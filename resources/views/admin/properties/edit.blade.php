@@ -189,11 +189,30 @@
                             </div>
                             @if(count($files=$property->property_attachments))
                               @foreach($files as $file)
+
+                                  @php
+                                    if($file->file_type=='pdf'){
+                                      $font_icon='far fa-file-pdf';
+                                      $color='red';
+                                    }elseif($file->file_type=='doc'){
+                                      $font_icon='far fa-file-word';
+                                      $color='blue';
+                                    }elseif($file->file_type=='text'){
+                                      $font_icon='far fa-file-alt';
+                                      $color='white';
+                                    }elseif($file->file_type=='image'){
+                                      $font_icon='far fa-file-image';
+                                      $color='grey';
+                                    }else{
+                                      $font_icon='fas fa-file';
+                                      $color='grey';
+                                    }
+                                  @endphp
                                 <div class="col-sm-1 col-xs-1 attachment_files" id="attachment_file_{{$file->id}}" style="height:55px">
                                   <div class="d-flex align-items-start" >
                                    <div>
                                     <a title="Click to download the file" href="{{route('admin.properties.download_attachment',$file->id)}}">
-                                      <i style="color: red;" class="fa-4x far fa-file-pdf"></i>
+                                      <i style="color:{{$color}} ;" class="fa-4x {{$font_icon}}"></i>
                                     </a>
                                    </div>
                                    <div class="ml-1">
@@ -212,7 +231,7 @@
                             <input  type="file" multiple class="form-control"
                             name="property_files[]" id="property_files" aria-describedby="propertyFilesHelp" >
 
-                            <small id="propertyFilesHelp" class="form-text text-muted">Upload PDF files of max. 1mb</small>
+                            <small id="propertyFilesHelp" class="form-text text-muted">Upload PDF/DOC/JPEG/PNG/TEXT files of max. 1mb</small>
                             @if($errors->get('property_files.*'))
                             
                              @foreach($errors->get('property_files.*') as $err)
@@ -223,8 +242,8 @@
                             @endif
                           </div>
 
-                          <input type="hidden" id="property_manager_create_url" value="{{route('admin.property_managers.create')}}">
-                          <input type="hidden" id="property_owner_create_url" value="{{route('admin.property_owners.create')}}">
+                          <input type="hidden" id="property_manager_create_url" value="{{route('admin.users.create')}}">
+                          <input type="hidden" id="property_owner_create_url" value="{{route('admin.users.create')}}">
 
                         </div>
                         <div>
