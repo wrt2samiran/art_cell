@@ -30,9 +30,9 @@
 				                <div class="d-flex justify-content-between" >
 				                    <div><span>Service List</span></div>
 					                <div>
-						                <!-- <a class="btn btn-success" href="{{route('admin.cities.add')}}">
-						                 Create City
-						                </a> -->
+						                <a class="btn btn-success" href="{{route('admin.service_management.addService')}}">
+						                 Add Service
+						                </a>
 					                </div>
 				                </div>
 				            </div>

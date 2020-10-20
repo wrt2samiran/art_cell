@@ -1,58 +1,56 @@
-    $("#admin_labour_task_add_form").validate({
+    $("#admin_service_add_form").validate({
         rules: {
 
-            
-            task_title: {
-                required: true,
-                minlength: 3,
-                maxlength: 50,
-            },
-            
-            service_id: {
-                required: true,
-            },
-            property_id: {
-                required: true,
-            },
-            country_id: {
-                required: true,
-            },
-            state_id: {
-                required: true,
-            },           
-            city_id: {
-                required: true,
-            },
-            user_id: {
-                required: true,
-            },
-
-
+        
+        contract_id:{
+            required: true
+        },   
+        property_id:{
+            required: true
         },
-        messages: {
-            task_title: {
-                required:  "Task title is required",
-                minlength: "Task title should have 3 characters",
-                maxlength: "Task title should not be more then 50 characters"
-            },
-            service_id: {
-                required:  "Please select service",
-            },
-            property_id: {
-                required:  "Please select property",
-            },
-            country_id: {
-                required:  "Please select country",
-            },
-            state_id: {
-                required:  "Please select state",
-            },
-            city_id: {
-                required:  "Please select city",
-            },
-            user_id: {
-                required:  "Please select user",
-            },
+        service_provider_id:{
+            required: true, 
+        },
+        property_owner:{
+            required: true, 
+        },
+        service_id:{
+            required: true, 
+        },
+        service_start_date:{
+            required: true, 
+            maxlength: 10,
+        },
+        service_end_date:{
+            required: true,
+            maxlength: 10, 
+        }
+        
+    },
+    messages: {
+
+        contract_id:{
+            required:  "Please Select a contract",
+        },
+        
+        property_id: {
+            required:  "Please select property",
+        },
+
+        service_provider_id:{
+            required:  "Please select service provider",
+        },
+        service_id:{
+            required:  "Please select service",
+        },
+       
+        service_start_date:{
+            required:  "Enter start date in dd/mm/yyy format",
+        },
+        service_end_date:{
+            required:  "Enter end date in dd/mm/yyy format",
+        }
+        
         },
 
         errorPlacement: function (error, element) {

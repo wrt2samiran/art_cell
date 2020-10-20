@@ -45,17 +45,17 @@ class UserController extends Controller
 
         $hide_user_role_array=[];
         //if user don't have service-provider-list permission then we will not fetch service providers from users table
-        if(!$current_user->hasAllPermission(['service-provider-list'])){
-             $hide_user_role_array[]='service-provider';
-        }
-        //if user don't have property-owner-list permission then we will not fetch property owners from users table
-        if(!$current_user->hasAllPermission(['property-owner-list'])){
-             $hide_user_role_array[]='property-owner';
-        }
-        //if user don't have property-manager-list permission then we will not fetch property manager from users table
-        if(!$current_user->hasAllPermission(['property-manager-list'])){
-             $hide_user_role_array[]='property-manager';
-        }
+        // if(!$current_user->hasAllPermission(['service-provider-list'])){
+        //      $hide_user_role_array[]='service-provider';
+        // }
+        // //if user don't have property-owner-list permission then we will not fetch property owners from users table
+        // if(!$current_user->hasAllPermission(['property-owner-list'])){
+        //      $hide_user_role_array[]='property-owner';
+        // }
+        // //if user don't have property-manager-list permission then we will not fetch property manager from users table
+        // if(!$current_user->hasAllPermission(['property-manager-list'])){
+        //      $hide_user_role_array[]='property-manager';
+        // }
 
         if($request->ajax()){
 
@@ -111,47 +111,47 @@ class UserController extends Controller
                 $edit_url=route('admin.users.edit',$user->id);
                 $action_buttons='';
                 
-                if($user->role->slug=='service-provider'){
-                    $has_details_permission=($current_user->hasAllPermission(['service-provider-details']))?true:false;
-                    $has_edit_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['service-provider-edit']))?true:false;
+                // if($user->role->slug=='service-provider'){
+                //     $has_details_permission=($current_user->hasAllPermission(['service-provider-details']))?true:false;
+                //     $has_edit_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['service-provider-edit']))?true:false;
 
-                    $has_delete_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['service-provider-delete']))?true:false;
+                //     $has_delete_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['service-provider-delete']))?true:false;
 
-                }elseif ($user->role->slug=='property-owner') {
-                    $has_details_permission=($current_user->hasAllPermission(['property-owner-details']))?true:false;
-                    $has_edit_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['property-owner-edit']))?true:false;
+                // }elseif ($user->role->slug=='property-owner') {
+                //     $has_details_permission=($current_user->hasAllPermission(['property-owner-details']))?true:false;
+                //     $has_edit_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['property-owner-edit']))?true:false;
 
-                    $has_delete_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['property-owner-delete']))?true:false;
+                //     $has_delete_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['property-owner-delete']))?true:false;
                 
-                }elseif ($user->role->slug=='property-manager') {
-                    $has_details_permission=($current_user->hasAllPermission(['property-manager-details']))?true:false;
-                    $has_edit_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['property-manager-edit']))?true:false;
+                // }elseif ($user->role->slug=='property-manager') {
+                //     $has_details_permission=($current_user->hasAllPermission(['property-manager-details']))?true:false;
+                //     $has_edit_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['property-manager-edit']))?true:false;
 
-                    $has_delete_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['property-manager-delete']))?true:false;
+                //     $has_delete_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['property-manager-delete']))?true:false;
 
-                }else{
-                    $has_details_permission=($current_user->hasAllPermission(['user-details']))?true:false;
-                    $has_edit_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['user-edit']))?true:false;
-                    $has_delete_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['user-delete']))?true:false;
-                }
-
-
-                if($has_details_permission){
-                    $action_buttons=$action_buttons.'<a title="View Servide Provider Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
-                }
+                // }else{
+                //     $has_details_permission=($current_user->hasAllPermission(['user-details']))?true:false;
+                //     $has_edit_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['user-edit']))?true:false;
+                //     $has_delete_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['user-delete']))?true:false;
+                // }
 
 
-                if($has_edit_permission){
-                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Servide Provider" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
-                }
+                // if($has_details_permission){
+                //     $action_buttons=$action_buttons.'<a title="View Servide Provider Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
+                // }
 
 
-                if($has_delete_permission){
-                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete user" href="javascript:delete_user('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
-                }
-                if($action_buttons==''){
-                    $action_buttons=$action_buttons.'<span class="text-muted">No access</span>';
-                } 
+                // if($has_edit_permission){
+                //     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Servide Provider" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
+                // }
+
+
+                // if($has_delete_permission){
+                //     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete user" href="javascript:delete_user('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
+                // }
+                // if($action_buttons==''){
+                //     $action_buttons=$action_buttons.'<span class="text-muted">No access</span>';
+                // } 
                 return $action_buttons;
             })
             ->rawColumns(['action','status'])
@@ -180,17 +180,17 @@ class UserController extends Controller
 
         $hide_user_role_array=[];
         //if user don't have service-provider-list permission then we will not fetch service providers role
-        if(!$current_user->hasAllPermission(['service-provider-list'])){
-             $hide_user_role_array[]='service-provider';
-        }
-        //if user don't have property-owner-list permission then we will not fetch property owners role
-        if(!$current_user->hasAllPermission(['property-owner-list'])){
-             $hide_user_role_array[]='property-owner';
-        }
-        //if user don't have property-manager-list permission then we will not fetch property manager role
-        if(!$current_user->hasAllPermission(['property-manager-list'])){
-             $hide_user_role_array[]='property-manager';
-        }
+        // if(!$current_user->hasAllPermission(['service-provider-list'])){
+        //      $hide_user_role_array[]='service-provider';
+        // }
+        // //if user don't have property-owner-list permission then we will not fetch property owners role
+        // if(!$current_user->hasAllPermission(['property-owner-list'])){
+        //      $hide_user_role_array[]='property-owner';
+        // }
+        // //if user don't have property-manager-list permission then we will not fetch property manager role
+        // if(!$current_user->hasAllPermission(['property-manager-list'])){
+        //      $hide_user_role_array[]='property-manager';
+        // }
 
 
         $roles=Role::whereStatus('A')->where(function($q)use($hide_user_role_array){

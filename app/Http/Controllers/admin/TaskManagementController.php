@@ -69,7 +69,7 @@ class TaskManagementController extends Controller
             ->make(true);
         }
 
-        $service_data=ServiceAllocationManagement::whereStatus('A')->where('work_status', '<>','2')->whereServiceProviderId($logedInUser)->whereId($id)->first();
+        $service_data=ServiceAllocationManagement::with('service')->whereStatus('A')->where('work_status', '<>','2')->whereServiceProviderId($logedInUser)->whereId($id)->first();
 
         $sqlProperty = DB::table('service_allocation_management')
         ->join('contracts', 'contracts.id', '=', 'service_allocation_management.contract_id')

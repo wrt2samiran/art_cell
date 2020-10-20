@@ -284,6 +284,8 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
 
             Route::group(['prefix' => 'service_management', 'as' => 'service_management.'], function () {
                 Route::get('/', 'ServiceManagementController@list')->name('list');
+                Route::any('/add-service','ServiceManagementController@addService')->name('addService');
+                Route::post('/get-data', 'ServiceManagementController@getData')->name('getData');
                 Route::any('/add','ServiceManagementController@cityAdd')->name('add');
                 Route::any('/edit/{encryptCode}', 'ServiceManagementController@edit')->name('edit');
                 Route::get('/{id}/change-change', 'ServiceManagementController@change_status')->name('change_status');
