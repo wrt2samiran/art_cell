@@ -24,7 +24,8 @@
 
             </div>
             <div class="info">
-                <a href="#" class="d-block">{{ $admin->name }}</a>
+                <a href="#" class="d-block">{{ $admin->name }}<br><span>({{$admin->role?$admin->role->role_name:''}})</span></a>
+
             </div>
         </div>
 
@@ -208,7 +209,7 @@
                 </li>
                 @endif
 
-                @if(auth()->guard('admin')->user()->hasAllPermission(['service-provider-list']))
+                @if(!auth()->guard('admin')->user()->hasAllPermission(['user-list']) && auth()->guard('admin')->user()->hasAllPermission(['service-provider-list']))
                 <li class="nav-item">
                     <a href="{{route('admin.service_providers.list')}}"
                     class="nav-link {{(request()->is('admin/service-providers/*','admin/service-providers'))?'active':''}}">
@@ -217,7 +218,7 @@
                     </a>
                 </li>
                 @endif
-                @if(auth()->guard('admin')->user()->hasAllPermission(['property-owner-list']))
+                @if(!auth()->guard('admin')->user()->hasAllPermission(['user-list']) &&  auth()->guard('admin')->user()->hasAllPermission(['property-owner-list']))
                 <li class="nav-item ">
                     <a href="{{route('admin.property_owners.list')}}"
                     class="nav-link {{(request()->is('admin/property-owners/*','admin/property-owners'))?'active':''}}">
@@ -226,7 +227,7 @@
                     </a>
                 </li>
                 @endif
-                @if(auth()->guard('admin')->user()->hasAllPermission(['property-manager-list']))
+                @if(!auth()->guard('admin')->user()->hasAllPermission(['user-list']) &&  auth()->guard('admin')->user()->hasAllPermission(['property-manager-list']))
                 <li class="nav-item ">
                     <a href="{{route('admin.property_managers.list')}}"
                     class="nav-link {{(request()->is('admin/property-managers/*','admin/property-managers'))?'active':''}}">

@@ -196,7 +196,7 @@
                             <input  type="file" multiple class="form-control"
                             name="contract_files[]" id="contract_files" aria-describedby="propertyFilesHelp" >
 
-                            <small id="propertyFilesHelp" class="form-text text-muted">Upload PDF files of max. 1mb</small>
+                            <small id="propertyFilesHelp" class="form-text text-muted">Upload PDF/DOC/JPEG/PNG/TEXT files of max. 1mb</small>
                             @if($errors->get('contract_files.*'))
                             
                              @foreach($errors->get('contract_files.*') as $err)
@@ -208,9 +208,9 @@
                           </div>
                           <input type="hidden" id="property_create_url" value="{{route('admin.properties.create')}}">
 
-                          <input type="hidden" id="service_provider_create_url" value="{{route('admin.service_providers.create')}}">
+                          <input type="hidden" id="service_provider_create_url" value="{{route('admin.users.create')}}">
 
-                          <input type="hidden" id="property_owner_create_url" value="{{route('admin.property_owners.create')}}">
+                          <input type="hidden" id="property_owner_create_url" value="{{route('admin.users.create')}}">
                         </div>
                         <div>
                            <a href="{{route('admin.contracts.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>

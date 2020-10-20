@@ -48,8 +48,17 @@
            $.LoadingOverlay("hide");
            var response=jqXHR.responseJSON;
            var status=jqXHR.status;
+
+         
            if(status=='404'){
             toastr.error('Invalid URL', 'Error', {timeOut: 5000});
+           }else if(status=='400'){
+            if(response.message){
+               toastr.error(response.message, 'Error', {timeOut: 5000});
+             }else{
+               toastr.error('Server error', 'Error', {timeOut: 5000});
+             }
+           
            }else{
              toastr.error('Internal server error.', 'Error', {timeOut: 5000});
            }

@@ -26,7 +26,6 @@ class CreateRoleRequest extends FormRequest
         return [
             'role_name'=>'required|min:3|max:50|unique:roles',
             'role_description'=>'required|max:255',
-            'parent_role'=>'required',
             'functionalities'=>'required'
         ];
     }
@@ -39,7 +38,6 @@ class CreateRoleRequest extends FormRequest
             'role_description.min'=>'Group description should have 3 characters',
             'role_description.max'=>'Group description should not more then 255 characters',
             'role_description.required'  => 'Group description is required',
-            'parent_role.required'=>'Select user type',
             'functionalities.required'=>'Select atleast one permission'
         ];
     }

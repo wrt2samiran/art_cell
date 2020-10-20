@@ -181,7 +181,7 @@
                             <input  type="file" multiple class="form-control"
                             name="property_files[]" id="property_files" aria-describedby="propertyFilesHelp" >
 
-                            <small id="propertyFilesHelp" class="form-text text-muted">Upload PDF files of max. 1mb</small>
+                            <small id="propertyFilesHelp" class="form-text text-muted">Upload PDF/DOC/JPEG/PNG/TEXT files of max. 1mb</small>
                             @if($errors->get('property_files.*'))
                             
                              @foreach($errors->get('property_files.*') as $err)
@@ -192,8 +192,8 @@
                             @endif
                           </div>
 
-                          <input type="hidden" id="property_manager_create_url" value="{{route('admin.property_managers.create')}}">
-                          <input type="hidden" id="property_owner_create_url" value="{{route('admin.property_owners.create')}}">
+                          <input type="hidden" id="property_manager_create_url" value="{{route('admin.users.create')}}">
+                          <input type="hidden" id="property_owner_create_url" value="{{route('admin.users.create')}}">
 
                         </div>
                         <div>

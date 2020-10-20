@@ -79,7 +79,7 @@
                               @if($service_provider->deleted_at)
                                 <span class="text-danger"><del>{{$service_provider->name}} </del>(user deleted)</span>
                               @else
-                                <a target="_blank" href="{{route('admin.service_providers.show',$service_provider->id)}}">{{$service_provider->name}}</a>
+                                <a target="_blank" href="{{route('admin.users.show',$service_provider->id)}}">{{$service_provider->name}}</a>
                               @endif
                             @else
                             N/A
@@ -119,8 +119,27 @@
                             <div class="row">
                               @if(count($files=$contract->contract_attachments))
                                 @foreach($files as $file)
+                                  @php
+                                    if($file->file_type=='pdf'){
+                                      $font_icon='far fa-file-pdf';
+                                      $color='red';
+                                    }elseif($file->file_type=='doc'){
+                                      $font_icon='far fa-file-word';
+                                      $color='blue';
+                                    }elseif($file->file_type=='text'){
+                                      $font_icon='far fa-file-alt';
+                                      $color='white';
+                                    }elseif($file->file_type=='image'){
+                                      $font_icon='far fa-file-image';
+                                      $color='grey';
+                                    }else{
+                                       $font_icon='fas fa-file';
+                                      $color='grey';
+                                    }
+                                  @endphp
+
                                   <div style="height: 55px" class="col-sm-1 col-xs-1">
-                                    <a title="Click to download" href="{{route('admin.contracts.download_attachment',$file->id)}}"><i style="color: red;" class="fa-4x far fa-file-pdf"></i></a>
+                                    <a title="Click to download" href="{{route('admin.contracts.download_attachment',$file->id)}}"><i style="color: {{$color}};" class="fa-4x {{$font_icon}}"></i></a>
                                   </div>
                                 @endforeach
                               @else
