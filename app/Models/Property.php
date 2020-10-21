@@ -24,4 +24,7 @@ class Property extends Model
     public function property_attachments(){
         return $this->hasMany(PropertyAttachment::class);
     }
+    public function contracts(){
+        return $this->hasMany(Contract::class);
+    }
 }
