@@ -148,6 +148,7 @@
                     </a>
                 </li>
                 @endif
+                
                 <li class="nav-item has-treeview {{(request()->is('admin/message/*','admin/message'))?'menu-open':''}}">
                     
                     <li class="nav-item">
