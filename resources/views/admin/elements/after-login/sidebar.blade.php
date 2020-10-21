@@ -271,18 +271,17 @@
                         <i class="nav-icon fas fa-quote-right"></i>
                         <p>{{__('nav_link_text.service_management')}}</p>
                     </a>
+                </li>
+
+                <li class="nav-item ">
+                    <a href="{{route('admin.email.list')}}"
+                    class="nav-link {{(request()->is('admin/email/*','admin/email'))?'active':''}}">
+                        <i class="nav-icon fa fa-file"></i>
+                        <p>{{__('nav_link_text.email_templete')}}</p>
+                    </a>
                 </li>            
                 
 
-                <!-- @if(auth()->guard('admin')->user()->hasAllPermission(['task-list']))
-                <li class="nav-item ">
-                    <a href="{{route('admin.service_management.list')}}"
-                    class="nav-link {{(request()->is('admin/service_management/*','admin/service_management'))?'active':''}}">
-                        <i class="nav-icon fas fa-quote-right"></i>
-                        <p>{{__('nav_link_text.service_management')}}</p>
-                    </a>
-                </li>            
-                @endif -->
 
                 @if(auth()->guard('admin')->user()->hasAllPermission(['task-list']))
                 <li class="nav-item ">
