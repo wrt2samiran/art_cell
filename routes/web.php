@@ -266,6 +266,13 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::get('/{id}', 'MessageController@show')->name('show');
             });
 
+            Route::group(['prefix' => 'email', 'as' => 'email.'], function () {
+                Route::get('/', 'EmailTemplateController@list')->name('list');
+                Route::any('/edit/{encryptCode}', 'EmailTemplateController@edit')->name('edit');
+                Route::delete('/{id}/delete', 'EmailTemplateController@delete')->name('delete');
+                Route::get('/{id}', 'EmailTemplateController@show')->name('show');
+            });
+
             
 
             Route::group(['prefix' => 'service_management', 'as' => 'service_management.'], function () {

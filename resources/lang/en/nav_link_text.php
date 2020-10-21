@@ -28,4 +28,5 @@ return array (
   'task_management' => 'Task Management',
   'translation_management' => 'Translation Management',
   'user_management' => 'User Management',
+  'email_templete' => 'Email Template Management',
 );
