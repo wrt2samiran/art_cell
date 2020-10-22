@@ -22,43 +22,43 @@ var message_table=$('#message_table').DataTable({
 
 //function to delete gallery
 function delete_message(url){
-swal({
-title: "Are you sure?",
-text: "Once deleted, you will not be able to recover this message!",
-icon: "warning",
-buttons: true,
-dangerMode: true,
-})
-.then((willDelete) => {
-if (willDelete) {
+  swal({
+  title: "Are you sure?",
+  text: "Once deleted, you will not be able to recover this message!",
+  icon: "warning",
+  buttons: true,
+  dangerMode: true,
+  })
+  .then((willDelete) => {
+    if (willDelete) {
 
-  $.LoadingOverlay("show");
-  $.ajax({
-    url: url,
-    type: "POST",
-    data:{ "_token": $('meta[name="csrf-token"]').attr('content')},
-    success: function (data) {
-      message_table.ajax.reload(null, false);
-      $.LoadingOverlay("hide");
-      toastr.success('Message successfully deleted.', 'Success', {timeOut: 2000});
-    },
-    error: function(jqXHR, textStatus, errorThrown) {
-       $.LoadingOverlay("hide");
-       var response=jqXHR.responseJSON;
-       var status=jqXHR.status;
-       if(status=='404'){
-        toastr.error('Invalid URL', 'Error', {timeOut: 2000});
-       }else{
-         toastr.error('Internal server error.', 'Error', {timeOut: 2000});
-       }
-    }
- });
+      $.LoadingOverlay("show");
+      $.ajax({
+        url: url,
+        type: "DELETE",
+        data:{ "_token": $('meta[name="csrf-token"]').attr('content')},
+        success: function (data) {
+          message_table.ajax.reload(null, false);
+          $.LoadingOverlay("hide");
+          toastr.success('Message successfully deleted.', 'Success', {timeOut: 5000});
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+           $.LoadingOverlay("hide");
+           var response=jqXHR.responseJSON;
+           var status=jqXHR.status;
+           if(status=='404'){
+            toastr.error('Invalid URL', 'Error', {timeOut: 5000});
+           }else{
+             toastr.error('Internal server error.', 'Error', {timeOut: 5000});
+           }
+        }
+     });
 
- message_table.ajax.reload(null, false);
-} 
-});
+     message_table.ajax.reload(null, false);
+    } 
+  });
 
-}
+ }
 
 
 
