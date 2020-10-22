@@ -254,31 +254,33 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             });
 
             Route::group(['prefix' => 'shared-service', 'as' => 'shared-service.'], function () {
-                Route::get('/', 'SharedServiceController@list')->name('list');
-                Route::any('/add','SharedServiceController@sharedServiceAdd')->name('add');
-                Route::any('/edit/{encryptCode}', 'SharedServiceController@edit')->name('edit');
-                Route::get('/{id}/change-change', 'SharedServiceController@change_status')->name('change_status');
-                Route::delete('/{id}/delete', 'SharedServiceController@delete')->name('delete');
-                Route::get('/{id}', 'SharedServiceController@show')->name('show');
+                Route::get('/', 'SharedServiceController@list')->name('list')->middleware('check_permissions:shared-service-list');
+                Route::any('/add','SharedServiceController@sharedServiceAdd')->name('add')->middleware('check_permissions:shared-service-add');
+                Route::any('/edit/{encryptCode}', 'SharedServiceController@edit')->name('edit')->middleware('check_permissions:shared-service-edit');
+                Route::get('/{id}/change-change', 'SharedServiceController@change_status')->name('change_status')->middleware('check_permissions:shared-service-change-status');
+                Route::delete('/{id}/delete', 'SharedServiceController@delete')->name('delete')->middleware('check_permissions:shared-service-delete');
+                Route::get('/{id}', 'SharedServiceController@show')->name('show')->middleware('check_permissions:shared-service-show');
             });
 
             Route::group(['prefix' => 'spare-parts', 'as' => 'spare-parts.'], function () {
-                Route::get('/', 'SparePartsController@list')->name('list');
-                Route::any('/add','SparePartsController@sparePartsAdd')->name('add');
-                Route::any('/edit/{encryptCode}', 'SparePartsController@edit')->name('edit');
-                Route::get('/{id}/change-change', 'SparePartsController@change_status')->name('change_status');
-                Route::delete('/{id}/delete', 'SparePartsController@delete')->name('delete');
-                Route::get('/{id}', 'SparePartsController@show')->name('show');
+                Route::get('/', 'SparePartsController@list')->name('list')->middleware('check_permissions:spare-parts-list');
+                Route::any('/add','SparePartsController@sparePartsAdd')->name('add')->middleware('check_permissions:spare-parts-add');
+                Route::any('/edit/{encryptCode}', 'SparePartsController@edit')->name('edit')->middleware('check_permissions:spare-parts-edit');
+                Route::get('/{id}/change-change', 'SparePartsController@change_status')->name('change_status')->middleware('check_permissions:spare-parts-change-status');
+                Route::delete('/{id}/delete', 'SparePartsController@delete')->name('delete')->middleware('check_permissions:spare-parts-delete');
+                Route::get('/{id}', 'SparePartsController@show')->name('show')->middleware('check_permissions:spare-parts-show');
             });
 
             Route::group(['prefix' => 'message', 'as' => 'message.'], function () {
-                Route::get('/', 'MessageController@list')->name('list');
-                Route::any('/add','MessageController@messageAdd')->name('add');
-                Route::any('/edit/{encryptCode}', 'MessageController@edit')->name('edit');
-                Route::get('/{id}/change-change', 'MessageController@change_status')->name('change_status');
-                Route::delete('/{id}/delete', 'MessageController@delete')->name('delete');
-                Route::get('/{id}', 'MessageController@show')->name('show');
+            //Route::group(['prefix'=>'message','middleware'=>['check_permissions:manage-message'],'as'=>'message.'],function(){    
+                Route::get('/', 'MessageController@list')->name('list')->middleware('check_permissions:message-list');
+                Route::any('/add','MessageController@messageAdd')->name('add')->middleware('check_permissions:message-add');
+                Route::any('/edit/{encryptCode}', 'MessageController@edit')->name('edit')->middleware('check_permissions:message-edit');
+                Route::get('/{id}/change-change', 'MessageController@change_status')->name('change_status')->middleware('check_permissions:message-change-status');
+                Route::delete('/{id}/delete', 'MessageController@delete')->name('delete')->middleware('check_permissions:message-delete');
+                Route::get('/{id}', 'MessageController@show')->name('show')->middleware('check_permissions:message-show');
             });
+
 
             Route::group(['prefix' => 'email', 'as' => 'email.'], function () {
                 Route::get('/', 'EmailTemplateController@list')->name('list');
@@ -293,26 +295,36 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             
 
             Route::group(['prefix' => 'service_management', 'as' => 'service_management.'], function () {
-                Route::get('/', 'ServiceManagementController@list')->name('list');
-                Route::any('/add-service','ServiceManagementController@addService')->name('addService');
+                Route::get('/', 'ServiceManagementController@list')->name('list')->middleware('check_permissions:service_management_list');
+                Route::any('/add-service','ServiceManagementController@addService')->name('addService')->middleware('check_permissions:service_management-add-service');
                 Route::post('/get-data', 'ServiceManagementController@getData')->name('getData');
-                Route::any('/add','ServiceManagementController@cityAdd')->name('add');
-                Route::any('/edit/{encryptCode}', 'ServiceManagementController@edit')->name('edit');
-                Route::get('/{id}/change-change', 'ServiceManagementController@change_status')->name('change_status');
-                Route::any('/{id}/delete', 'ServiceManagementController@delete')->name('delete');
-                Route::get('/{id}', 'ServiceManagementController@show')->name('show');
+               // Route::any('/add','ServiceManagementController@cityAdd')->name('add')->middleware('check_permissions:service_management_list');
+                Route::any('/edit/{encryptCode}', 'ServiceManagementController@edit')->name('edit')->middleware('check_permissions:service_managemen_edit');
+                Route::get('/{id}/change-change', 'ServiceManagementController@change_status')->name('change_status')->middleware('check_permissions:service_management_change-status');
+                Route::any('/{id}/delete', 'ServiceManagementController@delete')->name('delete')->middleware('check_permissions:service_management-delete');
+                Route::get('/{id}', 'ServiceManagementController@show')->name('show')->middleware('check_permissions:service_management-show');
             });
 
 
             Route::group(['prefix' => 'task_management', 'as' => 'task_management.'], function () {
-                Route::get('/calendar/{encryptCode}', 'TaskManagementController@calendar')->name('calendar');
+                Route::get('/calendar', 'TaskManagementController@calendar')->name('calendar');
                 Route::get('/', 'TaskManagementController@list')->name('list');
                 Route::any('/add','TaskManagementController@taskAdd')->name('taskAdd');
-                Route::post('/get-data', 'TaskManagementController@getData')->name('getData');
+                
                 Route::post('/get-cities', 'TaskManagementController@getCities')->name('getCities');
-                Route::post('/update-task', 'TaskManagementController@updateTask')->name('updateTask');
+                Route::post('/update-task', 'TaskManagementController@updateTask')->name('updateTask');  
+                Route::get('/{id}', 'TaskManagementController@show')->name('show');   
+                Route::get('/daily-task/{id}', 'TaskManagementController@dailyTask')->name('dailyTask'); 
                 
+                Route::any('/{id}/delete', 'TaskManagementController@delete')->name('delete');           
                 
+            });
+
+            Route::group(['prefix' => 'calendar', 'as' => 'calendar.'], function () {
+                Route::get('/calendar-data', 'CalendarController@calendardata')->name('calendardata');  
+                Route::any('/calendar-data-add','CalendarController@calendardataAdd')->name('calendardataAdd');
+
+                Route::post('/get-data', 'CalendarController@getData')->name('getData');       
                 
             });
 

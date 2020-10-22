@@ -9,12 +9,12 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Task Management</h1>
+            <h1>City Management</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.task-management.list')}}">Task</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.cities.list')}}">City</a></li>
               <li class="breadcrumb-item active">Details</li>
             </ol>
           </div>
@@ -28,22 +28,14 @@
             <!-- Default box -->
             <div class="card card-success">
                 <div class="card-header">
-                  Task Deatils
+                  City Deatils
                 </div> 
               <div class="card-body"> 
                  <table class="table table-bordered table-hover" id="country-details-table">
                       <tbody>
                         
                         <tr>
-                          <td >Task Title</td>
-                          <td >{{$city->country->name}}</td>
-                        </tr>
-                        <tr>
-                          <td >Property Name</td>
-                          <td >{{$city->country->name}}</td>
-                        </tr>
-                        <tr>
-                          <td >Country</td>
+                          <td >Country Name</td>
                           <td >{{$city->country->name}}</td>
                         </tr>
                         <tr>
@@ -54,18 +46,7 @@
                           <td>City Name</td>
                           <td >{{$city->name}}</td>
                         </tr>
-                        <tr>
-                          <td>Servise Tenure</td>
-                          <td >{{$city->name}}</td>
-                        </tr>
-                        <tr>
-                          <td>Assigned User</td>
-                          <td >{{$city->name}}</td>
-                        </tr>
-                        <tr>
-                          <td>User Reply</td>
-                          <td >{{$city->name}}</td>
-                        </tr>
+                        
                         <tr>
                           <td>Status</td>
                           <td>
@@ -76,7 +57,7 @@
                       </tbody>
                       <tfoot>
                         <tr>
-                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.task-management.list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
+                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.cities.list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
                         </tr>
                       </tfoot>
                   </table>
