@@ -240,11 +240,16 @@ class RoleController extends Controller
         $this->data['current_functionalities_id_array']=RolePermission::where('role_id',$role->id)->pluck('module_functionality_id')->toArray();
 
         $modules=Module::where(function($q)use($role){
-            $q->whereIn('slug',$role->creator->module_access_slug_array())
+            if($role->creator->role->user_type->slug!='super-admin'){
+                $q->whereIn('slug',$role->creator->module_access_slug_array())
                 ->whereNotIn('slug',['role-management','user-management']);
-
+            }
+                
         })->with(['functionalities'=>function($q)use($role){
-                $q->whereIn('slug',$role->creator->permisions_slug_array());
+            if($role->creator->role->user_type->slug!='super-admin'){
+               $q->whereIn('slug',$role->creator->permisions_slug_array());  
+            }
+               
         }])->orderBy('created_at','ASC')->get();
 
         $this->data['modules']=$modules;

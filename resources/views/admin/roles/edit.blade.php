@@ -65,7 +65,7 @@
                           </div>
                           @if($current_user->can_select_user_type_during_group_creation())
                             @php
-                            if($role->is_main_role || ($role->createdBy->role && $role->createdBy->role->user_type!='super-admin')){
+                            if($role->is_main_role || ($role->creator->role && $role->creator->role->user_type->slug!='super-admin')){
                               $disabled='disabled';
                             }else{
                               $disabled='';
