@@ -19,13 +19,13 @@ class Role extends Model
     
     /*****************************************************/
     # Role
-    # Function name : createdBy
+    # Function name : creator
     # Author        :
     # Created Date  : 15-07-2020
     # Purpose       : Relation between User table
     # Params        : 
     /*****************************************************/
-    public function createdBy(){
+    public function creator(){
 
         return $this->belongsTo('App\Models\User','created_by');
     }
@@ -46,6 +46,10 @@ class Role extends Model
 
     public function permissions(){
         return $this->hasMany(RolePermission::class);
+    }
+
+    public function user_type(){
+       return $this->belongsTo(UserType::class); 
     }
 
 }

@@ -69,7 +69,10 @@ $("#admin_roles_edit_form").validate({
 
 
 
-
+$('.user_type_select2').select2({
+  theme: 'bootstrap4',
+  placeholder:'Select user type'
+});
 
 
 

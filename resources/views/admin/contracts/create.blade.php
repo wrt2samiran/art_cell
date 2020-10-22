@@ -188,8 +188,6 @@
                               @endfor
                           </div> 
       
-
-
                           <hr>
                           <div class="form-group">
                             <label for="contract_files">Attach Files</label>

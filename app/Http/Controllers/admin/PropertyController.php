@@ -107,11 +107,16 @@ class PropertyController extends Controller
     public function create(){
         $this->data['page_title']='Create Property';
         $this->data['cities']=City::whereHas('state')->whereHas('country')->whereIsActive(true)->get();
-        $this->data['property_managers']=User::whereHas('role',function($q){
-        	$q->where('role_type','property-manager');
-        })->whereStatus('A')->get();
-        $this->data['property_owners']=User::whereHas('role',function($q){
-        	$q->where('role_type','property-owner');
+        $this->data['property_managers']=User::whereHas('role')
+        ->whereHas('role.creator')
+        ->whereHas('role.user_type',function($q){
+            $q->where('slug','property-manager');
+        })
+        ->whereStatus('A')->get();
+        $this->data['property_owners']=User::whereHas('role')
+        ->whereHas('role.creator')
+        ->whereHas('role.user_type',function($q){
+        	$q->where('slug','property-owner');
         })->whereStatus('A')->get();
 
         $this->data['property_types']=PropertyType::whereIsActive(true)->get();
@@ -230,11 +235,16 @@ class PropertyController extends Controller
         $this->data['property']=$property;
 
         $this->data['cities']=City::whereHas('state')->whereHas('country')->whereIsActive(true)->get();
-        $this->data['property_managers']=User::whereHas('role',function($q){
-        	$q->where('role_type','property-manager');
-        })->whereStatus('A')->get();
-        $this->data['property_owners']=User::whereHas('role',function($q){
-        	$q->where('role_type','property-owner');
+        $this->data['property_managers']=User::whereHas('role')
+        ->whereHas('role.creator')
+        ->whereHas('role.user_type',function($q){
+            $q->where('slug','property-manager');
+        })
+        ->whereStatus('A')->get();
+        $this->data['property_owners']=User::whereHas('role')
+        ->whereHas('role.creator')
+        ->whereHas('role.user_type',function($q){
+            $q->where('slug','property-owner');
         })->whereStatus('A')->get();
         
         $this->data['property_types']=PropertyType::whereIsActive(true)->get();

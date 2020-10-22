@@ -139,12 +139,16 @@ class ContractController extends Controller
     # Purpose          : To load contract create view page                   #
     public function create(){
         $this->data['page_title']='Create contract';
-        $this->data['property_owners']=User::whereStatus('A')->whereHas('role',function($q){
-        	$q->where('role_type','property-owner');
+        $this->data['property_owners']=User::whereStatus('A')->whereHas('role')
+        ->whereHas('role.creator')
+        ->whereHas('role.user_type',function($q){
+        	$q->where('slug','property-owner');
         })->get();
 
-        $this->data['service_providers']=User::whereStatus('A')->whereHas('role',function($q){
-        	$q->where('role_type','service-provider');
+        $this->data['service_providers']=User::whereStatus('A')->whereHas('role')
+        ->whereHas('role.creator')
+        ->whereHas('role.user_type',function($q){
+        	$q->where('slug','service-provider');
         })->get();
 
         $this->data['properties']=Property::whereIsActive(true)->get();
@@ -284,12 +288,18 @@ class ContractController extends Controller
         $contract=Contract::findOrFail($id);
         $this->data['page_title']='Edit Contract';
         $this->data['contract']=$contract;
-        $this->data['property_owners']=User::whereStatus('A')->whereHas('role',function($q){
-            $q->where('role_type','property-owner');
+        $this->data['property_owners']=User::whereStatus('A')
+        ->whereHas('role')
+        ->whereHas('role.creator')
+        ->whereHas('role.user_type',function($q){
+            $q->where('slug','property-owner');
         })->get();
 
-        $this->data['service_providers']=User::whereStatus('A')->whereHas('role',function($q){
-            $q->where('role_type','service-provider');
+        $this->data['service_providers']=User::whereStatus('A')
+        ->whereHas('role')
+        ->whereHas('role.creator')
+        ->whereHas('role.user_type',function($q){
+            $q->where('slug','service-provider');
         })->get();
 
         $this->data['properties']=Property::whereIsActive(true)->get();

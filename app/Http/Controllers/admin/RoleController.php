@@ -22,8 +22,7 @@ use Carbon\Carbon;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
 use App\Http\Requests\Admin\Role\{CreateRoleRequest,EditRoleRequest};
-
-use App\Models\{Module,User,Role,RolePermission,ModuleFunctionality};
+use App\Models\{Module,User,Role,RolePermission,ModuleFunctionality,UserType};
 
 class RoleController extends Controller
 {
@@ -37,26 +36,36 @@ class RoleController extends Controller
     # in datatable                                                           #
     # Function name    : list                                                #
     # Created Date     : 06-10-2020                                          #
-    # Modified date    : 07-10-2020                                          #
+    # Modified date    : 22-10-2020                                          #
     # Purpose          : For role list and returning datatable ajax response #
 
     public function list(Request $request){
         $this->data['page_title']='Group List';
-        
+        $current_user=auth()->guard('admin')->user();
+
         if($request->ajax()){
-            $roles=Role::select('roles.*');
+            $roles=Role::with(['user_type','creator'])->whereHas('creator')->where(function($q)use($current_user){
+                //if logged in user is not super admin then fetch only the roles which is created by logged in user
+                if($current_user->role->user_type->slug!='super-admin'){
+                    $q->whereCreatedBy($current_user->id);
+                }
+            })
+            ->when($request->user_type_id,function($query) use($request){
+                $query->where('user_type_id',$request->user_type_id);
+            })
+            ->select('roles.*');
             return Datatables::of($roles)
             ->editColumn('created_at', function ($role) {
                 return $role->created_at ? with(new Carbon($role->created_at))->format('d/m/Y') : '';
             })
-            ->editColumn('role_description', function ($role) {
-                return Str::limit($role->role_description,50);
-            })
             ->filterColumn('created_at', function ($query, $keyword) {
                 $query->whereRaw("DATE_FORMAT(created_at,'%d/%m/%Y') like ?", ["%$keyword%"]);
             })
-            ->addColumn('status',function($role){
-                $current_user=auth()->guard('admin')->user();
+            ->editColumn('creator.name', function ($role)use($current_user) {
+                return ($role->created_by==$current_user->id)?$role->creator->name.' (you)':$role->creator->name;
+            })
+            ->addColumn('status',function($role)use($current_user){
+                
                 $disabled=(!$current_user->hasAllPermission(['group-status-change']))?'disabled':'';
                 if($role->status=='A'){
                    $message='deactivate';
@@ -67,8 +76,8 @@ class RoleController extends Controller
                    return '<a title="Click to activate the group" href="javascript:change_status('."'".route('admin.roles.change_status',$role->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm '.$disabled.'">Inactive</a>';
                 }
             })
-            ->addColumn('action',function($role){
-                $current_user=auth()->guard('admin')->user();
+            ->addColumn('action',function($role)use($current_user){
+               
                 $delete_url=route('admin.roles.delete',$role->id);
                 $details_url=route('admin.roles.show',$role->id);
                 $edit_url=route('admin.roles.edit',$role->id);
@@ -83,12 +92,11 @@ class RoleController extends Controller
                     $has_edit_permission=true;
                 }
 
-                if($role->id==$current_user->role_id || !$current_user->hasAllPermission(['group-delete']) ||in_array($role->role_type,['super-admin','property-owner','property-manager','service-provider','labour'])  ){
+                if($role->id==$current_user->role_id || !$current_user->hasAllPermission(['group-delete']) ||  $role->is_main_role==true){
                     $has_delete_permission=false;
                 }else{
                     $has_delete_permission=true;
                 }
-                
                 
                 if($has_details_permission){
                     $action_buttons=$action_buttons.'<a title="View Group Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
@@ -111,6 +119,7 @@ class RoleController extends Controller
             ->make(true);
         }
 
+        $this->data['user_types']=UserType::whereIsActive(true)->orderBy('id','asc')->get();
         return view($this->view_path.'.list',$this->data);
     }
 
@@ -118,15 +127,25 @@ class RoleController extends Controller
     # Function to load role create view page                                 #
     # Function name    : create                                              #
     # Created Date     : 06-10-2020                                          #
-    # Modified date    : 07-10-2020                                          #
+    # Modified date    : 22-10-2020                                          #
     # Purpose          : To load role create view page                       #
     public function create(){
         $this->data['page_title']='Create Group';
-        $parent_roles=Role::whereStatus('A')->whereNull('parrent_id')->orderBy('id','ASC')->get();
-        $this->data['parent_roles']=$parent_roles;
-        $modules=Module::with(['functionalities'])->orderBy('created_at','ASC')->get();
+        $current_user=auth()->guard('admin')->user();
+        $this->data['user_types']=UserType::whereIsActive(true)->orderBy('id','asc')->get();
+
+        $modules=Module::where(function($q)use($current_user){
+            if($current_user->role->user_type->slug!='super-admin'){
+                //if logged in user is not super admin then fetch the modules related to logged in users role 
+                //and not consider user to create a group with such a module which belongs to only admin i.e role-management,user-management
+                $q->whereIn('slug',$current_user->module_access_slug_array())
+                ->whereNotIn('slug',['role-management','user-management']);
+            }
+        })->with(['functionalities'=>function($q)use($current_user){
+                //if logged in user is not super admin then fetch the permission related to logged in users role 
+                $q->whereIn('slug',$current_user->permisions_slug_array());
+        }])->orderBy('created_at','ASC')->get();
         $this->data['modules']=$modules;
-      
         return view($this->view_path.'.create',$this->data);
     }
 
@@ -134,15 +153,17 @@ class RoleController extends Controller
     # Function to store role data                                                    #
     # Function name    : store                                                       #
     # Created Date     : 06-10-2020                                                  #
-    # Modified date    : 06-10-2020                                                  #
+    # Modified date    : 22-10-2020                                                  #
     # Purpose          : to store role data                                          #
     # Param            : CreateRoleRequest $request                                  #
 
     public function store(CreateRoleRequest $request){
 
         $current_user=auth()->guard('admin')->user();
+        $user_type_id=($current_user->can_select_user_type_during_group_creation())?$request->user_type_id:$current_user->role->user_type->id;
+
         $new_role=Role::create([
-            'role_type'=>'group-user',
+            'user_type_id'=>$user_type_id,
             'role_name'=>$request->role_name,
             'role_description'=>$request->role_description,
             'slug'=>Str::slug($request->role_name, '-'),
@@ -184,7 +205,7 @@ class RoleController extends Controller
     # Param            : id                                                  #
 
     public function show($id){
-        $role=Role::findOrFail($id);
+        $role=Role::with(['creator','user_type'])->whereHas('creator')->whereHas('user_type')->findOrFail($id);
         $this->data['page_title']='Group Details';
         $this->data['role']=$role;
 
@@ -209,16 +230,25 @@ class RoleController extends Controller
     # Purpose          : to load role edit page                              #
     # Param            : id                                                  #
     public function edit($id){
-        $role=Role::findOrFail($id);
+        $current_user=auth()->guard('admin')->user();
+        $role=Role::whereHas('creator')->findOrFail($id);
         $this->data['page_title']='Group Edit';
         $this->data['role']=$role;
 
-
-        $modules=Module::with('functionalities')->orderBy('created_at','ASC')->get();
+        $this->data['user_types']=UserType::whereIsActive(true)->orderBy('id','asc')->get();
      
         $this->data['current_functionalities_id_array']=RolePermission::where('role_id',$role->id)->pluck('module_functionality_id')->toArray();
 
+        $modules=Module::where(function($q)use($role){
+            $q->whereIn('slug',$role->creator->module_access_slug_array())
+                ->whereNotIn('slug',['role-management','user-management']);
+
+        })->with(['functionalities'=>function($q)use($role){
+                $q->whereIn('slug',$role->creator->permisions_slug_array());
+        }])->orderBy('created_at','ASC')->get();
+
         $this->data['modules']=$modules;
+        $this->data['current_user']=$current_user;
         return view($this->view_path.'.edit',$this->data);
     }
 
@@ -230,16 +260,21 @@ class RoleController extends Controller
     # Purpose          : to update role data with module permissions                     #
     # Param            : EditRoleRequest $request,id                                     #
     public function update(EditRoleRequest $request,$id){
-        $role=Role::findOrFail($id);
+        $role=Role::whereHas('creator')->findOrFail($id);
         $current_user=auth()->guard('admin')->user();
 
-
-        $role->update([
+        $update_data=[
             'role_name'=>$request->role_name,
             'role_description'=>$request->role_description,
-            'slug'=>Str::slug($request->role_name, '-')
-        ]);
+            'slug'=>Str::slug($request->role_name, '-'),
+            'updated_by'=>$current_user->id
+        ];
 
+        if($current_user->can_select_user_type_during_group_creation()  && $request->user_type_id && !$role->is_main_role ){
+            $update_data['user_type_id']=$user_type_id;
+        }
+       
+        $role->update($update_data);
 
         $module_functionalities=ModuleFunctionality::whereIn('id',$request->functionalities)->get();
 

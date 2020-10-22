@@ -42,6 +42,14 @@
                           <td >{{$role->role_description}}</td>
                         </tr>
                         <tr>
+                          <td>Created By</td>
+                          <td >{{$role->creator->name}} ({{$role->creator->email}})</td>
+                        </tr>
+                        <tr>
+                          <td>Group User Type</td>
+                          <td >{{$role->user_type->name}}</td>
+                        </tr>
+                        <tr>
                           <td>Status</td>
                           <td>
                             <button role="button" class="btn btn-{{($role->status=='A')?'success':'danger'}}">{{($role->status=='A')?'Active':'Inactive'}}</button>
@@ -51,7 +59,6 @@
                           <td >Total Users</td>
                           <td >{{$role->users()->count()}}</td>
                         </tr>
-
                         <tr>
                           <td >Module wise permissions</td>
                           <td>

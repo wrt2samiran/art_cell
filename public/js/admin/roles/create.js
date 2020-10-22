@@ -20,6 +20,9 @@ $("#admin_roles_create_form").validate({
             minlength: 3,
             maxlength: 255,
         },
+        user_type_id:{
+            required: true,
+        },
         'functionalities[]':'required'
     },
     messages: {
@@ -34,19 +37,21 @@ $("#admin_roles_create_form").validate({
             minlength: "Group description should have 3 characters",
             maxlength: "Group description should not more then 255 characters"
         },
-
+        user_type_id:{
+            required:  "Please select the user type you are creating the group for",
+        },
         'functionalities[]':'Select atleast one permission'
     },
     errorPlacement: function (error, element) {
         
-        
+        error.addClass('invalid-feedback');
         if(element.attr('name')=='functionalities[]'){
             error.appendTo($('#permissions_error'));
+        }else if(element.attr('name')=='user_type_id'){
+            error.appendTo($('#user_type_error'));
         }else{
-            error.addClass('invalid-feedback');
             error.insertAfter(element);
         }
-        
      
     },
     highlight: function (element, errorClass, validClass) {
@@ -65,22 +70,11 @@ $("#admin_roles_create_form").validate({
     }
 });
 
-$('.parent_role_select2').select2({
+$('.user_type_select2').select2({
   theme: 'bootstrap4',
   placeholder:'Select user type'
 });
 
-async function onParentRoleChange(parent_role_id,url){
-    $.LoadingOverlay("show");
-    try {
-        const response = await axios.post(url,{parent_role_id});
-        $('#module_permissions_container').html(response.data);
-        $.LoadingOverlay("hide");
-    } catch (error) {
-        $.LoadingOverlay("hide");
-        console.error(error);
-    }
-}
 
 
 
