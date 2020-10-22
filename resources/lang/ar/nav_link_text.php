@@ -29,4 +29,5 @@ return array (
   'translation_management' => 'إدارة الترجمة',
   'user_management' => 'إدارةالمستخدم',
   'email_templete' => 'إدارة قالب البريد الإلكتروني',
+  'calendar' => 'التقويم',
 );

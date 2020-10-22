@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ServiceAllocationManagement extends Model
 {
+
+	protected $guarded=[];
  	
  	public function property() {
 		return $this->belongsTo('\App\Models\Property', 'property_id', 'id');

@@ -148,7 +148,7 @@
                     </a>
                 </li>
                 @endif
-                
+                @if(auth()->guard('admin')->user()->hasAllPermission(['message-list']))
                 <li class="nav-item has-treeview {{(request()->is('admin/message/*','admin/message'))?'menu-open':''}}">
                     
                     <li class="nav-item">
@@ -161,9 +161,9 @@
                             </a>
                         </li>
                 </li>
+                @endif
 
-
-
+                @if(auth()->guard('admin')->user()->hasAllPermission(['shared-service-list']))
                 <li class="nav-item has-treeview {{(request()->is('admin/shared-service/*','admin/shared-service'))?'menu-open':''}}">
                     
                     <li class="nav-item">
@@ -175,6 +175,9 @@
                             </a>
                         </li>
                 </li>
+                @endif
+                @if(auth()->guard('admin')->user()->hasAllPermission(['spare-parts-list']))
+
 
                 <li class="nav-item has-treeview {{(request()->is('admin/spare-parts/*','admin/spare-parts'))?'menu-open':''}}">
                     
@@ -185,7 +188,7 @@
                         </a>
                     </li>
                 </li>
-                
+                @endif
                
                 
                 @if(auth()->guard('admin')->user()->hasAllPermission(['group-list']))
@@ -266,11 +269,21 @@
                 </li> 
                 @endif
                
+               @if(auth()->guard('admin')->user()->hasAllPermission(['service_management_list']))
                 <li class="nav-item ">
                     <a href="{{route('admin.service_management.list')}}"
                     class="nav-link {{(request()->is('admin/service_management/*','admin/service_management'))?'active':''}}">
                         <i class="nav-icon fas fa-quote-right"></i>
                         <p>{{__('nav_link_text.service_management')}}</p>
+                    </a>
+                </li>
+                @endif
+
+                <li class="nav-item ">
+                    <a href="{{route('admin.calendar.calendardata')}}"
+                    class="nav-link {{(request()->is('admin/task_management/*','admin/calendar'))?'active':''}}">
+                        <i class="nav-icon fas fa-quote-right"></i>
+                        <p>{{__('nav_link_text.calendar')}}</p>
                     </a>
                 </li>
 

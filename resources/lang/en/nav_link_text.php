@@ -29,4 +29,5 @@ return array (
   'translation_management' => 'Translation Management',
   'user_management' => 'User Management',
   'email_templete' => 'Email Template Management',
+  'calendar'  => 'Calendar',
 );
