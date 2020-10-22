@@ -45,7 +45,7 @@ class EmailTemplateController extends Controller
                 $details_url=route('admin.email.show',$sqlEmailTemplate->id);
                 $edit_url=route('admin.email.edit',$sqlEmailTemplate->id);
 
-                return '<a title="View Email Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>&nbsp;&nbsp;<a title="Edit Email" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>&nbsp;&nbsp;<a title="Delete message" href="javascript:delete_message('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
+                return '<a title="View Email Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>&nbsp;&nbsp;<a title="Edit Email" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>&nbsp;&nbsp;<a title="Delete message"  href="javascript:delete_message('.$sqlEmailTemplate->id.')"><i class="far fa-minus-square text-danger"></i></a>';
                 
             })
             ->rawColumns(['action'])
@@ -192,28 +192,29 @@ class EmailTemplateController extends Controller
     /*****************************************************/
     public function delete(Request $request, $id = null)
     {
-        try
-        {
+        
             if ($id == null) {
                 return redirect()->route('admin.email.list');
             }
 
             $details = EmailTemplate::where('id', $id)->first();
-            if ($details != null) {
+           
                     $delete = $details->delete();
-                    if ($delete) {
-                        $request->session()->flash('alert-danger', 'Email Template has been deleted successfully');
-                    } else {
-                        $request->session()->flash('alert-danger', 'An error occurred while deleting the email');
-                    }
-            } else {
-                $request->session()->flash('alert-danger', 'Invalid email');
+        //             if ($delete) {
+        //                 $request->session()->flash('alert-danger', 'Email Template has been deleted successfully');
+        //             } else {
+        //                 $request->session()->flash('alert-danger', 'An error occurred while deleting the email');
+        //             }
+        //     } else {
+        //         $request->session()->flash('alert-danger', 'Invalid email');
                 
-            }
-            return redirect()->back();
-        } catch (Exception $e) {
-            return redirect()->route('admin.email.list')->with('error', $e->getMessage());
-        }
+        //     }
+        //     return redirect()->back();
+        // } catch (Exception $e) {
+        //     return redirect()->route('admin.email.list')->with('error', $e->getMessage());
+        return response()->json(['message'=>'Email Template successfully deleted.']);
+            
+       
     }
     
     /*****************************************************/
@@ -233,16 +234,16 @@ class EmailTemplateController extends Controller
     }
 
     public function sendMail(Request $request){
-        $mail = EmailTemplate::where('id','6')->first();
+        $mail = EmailTemplate::where('id','1')->first();
         $message = $mail->content;
         $message = str_replace("##USERNAME##", nl2br('SMMS'), $message);
-	    $message = str_replace("##Address##", nl2br('KOlkata'), $message);
+	    $message = str_replace("##Address##", nl2br('Kolkata'), $message);
         $message = str_replace("##Employ-code##", ('000-421'), $message); 
         \Mail::send('emails.admin.blankmail',
         [
             'templateForntend'=>$message,
         ], function ($m) use ($message) {
-            $m->to('banksbi@yopmail.com')->subject('Bank User Credential');
+            $m->to('banksbi@yopmail.com')->subject('User Credential');
         });
     }
 }
