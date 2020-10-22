@@ -287,7 +287,7 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::any('/add','EmailTemplateController@emailAdd')->name('add');
                 Route::get('/resend', 'EmailTemplateController@sendMail')->name('resend');
                 Route::any('/edit/{encryptCode}', 'EmailTemplateController@edit')->name('edit');
-                Route::delete('/{id}/delete', 'EmailTemplateController@delete')->name('delete');
+                Route::get('/delete/{id}', 'EmailTemplateController@delete')->name('delete');
                 Route::get('/{id}', 'EmailTemplateController@show')->name('show');
                 
             });
