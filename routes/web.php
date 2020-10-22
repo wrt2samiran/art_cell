@@ -188,6 +188,20 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             
             /************************************/
 
+            /*Routes for user contracts */
+            Route::group(['prefix'=>'user-contracts','as'=>'user_contracts.'],function(){
+                Route::get('/', 'UserContractController@list')->name('list')->middleware('check_permissions:users-contract-list');
+                Route::get('/{id}', 'UserContractController@show')->name('show')->middleware('check_permissions:users-contract-details');
+            });
+            /************************************/
+
+            /*Routes for user properties */
+            Route::group(['prefix'=>'user-properties','as'=>'user_properties.'],function(){
+                Route::get('/', 'UserPropertyController@list')->name('list')->middleware('check_permissions:users-property-list');
+                Route::get('/{id}', 'UserPropertyController@show')->name('show')->middleware('check_permissions:users-property-details');
+            });
+            /************************************/
+
 
             Route::group(['prefix' => 'module-management', 'as' => 'module-management.'], function () {
                 Route::get('/list', 'ModuleManagementController@moduleList')->name('module.list');
@@ -270,9 +284,12 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
 
             Route::group(['prefix' => 'email', 'as' => 'email.'], function () {
                 Route::get('/', 'EmailTemplateController@list')->name('list');
+                Route::any('/add','EmailTemplateController@emailAdd')->name('add');
+                Route::get('/resend', 'EmailTemplateController@sendMail')->name('resend');
                 Route::any('/edit/{encryptCode}', 'EmailTemplateController@edit')->name('edit');
                 Route::delete('/{id}/delete', 'EmailTemplateController@delete')->name('delete');
                 Route::get('/{id}', 'EmailTemplateController@show')->name('show');
+                
             });
 
             

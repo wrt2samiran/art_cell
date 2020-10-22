@@ -246,7 +246,7 @@
                     <a href="{{route('admin.properties.list')}}"
                     class="nav-link {{(request()->is('admin/properties/*','admin/properties'))?'active':''}}">
                         <i class="nav-icon fas fa-igloo"></i>
-                        <p>{{__('nav_link_text.properties')}}</p>
+                        <p>{{__('nav_link_text.property_management')}}</p>
                     </a>
                 </li>
                 @endif
@@ -268,8 +268,27 @@
                     </a>
                 </li> 
                 @endif
-               
-               @if(auth()->guard('admin')->user()->hasAllPermission(['service_management_list']))
+
+                @if(auth()->guard('admin')->user()->hasAllPermission(['users-contract-list']))
+                <li class="nav-item ">
+                    <a href="{{route('admin.user_contracts.list')}}"
+                    class="nav-link {{(request()->is('admin/user-contracts/*','admin/user-contracts'))?'active':''}}">
+                        <i class="nav-icon fas fa-handshake"></i>
+                        <p>{{__('nav_link_text.contracts')}}</p>
+                    </a>
+                </li>
+                @endif
+                @if(auth()->guard('admin')->user()->hasAllPermission(['users-property-list']))
+                <li class="nav-item ">
+                    <a href="{{route('admin.user_properties.list')}}"
+                    class="nav-link {{(request()->is('admin/user-properties/*','admin/user-properties'))?'active':''}}">
+                        <i class="nav-icon fas fa-house-user"></i>
+                        <p>{{__('nav_link_text.properties')}}</p>
+                    </a>
+                </li>
+                @endif 
+
+                @if(auth()->guard('admin')->user()->hasAllPermission(['service_management_list']))
                 <li class="nav-item ">
                     <a href="{{route('admin.service_management.list')}}"
                     class="nav-link {{(request()->is('admin/service_management/*','admin/service_management'))?'active':''}}">
