@@ -44,6 +44,12 @@ class ContractController extends Controller
         $current_user=auth()->guard('admin')->user();
         if($request->ajax()){
             $contracts=Contract::with(['property','customer','service_provider','services','contract_status'])
+            ->where(function($q)use ($current_user){
+                //if logged in user is not super admin then fetch only those contracts which are crated by logged in user
+                if($current_user->role->user_type->slug!='super-admin'){
+                    $q->whereCreatedBy($current_user->id);
+                }
+            })
             ->whereHas('property')
             ->whereHas('customer')
             ->whereHas('service_provider')
@@ -271,6 +277,8 @@ class ContractController extends Controller
             ->whereHas('customer')
             ->whereHas('service_provider')
             ->whereHas('services')->findOrFail($id);
+        //policy is defined in App\Policies\ContractPolicy
+        $this->authorize('view',$contract);
         $this->data['page_title']='Contract Details';
         $this->data['contract']=$contract;
         return view($this->view_path.'.show',$this->data);
@@ -286,6 +294,8 @@ class ContractController extends Controller
     # Param            : id                                                  #
     public function edit($id){
         $contract=Contract::findOrFail($id);
+        //policy is defined in App\Policies\ContractPolicy
+        $this->authorize('update',$contract);
         $this->data['page_title']='Edit Contract';
         $this->data['contract']=$contract;
         $this->data['property_owners']=User::whereStatus('A')
@@ -318,7 +328,8 @@ class ContractController extends Controller
     public function update(UpdateContractRequest $request,$id){
 
     	$contract=Contract::findOrFail($id);
-
+        //policy is defined in App\Policies\ContractPolicy
+        $this->authorize('update',$contract);
         $current_user=auth()->guard('admin')->user();
 
         $start_date=Carbon::createFromFormat('d/m/Y', $request->start_date)->format('Y-m-d');

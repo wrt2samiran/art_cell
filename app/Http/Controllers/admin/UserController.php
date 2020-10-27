@@ -205,6 +205,8 @@ class UserController extends Controller
     # Param            : id                                                  #
     public function edit($id){
         $user=User::findOrFail($id);
+        //policy is defined in App\Policies\UserPolicy
+        $this->authorize('update',$user);
         $this->data['page_title']='Edit User';
         $this->data['user']=$user;
         $current_user=auth()->guard('admin')->user();
@@ -231,6 +233,8 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request,$id){
 
         $user=User::findOrFail($id);
+        //policy is defined in App\Policies\UserPolicy
+        $this->authorize('update',$user);
         $update_data=[
             'first_name'=>$request->first_name,
             'last_name'=>$request->last_name,
@@ -262,6 +266,8 @@ class UserController extends Controller
     # Param            : id                                                  #
     public function delete($id){
         $user=User::findOrFail($id);
+        //policy is defined in App\Policies\UserPolicy
+        $this->authorize('delete',$user);
         $user->update([
             'email'=>$user->email.'(deleted at-'.Carbon::now().')',
             'deleted_by'=>auth()->guard('admin')->id()

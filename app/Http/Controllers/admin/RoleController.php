@@ -206,6 +206,8 @@ class RoleController extends Controller
 
     public function show($id){
         $role=Role::with(['creator','user_type'])->whereHas('creator')->whereHas('user_type')->findOrFail($id);
+        //policy is defined in App\Policies\RolePolicy
+        $this->authorize('view',$role);
         $this->data['page_title']='Group Details';
         $this->data['role']=$role;
 
@@ -232,6 +234,10 @@ class RoleController extends Controller
     public function edit($id){
         $current_user=auth()->guard('admin')->user();
         $role=Role::whereHas('creator')->findOrFail($id);
+
+        //policy is defined in App\Policies\RolePolicy
+        $this->authorize('update',$role);
+
         $this->data['page_title']='Group Edit';
         $this->data['role']=$role;
 
@@ -266,6 +272,8 @@ class RoleController extends Controller
     # Param            : EditRoleRequest $request,id                                     #
     public function update(EditRoleRequest $request,$id){
         $role=Role::whereHas('creator')->findOrFail($id);
+        //policy is defined in App\Policies\RolePolicy
+        $this->authorize('update',$role);
         $current_user=auth()->guard('admin')->user();
 
         $update_data=[
@@ -317,6 +325,8 @@ class RoleController extends Controller
     # Param            : id                                                  #
     public function delete($id){
          $role=Role::findOrFail($id);
+         //policy is defined in App\Policies\RolePolicy
+         $this->authorize('delete',$role);
          $users=User::where('role_id',$id)->whereStatus('A')->first();
 
          if($users){

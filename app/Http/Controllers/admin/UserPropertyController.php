@@ -17,8 +17,10 @@ use Yajra\Datatables\Datatables;
 use App\Models\{Country,State,City,User,PropertyType,PropertyAttachment};
 use Illuminate\Support\Str;
 use File;
+
 class UserPropertyController extends Controller
 {
+
     //defining the view path
     private $view_path='admin.user_properties';
     //defining data array
@@ -109,18 +111,9 @@ class UserPropertyController extends Controller
             ->whereHas('manager_details')
             ->with(['city','property_type','owner_details','manager_details','contracts'])
             ->findOrFail($id);
-
-        $current_user=auth()->guard('admin')->user();
-        //check if the logged in user authorize to view the property
-        /* if logged in user is the property_owner/property_manager of this property or he is the service_provider/customer of the contracts related to this property then he can view thre property details */
-
-        if(count($property->contracts) && $property->property_owner!=$current_user->id && $property->property_manager!=$current_user->id && $property->contracts[0]->customer_id!=$current_user->id && $property->contracts[0]->service_provider_id!=$current_user->id){
-
-            abort(403,'You do not have permission to access this page'.'<a href="'.route('admin.dashboard').'" class="btn btn-success">Back to Dashboard</a>');
-        }
-        elseif($property->property_owner!=$current_user->id && $property->property_manager!=$current_user->id){
-            abort(403,'You do not have permission to access this page'.'<a href="'.route('admin.dashboard').'" class="btn btn-success">Back to Dashboard</a>');
-        }
+            
+        //policy is defined in App\Policies\PropertyPolicy
+        $this->authorize('view_user_connected_property',$property);
 
         $this->data['page_title']='Property Details';
         $this->data['property']=$property;
