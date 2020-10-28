@@ -1,21 +1,20 @@
 //initializing galleries datatable
     var daily_task_management_table=$('#daily_task_management_table').DataTable({
+        
         "responsive": true,
         "autoWidth": false,
         processing: true,
         serverSide: true,
-        ajax: baseUrl+'/admin/task_management',
+        ajax: $('#details_task').val(),
+
+
         columns: [
             { data: 'id', name: 'id' },
-            { data: 'task_title', name: 'task_title'},
-            { data: 'property.property_name', name: 'property.property_name' },
-            { data: 'service.service_name', name: 'service.service_name' },
-            { data: 'country.name', name: 'country.name' },
-            { data: 'state.name', name: 'state.name' },
-            { data: 'city.name', name: 'city.name' },
+            // { data: 'task.task_title', name: 'task.task_title'},
+            // { data: 'service.service_name', name: 'service.service_name' },
 
-            { data: 'start_date', name: 'start_date' },
-            { data: 'end_date', name: 'end_date' },
+            { data: 'task_date', name: 'task_date' },
+            { data: 'user_feedback', name: 'user_feedback' },
 
             { data: 'status', name: 'ststus' },
             {data: 'action', name: 'action', orderable: false, searchable: false}

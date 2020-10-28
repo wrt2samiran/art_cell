@@ -91,6 +91,15 @@
                           </div>
 
                           <div class="form-group required">
+                            <label for="service_id">Service Details <span class="error">*</span></label>
+                            <textarea name="service_details" id="service_details" class="form-control parent_role_select2"></textarea>
+                            
+                            @if($errors->has('service_details'))
+                            <span class="text-danger">{{$errors->first('service_details')}}</span>
+                            @endif
+                          </div>
+
+                          <div class="form-group required">
                             <label for="service_provider_id">Service Provider <span class="error">*</span></label>
                             <select class="form-control parent_role_select2" style="width: 100%;" name="service_provider_id" id="service_provider_id">
                                 <option value="">Select a Service Provider</option>

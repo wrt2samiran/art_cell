@@ -286,11 +286,12 @@ class CalendarController extends Controller
                     //$arr_days []= date('o-m-d',$date_from);
                     
                     $addTaskDetails = TaskDetails::create([
-                        'service_id' => $request->service_id,
-                        'task_id'    => $addTask->id,
-                        'user_id'    => $request->labour_id,
-                        'task_date'  => date('o-m-d',$date_from),
-                        'created_by' => auth()->guard('admin')->id(),
+                        'service_allocation_id' => $request->service_id,
+                        'service_id'            => $sqlServiceData->service_name,
+                        'task_id'               => $addTask->id,
+                        'user_id'               => $request->labour_id,
+                        'task_date'             => date('o-m-d',$date_from),
+                        'created_by'            => auth()->guard('admin')->id(),
                     ]);
 
                     $array_all_days = array();
@@ -305,11 +306,12 @@ class CalendarController extends Controller
                     foreach ($arr_days as $key => $value) {
 
                         $task_details_data_array[]=[
-                            'service_id' => $request->service_id,
-                            'task_id'    => $addTask->id,
-                            'user_id'    => $request->labour_id,
-                            'task_date'  => $value,
-                            'created_by' => auth()->guard('admin')->id(),
+                            'service_allocation_id' => $request->service_id,
+                            'service_id'            => $sqlServiceData->service_name,
+                            'task_id'               => $addTask->id,
+                            'user_id'               => $request->labour_id,
+                            'task_date'             => $value,
+                            'created_by'            => auth()->guard('admin')->id(),
                         ];
 
                     }
