@@ -124,5 +124,13 @@ class User extends Authenticatable
         }
     }
 
+    //function to return true/false according to user has permission to select user type during group creation
+    public function can_select_user_type_during_group_creation(){
+        if($this->role->user_type && $this->role->user_type->slug=='super-admin'){
+            return true;
+        }
+        return false;
+    }
+
 
 }

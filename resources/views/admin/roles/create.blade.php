@@ -63,7 +63,20 @@
                               <span class="text-danger">{{$errors->first('role_description')}}</span>
                              @endif
                           </div>
-
+                          @if(auth()->guard('admin')->user()->can_select_user_type_during_group_creation())
+                          <div class="form-group required">
+                             <label for="user_type_id">Please select user type you creating the group for<span class="error">*</span></label>
+                              <select class="form-control user_type_select2" name="user_type_id" id="user_type_id" style="width: 100%;">
+                                <option value="">Select user type</option>
+                                @forelse($user_types as $user_type)
+                                   <option value="{{$user_type->id}}" >{{$user_type->name}}</option>
+                                @empty
+                                <option value="">No user type found</option>
+                                @endforelse                                
+                              </select>
+                              <div id="user_type_error"></div>
+                          </div>
+                          @endif
                           <div id="permissions_error" class="text-danger"></div>
                           <div id="module_permissions_container">
                               <div class="row">

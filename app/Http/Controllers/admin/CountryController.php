@@ -274,28 +274,16 @@ class CountryController extends Controller
     /*****************************************************/
     public function delete(Request $request, $id = null)
     {
-        try
-        {
+        
             if ($id == null) {
                 return redirect()->route('admin.country.list');
             }
 
             $details = Country::where('id', $id)->first();
-            if ($details != null) {
+            
                     $delete = $details->delete();
-                    if ($delete) {
-                        $request->session()->flash('alert-danger', 'Country has been deleted successfully');
-                    } else {
-                        $request->session()->flash('alert-danger', 'An error occurred while deleting the state');
-                    }
-            } else {
-                $request->session()->flash('alert-danger', 'Invalid state');
-                
-            }
-            return redirect()->back();
-        } catch (Exception $e) {
-            return redirect()->route('admin.country.list')->with('error', $e->getMessage());
-        }
+                return response()->json(['message'=>'Country successfully deleted.']);
+                    
     }
     
     /*****************************************************/

@@ -93,7 +93,7 @@
                               <select class="form-control " id="role_id" name="role_id" style="width: 100%;">
                                 <option value="">Select a group</option>
                                 @forelse($roles as $role)
-                                   <option value="{{$role->id}}" {{($role->id==$user->role_id)?'selected':''}}>{{$role->role_name}}</option>
+                                   <option value="{{$role->id}}" {{($role->id==$user->role_id)?'selected':''}}>{{$role->role_name}} - Created by {{$role->creator->name}} ({{$role->user_type->name}}) </option>
                                 @empty
                                 <option value="">No Group Found</option>
                                 @endforelse

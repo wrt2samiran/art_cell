@@ -43,18 +43,19 @@ class UserController extends Controller
 
         $current_user=auth()->guard('admin')->user();
 
-
-
-
         if($request->ajax()){
 
             $users=User::with(['role'])
             ->where('id','!=',$current_user->id)
             ->whereHas('role')
+            ->where(function($q)use ($current_user){
+                //if logged in user is not super admin then fetch only those useers which are crated by logged in user
+                if($current_user->role->user_type->slug!='super-admin'){
+                    $q->whereCreatedBy($current_user->id);
+                }
+            })
             ->when($request->role_id,function($query) use($request){
-                $query->whereHas('role',function($sub_query)use ($request){
-                    $sub_query->where('roles.id',$request->role_id);
-                });
+                $query->where('role_id',$request->role_id);
             })
             ->select('users.*');
             return Datatables::of($users)
@@ -84,12 +85,10 @@ class UserController extends Controller
                 $edit_url=route('admin.users.edit',$user->id);
                 $action_buttons='';
                 
-   
                 $has_details_permission=($current_user->hasAllPermission(['user-details']))?true:false;
                 $has_edit_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['user-edit']))?true:false;
                 $has_delete_permission=($current_user->id!=$user->id && $current_user->hasAllPermission(['user-delete']))?true:false;
           
-
 
                 if($has_details_permission){
                     $action_buttons=$action_buttons.'<a title="View Servide Provider Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
@@ -113,7 +112,15 @@ class UserController extends Controller
             ->make(true);
         }
 
-        $roles=Role::whereStatus('A')->orderBy('id','ASC')->get(); 
+        $roles=Role::whereHas('user_type')
+        ->whereStatus('A')
+        ->where(function($q)use ($current_user){
+            //if logged in user is not super admin then fetch only roles  which are crated by logged in user
+            if($current_user->role->user_type->slug!='super-admin'){
+                $q->whereCreatedBy($current_user->id);
+            }
+        })
+        ->orderBy('id','ASC')->get(); 
         $this->data['roles']=$roles;
         return view($this->view_path.'.list',$this->data);
     }
@@ -129,7 +136,15 @@ class UserController extends Controller
 
         $current_user=auth()->guard('admin')->user();
 
-        $roles=Role::whereStatus('A')->orderBy('id','ASC')->get();
+        $roles=Role::whereHas('user_type')
+        ->whereStatus('A')
+        ->where(function($q)use ($current_user){
+            //if logged in user is not super admin then fetch only roles  which are crated by logged in user
+            if($current_user->role->user_type->slug!='super-admin'){
+                $q->whereCreatedBy($current_user->id);
+            }
+        })
+        ->orderBy('id','ASC')->get();
         $this->data['roles']=$roles;
         return view($this->view_path.'.create',$this->data);
     }
@@ -144,12 +159,11 @@ class UserController extends Controller
 
     public function store(CreateUserRequest $request){
 
-
         $user=User::create([
             'first_name'=>$request->first_name,
             'last_name'=>$request->last_name,
             'name'=>$request->first_name.' '.$request->last_name,
-            'email'=>$request->email,
+            'email'=>strtolower($request->email),
             'password'=>$request->password,
             'phone'=>$request->phone,
             'role_id'=>$request->role_id,
@@ -191,12 +205,20 @@ class UserController extends Controller
     # Param            : id                                                  #
     public function edit($id){
         $user=User::findOrFail($id);
+        //policy is defined in App\Policies\UserPolicy
+        $this->authorize('update',$user);
         $this->data['page_title']='Edit User';
         $this->data['user']=$user;
         $current_user=auth()->guard('admin')->user();
-
-
-        $roles=Role::whereStatus('A')->orderBy('id','ASC')->get();
+        $roles=Role::whereHas('user_type')
+        ->whereStatus('A')
+        ->where(function($q)use ($current_user){
+            //if logged in user is not super admin then fetch only roles  which are crated by logged in user
+            if($current_user->role->user_type->slug!='super-admin'){
+                $q->whereCreatedBy($current_user->id);
+            }
+        })
+        ->orderBy('id','ASC')->get();
         $this->data['roles']=$roles;
         return view($this->view_path.'.edit',$this->data);
     }
@@ -211,11 +233,13 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request,$id){
 
         $user=User::findOrFail($id);
+        //policy is defined in App\Policies\UserPolicy
+        $this->authorize('update',$user);
         $update_data=[
             'first_name'=>$request->first_name,
             'last_name'=>$request->last_name,
             'name'=>$request->first_name.' '.$request->last_name,
-            'email'=>$request->email,
+            'email'=>strtolower($request->email),
             'phone'=>$request->phone,
             'role_id'=>$request->role_id,
             'updated_by'=>auth()->guard('admin')->id()
@@ -242,6 +266,8 @@ class UserController extends Controller
     # Param            : id                                                  #
     public function delete($id){
         $user=User::findOrFail($id);
+        //policy is defined in App\Policies\UserPolicy
+        $this->authorize('delete',$user);
         $user->update([
             'email'=>$user->email.'(deleted at-'.Carbon::now().')',
             'deleted_by'=>auth()->guard('admin')->id()

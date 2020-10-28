@@ -8,11 +8,11 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use App\Models\PrCopywriter;
-
+use Auth;
 
 class Controller extends BaseController
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+    use  DispatchesJobs, ValidatesRequests;
 
     private $currentLang;
     private $setLang;
@@ -21,6 +21,20 @@ class Controller extends BaseController
     {
        
     }
+    /** code for laravel policy authorization we overwrite the authorize method because in our case auth guard is admin  **/
+    use AuthorizesRequests {
+        authorize as protected baseAuthorize;
+    }
+
+    public function authorize($ability, $arguments = [])
+    {
+        if (Auth::guard('admin')->check()) {
+            Auth::shouldUse('admin');
+        }
+
+        $this->baseAuthorize($ability, $arguments);
+    }
+    /*****/
 
     public function formatError($errors) : array{
         $formatted_errors = [];

@@ -114,7 +114,7 @@
 
  $('.role-filter').select2({
   theme: 'bootstrap4',
-  placeholder:'Filter By Group/Role'
+  placeholder:'Filter By Group'
 });
 
 

@@ -63,6 +63,7 @@
                                         </tr>
                                     </thead>
                                 </table>
+                                <input type="hidden" id="state_data_url" value="{{route('admin.state.list')}}">
                             </div>
                         </div>
                     </div>

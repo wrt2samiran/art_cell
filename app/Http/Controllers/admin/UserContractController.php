@@ -131,11 +131,9 @@ class UserContractController extends Controller
         $current_user=auth()->guard('admin')->user();
         //check if the logged in user authorize to view the contract
 
-        /* if logged in user is the custome/service_provider of this contract or he is the property_manager/property_owner of the property related to this contract then he can view thre contract details */
+        //policy is defined in App\Policies\ContractPolicy
+        $this->authorize('view_user_connected_contract',$contract);
 
-        if($contract->customer_id!=$current_user->id && $contract->service_provider_id!=$current_user->id && $contract->property->property_manager!=$current_user->id && $contract->property->property_owner!=$current_user->id){
-            abort(403,'You do not have permission to access this page'.'<a href="'.route('admin.dashboard').'" class="btn btn-success">Back to Dashboard</a>');
-        }
 
         $this->data['page_title']='Contract Details';
         $this->data['contract']=$contract;

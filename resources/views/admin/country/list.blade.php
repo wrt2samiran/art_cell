@@ -64,6 +64,7 @@
                                         </tr>
                                     </thead>
                                 </table>
+                                <input type="hidden" id="country_data_url" value="{{route('admin.country.list')}}">
                             </div>
                         </div>
                     </div>

@@ -1,10 +1,10 @@
 //initializing galleries datatable
-var message_table=$('#message_table').DataTable({
+var email_table=$('#email_table').DataTable({
     "responsive": true,
     "autoWidth": false,
     processing: true,
     serverSide: true,
-    ajax: $('#services_data_url').val(),
+    ajax: $('#email_data_url').val(),
     columns: [
         { data: 'id', name: 'id' },
         { data: 'template_name', name: 'template_name'},
@@ -21,7 +21,9 @@ var message_table=$('#message_table').DataTable({
 });
 
 //function to delete gallery
-function delete_message(url){
+function delete_message(id){
+  // alert(id);
+  // return false;
   swal({
   title: "Are you sure?",
   text: "Once deleted, you will not be able to recover this message!",
@@ -34,13 +36,15 @@ function delete_message(url){
 
       $.LoadingOverlay("show");
       $.ajax({
-        url: url,
-        type: "DELETE",
-        data:{ "_token": $('meta[name="csrf-token"]').attr('content')},
+        url: "https://www.demoyourprojects.com/cmms/public/admin/email/delete/"+id,
+        type: "GET",
+        data:{ 
+          "_token": $('meta[name="csrf-token"]').attr('content')
+        },
         success: function (data) {
-          message_table.ajax.reload(null, false);
+          email_table.ajax.reload(null, false);
           $.LoadingOverlay("hide");
-          toastr.success('Message successfully deleted.', 'Success', {timeOut: 5000});
+          toastr.success('Emailtemplate successfully deleted.', 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");
@@ -54,7 +58,7 @@ function delete_message(url){
         }
      });
 
-     message_table.ajax.reload(null, false);
+     email_table.ajax.reload(null, false);
     } 
   });
 

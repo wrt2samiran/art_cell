@@ -4,11 +4,17 @@
         "autoWidth": false,
         processing: true,
         serverSide: true,
-        ajax: $('#roles_data_url').val(),
+        ajax: {
+            url: $('#roles_data_url').val(),
+            data: function (d) {
+                d.user_type_id = $('#user_type_id').val();
+            }
+        },
         columns: [
             { data: 'id', name: 'id' },
             { data: 'role_name', name: 'role_name'},
-            { data: 'role_description', name: 'role_description' },
+            { data: 'user_type.name', name: 'user_type.name'},
+            { data: 'creator.name', name: 'creator.name' },
             { data: 'status', name: 'status',orderable: false },
             { data: 'created_at', name: 'created_at' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
@@ -18,7 +24,10 @@
         {   "targets": [0],
             "visible": false,
             "searchable": false
-        }]
+        }],
+        "drawCallback": function( settings ) {
+            $.LoadingOverlay("hide");
+        }
 
     });
 
@@ -109,3 +118,27 @@
   });
 
  }
+
+
+
+$('.user_type-filter').select2({
+  theme: 'bootstrap4',
+  placeholder:'Filter By User type'
+});
+
+
+$('#user_type_id').on('change', function(e) {
+    if(this.value!=''){
+      $('#user_type-filter-clear').show();
+    }else{
+      $('#user_type-filter-clear').hide();
+    }
+    
+    $.LoadingOverlay("show");
+    roles_table.draw();
+});
+
+
+$('#user_type-filter-clear').on('click',function(){
+  $('#user_type_id').val("").change();
+});

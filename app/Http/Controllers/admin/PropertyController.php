@@ -26,8 +26,12 @@ use App\Models\{Country,State,City,User,PropertyType,PropertyAttachment};
 use App\Http\Requests\Admin\Property\{CreatePropertyRequest,UpdatePropertyRequest};
 use Illuminate\Support\Str;
 use File;
+use Auth;
+
 class PropertyController extends Controller
 {
+
+
     //defining the view path
     private $view_path='admin.properties';
     //defining data array
@@ -46,7 +50,14 @@ class PropertyController extends Controller
         $current_user=auth()->guard('admin')->user();
         if($request->ajax()){
 
-            $properties=Property::whereHas('city')->whereHas('property_type')->with('city')->select('properties.*');
+            $properties=Property::whereHas('city')
+            ->where(function($q)use ($current_user){
+                //if logged in user is not super admin then fetch only those properties which are crated by logged in user
+                if($current_user->role->user_type->slug!='super-admin'){
+                    $q->whereCreatedBy($current_user->id);
+                }
+            })
+            ->whereHas('property_type')->with('city')->select('properties.*');
             return Datatables::of($properties)
             ->editColumn('created_at', function ($property) {
                 return $property->created_at ? with(new Carbon($property->created_at))->format('d/m/Y') : '';
@@ -107,12 +118,32 @@ class PropertyController extends Controller
     public function create(){
         $this->data['page_title']='Create Property';
         $this->data['cities']=City::whereHas('state')->whereHas('country')->whereIsActive(true)->get();
-        $this->data['property_managers']=User::whereHas('role',function($q){
-        	$q->where('role_type','property-manager');
-        })->whereStatus('A')->get();
-        $this->data['property_owners']=User::whereHas('role',function($q){
-        	$q->where('role_type','property-owner');
-        })->whereStatus('A')->get();
+        $current_user=auth()->guard('admin')->user();
+        $this->data['property_managers']=User::whereHas('role')
+        ->whereHas('role.creator')
+        ->whereHas('role.user_type',function($q){
+            $q->where('slug','property-manager');
+        })
+        ->whereStatus('A')->get();
+
+        $this->data['property_owners']=User::whereHas('role')
+        ->whereHas('role.creator')
+        ->whereHas('role.user_type',function($q){
+        	$q->where('slug','property-owner');
+        })
+        ->where(function($q)use ($current_user){
+            //if logged in user is not super admin then fetch only those property owner which are crated by logged in user and if the logged in user is a property owner then include his record to property owner list
+            if($current_user->role->user_type->slug!='super-admin'){
+                if($current_user->role->user_type->slug=='property-owner'){
+                  $q->whereCreatedBy($current_user->id)
+                  ->orWhere('id',$current_user->id);   
+                }else{
+                  $q->whereCreatedBy($current_user->id);
+                }
+               
+            }
+        })
+        ->whereStatus('A')->get();
 
         $this->data['property_types']=PropertyType::whereIsActive(true)->get();
         
@@ -138,9 +169,6 @@ class PropertyController extends Controller
         if(!$city){
            return redirect()->back()->with('error','City not found.'); 
         }
-
-
-
     	//system generated property code
     	$property_code='PROP'.Carbon::now()->timestamp;
     	$property=Property::create([
@@ -211,6 +239,8 @@ class PropertyController extends Controller
 
     public function show($id){
         $property=Property::findOrFail($id);
+        //policy is defined in App\Policies\PropertyPolicy
+        $this->authorize('update',$property);
         $this->data['page_title']='Property Details';
         $this->data['property']=$property;
         return view($this->view_path.'.show',$this->data);
@@ -225,17 +255,38 @@ class PropertyController extends Controller
     # Purpose          : to load property edit page                          #
     # Param            : id                                                  #
     public function edit($id){
+
         $property=Property::findOrFail($id);
+        //policy is defined in App\Policies\PropertyPolicy
+        $this->authorize('update',$property);
         $this->data['page_title']='Edit Property';
         $this->data['property']=$property;
-
+        $current_user=auth()->guard('admin')->user();
         $this->data['cities']=City::whereHas('state')->whereHas('country')->whereIsActive(true)->get();
-        $this->data['property_managers']=User::whereHas('role',function($q){
-        	$q->where('role_type','property-manager');
-        })->whereStatus('A')->get();
-        $this->data['property_owners']=User::whereHas('role',function($q){
-        	$q->where('role_type','property-owner');
-        })->whereStatus('A')->get();
+        $this->data['property_managers']=User::whereHas('role')
+        ->whereHas('role.creator')
+        ->whereHas('role.user_type',function($q){
+            $q->where('slug','property-manager');
+        })
+        ->whereStatus('A')->get();
+        $this->data['property_owners']=User::whereHas('role')
+        ->whereHas('role.creator')
+        ->whereHas('role.user_type',function($q){
+            $q->where('slug','property-owner');
+        })
+        ->where(function($q)use ($current_user){
+            //if logged in user is not super admin then fetch only those property owner which are crated by logged in user and if the logged in user is a property owner then include his record to property owner list
+            if($current_user->role->user_type->slug!='super-admin'){
+                if($current_user->role->user_type->slug=='property-owner'){
+                  $q->whereCreatedBy($current_user->id)
+                  ->orWhere('id',$current_user->id);   
+                }else{
+                  $q->whereCreatedBy($current_user->id);
+                }
+               
+            }
+        })
+        ->whereStatus('A')->get();
         
         $this->data['property_types']=PropertyType::whereIsActive(true)->get();
 
@@ -257,7 +308,8 @@ class PropertyController extends Controller
     public function update(UpdatePropertyRequest $request,$id){
 
     	$property=Property::findOrFail($id);
-
+        //policy is defined in App\Policies\PropertyPolicy
+        $this->authorize('update',$property);
     	$city=City::find($request->city_id);
         if(!$city){
            return redirect()->back()->with('error','City not found.'); 

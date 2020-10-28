@@ -53,12 +53,29 @@
                                         {{ Session::get('error') }}
                                     </div>
                                 @endif
+                                <div class="filter-area ">
+                                    <div class="row">
+                                        <div class="col-sm-4" id="user_type-filter-container">
+                                            <select class="form-control user_type-filter"  name="user_type_id" id="user_type_id">
+                                                <option value="">Filter By User type</option>
+                                                @forelse($user_types as $user_type)
+                                                   <option value="{{$user_type->id}}">{{$user_type->name}}</option>
+                                                @empty
+                                                <option value="">No User Type Found</option>
+                                                @endforelse
+                                           </select>
+                                           <a href="javascript::void(0)" title="Click to clear filter" style="display: none;" id="user_type-filter-clear"><span class="badge badge-danger">Clear Filter <i class="fas fa-times"></i></span></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="mt-3 mb-3"/>
                                 <table class="table table-bordered" id="roles_table">
                                     <thead>
                                         <tr>
                                             <th>Id</th>
                                             <th>Group Name</th>
-                                            <th>Group Description</th>
+                                            <th>Group User Type</th>
+                                            <th>Created By</th>
                                             <th>Status</th>
                                             <th>Created At</th>
                                             <th>Action</th>

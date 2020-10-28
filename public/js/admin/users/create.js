@@ -93,5 +93,5 @@ $("#admin_user_create_form").validate({
 
 $('#role_id').select2({
   theme: 'bootstrap4',
-  placeholder:'Select a group/role'
+  placeholder:'Select a group'
 });
