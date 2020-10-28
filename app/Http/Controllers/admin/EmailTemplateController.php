@@ -200,18 +200,6 @@ class EmailTemplateController extends Controller
             $details = EmailTemplate::where('id', $id)->first();
            
                     $delete = $details->delete();
-        //             if ($delete) {
-        //                 $request->session()->flash('alert-danger', 'Email Template has been deleted successfully');
-        //             } else {
-        //                 $request->session()->flash('alert-danger', 'An error occurred while deleting the email');
-        //             }
-        //     } else {
-        //         $request->session()->flash('alert-danger', 'Invalid email');
-                
-        //     }
-        //     return redirect()->back();
-        // } catch (Exception $e) {
-        //     return redirect()->route('admin.email.list')->with('error', $e->getMessage());
         return response()->json(['message'=>'Email Template successfully deleted.']);
             
        

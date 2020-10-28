@@ -286,28 +286,16 @@ class CitiesController extends Controller
     /*****************************************************/
     public function delete(Request $request, $id = null)
     {
-        try
-        {
+       
             if ($id == null) {
                 return redirect()->route('admin.cities.list');
             }
 
             $details = City::where('id', $id)->first();
-            if ($details != null) {
+            
                     $delete = $details->delete();
-                    if ($delete) {
-                        $request->session()->flash('alert-danger', 'City has been deleted successfully');
-                    } else {
-                        $request->session()->flash('alert-danger', 'An error occurred while deleting the city');
-                    }
-            } else {
-                $request->session()->flash('alert-danger', 'Invalid city');
-                
-            }
-            return redirect()->back();
-        } catch (Exception $e) {
-            return redirect()->route('admin.cities.list')->with('error', $e->getMessage());
-        }
+                return response()->json(['message'=>'City successfully deleted.']);
+                    
     }
     
 

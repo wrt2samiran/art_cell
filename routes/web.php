@@ -227,7 +227,7 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::any('/edit/{encryptCode}', 'CountryController@edit')->name('edit');
                 Route::put('/update', 'CountryController@update')->name('update');
                 Route::get('/{id}/change-change', 'CountryController@change_status')->name('change_status');
-                Route::delete('/{id}/delete', 'CountryController@delete')->name('delete');
+                Route::get('/delete/{id}', 'CountryController@delete')->name('delete');
                 Route::get('/{id}', 'CountryController@show')->name('show');                
             });
 
@@ -237,7 +237,7 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::any('/edit/{encryptCode}', 'StateController@edit')->name('edit');
                 Route::put('/update', 'StateController@update')->name('update');
                 Route::get('/{id}/change-change', 'StateController@change_status')->name('change_status');
-                Route::delete('/{id}/delete', 'StateController@delete')->name('delete');
+                Route::get('/delete/{id}', 'StateController@delete')->name('delete');
                 Route::get('/{id}', 'StateController@show')->name('show');
                 
             });
@@ -248,7 +248,7 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::any('/edit/{encryptCode}', 'CitiesController@edit')->name('edit');
                 Route::put('/update', 'CitiesController@update')->name('update');
                 Route::get('/{id}/change-change', 'CitiesController@change_status')->name('change_status');
-                Route::delete('/{id}/delete', 'CitiesController@delete')->name('delete');
+                Route::get('/delete/{id}', 'CitiesController@delete')->name('delete');
                 Route::get('/{id}', 'CitiesController@show')->name('show');
                 Route::post('/get-states', 'CitiesController@getStates')->name('getStates');                
             });

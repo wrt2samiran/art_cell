@@ -38,7 +38,7 @@
       $.LoadingOverlay("show");
       $.ajax({
         url: url,
-        type: "DELETE",
+        type: "GET",
         
         data:{ "_token": $('meta[name="csrf-token"]').attr('content')},
         success: function (data) {
