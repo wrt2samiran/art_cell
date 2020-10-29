@@ -56,6 +56,7 @@
                                         <tr>
                                             <th>Id</th>
                                             <th>Service Name</th>
+                                            <th>Price ({{Helper::getSiteCurrency()}})</th>
                                             <th>Description</th>
                                             <th>Status</th>
                                             <th>Created At</th>

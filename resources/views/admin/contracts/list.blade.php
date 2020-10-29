@@ -102,7 +102,7 @@
                                         <tr>
                                             <th>Id</th>
                                             <th>Contract Code</th>
-                                            <th>Info</th>
+                                            <th>Title</th>
                                             <th>Start Date</th>
                                             <th>End Date</th>
                                             <th>Location</th>

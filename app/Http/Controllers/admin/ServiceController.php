@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use App\Http\Requests\Admin\Service\{CreateServiceRequest,EditServiceRequest};
 use App\Models\{User,Service};
 use Carbon\Carbon;
+use Helper;
 class ServiceController extends Controller
 {
     private $view_path='admin.services';
@@ -101,6 +102,8 @@ class ServiceController extends Controller
                'description' =>$request->ar_description,
             ],
             'slug'=>Str::slug($request->service_name),
+            'price'=>$request->price,
+            'currency'=>Helper::getSiteCurrency(),
             'created_by'=>$current_user->id,
             'updated_by'=>$current_user->id
         ];
@@ -135,6 +138,8 @@ class ServiceController extends Controller
                'description' =>$request->ar_description,
             ],
             'slug'=>Str::slug($request->service_name),
+            'price'=>$request->price,
+            'currency'=>Helper::getSiteCurrency(),
             'updated_by'=>$current_user->id
         ];
 

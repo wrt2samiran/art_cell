@@ -146,3 +146,37 @@ $('.permission_checkbox').on('change',function(){
 
 
 
+var contract_module=$('#module_contract-management');
+
+
+
+if($('#user_type_id').length>0){
+ 
+
+    var selected_user_type=$('#user_type_id').find(":selected").data("slug");
+    if(selected_user_type!='super-admin'){
+        //we are not giving contract management permission to non super-admin user type
+        contract_module.css({display:'none'});
+        contract_module.find('input[type=checkbox]:checked').prop( "checked", false );
+    }
+
+
+    $('#user_type_id').on('change',function(){
+        var user_type=$(this).find(":selected").data("slug");
+
+        if(user_type!='super-admin'){
+            //we are not giving contract management permission to non super-admin user type
+            contract_module.css({display:'none'});
+            contract_module.find('input[type=checkbox]:checked').prop( "checked", false );
+        }else{
+            contract_module.css({display:'block'});
+        }
+
+    });
+}else{
+     contract_module.css({display:'block'});
+}
+
+
+
+

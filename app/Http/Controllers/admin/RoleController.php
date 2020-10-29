@@ -142,8 +142,11 @@ class RoleController extends Controller
                 ->whereNotIn('slug',['role-management','user-management']);
             }
         })->with(['functionalities'=>function($q)use($current_user){
-                //if logged in user is not super admin then fetch the permission related to logged in users role 
-                $q->whereIn('slug',$current_user->permisions_slug_array());
+                //if logged in user is not super admin then fetch the permission related to logged in users role
+                if($current_user->role->user_type->slug!='super-admin'){
+                    $q->whereIn('slug',$current_user->permisions_slug_array());
+                } 
+                
         }])->orderBy('created_at','ASC')->get();
         $this->data['modules']=$modules;
         return view($this->view_path.'.create',$this->data);
@@ -284,7 +287,7 @@ class RoleController extends Controller
         ];
 
         if($current_user->can_select_user_type_during_group_creation()  && $request->user_type_id && !$role->is_main_role ){
-            $update_data['user_type_id']=$user_type_id;
+            $update_data['user_type_id']=$request->user_type_id;
         }
        
         $role->update($update_data);

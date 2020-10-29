@@ -22,6 +22,7 @@ class CreateServiceRequest extends FormRequest
             'en_description'=>'required|max:255',
             'ar_service_name'=>'required|min:3|max:50',
             'ar_description'=>'required|max:255',
+            'price'=>'required|numeric'
         ];
     }
     public function messages(){

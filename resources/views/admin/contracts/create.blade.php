@@ -51,22 +51,45 @@
                         @csrf
                         <div>
                           <div class="form-group required">
-                            <label for="description">Contract Info <span class="error">*</span></label>
-                            <textarea class="form-control" name="description" id="description"  placeholder="Description">{!!old('description')?old('description'):''!!}</textarea>
+                            <label for="title">Contract Title <span class="error">*</span></label>
+                            <input type="text" value="{{old('title')?old('title'):''}}" class="form-control" name="title" id="title"  placeholder="Contract Title" />
+                            @if($errors->has('title'))
+                            <span class="text-danger">{{$errors->first('title')}}</span>
+                            @endif
+                          </div>
+                 
+                          <div class="form-group required">
+                             <label for="services">Services required for the contract <span class="error">*</span></label>
+                             <div>
+ 
+                               <a href="javascript:add_service();" class="btn  btn-outline-success"><i class="fas fa-plus"></i> Add Service</a>
+                             </div>
+                             <div id="services_error"></div>
+                             <input type="hidden" name="total_service" id="total_service">
+                          </div>
+                          <div id="services_container" style="display: none;">
+                            <table class="table table-bordered">
+                              <thead>
+                                <tr>
+                                  <th>Service Name</th>
+                                  <th>Service Type</th>
+                                  <th>How Frequently</th>
+                                  <th>Service Price</th>
+                                  <th>Action</th>
+                                </tr>
+                              </thead>
+                              <tbody></tbody>
+                            </table>
+                            
+                          </div>
+                          <div class="form-group required">
+                            <label for="description">Description<span class="error">*</span></label>
+                           <textarea rows="5" class="form-control CKEDITOR"  name="description" id="description"  placeholder="Description">{{old('description')?old('description'):''}}</textarea>
+
                             @if($errors->has('description'))
                             <span class="text-danger">{{$errors->first('description')}}</span>
                             @endif
-                          </div>
-                          <div class="form-group required">
-                             <label for="services">Services required for the contract <span class="error">*</span></label>
-                              <select class="form-control " multiple name="services[]" id="services" style="width: 100%;">
-                                <option value="">Select services</option>
-                                @forelse($services as $service)
-                                   <option value="{{$service->id}}" >{{$service->service_name}} </option>
-                                @empty
-                                <option value="">No Service Found</option>
-                                @endforelse                                
-                              </select>
+                            <div id="description_error"></div>
                           </div>
                           <div class="form-group required">
                              <label for="property_owner">Property Owner <span class="error">*</span></label>
@@ -117,7 +140,7 @@
                             <span class="text-danger">{{$errors->first('end_date')}}</span>
                             @endif
                           </div>
-                         <div class="form-group required">
+                          <div class="form-group required">
                             <label for="contract_price">Contract Price<span class="error">*</span></label>
                             <input type="text" class="form-control" value="{{old('contract_price')?old('contract_price'):''}}" name="contract_price" id="contract_price"  placeholder="Contract Price">
                             @if($errors->has('contract_price'))
@@ -223,8 +246,17 @@
       </div>
     </section>
 </div>
+@include('admin.contracts.modals.add_service_modal')
 @endsection
 
 @push('custom-scripts')
+<!-- *********Used for CK Editor ***************-->
+<script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
+<script>
+  $(document).ready(function(){
+    CKEDITOR.replace('description');
+  });
+
+</script>
 <script type="text/javascript" src="{{asset('js/admin/contracts/create.js')}}"></script>
 @endpush

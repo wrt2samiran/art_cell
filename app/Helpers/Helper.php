@@ -442,6 +442,14 @@ class Helper
             return $number. $ends[$number % 10];
     }
 
+    /*****************************************************/
+    # Function name : getSiteCurrency                     #
+    # Created Date  : 28-10-2020                          #
+    # Purpose       : Get site currency                   #
+    /*****************************************************/
+    public static function getSiteCurrency(){
+        return 'SAR';
+    }
 
 
 }

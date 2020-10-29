@@ -52,23 +52,87 @@
                         @method('PUT')
                         <div>
                           <div class="form-group required">
-                            <label for="description">Contract Info <span class="error">*</span></label>
-                            <textarea class="form-control" name="description" id="description"  placeholder="Description">{!!old('description')?old('description'):$contract->description!!}</textarea>
+                            <label for="title">Contract Title <span class="error">*</span></label>
+                            <input type="text" value="{{old('title')?old('title'):$contract->title}}" class="form-control" name="title" id="title"  placeholder="Contract Title" />
+                            @if($errors->has('title'))
+                            <span class="text-danger">{{$errors->first('title')}}</span>
+                            @endif
+                          </div>
+                 
+                          <div class="form-group required">
+                             <label for="services">Services required for the contract <span class="error">*</span></label>
+                             <div>
+ 
+                               <a href="javascript:add_service();" class="btn  btn-outline-success"><i class="fas fa-plus"></i> Add Service</a>
+                             </div>
+                             <div id="services_error"></div>
+                             <input type="hidden" value="{{(count($contract->services))?count($contract->services):''}}" name="total_service" id="total_service">
+                          </div>
+                          <div id="services_container" style="display: {{(count($contract->services))?'block':'none'}};">
+                            <table class="table table-bordered">
+                              <thead>
+                                <tr>
+                                  <th>Service Name</th>
+                                  <th>Service Type</th>
+                                  <th>How Frequently</th>
+                                  <th>Service Price</th>
+                                  <th>Action</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                @if(count($contract->services))
+                                @foreach($contract->services as $service)
+                      
+                                <tr class="services_row" id="service_row_{{$service->id}}">
+                                  <td>
+                                    {{$service->service->service_name}}
+                                    <input type="hidden" value="{{$service->service_id}}" name="services[]">
+                                  </td>
+                                  <td>
+                                    {{$service->service_type}}
+                                    <input type="hidden" value="{{$service->service_type}}" name="service_type[]">
+                                  </td>
+                                  <td>
+                                    @if($service->frequency_type)
+                                    {{$service->frequency_type->type}}
+                                    @endif
+                                    @if($service->number_of_time_can_used)
+                                    <span>Can use {{$service->number_of_time_can_used}} times</span>
+                                    @endif
+                                    @if(!$service->frequency_type && !$service->number_of_time_can_used)
+                                    ---
+                                    @endif
+                                    <input type="hidden" value="{{$service->frequency_type_id}}" name="frequency_type_id[]">
+                                    <input type="hidden" value="{{$service->interval_days}}" name="interval_days[]">
+                                    <input type="hidden" value="{{$service->number_of_time_can_used}}" name="number_of_time_can_used[]">
+                                  </td>
+                                  <td>
+                                    {{$service->price}}
+                                    <input type="hidden" value="{{$service->price}}" name="service_price[]">
+                                  </td>
+                                  <td>
+                                    <input type="hidden" value="{{$service->id}}" name="contract_service_id[]">
+                                    <a href="javascript:void(0)" data-service_details="{{base64_encode($service)}}" id="edit_{{$service->id}}" class="btn_service_edit btn btn-outline-success"><i class="fas fa-pen-square text-success"></i></a>
+
+                                    <a href="javascript:void(0)" id="{{$service->id}}" class="btn_service_remove btn btn-outline-danger">x</a>
+                                  </td>
+                                </tr>
+                                @endforeach
+                                @endif
+                              </tbody>
+                            </table>
+                            
+                          </div>
+                          <div class="form-group required">
+                            <label for="description">Description<span class="error">*</span></label>
+                           <textarea rows="5" class="form-control CKEDITOR"  name="description" id="description"  placeholder="Description">{{old('description')?old('description'):$contract->description}}</textarea>
+
                             @if($errors->has('description'))
                             <span class="text-danger">{{$errors->first('description')}}</span>
                             @endif
+                            <div id="description_error"></div>
                           </div>
-                          <div class="form-group required">
-                             <label for="services">Services required for the contract <span class="error">*</span></label>
-                              <select class="form-control " multiple name="services[]" id="services" style="width: 100%;">
-                                <option value="">Select services</option>
-                                @forelse($services as $service)
-                                   <option value="{{$service->id}}" {{(in_array($service->id,$contract->services_id_array()))?'selected':''}} >{{$service->service_name}} </option>
-                                @empty
-                                <option value="">No Service Found</option>
-                                @endforelse                                
-                              </select>
-                          </div>
+
                           <div class="form-group required">
                              <label for="property_owner">Property Owner <span class="error">*</span></label>
                               <select class="form-control " name="property_owner" id="property_owner" style="width: 100%;">
@@ -327,8 +391,18 @@
       </div>
     </section>
 </div>
+@include('admin.contracts.modals.add_service_modal')
+@include('admin.contracts.modals.edit_service_modal')
 @endsection
 
 @push('custom-scripts')
+<!-- *********Used for CK Editor ***************-->
+<script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
+<script>
+  $(document).ready(function(){
+    CKEDITOR.replace('description');
+  });
+
+</script>
 <script type="text/javascript" src="{{asset('js/admin/contracts/edit.js')}}"></script>
 @endpush

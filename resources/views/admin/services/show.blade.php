@@ -38,6 +38,10 @@
                           <td >{{$service->service_name}}</td>
                         </tr>
                         <tr>
+                          <td>Price</td>
+                          <td >{{$service->price}} {{Helper::getSiteCurrency()}}</td>
+                        </tr>
+                        <tr>
                           <td >Description</td>
                           <td >{{$service->description}}</td>
                         </tr>

@@ -11,7 +11,7 @@ class Contract extends Model
     protected $guarded=[];
 
     public function services(){
-    	return $this->belongsToMany(Service::class);
+    	return $this->hasMany(ContractService::class);
     }
 
     public function service_provider(){
