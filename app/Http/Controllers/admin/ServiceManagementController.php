@@ -138,6 +138,7 @@ class ServiceManagementController extends Controller
                     'property_id'          => 'required',
                     'service_provider_id'  => 'required',
                     'service_id'           => 'required',
+                    'service_details'      => 'required',
                     'service_start_date'   => 'required',
                     'service_end_date'     => 'required',
                 );
@@ -146,6 +147,7 @@ class ServiceManagementController extends Controller
                     'property_id.required'         => 'Please select country',
                     'service_provider_id.required' => 'Please select state',
                     'service_id.required'          => 'Please select country',
+                    'service_details.required'     => 'Service Details is required',
                     'service_start_date.required'  => 'Please select state',
                     'service_end_date.required'    => 'Please select state',
                 );
@@ -165,6 +167,7 @@ class ServiceManagementController extends Controller
                     $newService->property_id            = $request->property_id;
                     $newService->service_provider_id    = $request->service_provider_id;
                     $newService->service_name           = $request->service_id;
+                    $newService->service_details        = $request->service_details;
                     $newService->service_start_date     = $start_date;
                     $newService->service_end_date       = $end_date;
                     $newService->created_at             = date('Y-m-d H:i:s');
@@ -258,6 +261,7 @@ class ServiceManagementController extends Controller
                     'property_id'          => 'required',
                     'service_provider_id'  => 'required',
                     'service_id'           => 'required',
+                    'service_details'      => 'required',
                     'service_start_date'   => 'required',
                     'service_end_date'     => 'required',
                 );
@@ -266,6 +270,7 @@ class ServiceManagementController extends Controller
                     'property_id.required'         => 'Please select country',
                     'service_provider_id.required' => 'Please select state',
                     'service_id.required'          => 'Please select country',
+                    'service_details.required'     => 'Service Details is required',
                     'service_start_date.required'  => 'Please select state',
                     'service_end_date.required'    => 'Please select state',
                 );
@@ -282,6 +287,7 @@ class ServiceManagementController extends Controller
                     $details->property_id            = $request->property_id;
                     $details->service_provider_id    = $request->service_provider_id;
                     $details->service_name           = $request->service_id;
+                    $details->service_details        = $request->service_details;
                     $details->service_start_date     = $start_date;
                     $details->service_end_date       = $end_date;
                     $details->created_at             = date('Y-m-d H:i:s');

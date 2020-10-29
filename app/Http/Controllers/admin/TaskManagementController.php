@@ -62,7 +62,7 @@ class TaskManagementController extends Controller
                 $details_url=route('admin.task_management.show',$task_list->id);
                 $add_url=route('admin.task_management.calendar',$task_list->id);
 
-                return '<a title="View City Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>&nbsp;&nbsp;<a title="Add Task" href="'.$add_url.'"><i class="fas fa-plus text-success"></i></a>&nbsp;&nbsp;<a title="Delete city" href="javascript:delete_city('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
+                return '<a title="View Task Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>&nbsp;&nbsp;<a title="Add Task" href="'.$add_url.'"><i class="fas fa-plus text-success"></i></a>&nbsp;&nbsp;<a title="Delete city" href="javascript:delete_city('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
                 
             })
             ->rawColumns(['action','status'])
@@ -192,7 +192,7 @@ class TaskManagementController extends Controller
                 
                 if($logedInUser==$tasks->created_by){
                     $details_url = route('admin.task_management.dailyTask',$tasks->id);
-                    $action_buttons=$action_buttons.'<a title="Daily Task List" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
+                    $action_buttons=$action_buttons.'<a title="Daily Task List" id="details_task" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
                 }
 
                 // if($logedInUser==$tasks->created_by and isset($tasks->tasks_list)==''){
@@ -324,6 +324,7 @@ class TaskManagementController extends Controller
                     //$arr_days []= date('o-m-d',$date_from);
                     
                     $temp = new TaskDetails;
+                    $temp->service_allocation_id = $request->service_allocation_id;
                     $temp->service_id = $request->service_id;
                     $temp->task_id = $new->id;
                     $temp->user_id =$request->labour_id;
@@ -342,6 +343,7 @@ class TaskManagementController extends Controller
 
                         $temp = new TaskDetails;
                         $temp->service_id = $request->service_id;
+                        $temp->service_allocation_id = $request->service_allocation_id;
                         $temp->task_id = $new->id;
                         $temp->user_id =$request->labour_id;
                         $temp->task_date = $value;
@@ -596,14 +598,14 @@ class TaskManagementController extends Controller
     /*****************************************************/
 
     public function dailyTask(Request $request, $id){
-       // dd($request->all());
+
+        //dd($request->all());
         $this->data['page_title']='Daily Task List';
         $logedInUser = \Auth::guard('admin')->user()->id;
 
         if($request->ajax()){
-            echo $id;
-            exit();
-            $task_detail_list=TaskDetails::whereTaskId($id)->orderBy('id','Desc');
+
+            $task_detail_list=TaskDetails::with('task')->with('service')->where('task_id', $id)->orderBy('id','Desc');
             return Datatables::of($task_detail_list)
             ->editColumn('created_at', function ($task_detail_list) {
                 return $task_detail_list->created_at ? with(new Carbon($task_detail_list->created_at))->format('m/d/Y') : '';
@@ -615,11 +617,11 @@ class TaskManagementController extends Controller
             ->addColumn('status',function($task_detail_list){
                 if($task_detail_list->status=='1'){
                    //$message='deactivate';
-                   return '<span class="btn btn-block btn-outline-success btn-sm">Overdue</a>';
+                   return '<span class="btn btn-block btn-outline-denger btn-sm">Overdue</a>';
                     
                 }else if($task_detail_list->status=='0'){
                   // $message='activate';
-                   return '<span class="btn btn-block btn-outline-success btn-sm">Pending</a>';
+                   return '<span class="btn btn-block btn-outline-warning btn-sm">Pending</a>';
                 }
                 else
                 {
@@ -627,22 +629,26 @@ class TaskManagementController extends Controller
                 }
             })
             ->addColumn('action',function($task_detail_list){
-                $delete_url=route('admin.task_management.daily-task-delete',$task_detail_list->id);
-                $details_url=route('admin.task_management.daily-task-show',$task_detail_list->id);
+                //$delete_url=route('admin.task_management.daily-task-delete',$task_detail_list->id);
+              //  $details_url=route('admin.task_management.daily-task-show',$task_detail_list->id);
 
-                return '<a title="View Daily Task Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>&nbsp;&nbsp;<a title="Delete Daily Task" href="javascript:delete_daily_task('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
+                return '<a title="View Daily Task Update" href="javascript:void(0)" onclick="callModal('.$task_detail_list->id.')"><i class="fas fa-head-side-cough"></i></a>&nbsp;&nbsp;';
+                //return '<button data-id="'.$task_detail_list->id.'" data-toggle="modal"  class="btnModal"> Edit </button>';
+                // 
                 
             })
             ->rawColumns(['action','status'])
             ->make(true);
         }
 
-        
+        $this->data['task_list_data']=TaskLists::with('property')->with('service')->with('country')->with('state')->with('city')->with('userDetails')->findOrFail($id);
         //$this->data['task_detail_list']  = $task_detail_list;
         $this->data['request'] = $request;
 
        // return view($this->view_path.'.add',$this->data);
-
+        // dd($task_detail_list);
+        // echo 'Kasds';
+        // exit();
         return view($this->view_path.'.daily-task-list',$this->data);
     }
 

@@ -33,7 +33,7 @@
               <div class="card-body"> 
                  <table class="table table-bordered table-hover" id="country-details-table">
                       <tbody>
-                        
+                        <?php //dd($service_allocation_data);?>
                         <tr>
                           <td >Contract Code</td>
                           <td >{{$service_allocation_data->contract->code}}</td>
@@ -50,7 +50,10 @@
                           <td>Service Required</td>
                           <td >{{$service_allocation_data->service->service_name}}</td>
                         </tr>
-
+                        <tr>
+                          <td>Service Details</td>
+                          <td >{!! $service_allocation_data->service_details!!}</td>
+                        </tr>
                         <tr>
                           <td >Service Provider</td>
                           <td >{{$service_allocation_data->service_provider->name}}</td>

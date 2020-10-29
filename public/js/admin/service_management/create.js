@@ -17,6 +17,10 @@
         service_id:{
             required: true, 
         },
+        service_details:{
+            required: true,
+            maxlength: 1000,  
+        },
         service_start_date:{
             required: true, 
             maxlength: 10,
@@ -43,7 +47,10 @@
         service_id:{
             required:  "Please select service",
         },
-       
+        service_details: {
+            required:  "Service Details is required",
+            maxlength: "Info should not be more then 1000 characters",
+        },
         service_start_date:{
             required:  "Enter start date in dd/mm/yyy format",
         },

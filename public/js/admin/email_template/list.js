@@ -44,7 +44,7 @@ function delete_message(id){
         success: function (data) {
           email_table.ajax.reload(null, false);
           $.LoadingOverlay("hide");
-          toastr.success('Message successfully deleted.', 'Success', {timeOut: 5000});
+          toastr.success('Emailtemplate successfully deleted.', 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");
