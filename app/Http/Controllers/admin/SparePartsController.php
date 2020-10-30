@@ -288,16 +288,12 @@ class SparePartsController extends Controller
             $details = SparePart::where('id', $id)->first();
             if ($details != null) {
                     $delete = $details->delete();
-                    if ($delete) {
-                        $request->session()->flash('alert-danger', 'Shared Service has been deleted successfully');
-                    } else {
-                        $request->session()->flash('alert-danger', 'An error occurred while deleting the state');
-                    }
+                    return response()->json(['message'=>'Spare Parts successfully deleted.']);
             } else {
-                $request->session()->flash('alert-danger', 'Invalid state');
+                return response()->json(['message'=>'Something went wrong! Please try again letter.']);
                 
             }
-            return redirect()->back();
+        
         } catch (Exception $e) {
             return redirect()->route('admin.spare-parts.list')->with('error', $e->getMessage());
         }

@@ -310,13 +310,15 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::get('/calendar', 'TaskManagementController@calendar')->name('calendar');
                 Route::get('/', 'TaskManagementController@list')->name('list');
                 Route::any('/add','TaskManagementController@taskAdd')->name('taskAdd');
-                
                 Route::post('/get-cities', 'TaskManagementController@getCities')->name('getCities');
                 Route::post('/update-task', 'TaskManagementController@updateTask')->name('updateTask');  
                 Route::get('/{id}', 'TaskManagementController@show')->name('show');   
                 Route::get('/daily-task/{id}', 'TaskManagementController@dailyTask')->name('dailyTask'); 
-                
-                Route::any('/{id}/delete', 'TaskManagementController@delete')->name('delete');           
+                Route::any('/{id}/delete', 'TaskManagementController@delete')->name('delete');
+                Route::post('/task-feedback', 'TaskManagementController@taskFeedback')->name('taskFeedback'); 
+                Route::get('/daily-task-show/{id}', 'TaskManagementController@dailyTaskShow')->name('dailyTaskShow');
+                Route::get('/{id}/change-status', 'TaskManagementController@change_status')->name('change_status');
+                   
                 
             });
 

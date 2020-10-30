@@ -112,8 +112,6 @@
                                     <thead>
                                         <tr>
                                             <th>Id</th>
-                                            <!-- <th>Task Title</th>
-                                            <th>Service</th> -->
                                             <th>Task Date</th>
                                             <th>User Feedback</th>
                                             <th>Status</th>
@@ -137,30 +135,16 @@
                                     </div>
                                     <div class="modal-body">
                                       <div class="card-body">
-                                         @if(Session::has('success'))
-                                            <div class="alert alert-success alert-dismissable __web-inspector-hide-shortcut__">
-                                                <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-                                                {{ Session::get('success') }}
-                                            </div>
-                                          @endif
-
-                                          @if(Session::has('error'))
-                                            <div class="alert alert-danger alert-dismissable">
-                                                <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-                                                {{ Session::get('error') }}
-                                            </div>
-                                          @endif
-
-
                                           <div class="row justify-content-center">
                                             <div class="col-md-10 col-sm-12">
+                                              
                                               <form  method="post" id="admin_labour_task_feedback_form" action="{{route('admin.task_management.taskFeedback')}}" method="post" enctype="multipart/form-data">
                                                 @csrf
                                                       <div>  
-                                                        <input type="text" name="task_details_id" id="task_details_id" />
+                                                        <input type="hidden" name="task_details_id" id="task_details_id" />
                                                  
                                                         <div class="form-group">
-                                                          <label for="service_id">Task Description</label>
+                                                          <label for="service_id">Task Feedback </label>
                                                           <textarea class="form-control float-right" name="user_feedback" id="user_feedback">{{old('user_feedback')}}</textarea>
                                                            @if($errors->has('user_feedback'))
                                                             <span class="text-danger">{{$errors->first('user_feedback')}}</span>
@@ -169,6 +153,7 @@
                                                         
                                                     <div>
                                                    <button type="submit" class="btn btn-success">Submit</button> 
+
                                                 </div>
                                               </form>
                                             </div>
@@ -198,7 +183,7 @@
 @push('custom-scripts')
 
 <script type="text/javascript">
-    function callModal(id)
+    function addFeedback(id)
     {
         $('#task_details_id').val(id);
         $('#addTaskModal').modal('show');
