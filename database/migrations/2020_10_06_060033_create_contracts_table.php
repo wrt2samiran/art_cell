@@ -17,6 +17,7 @@ class CreateContractsTable extends Migration
         Schema::create('contracts', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('code',30)->comment = 'System generated';
+            $table->string('title');
             $table->text('description');
             $table->unsignedBigInteger('customer_id')->index()->nullable();
             $table->unsignedBigInteger('property_id')->index();

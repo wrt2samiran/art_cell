@@ -18,7 +18,7 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\{ContractStatus,Contract,User,Property,Service,ContractAttachment,ContractInstallment};
+use App\Models\{ContractStatus,Contract,User,Property,Service,ContractAttachment,ContractInstallment,FrequencyType,ContractService};
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
@@ -53,7 +53,7 @@ class ContractController extends Controller
             ->whereHas('property')
             ->whereHas('customer')
             ->whereHas('service_provider')
-            ->whereHas('services')
+
             ->whereHas('contract_status')
             ->when($request->contract_status_id,function($query) use($request){
             	$query->where('contract_status_id',$request->contract_status_id);
@@ -156,7 +156,7 @@ class ContractController extends Controller
         ->whereHas('role.user_type',function($q){
         	$q->where('slug','service-provider');
         })->get();
-
+        $this->data['frequency_types']=FrequencyType::get();
         $this->data['properties']=Property::whereIsActive(true)->get();
 		$this->data['services']=Service::whereIsActive(true)->get();
         return view($this->view_path.'.create',$this->data);
@@ -185,6 +185,7 @@ class ContractController extends Controller
 
         $contract=Contract::create([
         	'code'=>$contract_code,
+            'title'=>$request->title,
         	'description'=>$request->description,
         	'customer_id'=>$request->property_owner,
         	'property_id'=>$request->property,
@@ -201,7 +202,27 @@ class ContractController extends Controller
         	'updated_by'=>$current_user->id
         ]);
 
-        $contract->services()->sync($request->services);
+        if($request->services){
+            $service_data=[];
+
+            foreach ($request->services as $key => $service) {
+               $service_data[]=[
+                'contract_id'=>$contract->id,
+                'service_id'=>$service,
+                'service_type'=>$request->service_type[$key],
+                'currency'=>'SAR',
+                'price'=>($request->service_type[$key]=='Free')?'0':$request->service_price[$key],
+                'frequency_type_id'=>$request->frequency_type_id[$key],
+                'interval_days'=>$request->interval_days[$key],
+                'number_of_time_can_used'=>$request->number_of_time_can_used[$key],
+                'created_by'=>$current_user->id,
+                'updated_by'=>$current_user->id
+               ];
+            }
+            
+            ContractService::insert($service_data);
+
+        }
 
         if($request->hasFile('contract_files')){
 
@@ -276,7 +297,7 @@ class ContractController extends Controller
             ->whereHas('property')
             ->whereHas('customer')
             ->whereHas('service_provider')
-            ->whereHas('services')->findOrFail($id);
+            ->findOrFail($id);
         //policy is defined in App\Policies\ContractPolicy
         $this->authorize('view',$contract);
         $this->data['page_title']='Contract Details';
@@ -312,6 +333,8 @@ class ContractController extends Controller
             $q->where('slug','service-provider');
         })->get();
 
+        $this->data['frequency_types']=FrequencyType::get();
+
         $this->data['properties']=Property::whereIsActive(true)->get();
         $this->data['services']=Service::whereIsActive(true)->get();
         $this->data['contract_statuses']=ContractStatus::where('is_active',true)->get();
@@ -336,6 +359,7 @@ class ContractController extends Controller
         $end_date=Carbon::createFromFormat('d/m/Y', $request->end_date)->format('Y-m-d');
 
         $contract->update([
+            'title'=>$request->title,
             'description'=>$request->description,
             'customer_id'=>$request->property_owner,
             'property_id'=>$request->property,
@@ -351,7 +375,43 @@ class ContractController extends Controller
             'updated_by'=>$current_user->id
         ]);
 
-        $contract->services()->sync($request->services);
+        if($request->services){
+
+            foreach ($request->services as $key => $service) {
+               $service_data=[
+                'contract_id'=>$contract->id,
+                'service_id'=>$service,
+                'service_type'=>$request->service_type[$key],
+                'currency'=>'SAR',
+                'price'=>($request->service_type[$key]=='Free')?'0':$request->service_price[$key],
+                'frequency_type_id'=>$request->frequency_type_id[$key],
+                'interval_days'=>$request->interval_days[$key],
+                'number_of_time_can_used'=>$request->number_of_time_can_used[$key],
+                'updated_by'=>$current_user->id
+               ];
+
+               $contract_service_id=$request->contract_service_id[$key];
+
+               if($contract_service_id!=''){
+                $contract_service=ContractService::find($contract_service_id);
+               }else{
+                $contract_service=null;
+               }
+
+               if($contract_service){
+                $contract_service->update($service_data);
+               }else{
+                $service_data['created_by']=$current_user->id;
+                ContractService::create($service_data);
+               }
+
+
+
+            }
+            
+            
+
+        }
 
         if($request->hasFile('contract_files')){
 
@@ -381,7 +441,6 @@ class ContractController extends Controller
                  'file_type'=>$file_type,
                  'created_by'=>auth()->guard('admin')->id()
                 ]);
-
 
             }
         }
@@ -418,8 +477,6 @@ class ContractController extends Controller
                             'updated_by'=>$current_user->id
                         ]);  
                     }
-
-                    
 
                 }
             }

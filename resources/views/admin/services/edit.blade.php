@@ -102,6 +102,14 @@
                           </div>
 
                         </div>
+                        <hr>
+                        <div class="form-group required">
+                          <label for="price">Price ({{Helper::getSiteCurrency()}})<span class="error">*</span></label>
+                          <input type="text" class="form-control" value="{{old('price')?old('price'):$service->price}}" name="price" id="price"  placeholder="Please Enter Price">
+                          @if($errors->has('price'))
+                          <span class="text-danger">{{$errors->first('price')}}</span>
+                          @endif
+                        </div>
                         <!--  this the url for remote validattion rule for role name -->
                         <input type="hidden" id="ajax_check_service_name_unique_url" value="{{route('admin.services.ajax_check_service_name_unique',$service->id)}}">
                         <div>

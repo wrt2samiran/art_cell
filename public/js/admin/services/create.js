@@ -45,6 +45,10 @@ $("#admin_service_create_form").validate({
             minlength: 3,
             maxlength: 255,
         },
+        price:{
+            required: true, 
+            number:true
+        },
     },
     messages: {
         en_service_name: {
@@ -68,7 +72,10 @@ $("#admin_service_create_form").validate({
             required:  "Description is required",
             minlength: "Description should have 3 characters",
             maxlength: "Description should not more then 255 characters"
-        }
+        },
+        price:{
+            required:  "Enter service price",
+        },
     },
     errorPlacement: function (error, element) {
         error.addClass('invalid-feedback');

@@ -8,6 +8,7 @@
         columns: [
             { data: 'id', name: 'id' },
             { data: 'service_name', name: 'service_name'},
+            { data: 'price', name: 'price'},
             { data: 'description', name: 'description' },
             { data: 'is_active', name: 'is_active',orderable: false },
             { data: 'created_at', name: 'created_at' },

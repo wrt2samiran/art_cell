@@ -76,7 +76,7 @@
                               <select {{$disabled}} class="form-control user_type_select2" name="user_type_id" id="user_type_id" style="width: 100%;">
                                 <option value="">Select user type</option>
                                 @forelse($user_types as $user_type)
-                                   <option value="{{$user_type->id}}" {{($user_type->id==$role->user_type_id)?'selected':''}}>{{$user_type->name}}</option>
+                                   <option data-slug="{{$user_type->slug}}" value="{{$user_type->id}}" {{($user_type->id==$role->user_type_id)?'selected':''}}>{{$user_type->name}}</option>
                                 @empty
                                 <option value="">No user type found</option>
                                 @endforelse                                
@@ -90,7 +90,7 @@
                           <div class="row">
                             @if(count($modules))
                               @foreach($modules as $module)
-                              <div class="col-sm-4">
+                              <div class="col-sm-4" id="module_{{$module->slug}}">
                                 <div class="card card-success">
                                   <div  class="card-header">{{$module->module_name}}</div>
                                   <div  class="card-body" id="module_no_{{$module->id}}">

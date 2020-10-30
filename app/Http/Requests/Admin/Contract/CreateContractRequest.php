@@ -26,14 +26,14 @@ class CreateContractRequest extends FormRequest
     {
         request()->session()->flash('number_of_installment', count(request('amount')));
         return [
-            'description'=>'required|max:1000',
+            'title'=>'required|max:255',
+            'description'=>'required',
             'property'=>'required',
             'service_provider'=>'required',
             'property_owner'=>'required',
             'start_date'=>['required','date_format:d/m/Y'],
             'end_date'=>['required','date_format:d/m/Y'],
             'contract_price'=>'required',
-            'services'=>'required',
             'contract_files.*' => [
                 'mimetypes:application/pdf,image/jpeg,image/png,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword',
                 'max:1024',
@@ -42,8 +42,9 @@ class CreateContractRequest extends FormRequest
     }
     public function messages(){
         return [
-            'description.required' => 'Contract info is required',
-            'description.max'=>'Info should not be more then 1000 characters',
+            'title.required' => 'Contract title is required',
+            'title.max'=>'Title should not be more then 255 characters',
+            'description.required' => 'Contract description is required',
             'property.required'=>'Select property',
             'property_owner.required' => 'Please select property owner',
             'service_provider.required'=>'Please select service provider',
