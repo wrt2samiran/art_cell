@@ -71,10 +71,10 @@
  }
 
 //function to change status of gallery
- function change_status(url,activate_or_deactivate){
+ function change_status(url,complete_or_pending){
   swal({
   title: "Are you sure?",
-  text: "You want to "+activate_or_deactivate+" the city.",
+  text: "You want to "+complete_or_pending+" the daily task.",
   icon: "warning",
   buttons: true,
   dangerMode: true,
@@ -89,6 +89,8 @@
         success: function (data) {
           $.LoadingOverlay("hide");
           toastr.success('Status successfully updated.', 'Success', {timeOut: 5000});
+          //daily_task_management_table.ajax.reload(null, false);
+          window.location.href=url;
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");
@@ -102,13 +104,48 @@
         }
      });
 
-     daily_task_management_table.ajax.reload(null, false);
-    // window.location.href=url;
+     
+    // 
     } 
   });
 
 
  }
+
+ 
+
+ $("#admin_labour_task_feedback_form").validate({
+
+        rules: {
+            user_feedback: {
+                required: true,
+                maxlength: 5000,
+            },
+           
+        },
+        messages: {
+            user_feedback: {
+                required: 'Please enter your Feedback',
+                maxlength: "Feedback should not be more than 5000 characters"
+            },
+            
+        },
+
+        errorPlacement: function (error, element) {
+          error.addClass('invalid-feedback');
+          error.insertAfter(element);
+        },
+        highlight: function (element, errorClass, validClass) {
+          $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+          $(element).removeClass('is-invalid');
+        },
+        submitHandler: function(form) {
+            form.submit();
+        }
+    });
+
 
  $("document").ready(function(){
     setTimeout(function(){

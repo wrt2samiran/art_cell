@@ -190,10 +190,10 @@ class TaskManagementController extends Controller
                      $action_buttons =$action_buttons.'<a title="Add Task" href="'.$add_url.'"><i class="fas fa-plus text-success"></i></a>';
                 }
                 
-                if($logedInUser==$tasks->created_by){
+                // if($logedInUser==$tasks->created_by){
                     $details_url = route('admin.task_management.dailyTask',$tasks->id);
                     $action_buttons=$action_buttons.'<a title="Daily Task List" id="details_task" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
-                }
+                // }
 
                 // if($logedInUser==$tasks->created_by and isset($tasks->tasks_list)==''){
                 //     $edit_url = route('admin.task_management.edit',$tasks->id);
@@ -446,13 +446,13 @@ class TaskManagementController extends Controller
         try
         {
             if ($id == null) {
-                return redirect()->route('admin.service_management.calendar');
+                return redirect()->route('admin.task_management.daily-task');
             }
-            $details = TaskLists::where('id', $id)->first();
+            $details = TaskDetails::where('id', $id)->first();
             if ($details != null) {
-                if ($details->is_active == 1) {
+                if ($details->status == 0) {
                     
-                    $details->is_active = '0';
+                    $details->status = '2';
                     $details->save();
                         
                     $request->session()->flash('alert-success', 'Status updated successfully');                 
@@ -601,7 +601,7 @@ class TaskManagementController extends Controller
 
         //dd($request->all());
         $this->data['page_title']='Daily Task List';
-        $logedInUser = \Auth::guard('admin')->user()->id;
+        
 
         if($request->ajax()){
 
@@ -620,19 +620,48 @@ class TaskManagementController extends Controller
                    return '<span class="btn btn-block btn-outline-denger btn-sm">Overdue</a>';
                     
                 }else if($task_detail_list->status=='0'){
-                  // $message='activate';
-                   return '<span class="btn btn-block btn-outline-warning btn-sm">Pending</a>';
+                   $message='complete';
+                   if($task_detail_list->user_feedback==''){
+                        return '<span class="btn btn-block btn-outline-warning btn-sm">Pending</a>';
+                   }
+                   else{
+                        return '<a title="Click to Complete the daily task" href="javascript:change_status('."'".route('admin.task_management.change_status',$task_detail_list->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm">Pending</a>';
+                   }
+                   
+                   
                 }
                 else
                 {
                     return '<span class="btn btn-block btn-outline-success btn-sm">Completed</a>';
                 }
             })
-            ->addColumn('action',function($task_detail_list){
-                //$delete_url=route('admin.task_management.daily-task-delete',$task_detail_list->id);
-              //  $details_url=route('admin.task_management.daily-task-show',$task_detail_list->id);
 
-                return '<a title="View Daily Task Update" href="javascript:void(0)" onclick="callModal('.$task_detail_list->id.')"><i class="fas fa-head-side-cough"></i></a>&nbsp;&nbsp;';
+            ->addColumn('action',function($task_detail_list){
+                $logedInUser = \Auth::guard('admin')->user()->id;
+                $details_url=route('admin.task_management.dailyTaskShow',$task_detail_list->id);
+
+                if($task_detail_list->user_feedback==''){
+                    if($task_detail_list->user_id==$logedInUser){
+                        $today = date('Y-m-d');
+                        if($today == $task_detail_list->task_date)
+                        {
+                            return '<a title="Add Task Feedback" href="javascript:void(0)" onclick="addFeedback('.$task_detail_list->id.')"><i class="fas fa-head-side-cough"></i></a>&nbsp;&nbsp;';
+                        }
+                        else
+                        {
+                            return 'Permission Denied';
+                        }
+                        
+                    }
+                    else{
+                        return 'No Access';
+                    }
+                    
+                }
+                else{
+                    // return '<a title="View Daily Task Update" href="javascript:void(0)" onclick="showFeedback('.$task_detail_list->id.')"><i class="fas fa-eye text-primary"></i></a>&nbsp;&nbsp;';
+                    return '<a title="View Daily Task Update" id="details_task_feedback" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
+                }
                 //return '<button data-id="'.$task_detail_list->id.'" data-toggle="modal"  class="btnModal"> Edit </button>';
                 // 
                 
@@ -642,14 +671,71 @@ class TaskManagementController extends Controller
         }
 
         $this->data['task_list_data']=TaskLists::with('property')->with('service')->with('country')->with('state')->with('city')->with('userDetails')->findOrFail($id);
-        //$this->data['task_detail_list']  = $task_detail_list;
         $this->data['request'] = $request;
-
-       // return view($this->view_path.'.add',$this->data);
-        // dd($task_detail_list);
-        // echo 'Kasds';
-        // exit();
+       
         return view($this->view_path.'.daily-task-list',$this->data);
+    }
+
+    
+    public function taskFeedback(Request $request) {
+
+        //dd($request->all());
+        $logedInUser = \Auth::guard('admin')->user()->id;
+        $sqlTaskData = TaskDetails::findOrFail($request->task_details_id);
+        $this->data['page_title']     = 'Add Task Feedback';
+    
+        try
+        {
+            if ($request->isMethod('POST'))
+            {
+                $validationCondition = array(
+                    'user_feedback' => 'required|max:5000',
+                );
+                $validationMessages = array(
+                    'user_feedback.required'    => 'Please enter your Feedback',
+                    'user_feedback.max'         => 'Feedback should not be more than 5000 characters',
+                );
+
+                $Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);
+                if ($Validator->fails()) {
+
+                    return redirect()->route('admin.task_management.dailyTask',$sqlTaskData->task_id)->withErrors($Validator)->withInput();
+                    
+                } else {
+                    
+                    $sqlTaskData->user_feedback  = $request->user_feedback;
+                    $sqlTaskData->updated_at     = date('Y-m-d H:i:s');
+                    $sqlTaskData->updated_by     = $logedInUser;
+                    $save                        = $sqlTaskData->save(); 
+
+                   
+                    $request->session()->flash('alert-success', 'Task Feedback has been added successfully');
+                    return redirect()->route('admin.task_management.dailyTask',$sqlTaskData->task_id);
+                    
+                }
+            }
+
+           
+        } catch (Exception $e) {
+            return redirect()->route('admin.task_management.daily-task',$sqlTaskData->task_id)->with('error', $e->getMessage());
+        }
+    }
+
+
+    /*****************************************************/
+    # TaskManagementController
+    # Function name : dailyTaskShow
+    # Author        :
+    # Created Date  : 29-11-2020
+    # Purpose       : Showing Daily Task feedback
+    # Params        : Request $request
+    /*****************************************************/
+
+    public function dailyTaskShow($id){
+        $tasksDetails=TaskDetails::with('task')->with('userDetails')->whereId($id)->first();
+        $this->data['page_title']='Task Details';
+        $this->data['task_data']=$tasksDetails;
+        return view($this->view_path.'.show-daily-task-feedback',$this->data);
     }
 
 

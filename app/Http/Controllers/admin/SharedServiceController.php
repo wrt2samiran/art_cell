@@ -289,15 +289,12 @@ class SharedServiceController extends Controller
             if ($details != null) {
                     $delete = $details->delete();
                     if ($delete) {
-                        $request->session()->flash('alert-danger', 'Shared Service has been deleted successfully');
+                        return response()->json(['message'=>'Shared Service successfully deleted.']);
                     } else {
-                        $request->session()->flash('alert-danger', 'An error occurred while deleting the state');
+                        return response()->json(['message'=>'Something went wrong! Please try again letter.']);
                     }
-            } else {
-                $request->session()->flash('alert-danger', 'Invalid state');
-                
-            }
-            return redirect()->back();
+            } 
+           
         } catch (Exception $e) {
             return redirect()->route('admin.shared-service.list')->with('error', $e->getMessage());
         }
