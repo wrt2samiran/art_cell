@@ -45,12 +45,21 @@
                   @endforelse                                
                 </select>
             </div>
+
             <div class="form-group required" id="number_of_time_can_used_holder_edit" style="display: none;">
               <label for="number_of_time_can_used_edit">Number of times can use</label>
               <input type="text" aria-describedby="numberOfTimesHelpEdit" class="form-control" value="{{old('number_of_time_can_used_edit')?old('number_of_time_can_used_edit'):''}}" name="number_of_time_can_used_edit" id="number_of_time_can_used_edit"  placeholder="Number of times">
               <small id="numberOfTimesHelpEdit" class="form-text text-muted">You can set the limitation of usage. Leave blank if no limitation.</small>
               @if($errors->has('number_of_time_can_used_edit'))
               <span class="text-danger">{{$errors->first('number_of_time_can_used_edit')}}</span>
+              @endif
+            </div>
+            <div class="form-group required" id="frequency_number_holder_edit" style="display: none;">
+              <label for="frequency_number_edit">Number of frequency </label>
+              <input type="number" min="1" step="1"  class="form-control" value="{{old('frequency_number_edit')?old('frequency_number_edit'):''}}" name="frequency_number_edit" id="frequency_number_edit"  placeholder="Number of frequency">
+              
+              @if($errors->has('frequency_number_edit'))
+              <span class="text-danger">{{$errors->first('frequency_number_edit')}}</span>
               @endif
             </div>
             <div class="form-group required">

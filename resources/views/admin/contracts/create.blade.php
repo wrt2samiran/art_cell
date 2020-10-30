@@ -80,7 +80,6 @@
                               </thead>
                               <tbody></tbody>
                             </table>
-                            
                           </div>
                           <div class="form-group required">
                             <label for="description">Description<span class="error">*</span></label>
