@@ -249,28 +249,15 @@ class MessageController extends Controller
     /*****************************************************/
     public function delete(Request $request, $id = null)
     {
-        try
-        {
+        
             if ($id == null) {
                 return redirect()->route('admin.message.list');
             }
 
             $details = Message::where('id', $id)->first();
-            if ($details != null) {
-                    $delete = $details->delete();
-                    if ($delete) {
-                        $request->session()->flash('alert-danger', 'Message has been deleted successfully');
-                    } else {
-                        $request->session()->flash('alert-danger', 'An error occurred while deleting the state');
-                    }
-            } else {
-                $request->session()->flash('alert-danger', 'Invalid state');
-                
-            }
-            return redirect()->back();
-        } catch (Exception $e) {
-            return redirect()->route('admin.message.list')->with('error', $e->getMessage());
-        }
+            $delete = $details->delete();
+            return response()->json(['message'=>'Message successfully deleted.']);
+                   
     }
     
     /*****************************************************/

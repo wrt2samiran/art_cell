@@ -277,7 +277,7 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::any('/add','MessageController@messageAdd')->name('add')->middleware('check_permissions:message-add');
                 Route::any('/edit/{encryptCode}', 'MessageController@edit')->name('edit')->middleware('check_permissions:message-edit');
                 Route::get('/{id}/change-change', 'MessageController@change_status')->name('change_status')->middleware('check_permissions:message-change-status');
-                Route::delete('/{id}/delete', 'MessageController@delete')->name('delete')->middleware('check_permissions:message-delete');
+                Route::get('/delete/{id}', 'MessageController@delete')->name('delete')->middleware('check_permissions:message-delete');
                 Route::get('/{id}', 'MessageController@show')->name('show')->middleware('check_permissions:message-show');
             });
 
