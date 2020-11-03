@@ -4,7 +4,7 @@
         "autoWidth": false,
         processing: true,
         serverSide: true,
-        ajax: $('#services_data_url').val(),
+        ajax: $('#message_data_url').val(),
         columns: [
             { data: 'id', name: 'id' },
             { data: 'name', name: 'name'},
@@ -36,7 +36,7 @@
       $.LoadingOverlay("show");
       $.ajax({
         url: url,
-        type: "DELETE",
+        type: "GET",
         data:{ "_token": $('meta[name="csrf-token"]').attr('content')},
         success: function (data) {
           message_table.ajax.reload(null, false);

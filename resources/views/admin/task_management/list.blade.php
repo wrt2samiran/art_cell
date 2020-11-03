@@ -26,16 +26,16 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                    <div class="card-header">
-                        <div class="d-flex justify-content-between" >
-                            <div><span>Task List</span></div>
-                          <div>
-                            <!-- <a class="btn btn-success" href="{{route('admin.service_management.addService')}}">
-                             Add Service
-                            </a> -->
-                          </div>
-                        </div>
-                    </div>
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between" >
+                                    <div><span>Task List</span></div>
+                                  <div>
+                                    <a class="btn btn-success" href="{{route('admin.task_management.taskCreate')}}">
+                                     Add Task
+                                    </a>
+                                  </div>
+                                </div>
+                            </div>
 
                             <!-- /.card-header -->
                             <div class="card-body">

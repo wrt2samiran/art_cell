@@ -23,6 +23,12 @@
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
+              @if(Session::has('success-message'))
+                  <div class="alert alert-success alert-dismissable">
+                      <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                      {{ Session::get('success-message') }}
+                  </div>
+              @endif
               @if(Session::has('error'))
                   <div class="alert alert-danger alert-dismissable">
                       <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
@@ -54,12 +60,7 @@
                       </div>
 
                     </div>
-                       
 
-                        
-
-                        
-                
               </form>
                 
                 <section class="content">
@@ -492,7 +493,10 @@ colors.forEach(iterate);
 
 
 $(document).on('click', 'td.fc-today,td.fc-future', function() {
-$('#addTaskModal').modal('show');
+  <?php if(\Auth::guard('admin')->user()->role_id==4){ ?>
+      $('#addTaskModal').modal('show');
+  <?php } ?>
+
  });
 
 function onServiceChange(service_id){
@@ -557,7 +561,7 @@ function onTaskChange(task_id, start_date, end_date){
 
      $.ajax({
        
-        url: "{{route('admin.task_management.updateTask')}}",
+        url: "{{route('admin.calendar.updateTask')}}",
         type:'post',
         dataType: "json",
         data:{task_id:task_id,modified_start_date:modified_start_date,modified_end_date:modified_end_date,_token:"{{ csrf_token() }}"}
@@ -569,7 +573,6 @@ function onTaskChange(task_id, start_date, end_date){
             }
             else
             { 
-              
               console.log(response.status);
               location.reload();
             }
@@ -579,7 +582,7 @@ function onTaskChange(task_id, start_date, end_date){
 
     setTimeout(function() {
         $('.alert-dismissable').fadeOut('fast');
-    }, 3000); 
+    }, 5000); 
 
 //Date range picker
     

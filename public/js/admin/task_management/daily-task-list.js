@@ -11,10 +11,40 @@
         columns: [
             { data: 'id', name: 'id' },
             // { data: 'task.task_title', name: 'task.task_title'},
-            // { data: 'service.service_name', name: 'service.service_name' },
+           
 
             { data: 'task_date', name: 'task_date' },
+            { data: 'user_details.name', name: 'user_details.name' },
             { data: 'user_feedback', name: 'user_feedback' },
+            { data: 'status', name: 'ststus' },
+            {data: 'action', name: 'action', orderable: false, searchable: false}
+        ],
+         order: [ [0, 'asc'] ],
+        columnDefs: [
+        {   "targets": [0],
+            "visible": false,
+            "searchable": false
+        }]
+
+    });
+
+
+    
+    var labour_task_management_table=$('#labour_task_management_table').DataTable({
+        "responsive": true,
+        "autoWidth": false,
+        processing: true,
+        serverSide: true,
+        ajax: baseUrl+'/admin/task_management',
+        columns: [
+            { data: 'id', name: 'id' },
+            // { data: 'task.property.property_name', name: 'task.property.property_name' },
+            { data: 'service.service_name', name: 'service.service_name' },
+            // { data: 'country.name', name: 'country.name' },
+            // { data: 'state.name', name: 'state.name' },
+            // { data: 'city.name', name: 'city.name' },
+
+            { data: 'task_date', name: 'task_date' },
 
             { data: 'status', name: 'ststus' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
@@ -28,11 +58,11 @@
 
     });
 
- //function to delete city
- function delete_city(url){
+ //function to delete labour task
+ function delete_task(url){
   swal({
   title: "Are you sure?",
-  text: "Once deleted, you will not be able to recover this city!",
+  text: "Once deleted, you will not be able to recover this labour task!",
   icon: "warning",
   buttons: true,
   dangerMode: true,
@@ -48,7 +78,8 @@
         data:{ "_token": $('meta[name="csrf-token"]').attr('content')},
         success: function (data) {
           $.LoadingOverlay("hide");
-          toastr.success('City successfully deleted.', 'Success', {timeOut: 5000});
+          toastr.success('Labour task successfully deleted.', 'Success', {timeOut: 5000});
+          daily_task_management_table.ajax.reload(null, false);
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");
@@ -62,7 +93,7 @@
         }
      });
 
-     daily_task_management_table.ajax.reload(null, false);
+     
 
 
     } 

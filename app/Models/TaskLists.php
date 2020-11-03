@@ -27,4 +27,8 @@ class TaskLists extends Model
 	public function service() {
 		return $this->belongsTo('\App\Models\Service', 'service_id', 'id');
 	}
+    public function contract_services() {
+        return $this->belongsTo('\App\Models\ContractService', 'contract_service_id', 'id');
+    }
+
 }

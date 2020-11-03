@@ -50,6 +50,7 @@
                                         </tr>
                                     </thead>
                                 </table>
+                                <input type="hidden" id="message_data_url" value="{{route('admin.message.list')}}">
                             </div>
                         </div>
                     </div>
