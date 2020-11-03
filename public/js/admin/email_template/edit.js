@@ -5,13 +5,16 @@ $("#admin_email_edit_form").validate({
             minlength: 3,
             maxlength: 50,
         },
+        slug: {
+            required: true,
+        },
         variable_name: {
             required: true,
             minlength: 3,
             maxlength: 50,
         },
         content: {
-            required: true,
+            ckrequired: true,
             minlength: 3,
         },
 
@@ -22,13 +25,16 @@ $("#admin_email_edit_form").validate({
             minlength: "Message Title should have 3 characters",
             maxlength: "Message Title should not be more then 50 characters",
         },
+        slug: {
+            required: "Slug is required",
+        },
         variable_name: {
             required:  "Variables Name is required",
             minlength: "Variables Name should have 3 characters",
             maxlength: "Variables Name should not be more then 50 characters",
         },
         content: {
-            required:  "Description is required",
+            ckrequired:  "Description is required",
             minlength: "Description should have 3 characters",
         }
     },

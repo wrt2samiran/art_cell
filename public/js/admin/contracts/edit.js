@@ -22,6 +22,9 @@ $("#admin_contract_edit_form").validate({
         service_provider:{
             required: true, 
         },
+        property_manager:{
+            required: true, 
+        },
         property_owner:{
             required: true, 
         },
@@ -62,6 +65,9 @@ $("#admin_contract_edit_form").validate({
         },
         service_provider:{
             required:  "Please select service provider",
+        },
+        property_manager: {
+            required:  "Please select property manager",
         },
         contract_price:{
             required:  "Enter contract price",
@@ -632,7 +638,7 @@ $("#add_service_form").validate({
         }
         
         service_row=service_row+`<td>`+service_price+`<input type="hidden" value="`+service_price+`" name="service_price[]"></td>`;
-        service_row=service_row+`<td><a href="javascript:void(0)" id="`+uniqueId+`" class="btn_service_remove btn btn-outline-danger">x</a></td>`;
+        service_row=service_row+`<td><input type="hidden" value="" name="contract_service_id[]"><a href="javascript:void(0)" id="`+uniqueId+`" class="btn_service_remove btn btn-outline-danger">x</a></td>`;
 
         service_row=service_row+`</tr>`;
 

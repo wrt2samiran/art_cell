@@ -17,6 +17,10 @@
             price: {
                 required: true,
             },
+            quantity_available:{
+                required: true,
+                number:true
+            }
             // currency: {
             //     required: true,
             // },
@@ -37,6 +41,9 @@
             },
             price: {
                 required:  "Price is required",
+            },
+            quantity_available: {
+                required:  "Enter available quantity",
             },
             // currency: {
             //     required:  "Currency is required",

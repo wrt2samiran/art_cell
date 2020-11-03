@@ -120,6 +120,20 @@
                           </td>
                         </tr>
                         <tr>
+                          <td >Property Manager</td>
+                          <td>
+                            @if($property_manager=$contract->property_manager()->withTrashed()->first())
+                              @if($property_manager->deleted_at)
+                                <span class="text-danger"><del>{{$property_manager->name}} </del>(user deleted)</span>
+                              @else
+                                <a target="_blank" href="{{route('admin.users.show',$property_manager->id)}}">{{$property_manager->name}}</a>
+                              @endif
+                            @else
+                            N/A
+                            @endif
+                          </td>
+                        </tr>
+                        <tr>
                           <td>Property</td>
                           <td >{{$contract->property->property_name}}</td>
                         </tr>

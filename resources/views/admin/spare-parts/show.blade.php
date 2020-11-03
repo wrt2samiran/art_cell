@@ -54,7 +54,10 @@
                           <td>Price</td>
                           <td >{{$spareParts->currency}} {{$spareParts->price}}</td>
                         </tr>
-                        
+                        <tr>
+                          <td>Quantity Available</td>
+                          <td >{{$spareParts->quantity_available}}</td>
+                        </tr>
                         <tr>
                           <td>Status</td>
                           <td>

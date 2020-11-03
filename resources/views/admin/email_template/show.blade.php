@@ -38,6 +38,10 @@
                           <td>{{$email->template_name}}</td>
                         </tr>
                         <tr>
+                          <td>Slug</td>
+                          <td>{{$email->slug}}</td>
+                        </tr>
+                        <tr>
                           <td>Variables Name</td>
                           <td>{{ $email->variable_name }}</td>
                         </tr>

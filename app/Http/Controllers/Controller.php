@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use App\Models\PrCopywriter;
 use Auth;
+use App\Models\Setting;
 
 class Controller extends BaseController
 {
@@ -33,6 +34,13 @@ class Controller extends BaseController
         }
 
         $this->baseAuthorize($ability, $arguments);
+    }
+    /*****/
+
+    /* return site setting data in an array */
+    public function site_setting()
+    {
+        return Setting::pluck('value','slug')->toArray();
     }
     /*****/
 

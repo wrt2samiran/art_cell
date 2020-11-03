@@ -124,6 +124,17 @@
                                 @endforelse 
                               </select>
                           </div>
+                          <div class="form-group required">
+                             <label for="property_manager">Property Manager <span class="error">*</span></label>
+                              <select class="form-control " id="property_manager" name="property_manager" style="width: 100%;">
+                                <option value="">Select property manager</option>
+                                @forelse($property_managers as $property_manager)
+                                   <option value="{{$property_manager->id}}" >{{$property_manager->name}} ({{$property_manager->email}})</option>
+                                @empty
+                                <option value="">No Property Manager Found</option>
+                                @endforelse 
+                              </select>
+                          </div>
 
                           <div class="form-group required">
                             <label for="start_date">Start Date <span class="error">*</span></label>
