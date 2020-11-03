@@ -9,6 +9,7 @@ use \App\Contract;
 use \Illuminate\Support\Facades\Session;
 use App\Http\Helpers\NotificationHelper;
 use DB;
+use App\Models\EmailTemplate;
 
 class Helper
 {
@@ -449,6 +450,19 @@ class Helper
     /*****************************************************/
     public static function getSiteCurrency(){
         return 'SAR';
+    }
+
+    public static function emailTemplateMail($slug,array $variable_value){
+        $email_template = EmailTemplate::where('slug',$slug)->first();
+        $template_variables = explode(',' , $email_template->variable_name);
+        $content =$email_template->content;
+        foreach ($variable_value as $key=>$val){
+            $content = str_replace($key, nl2br($val), $content);
+        }
+        
+        // dd($email_template);
+        return $content;
+
     }
 
 
