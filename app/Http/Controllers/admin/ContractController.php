@@ -24,6 +24,7 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Http\Requests\Admin\Contract\{CreateContractRequest,UpdateContractRequest};
 use File;
+use Helper;
 class ContractController extends Controller
 {
     //defining the view path
@@ -210,16 +211,16 @@ class ContractController extends Controller
                 'contract_id'=>$contract->id,
                 'service_id'=>$service,
                 'service_type'=>$request->service_type[$key],
-                'currency'=>'SAR',
+                'currency'=>Helper::getSiteCurrency(),
                 'price'=>($request->service_type[$key]=='Free')?'0':$request->service_price[$key],
                 'frequency_type_id'=>$request->frequency_type_id[$key],
+                'frequency_number'=>$request->frequency_number[$key],
                 'interval_days'=>$request->interval_days[$key],
                 'number_of_time_can_used'=>$request->number_of_time_can_used[$key],
                 'created_by'=>$current_user->id,
                 'updated_by'=>$current_user->id
                ];
             }
-            
             ContractService::insert($service_data);
 
         }
@@ -385,6 +386,7 @@ class ContractController extends Controller
                 'currency'=>'SAR',
                 'price'=>($request->service_type[$key]=='Free')?'0':$request->service_price[$key],
                 'frequency_type_id'=>$request->frequency_type_id[$key],
+                'frequency_number'=>$request->frequency_number[$key],
                 'interval_days'=>$request->interval_days[$key],
                 'number_of_time_can_used'=>$request->number_of_time_can_used[$key],
                 'updated_by'=>$current_user->id

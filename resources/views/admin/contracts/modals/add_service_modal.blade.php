@@ -51,6 +51,14 @@
               <span class="text-danger">{{$errors->first('number_of_time_can_used')}}</span>
               @endif
             </div>
+            <div class="form-group required" id="frequency_number_holder" style="display: none;">
+              <label for="frequency_number">Number of frequency </label>
+              <input type="number" min="1" step="1"  class="form-control" value="{{old('frequency_number')?old('frequency_number'):''}}" name="frequency_number" id="frequency_number"  placeholder="Number of frequency">
+              
+              @if($errors->has('frequency_number'))
+              <span class="text-danger">{{$errors->first('frequency_number')}}</span>
+              @endif
+            </div>
             <div class="form-group required">
               <label for="service_price">Service Price ({{Helper::getSiteCurrency()}})<span class="error">*</span></label>
               <input type="text" class="form-control" value="{{old('service_price')?old('service_price'):''}}" name="service_price" id="service_price"  placeholder="Service Price">

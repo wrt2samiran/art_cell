@@ -421,12 +421,17 @@ $('#service_type').on('change',function(){
     $('#number_of_time_can_used_holder').hide();
     $('#number_of_time_can_used').val('');
     $('#frequency_type_holder').show();
+    $('#frequency_number_holder').show();
   }else if(service_type=='On Demand') {
     $('#number_of_time_can_used_holder').show();
     $('#frequency_type_holder').hide();
+    $('#frequency_number').val('');
+    $('#frequency_number_holder').hide();
   }else{
     $('#number_of_time_can_used').val('');
+    $('#frequency_number').val('');
     $('#frequency_type_holder').hide();
+    $('#frequency_number_holder').hide();
     $('#number_of_time_can_used_holder').hide();
   }
 
@@ -452,20 +457,36 @@ $('#service_type').on('change',function(){
 
 $('#service').on('change',function(){
 
-  var service_price=$('#service').find(":selected").data("service_price");
 
+  var service_price=$('#service').find(":selected").data("service_price");
 
   var service_type=$('#service_type').find(":selected").val();
 
   if(service_type && service_type=='Free'){
     $('#service_price').val('0');
   }else{
+
+    var frequency_number=$('#frequency_number').val();
+    if(frequency_number && $.isNumeric(frequency_number)){
+      service_price=service_price* parseInt(frequency_number);
+    }
+
     $('#service_price').val(service_price);
+  }
+
+});
+
+$('#frequency_number').on('keyup keydown blur change',function(){
+
+  var service_price=$('#service').find(":selected").data("service_price");
+  if(service_price){
+      if($.isNumeric(this.value)){
+      service_price=service_price* parseInt(this.value);
+      }
+      $('#service_price').val(service_price);
   }
   
 });
-
-
 
 
 $('#service').select2({
@@ -520,6 +541,13 @@ $("#add_service_form").validate({
         number_of_time_can_used:{
             number:true
         },
+        frequency_type:{
+            required: true, 
+        },
+        frequency_number:{
+            required: true, 
+            number:true
+        },
         service_price:{
             required: true, 
             number:true
@@ -565,12 +593,15 @@ $("#add_service_form").validate({
           var frequency_type=$('#frequency_type').find(":selected").data("type_name");
           var interval_days=$('#frequency_type').find(":selected").data("interval_days");
        
+          var frequency_number=$('#frequency_number').val();
 
           var number_of_time_can_used='';
-          var frequency_text=frequency_type;
+          var frequency_text=frequency_type+' (x'+frequency_number+')';
 
         }else if(service_type=='On Demand') {
+
           var frequency_type_id='';
+          var frequency_number='';
           var number_of_time_can_used=$('#number_of_time_can_used').val();
           if(number_of_time_can_used!=''){
             var frequency_text=`Can use `+number_of_time_can_used+` times`;
@@ -584,9 +615,15 @@ $("#add_service_form").validate({
           var number_of_time_can_used='';
           var frequency_text='---';
           var interval_days='';
+          var frequency_number='';
         }
 
-        service_row=service_row+`<td>`+frequency_text+` <input type="hidden" value="`+frequency_type_id+`" name="frequency_type_id[]"><input type="hidden" value="`+interval_days+`" name="interval_days[]"><input type="hidden" value="`+number_of_time_can_used+`" name="number_of_time_can_used[]"></td>`;
+        service_row=service_row+`<td>`+frequency_text+`
+        <input type="hidden" value="`+frequency_type_id+`" name="frequency_type_id[]">
+        <input type="hidden" value="`+frequency_number+`" name="frequency_number[]">
+        <input type="hidden" value="`+interval_days+`" name="interval_days[]">
+        <input type="hidden" value="`+number_of_time_can_used+`" name="number_of_time_can_used[]">
+        </td>`;
 
         if(service_type=='Free'){
           var service_price='0';
@@ -594,9 +631,8 @@ $("#add_service_form").validate({
           var service_price=$('#service_price').val();
         }
         
-
         service_row=service_row+`<td>`+service_price+`<input type="hidden" value="`+service_price+`" name="service_price[]"></td>`;
-        service_row=service_row+`<td><input type="hidden" value="" name="contract_service_id[]"><a href="javascript:void(0)" id="`+uniqueId+`" class="btn_service_remove btn btn-outline-danger">x</a></td>`;
+        service_row=service_row+`<td><a href="javascript:void(0)" id="`+uniqueId+`" class="btn_service_remove btn btn-outline-danger">x</a></td>`;
 
         service_row=service_row+`</tr>`;
 
@@ -606,7 +642,6 @@ $("#add_service_form").validate({
         $.LoadingOverlay("hide");
         form.reset();
         
-
         $('#total_service').val($('.services_row').length);
 
         $('#frequency_type').val(null).trigger('change');
@@ -649,6 +684,12 @@ $(document).on('click', '.btn_service_edit', function(){
       $('#frequency_type_edit').val('');
     }
 
+    if(service_details.service_type=='Maintenance'){
+      $('#frequency_number_edit').val(service_details.frequency_number);
+    }else{
+      $('#frequency_number_edit').val('');
+    }
+
     $('#service_type_edit').val(service_details.service_type);
 
     if(service_details.number_of_time_can_used){
@@ -656,6 +697,8 @@ $(document).on('click', '.btn_service_edit', function(){
     }else{
       $('#number_of_time_can_used_edit').val('');
     }
+
+
 
     $('#service_price_edit').val(service_details.price);
  
@@ -670,6 +713,7 @@ $(document).on('click', '.btn_service_edit', function(){
 
     if(service_details.service_type=='Maintenance'){
       $('#frequency_type_holder_edit').show();
+      $('#frequency_number_holder_edit').show();
     }
 
     $('#service_details').val(service_details_in_string);
@@ -687,13 +731,19 @@ $('#service_type_edit').on('change',function(){
     $('#number_of_time_can_used_holder_edit').hide();
     $('#number_of_time_can_used_edit').val('');
     $('#frequency_type_holder_edit').show();
+    $('#frequency_number_holder_edit').show();
   }else if(service_type=='On Demand') {
     $('#number_of_time_can_used_holder_edit').show();
     $('#frequency_type_holder_edit').hide();
+
+    $('#frequency_number_edit').val('');
+    $('#frequency_number_holder_edit').hide();
   }else{
     $('#number_of_time_can_used_edit').val('');
     $('#frequency_type_holder_edit').hide();
     $('#number_of_time_can_used_holder_edit').hide();
+    $('#frequency_number_edit').val('');
+    $('#frequency_number_holder_edit').hide();
   }
 
   if(service_type=='Free'){
@@ -722,11 +772,26 @@ $('#service_edit').on('change',function(){
   if(service_type && service_type=='Free'){
     $('#service_price_edit').val('0');
   }else{
+    var frequency_number=$('#frequency_number_edit').val();
+    if(frequency_number && $.isNumeric(frequency_number)){
+      service_price=service_price* parseInt(frequency_number);
+    }
     $('#service_price_edit').val(service_price);
   }
   
 });
 
+$('#frequency_number_edit').on('keyup keydown blur change',function(){
+
+  var service_price=$('#service_edit').find(":selected").data("service_price");
+  if(service_price){
+      if($.isNumeric(this.value)){
+      service_price=service_price* parseInt(this.value);
+      }
+      $('#service_price_edit').val(service_price);
+  }
+  
+});
 
 $("#edit_service_form").validate({
     rules: {
@@ -738,6 +803,13 @@ $("#edit_service_form").validate({
             required: true
         },
         number_of_time_can_used_edit:{
+            number:true
+        },
+        frequency_type_edit:{
+            required: true, 
+        },
+        frequency_number_edit:{
+            required: true, 
             number:true
         },
         service_price_edit:{
@@ -795,12 +867,14 @@ $("#edit_service_form").validate({
           var frequency_type=$('#frequency_type_edit').find(":selected").data("type_name");
           var interval_days=$('#frequency_type_edit').find(":selected").data("interval_days");
        
-
+          var frequency_number=$('#frequency_number_edit').val();
           var number_of_time_can_used='';
-          var frequency_text=frequency_type;
+
+          var frequency_text=frequency_type+' (x'+frequency_number+')';
 
         }else if(service_type=='On Demand') {
           var frequency_type_id='';
+          var frequency_number='';
           var number_of_time_can_used=$('#number_of_time_can_used_edit').val();
           if(number_of_time_can_used!=''){
             var frequency_text=`Can use `+number_of_time_can_used+` times`;
@@ -811,6 +885,7 @@ $("#edit_service_form").validate({
           var interval_days='';
         }else{
           var frequency_type_id='';
+          var frequency_number='';
           var number_of_time_can_used='';
           var frequency_text='---';
           var interval_days='';
@@ -818,9 +893,15 @@ $("#edit_service_form").validate({
 
         service_details['frequency_type']=frequency_type;
         service_details['frequency_type_id']=frequency_type_id;
+        service_details['frequency_number']=frequency_number;
         service_details['number_of_time_can_used']=number_of_time_can_used;
         
-        service_row=service_row+`<td>`+frequency_text+` <input type="hidden" value="`+frequency_type_id+`" name="frequency_type_id[]"><input type="hidden" value="`+interval_days+`" name="interval_days[]"><input type="hidden" value="`+number_of_time_can_used+`" name="number_of_time_can_used[]"></td>`;
+        service_row=service_row+`<td>`+frequency_text+`
+        <input type="hidden" value="`+frequency_type_id+`" name="frequency_type_id[]">
+        <input type="hidden" value="`+frequency_number+`" name="frequency_number[]">
+        <input type="hidden" value="`+interval_days+`" name="interval_days[]">
+        <input type="hidden" value="`+number_of_time_can_used+`" name="number_of_time_can_used[]">
+        </td>`;
 
         if(service_type=='Free'){
           var service_price='0';

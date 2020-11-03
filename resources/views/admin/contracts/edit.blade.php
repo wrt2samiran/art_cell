@@ -94,7 +94,7 @@
                                   </td>
                                   <td>
                                     @if($service->frequency_type)
-                                    {{$service->frequency_type->type}}
+                                    {{$service->frequency_type->type}} (x{{$service->frequency_number}})
                                     @endif
                                     @if($service->number_of_time_can_used)
                                     <span>Can use {{$service->number_of_time_can_used}} times</span>
@@ -103,6 +103,7 @@
                                     ---
                                     @endif
                                     <input type="hidden" value="{{$service->frequency_type_id}}" name="frequency_type_id[]">
+                                    <input type="hidden" value="{{$service->frequency_number}}" name="frequency_number[]">
                                     <input type="hidden" value="{{$service->interval_days}}" name="interval_days[]">
                                     <input type="hidden" value="{{$service->number_of_time_can_used}}" name="number_of_time_can_used[]">
                                   </td>

@@ -101,7 +101,7 @@ class ServiceController extends Controller
                'service_name'=>$request->ar_service_name,
                'description' =>$request->ar_description,
             ],
-            'slug'=>Str::slug($request->service_name),
+            'slug'=>Str::slug($request->en_service_name),
             'price'=>$request->price,
             'currency'=>Helper::getSiteCurrency(),
             'created_by'=>$current_user->id,
@@ -137,7 +137,7 @@ class ServiceController extends Controller
                'service_name'=>$request->ar_service_name,
                'description' =>$request->ar_description,
             ],
-            'slug'=>Str::slug($request->service_name),
+            'slug'=>Str::slug($request->en_service_name),
             'price'=>$request->price,
             'currency'=>Helper::getSiteCurrency(),
             'updated_by'=>$current_user->id
