@@ -19,7 +19,7 @@ class CalendarController extends Controller
     private $view_path='admin.calendar';
 
     /*****************************************************/
-    # TaskManagementController
+    # CalendarController
     # Function name : Calendar
     # Author        :
     # Created Date  : 16-10-2020
@@ -31,6 +31,7 @@ class CalendarController extends Controller
         //dd($request->all());
         $this->data['page_title']='Calendar';
         $logedInUser = \Auth::guard('admin')->user()->id;
+        $logedInUserRole = \Auth::guard('admin')->user()->role_id;
 
 
         $sqlService=ServiceAllocationManagement::with('service')->with('contract')->whereStatus('A')->where('work_status', '<>','2')->whereServiceProviderId($logedInUser)->get();
@@ -50,13 +51,7 @@ class CalendarController extends Controller
 
 
         $this->data['service_list'] = $sqlService;
-        //$this->data['contract_list'] = $sqlContract;
-        // $this->data['task_id'] = $id;
-        //this->data['property_list'] = $sqlProperty;
-        // $this->data['city_data'] = $sqlCity;
-        // $this->data['state_data'] = $sqlState;
-        // $this->data['country_data'] = $sqlCountry;
-        // $this->data['service_allocation_id'] = $id;
+        
 
         $this->data['labour_list']  = $labour_list;
 
@@ -90,7 +85,13 @@ class CalendarController extends Controller
             })->get();
 
         } else {
-            $sqlTask=TaskLists::whereCreatedBy($logedInUser)->orderBy('id','Desc')->get();
+           // if($logedInUserRole != 4 ){
+                $sqlTask=TaskLists::whereCreatedBy($logedInUser)->orWhere('user_id',$logedInUser)->orderBy('id','Desc')->get();
+           // }
+            // else
+            // {
+            //     $sqlTask=TaskDetails::whereCreatedBy($logedInUser)->orderBy('id','Desc')->get();
+            // }
         }
 
         //dd($sqlCalendar);
@@ -105,7 +106,7 @@ class CalendarController extends Controller
 
 
     /*****************************************************/
-    # TaskManagementController
+    # CalendarController
     # Function name : List
     # Author        :
     # Created Date  : 20-10-2020
@@ -186,7 +187,7 @@ class CalendarController extends Controller
     }
 
    /*****************************************************/
-    # TaskManagementController
+    # CalendarController
     # Function name : taskAdd
     # Author        :
     # Created Date  : 14-10-2020
@@ -198,7 +199,8 @@ class CalendarController extends Controller
        // dd($request->all());
 
         $this->data['page_title']     = 'Add Task';
-    
+        
+
         try
         {
             if ($request->isMethod('POST'))
@@ -569,97 +571,138 @@ class CalendarController extends Controller
     
     public function updateTask(Request $request)
     {
-        //$request->calendar_id;
+       // dd($request->task_id);
         
         $logedInUser = \Auth::guard('admin')->user()->id;
+        $logedInUserRole = \Auth::guard('admin')->user()->role_id;
         $validator = Validator::make($request->all(), [ 
             'task_id' => 'required',
             ]);
 
-           if ($validator->fails()) { 
-              return response()->json(['success' =>false,'message'=>$validator->errors()->first()], 200);
-            }
+        if ($validator->fails()) { 
+          return response()->json(['success' =>false,'message'=>$validator->errors()->first()], 200);
+         }
 
          
-         $sqlTask =  TaskLists::whereId($request->task_id)->first();    
-
          
 
-                    $start_date  = date('Y-m-d h:i:s', strtotime($request->modified_start_date));
-                    $end_date    = date('Y-m-d h:i:s', strtotime($request->modified_end_date));
+        if($logedInUserRole==4)
+        {
+            $sqlTask =  TaskLists::whereId($request->task_id)->first();
+            $start_date  = date('Y-m-d h:i:s', strtotime($request->modified_start_date));
+            $end_date    = date('Y-m-d h:i:s', strtotime($request->modified_end_date));
+
+            $date_from = strtotime($start_date);
+            $date_to = strtotime($end_date);
+
+            $array_all_days = array();
+            $day_passed = ($date_to - $date_from); //seconds
+            $day_passed = ($day_passed/86400); //days
+            $arr_days=  array();
+            $counter = 1;
+            $day_to_display = $date_from;
+            while($counter <= $day_passed){
+                $day_to_display += 86400;
+                //echo date("F j, Y \n", $day_to_display);
+                $checkFreeDate = TaskDetails::whereTaskDate(date('o-m-d',$day_to_display))->whereServiceId($sqlTask->service_allocation_id)->whereUserId($sqlTask->user_id)->first();
+                if(!$checkFreeDate)
+                {
+                    $arr_days[] = date('o-m-d',$day_to_display);
+                    $counter++;
+                }
+                
+                else
+                {
+
+                    session()->flash('error', 'Task already been added for this user on '.date("o-m-d",$day_to_display).' for this Service.');
 
 
-                    $date_from = strtotime($start_date);
-                    $date_to = strtotime($end_date);
+                    return response()->json(['status'=>false],200);
 
-                    $array_all_days = array();
-                    $day_passed = ($date_to - $date_from); //seconds
-                    $day_passed = ($day_passed/86400); //days
-                    $arr_days=  array();
-                    $counter = 1;
-                    $day_to_display = $date_from;
-                    while($counter <= $day_passed){
-                        $day_to_display += 86400;
-                        //echo date("F j, Y \n", $day_to_display);
-                        $checkFreeDate = TaskDetails::whereTaskDate(date('o-m-d',$day_to_display))->whereServiceId($sqlTask->service_allocation_id)->whereUserId($sqlTask->user_id)->first();
-                        if(!$checkFreeDate)
-                        {
-                            $arr_days[] = date('o-m-d',$day_to_display);
-                            $counter++;
-                        }
-                        
-                        else
-                        {
-
-                            session()->flash('error', 'Task already been added for this user on '.date("o-m-d",$day_to_display).' for this Service.');
-
-
-                            return response()->json(['status'=>false],200);
-
-                        }
-                        
-                         
-                    }
-                  //  print_r($arr_days);
-
-                    $sqlTask->start_date  = date('Y-m-d h:i:s', strtotime($request->modified_start_date));
-                    $sqlTask->end_date    = date('Y-m-d h:i:s', strtotime($request->modified_end_date));
-                    $sqlTask->updated_at  = date('Y-m-d H:i:s');
-                    $sqlTask->updated_by  = $logedInUser;
-                    $save = $sqlTask->save(); 
+                }
+                
                  
+            }
+            
+             
 
-                    
-                    $sqlTaskDetails = TaskDetails::whereServiceId($sqlTask->service_allocation_id)->whereTaskId($request->task_id)->whereUserId($sqlTask->user_id)->delete();
+            if($sqlTask->created_by == $logedInUser)
+            { 
+
+           
+
+            $sqlTask->start_date  = date('Y-m-d h:i:s', strtotime($request->modified_start_date));
+            $sqlTask->end_date    = date('Y-m-d h:i:s', strtotime($request->modified_end_date));
+            $sqlTask->updated_at  = date('Y-m-d H:i:s');
+            $sqlTask->updated_by  = $logedInUser;
+            $save = $sqlTask->save(); 
+
+            $sqlTaskDetails = TaskDetails::whereServiceId($sqlTask->service_allocation_id)->whereTaskId($request->task_id)->whereUserId($sqlTask->user_id)->delete();
+
+            $tempTaskDetails = new TaskDetails;
+
+            $tempTaskDetails->service_id = $sqlTask->service_allocation_id;
+            $tempTaskDetails->task_id = $request->task_id;
+            $tempTaskDetails->user_id = $sqlTask->user_id;
+            $tempTaskDetails->task_date = date('o-m-d',$date_from);
+            $tempTaskDetails->created_by = auth()->guard('admin')->id();
+            $tempTaskDetails->save();
+
+            $array_all_days = array();
+            $day_passed = ($date_to - $date_from); //seconds
+            $day_passed = ($day_passed/86400); //days
+
+            $counter = 1;
+            $day_to_display = $date_from;
+
+                foreach ($arr_days as $key => $value) {
 
                     $tempTaskDetails = new TaskDetails;
-
                     $tempTaskDetails->service_id = $sqlTask->service_allocation_id;
                     $tempTaskDetails->task_id = $request->task_id;
                     $tempTaskDetails->user_id = $sqlTask->user_id;
-                    $tempTaskDetails->task_date = date('o-m-d',$date_from);
+                    $tempTaskDetails->task_date = $value;
                     $tempTaskDetails->created_by = auth()->guard('admin')->id();
                     $tempTaskDetails->save();
+                }
 
-                    $array_all_days = array();
-                    $day_passed = ($date_to - $date_from); //seconds
-                    $day_passed = ($day_passed/86400); //days
+                return response()->json(['status'=>true],200);
+            }
+            
+            else
+            {
+                $request->session()->flash('error', 'You are not the authorised person to modified this task!');
+                return response()->json(['status'=>true],200);
+            }    
+        }
 
-                    $counter = 1;
-                    $day_to_display = $date_from;
+        else
+        {
+            $sqlTask =  TaskLists::whereId($request->task_id)->first();   
 
-                    foreach ($arr_days as $key => $value) {
+            $sqlTaskDetails = TaskDetails::whereTaskId($request->task_id)->first();    
 
-                        $tempTaskDetails = new TaskDetails;
-                        $tempTaskDetails->service_id = $sqlTask->service_allocation_id;
-                        $tempTaskDetails->task_id = $request->task_id;
-                        $tempTaskDetails->user_id = $sqlTask->user_id;
-                        $tempTaskDetails->task_date = $value;
-                        $tempTaskDetails->created_by = auth()->guard('admin')->id();
-                        $tempTaskDetails->save();
-                    }
+            if(!$sqlTaskDetails)  
+            {
+                $start_date  = date('Y-m-d h:i:s', strtotime($request->modified_start_date));
+                $end_date    = date('Y-m-d h:i:s', strtotime($request->modified_end_date));
+
+                $sqlTask->start_date  = date('Y-m-d h:i:s', strtotime($request->modified_start_date));
+                $sqlTask->end_date    = date('Y-m-d h:i:s', strtotime($request->modified_end_date));
+                $sqlTask->updated_at  = date('Y-m-d H:i:s');
+                $sqlTask->updated_by  = $logedInUser;
+                $save = $sqlTask->save();
+                
+                $request->session()->flash('success-message', 'Task has been modified successfully');
+                return response()->json(['status'=>true],200);
+            }
+            else
+            {
+                $request->session()->flash('error', 'Task has already been assigned to labour! Can not be modified now!');
+                return response()->json(['status'=>false],200);
+            }
+        }
 
         
-        return response()->json(['status'=>true],200);
     }
 }

@@ -9,13 +9,12 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Labour Task Management</h1>
+                <h1>Task Management</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                   <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item"><a href="{{route('admin.task_management.list')}}">Task Management</a></li>
-                  <li class="breadcrumb-item active">Labour Task List</li>
+                  <li class="breadcrumb-item active">Task</li>
                 </ol>
               </div>
             </div>
@@ -27,17 +26,16 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                    <div class="card-header">
-                        <div class="d-flex justify-content-between" >
-                            <div><span>Task Details</span></div>
-                          <div>
-                            <!-- <a class="btn btn-success" href="{{route('admin.service_management.addService')}}">
-                             Add Service
-                            </a> -->
-                          </div>
-                        </div>
-                    </div>
-
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between" >
+                                    <div><span>Task List</span></div>
+                                  <div>
+                                    <a class="btn btn-success" href="{{route('admin.task_management.taskCreate')}}">
+                                     Add Task
+                                    </a>
+                                  </div>
+                                </div>
+                            </div>
 
                             <!-- /.card-header -->
                             <div class="card-body">
@@ -53,87 +51,28 @@
                                         {{ Session::get('error') }}
                                     </div>
                                 @endif
-                                @if(\Auth::guard('admin')->user()->role_id !=5)
-                                <table class="table table-bordered table-hover" id="country-details-table">
-                                      <tbody>
-                                        <?php //dd($service_allocation_data);?>
-                                        <tr>
-                                          <td >Task Title</td>
-                                          <td >{{$task_list_data->task_title}}</td>
-                                        </tr>
-                                        <tr>
-                                          <td >Property Name</td>
-                                          <td >{{$task_list_data->property->property_name}}</td>
-                                        </tr>
-                                        <tr>
-                                          <td >Service</td>
-                                          <td >{{$task_list_data->service->service_name}}</td>
-                                        </tr>
-                                        <tr>
-                                          <td>Country</td>
-                                          <td >{{$task_list_data->country->name}}</td>
-                                        </tr>
-                                        <tr>
-                                          <td>State</td>
-                                          <td >{{$task_list_data->state->name}}</td>
-                                        </tr>
-                                        <tr>
-                                          <td>City</td>
-                                          <td >{{$task_list_data->city->name}}</td>
-                                        </tr>
-                                        <tr>
-                                          <td>Task Details</td>
-                                          <td >{!! $task_list_data->task_desc!!}</td>
-                                        </tr>
-                                        <tr>
-                                          <td >Service Provider</td>
-                                          <td >{{$task_list_data->userDetails->name}}</td>
-                                        </tr>
-                                        <tr>
-                                          <td>Start Date</td> 
-                                          <td >{{Carbon\Carbon::createFromFormat('Y-m-d', $task_list_data->start_date)->format('d-m-Y')}}</td>
-                                        </tr>
-
-                                        <tr>
-                                          <td>End Date</td>
-                                          <td >{{Carbon\Carbon::createFromFormat('Y-m-d', $task_list_data->end_date)->format('d-m-Y')}}</td>
-                                        </tr>
-                                        
-                                        <!-- <tr>
-                                          <td>Status</td>
-                                          <td>
-                                            <button role="button" class="btn btn-{{($task_list_data->status=='A')?'success':'danger'}}">{{($task_list_data->status=='A')?'Active':'Inactive'}}</button>
-                                          </td>
-                                        </tr> -->
-                                       
-                                      </tbody>
-                                      
-                                  </table>
-                              </br>
-                                <div class="card-header">
-                                    <div class="d-flex justify-content-between" >
-                                      <div>
-                                        <a class="btn btn-success" style="text-align: right;" href="{{route('admin.task_management.labourTaskCreate', $task_list_data->id)}}">
-                                         Assign Labour Task
-                                        </a>
-                                      </div>
-                                    </div>
-                                </div>
-                                @endif
-                                <table class="table table-bordered" id="daily_task_management_table">
+                                <table class="table table-bordered" id="labour_task_management_table">
                                     <thead>
                                         <tr>
                                             <th>Id</th>
+                                            <!-- <th>Property Name</th> -->
+                                            <th>Service</th>
+                                            <!-- <th>Country</th>
+                                            <th>State</th>
+                                            <th>City</th> -->
                                             <th>Task Date</th>
-                                            <th>Labour Name</th>
-                                            <th>User Feedback</th>
                                             <th>Status</th>
+                                            
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                 </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                                <!-- Modal -->
+                <!-- Modal -->
                                 
 
                                 <div class="modal fade" id="addTaskModal" role="dialog">
@@ -180,18 +119,12 @@
                                   
                                 </div>
                                 </div>
-
-                        </div>
-                    </div>
-                </div>
   
         </section>
         <!-- /.content -->
     </div>
 
 @endsection
-
-
 
 @push('custom-scripts')
 
@@ -206,6 +139,7 @@
         $('.alert-dismissable').fadeOut('fast');
     }, 5000); 
 </script>
+
 <script type="text/javascript" src="{{asset('js/admin/task_management/daily-task-list.js')}}"></script>
 @endpush
 

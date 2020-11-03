@@ -14,7 +14,9 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item active">Details</li>
+              <li class="breadcrumb-item"><a href="{{route('admin.task_management.list')}}">Task Management</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.task_management.labourTaskList', $task_data->task_id)}}">Labour Task List</a></li>
+              <li class="breadcrumb-item active">Daily Task Details</li>
             </ol>
           </div>
         </div>
@@ -27,7 +29,7 @@
             <!-- Default box -->
             <div class="card card-success">
                 <div class="card-header">
-                  Task Deatils
+                  Daily Task Deatils
                 </div> 
               <div class="card-body"> 
                  <table class="table table-bordered table-hover" id="country-details-table">
@@ -43,6 +45,10 @@
                           <td >{{$task_data->userDetails->name}}</td>
                         </tr>
                         @endif
+                        <tr>
+                          <td>Daily Task Details</td>
+                          <td >{!!$task_data->task_description!!}</td>
+                        </tr>
                         <tr>
                           <td>Labour Feedback</td>
                           <td >{{$task_data->user_feedback}}</td>
@@ -78,7 +84,7 @@
                       </tbody>
                       <tfoot>
                         <tr>
-                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.task_management.dailyTask', $task_data->task_id)}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
+                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.task_management.labourTaskList', $task_data->task_id)}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
                         </tr>
                       </tfoot>
                   </table>

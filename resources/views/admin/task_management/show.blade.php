@@ -14,7 +14,7 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.task-management.list')}}">Task</a></li>
+              
               <li class="breadcrumb-item active">Details</li>
             </ol>
           </div>
@@ -31,52 +31,82 @@
                   Task Deatils
                 </div> 
               <div class="card-body"> 
-                 <table class="table table-bordered table-hover" id="country-details-table">
+                  <table class="table table-bordered table-hover" id="country-details-table">
                       <tbody>
                         
                         <tr>
                           <td >Task Title</td>
-                          <td >{{$city->country->name}}</td>
+                          <td >{{$task_list->task_title}}</td>
+                        </tr>
+                        <tr>
+                          <td >Task Details</td>
+                          <td >{!!$task_list->task_desc!!}</td>
                         </tr>
                         <tr>
                           <td >Property Name</td>
-                          <td >{{$city->country->name}}</td>
+                          <td >{{$task_list->task_title}}</td>
+                        </tr>
+                        <tr>
+                          <td >Service</td>
+                          <td >{{$task_list->service->service_name}}</td>
+                        </tr>
+                        <tr>
+                          <td >Service Type</td>
+                          <td >{{$task_list->contract_services->service_type}}</td>
                         </tr>
                         <tr>
                           <td >Country</td>
-                          <td >{{$city->country->name}}</td>
+                          <td >{{$task_list->country->name}}</td>
                         </tr>
                         <tr>
-                          <td >State Name</td>
-                          <td >{{$city->state->name}}</td>
+                          <td >State</td>
+                          <td >{{$task_list->state->name}}</td>
                         </tr>
                         <tr>
-                          <td>City Name</td>
-                          <td >{{$city->name}}</td>
+                          <td >City</td>
+                          <td >{{$task_list->city->name}}</td>
                         </tr>
                         <tr>
-                          <td>Servise Tenure</td>
-                          <td >{{$city->name}}</td>
+                          <td >Task Start Date</td>
+                          <td >{{$task_list->start_date}}</td>
                         </tr>
                         <tr>
-                          <td>Assigned User</td>
-                          <td >{{$city->name}}</td>
+                          <td >Task End Date</td>
+                          <td >{{$task_list->end_date}}</td>
                         </tr>
-                        <tr>
-                          <td>User Reply</td>
-                          <td >{{$city->name}}</td>
-                        </tr>
+                       
                         <tr>
                           <td>Status</td>
                           <td>
-                            <button role="button" class="btn btn-{{($city->is_active=='1')?'success':'danger'}}">{{($city->is_active=='1')?'Active':'Inactive'}}</button>
+                            @php
+                              if($task_list->status=='0'){
+                                  $button = 'warning';
+                                  $status = 'Pending';
+                                }
+                                
+                              else if($task_list->status=='1'){
+                                  $button = 'danger';
+                                  $status = 'Over Due';
+
+                                }
+                                
+                              else{
+
+                                  $button = 'success';
+                                  $status = 'Completed';
+                                }
+                                
+                              @endphp  
+
+                            <button role="button" class="btn btn-{{$button}}">{{$status}}</button>
+                            
                           </td>
                         </tr>
                        
                       </tbody>
                       <tfoot>
                         <tr>
-                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.task-management.list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
+                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.task_management.labourTaskList', $task_list->id)}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
                         </tr>
                       </tfoot>
                   </table>

@@ -9,13 +9,13 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Task Management</h1>
+            <h1>Labour Task Management</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.task_management.list')}}">Task</a></li>
-              <li class="breadcrumb-item active">Create</li>
+              <li class="breadcrumb-item"><a href="{{route('admin.task_management.labourTaskList', $sqltaskData->id)}}">Labour Task List</a></li>
+              <li class="breadcrumb-item active">Assign Labour Task</li>
             </ol>
           </div>
         </div>
@@ -28,7 +28,7 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Create Task</h3>
+                <h3 class="card-title">Assign Labour Task</h3>
               </div>
               <div class="card-body">
                   @if(Session::has('success'))
@@ -46,30 +46,27 @@
                   @endif
                   <div class="row justify-content-center">
                     <div class="col-md-10 col-sm-12">
-                      <form  method="post" id="admin_task_add_form" action="{{route('admin.task_management.taskAdd')}}" method="post" enctype="multipart/form-data">
+                      <form  method="post" id="admin_labour_assign_form" action="{{route('admin.task_management.taskAssign')}}" method="post" enctype="multipart/form-data">
                         @csrf
+                        <?php //dd($sqltaskData);?>
                               <div>  
                                 </div>
                                 <div class="form-group required">
-                                  <label for="service_id">Contract Title <span class="error">*</span></label>
-                                  <select class="form-control parent_role_select2"  style="width: 100%;" name="contract_id" id="contract_id" 
-                                    onchange="onContractChange(this.value)">
-                                     <option value="">Select Contract</option>
-                                     @forelse($contract_list as $contract_data)
-                                           <option value="{{$contract_data->id}}" {{(old('contract_id')== $contract_data->id)? 'selected':''}}>{{@$contract_data->title}} ({{@$contract_data->code}})</option>
-                                      @empty
-                                      <option value="">No Contract Found</option>
-                                      @endforelse                             
+                                  <label for="service_id">Task Title <span class="error">*</span></label>
+                                  <select class="form-control parent_role_select2"  style="width: 100%;" name="task_id" id="task_id" 
+                                    >
+                                           <option value="{{$sqltaskData->id}}" {{(old('task_id')== $sqltaskData->id)? 'selected':''}}>{{@$sqltaskData->task_title}}</option>
+                                     
                                     </select>
-                                  @if($errors->has('contract_id'))
-                                  <span class="text-danger">{{$errors->first('contract_id')}}</span>
+                                  @if($errors->has('task_id'))
+                                  <span class="text-danger">{{$errors->first('task_id')}}</span>
                                   @endif
                                 </div>
                                 
                                 <div class="form-group required">
-                                  <label for="property_id">Property <span class="error">*</span></label>
-                                  <select class="form-control parent_role_select2" style="width: 100%;" name="property_id" id="property_id" >
-                                          <option value="">Select Property </option>
+                                  <label for="property_id">Service <span class="error">*</span></label>
+                                  <select class="form-control parent_role_select2" style="width: 100%;" name="service_id" id="service_id" >
+                                           <option value="{{$sqltaskData->service_id}}" {{(old('service_id')== $sqltaskData->service_id)? 'selected':''}}>{{@$sqltaskData->service->service_name}}</option>
                                     </select>
                                   @if($errors->has('property_id'))
                                   <span class="text-danger">{{$errors->first('property_id')}}</span>
@@ -77,45 +74,20 @@
                                 </div>
 
                                 <div class="form-group required">
-                                  <label for="service_id">Service <span class="error">*</span></label>
-                                  <select class="form-control parent_role_select2"  style="width: 100%;" name="service_id" id="service_id" 
-                                   >
-                                     <option>Select Service</option>
-                                                                 
+                                  <label for="service_id">Labour List <span class="error">*</span></label>
+                                  <select class="form-control parent_role_select2"  style="width: 100%;" name="user_id" id="user_id" 
+                                    >
+                                     <option value="">Select Labour</option>
+                                     @forelse($labour_list as $labour_data)
+                                           <option value="{{$labour_data->id}}" {{(old('contract_id')== $labour_data->id)? 'selected':''}}>{{@$labour_data->name}}</option>
+                                      @empty
+                                      <option value="">No Labour Found</option>
+                                      @endforelse     
+                                                               
                                     </select>
-                                  @if($errors->has('service_id'))
-                                  <span class="text-danger">{{$errors->first('service_id')}}</span>
+                                  @if($errors->has('contract_id'))
+                                  <span class="text-danger">{{$errors->first('contract_id')}}</span>
                                   @endif
-                                </div>
-
-                                <div class="form-group required">
-                                  <label for="country_id">Country <span class="error">*</span></label>
-                                    <select class="form-control parent_role_select2" style="width: 100%;" name="country_id" id="country_id">
-                                          <option value="">Select Country</option>
-                                    </select>
-                                  @if($errors->has('country_id'))
-                                  <span class="text-danger">{{$errors->first('country_id')}}</span>
-                                  @endif
-                                </div>
-
-                                <div class="form-group required">
-                                  <label for="country_id">State <span class="error">*</span></label>
-                                   <select name="state_id" id="state_id" class="form-control">
-                                          <option value="">Select State</option>
-                                   </select>
-                                    @if($errors->has('state_id'))
-                                      <span class="text-danger">{{$errors->first('state_id')}}</span>
-                                    @endif
-                                </div>
-
-                                <div class="form-group required">
-                                  <label for="name">City Name <span class="error">*</span></label>
-                                  <select name="city_id" id="city_id" class="form-control">
-                                          <option value="">Select State</option>
-                                  </select>
-                                   @if($errors->has('city_id'))
-                                      <span class="text-danger">{{$errors->first('city_id')}}</span>
-                                   @endif
                                 </div>
                                 
                                 <div class="form-group">
@@ -131,17 +103,11 @@
                                   </div>
                                   <!-- /.input group -->
                                 </div>
-                                <div class="form-group required">
-                                  <label for="service_id">Task Title <span class="error">*</span></label>
-                                  <input type="text" class="form-control float-right" id="task_title" name="task_title">
-                                   @if($errors->has('task_title'))
-                                    <span class="text-danger">{{$errors->first('task_title')}}</span>
-                                   @endif
-                                </div>
+                                
 
                                 <div class="form-group">
                                   <label for="service_id">Task Description</label>
-                                  <textarea class="form-control float-right" name="task_desc" id="task_desc">{{old('task_desc')}}</textarea>
+                                  <textarea class="form-control float-right" name="task_description" id="task_description">{{old('task_description')}}</textarea>
                                 </div>                                            
                             <div>
                            <button type="submit" class="btn btn-success">Submit</button> 
@@ -225,6 +191,17 @@
             }
         });
     }
+
+    $( document ).ready(function() {
+        $('#date_range').daterangepicker({
+                 minDate: new Date('<?=$sqltaskData->start_date?>'),
+                 maxDate: new Date('<?=$sqltaskData->end_date?>'),
+                 startDate: new Date('<?=$sqltaskData->start_date?>'),
+                 endDate: new Date('<?=$sqltaskData->end_date?>'),
+              })
+    });
+
+    
 </script>
 
 <script type="text/javascript" src="{{asset('js/admin/task_management/create.js')}}">

@@ -309,15 +309,33 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             Route::group(['prefix' => 'task_management', 'as' => 'task_management.'], function () {
                 Route::get('/calendar', 'TaskManagementController@calendar')->name('calendar');
                 Route::get('/', 'TaskManagementController@list')->name('list');
+                Route::any('/create','TaskManagementController@taskCreate')->name('taskCreate');
                 Route::any('/add','TaskManagementController@taskAdd')->name('taskAdd');
+                Route::get('/get-contract-data', 'TaskManagementController@getContractData')->name('getContractData');
+
+
                 Route::post('/get-cities', 'TaskManagementController@getCities')->name('getCities');
                 Route::post('/update-task', 'TaskManagementController@updateTask')->name('updateTask');  
-                Route::get('/{id}', 'TaskManagementController@show')->name('show');   
+                Route::get('/{id}', 'TaskManagementController@show')->name('show'); 
+                Route::get('/{id}/edit', 'TaskManagementController@edit')->name('edit'); 
+
+                
+                Route::get('/labour-task-list/{id}', 'TaskManagementController@labourTaskList')->name('labourTaskList'); 
                 Route::get('/daily-task/{id}', 'TaskManagementController@dailyTask')->name('dailyTask'); 
                 Route::any('/{id}/delete', 'TaskManagementController@delete')->name('delete');
                 Route::post('/task-feedback', 'TaskManagementController@taskFeedback')->name('taskFeedback'); 
                 Route::get('/daily-task-show/{id}', 'TaskManagementController@dailyTaskShow')->name('dailyTaskShow');
+                Route::any('/{id}/edit-daily-task', 'TaskManagementController@editDailyTask')->name('editDailyTask'); 
+                Route::any('/{id}/delete-labour-task', 'TaskManagementController@deleteLabourTask')->name('deleteLabourTask');
+                
+                //Route::post('/update-daily-task', 'TaskManagementController@updateDailyTask')->name('updateDailyTask');  
+                
                 Route::get('/{id}/change-status', 'TaskManagementController@change_status')->name('change_status');
+                Route::get('/labour-task-create/{id}', 'TaskManagementController@labourTaskCreate')->name('labourTaskCreate');
+                Route::post('/assign-labour-task', 'TaskManagementController@taskAssign')->name('taskAssign');
+                
+
+
                    
                 
             });
@@ -325,7 +343,8 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             Route::group(['prefix' => 'calendar', 'as' => 'calendar.'], function () {
                 Route::get('/calendar-data', 'CalendarController@calendardata')->name('calendardata');  
                 Route::any('/calendar-data-add','CalendarController@calendardataAdd')->name('calendardataAdd');
-
+                Route::get('/{id}', 'TaskManagementController@show')->name('show');
+                Route::post('/update-task', 'CalendarController@updateTask')->name('updateTask');  
                 Route::post('/get-data', 'CalendarController@getData')->name('getData');       
                 
             });
