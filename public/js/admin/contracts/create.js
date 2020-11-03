@@ -27,6 +27,9 @@ $("#admin_contract_create_form").validate({
         property_owner:{
             required: true, 
         },
+        property_manager:{
+            required: true, 
+        },
         start_date:{
             required: true, 
             maxlength: 10,
@@ -58,6 +61,9 @@ $("#admin_contract_create_form").validate({
         },
         service_provider:{
             required:  "Please select service provider",
+        },
+        property_manager: {
+            required:  "Please select property manager",
         },
         contract_price:{
             required:  "Enter contract price",

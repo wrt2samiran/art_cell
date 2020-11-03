@@ -86,7 +86,13 @@
                             <span class="text-danger">{{$errors->first('extra_price_per_day')}}</span>
                             @endif
                           </div>
-                          
+                          <div class="form-group required">
+                            <label for="quantity_available">Quantity Available <span class="error">*</span></label>
+                            <input type="number" min="0" step="1" class="form-control" value="{{old('quantity_available')?old('quantity_available'):$details->quantity_available}}" name="quantity_available" id="quantity_available"  placeholder="Quantity Available">
+                            @if($errors->has('quantity_available'))
+                            <span class="text-danger">{{$errors->first('quantity_available')}}</span>
+                            @endif
+                          </div>
 
                         </div>
                         <input type="hidden" name="shared_service_id" id="shared_service_id" value="{{$details->id}}">

@@ -104,6 +104,7 @@ class SparePartsController extends Controller
                     'manufacturer'    => 'required|min:2|max:255',
                     'unit_master_id'  => 'required',
                     'price'     => 'required',
+                    'quantity_available'=>'required|numeric'
                    // 'currency'     => 'required',
 				);
 				$validationMessages = array(
@@ -129,7 +130,8 @@ class SparePartsController extends Controller
                     $new->description  = $request->description;
                     $new->unit_master_id  = $request->unit_master_id;
                     $new->price  = $request->price;
-                    $new->currency  = 'AED';
+                    $new->quantity_available=$request->quantity_available;
+                    $new->currency  = Helper::getSiteCurrency();
                     $new->created_at = Carbon::now();
                     $new->created_by = $logedin_user->id;
                     $new->updated_by = $logedin_user->id;
@@ -181,6 +183,7 @@ class SparePartsController extends Controller
                     'manufacturer'    => 'required|min:2|max:255',
                     'unit_master_id'  => 'required',
                     'price'     => 'required',
+                    'quantity_available'=>'required|numeric'
                   //  'currency'     => 'required',
                 );
                 $validationMessages = array(
@@ -207,7 +210,8 @@ class SparePartsController extends Controller
                     $details->description  = $request->description;
                     $details->unit_master_id  = $request->unit_master_id;
                     $details->price  = $request->price;
-                    $details->currency  = 'AED';
+                    $details->quantity_available=$request->quantity_available;
+                    $details->currency  = Helper::getSiteCurrency();
                     $details->updated_at = Carbon::now();
                     $details->updated_by = $logedin_user->id;
                     $save = $details->save();                        

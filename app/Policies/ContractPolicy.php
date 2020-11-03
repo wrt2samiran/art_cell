@@ -106,7 +106,7 @@ class ContractPolicy
         /* if logged in user is the custome/service_provider of this contract or he is the property_manager/property_owner of the property related to this contract then he can view thre contract details */
         $current_user=$user;
 
-        if($contract->customer_id!=$current_user->id && $contract->service_provider_id!=$current_user->id && $contract->property->property_manager!=$current_user->id && $contract->property->property_owner!=$current_user->id){
+        if($contract->customer_id!=$current_user->id && $contract->service_provider_id!=$current_user->id && $contract->property_manager_id!=$current_user->id && $contract->property->property_owner!=$current_user->id){
 
             return  Response::deny('You do not have permission to access this page. '.'<a href="'.route('admin.dashboard').'" class="btn btn-success">Back to Dashboard</a>');
         }

@@ -17,6 +17,10 @@
             extra_price_per_day: {
                 required: true,
             },
+            quantity_available:{
+                required: true,
+                number:true
+            }
         },
         messages: {
             name: {
@@ -34,7 +38,9 @@
             extra_price_per_day: {
                 required:  "Extra Price/day is required",
             },
-            
+            quantity_available: {
+                required:  "Enter available quantity",
+            },
 
         },
 
