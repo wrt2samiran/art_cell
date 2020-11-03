@@ -185,7 +185,6 @@ class PropertyController extends Controller
     		'contact_number'=>$request->contact_number,
             'contact_email'=>$request->contact_email,
     		'property_owner'=>$request->property_owner,
-    		'property_manager'=>$request->property_manager,
     		'electricity_account_day'=>$request->electricity_account_day,
     		'water_account_day'=>$request->water_account_day,
     		'created_by'=>auth()->guard('admin')->id(),
@@ -328,7 +327,6 @@ class PropertyController extends Controller
             'contact_number'=>$request->contact_number,
             'contact_email'=>$request->contact_email,
             'property_owner'=>$request->property_owner,
-            'property_manager'=>$request->property_manager,
             'electricity_account_day'=>$request->electricity_account_day,
             'water_account_day'=>$request->water_account_day,
             'updated_by'=>auth()->guard('admin')->id()

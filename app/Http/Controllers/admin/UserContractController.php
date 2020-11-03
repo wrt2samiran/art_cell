@@ -35,10 +35,11 @@ class UserContractController extends Controller
         $this->data['page_title']='Contract List';
         $current_user=auth()->guard('admin')->user();
         if($request->ajax()){
-            $contracts=Contract::with(['property','customer','service_provider','services','contract_status'])
+            $contracts=Contract::with(['property','customer','service_provider','property_manager','services','contract_status'])
             ->whereHas('property')
             ->whereHas('customer')
             ->whereHas('service_provider')
+            ->whereHas('property_manager')
             ->whereHas('services')
             ->whereHas('contract_status')
             ->where(function($q) use ($current_user){
@@ -46,10 +47,11 @@ class UserContractController extends Controller
                 $q->where('customer_id',$current_user->id)
                 //OR if logged in user is the service_provider of the contract 
                 ->orWhere('service_provider_id',$current_user->id)
-                //OR if logged in user is the property_manager/property_owner of the property related to this contract 
+                //OR if logged in user is the property manager of the contract 
+                ->orWhere('property_manager_id',$current_user->id)
+                //OR if logged in user is the property_owner of the property related to this contract 
                 ->orWhereHas('property',function($q1) use ($current_user){
-                    $q1->where('property_manager',$current_user->id)
-                    ->orWhere('property_owner',$current_user->id);
+                    $q1->where('property_owner',$current_user->id);
                 });
             })
             ->when($request->contract_status_id,function($query) use($request){
@@ -122,10 +124,11 @@ class UserContractController extends Controller
     # Param            : id                                                  #
 
     public function show($id){
-        $contract=Contract::with(['property','customer','service_provider','services'])
+        $contract=Contract::with(['property','customer','service_provider','property_manager','services'])
             ->whereHas('property')
             ->whereHas('customer')
             ->whereHas('service_provider')
+            ->whereHas('property_manager')
             ->whereHas('services')->findOrFail($id);
 
         $current_user=auth()->guard('admin')->user();

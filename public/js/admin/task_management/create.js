@@ -1,47 +1,160 @@
-    $("#admin_city_add_form").validate({
+$("#admin_task_add_form").validate({
         rules: {
-            name: {
+
+            
+            
+            contract_id: {
                 required: true,
-                minlength: 3,
-                maxlength: 50,
             },
-           
+            
+            service_id: {
+                required: true,
+            },
+            property_id: {
+                required: true,
+            },
             country_id: {
                 required: true,
             },
             state_id: {
                 required: true,
             },           
-           
+            city_id: {
+                required: true,
+            },
+            labour_id: {
+                required: true,
+            },
+            date_range: {
+                required: true,
+            },
+            task_title: {
+                required: true,
+                minlength: 3,
+                maxlength: 50,
+            },
+            
+
+
+
         },
         messages: {
-            name: {
-                required:  "City name is required",
-                minlength: "City name should have 3 characters",
-                maxlength: "City name should not be more then 50 characters"
+            
+            contract_id: {
+                required:  "Please select contract",
+            },
+            service_id: {
+                required:  "Please select service",
+            },
+            property_id: {
+                required:  "Please select property",
             },
             country_id: {
-                required:  "Country name is required",
+                required:  "Please select country",
             },
             state_id: {
-                required:  "State name is required",
+                required:  "Please select state",
             },
+            city_id: {
+                required:  "Please select city",
+            },
+            labour_id: {
+                required:  "Please select user",
+            },
+            date_range: {
+                required:  "Please select date range",
+            },
+            task_title: {
+                required:  "Task title is required",
+                minlength: "Task title should have 3 characters",
+                maxlength: "Task title should not be more then 50 characters"
+            },
+
         },
 
         errorPlacement: function (error, element) {
-	        error.addClass('invalid-feedback');
-	        error.insertAfter(element);
+          error.addClass('invalid-feedback');
+          error.insertAfter(element);
         },
         highlight: function (element, errorClass, validClass) {
-        	$(element).addClass('is-invalid');
+          $(element).addClass('is-invalid');
         },
         unhighlight: function (element, errorClass, validClass) {
-        	$(element).removeClass('is-invalid');
+          $(element).removeClass('is-invalid');
         },
         submitHandler: function(form) {
             form.submit();
         }
     });
+
+
+$("#admin_labour_assign_form").validate({
+        rules: {
+
+            task_id: {
+                required: true,
+            },
+            
+            service_id: {
+                required: true,
+            },
+            
+            user_id: {
+                required: true,
+            },
+            date_range: {
+                required: true,
+            },
+            task_description: {
+                required: true,
+                minlength: 10,
+                maxlength: 5000,
+            },
+            
+
+
+
+        },
+        messages: {
+            
+            task_id: {
+                required:  "Please select task",
+            },
+            service_id: {
+                required:  "Please select service",
+            },
+            
+            user_id: {
+                required:  "Please select user",
+            },
+            date_range: {
+                required:  "Please select date range",
+            },
+            task_description: {
+                required:  "Task description is required",
+                minlength: "Task description should have 10 characters",
+                maxlength: "Task description should not be more then 5000 characters"
+            },
+
+        },
+
+        errorPlacement: function (error, element) {
+          error.addClass('invalid-feedback');
+          error.insertAfter(element);
+        },
+        highlight: function (element, errorClass, validClass) {
+          $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+          $(element).removeClass('is-invalid');
+        },
+        submitHandler: function(form) {
+            form.submit();
+        }
+    });
+
+
+    
 
     
     

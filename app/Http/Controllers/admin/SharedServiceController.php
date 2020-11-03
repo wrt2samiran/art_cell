@@ -102,6 +102,7 @@ class SharedServiceController extends Controller
                     'number_of_days'  => 'required',
                     'price'     => 'required',
                     'extra_price_per_day'  => 'required',
+                    'quantity_available'=>'required|numeric'
                     //'currency'     => 'required',
 				);
 				$validationMessages = array(
@@ -128,7 +129,8 @@ class SharedServiceController extends Controller
                     $new->number_of_days  = $request->number_of_days;
                     $new->price  = $request->price;
                     $new->extra_price_per_day  = $request->extra_price_per_day;
-                    $new->currency  = 'AED';
+                    $new->quantity_available=$request->quantity_available;
+                    $new->currency  = Helper::getSiteCurrency();
                     $new->created_at = Carbon::now();
                     $new->created_by = $logedin_user->id;
                     $new->updated_by = $logedin_user->id;
@@ -180,6 +182,7 @@ class SharedServiceController extends Controller
                     'number_of_days'  => 'required',
                     'price'     => 'required',
                     'extra_price_per_day'  => 'required',
+                    'quantity_available'=>'required|numeric'
                     //'currency'     => 'required',
                 );
                 $validationMessages = array(
@@ -206,7 +209,8 @@ class SharedServiceController extends Controller
                     $details->number_of_days  = $request->number_of_days;
                     $details->price  = $request->price;
                     $details->extra_price_per_day  = $request->extra_price_per_day;
-                    $details->currency  = 'AED';
+                    $details->quantity_available=$request->quantity_available;
+                    $details->currency  = Helper::getSiteCurrency();
                     $details->updated_at = Carbon::now();
                     $details->updated_by = $logedin_user->id;
                     $save = $details->save();                        

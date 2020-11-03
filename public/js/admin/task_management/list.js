@@ -30,10 +30,10 @@
     });
 
  //function to delete city
- function delete_city(url){
+ function delete_task(url){
   swal({
   title: "Are you sure?",
-  text: "Once deleted, you will not be able to recover this city!",
+  text: "Once deleted, you will not be able to recover this task!",
   icon: "warning",
   buttons: true,
   dangerMode: true,
@@ -49,7 +49,7 @@
         data:{ "_token": $('meta[name="csrf-token"]').attr('content')},
         success: function (data) {
           $.LoadingOverlay("hide");
-          toastr.success('City successfully deleted.', 'Success', {timeOut: 5000});
+          toastr.success('Task successfully deleted.', 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");

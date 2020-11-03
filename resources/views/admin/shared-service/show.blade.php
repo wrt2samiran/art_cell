@@ -53,7 +53,10 @@
                           <td>Extra Price/Day</td>
                           <td >{{$sharedServices->currency}} {{$sharedServices->extra_price_per_day}}</td>
                         </tr>
-                        
+                        <tr>
+                          <td>Quantity Available</td>
+                          <td >{{$sharedServices->quantity_available}}</td>
+                        </tr>
                         <tr>
                           <td>Status</td>
                           <td>

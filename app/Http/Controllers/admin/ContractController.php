@@ -157,6 +157,12 @@ class ContractController extends Controller
         ->whereHas('role.user_type',function($q){
         	$q->where('slug','service-provider');
         })->get();
+        $this->data['property_managers']=User::whereHas('role')
+        ->whereHas('role.creator')
+        ->whereHas('role.user_type',function($q){
+            $q->where('slug','property-manager');
+        })
+        ->whereStatus('A')->get();
         $this->data['frequency_types']=FrequencyType::get();
         $this->data['properties']=Property::whereIsActive(true)->get();
 		$this->data['services']=Service::whereIsActive(true)->get();
@@ -191,6 +197,7 @@ class ContractController extends Controller
         	'customer_id'=>$request->property_owner,
         	'property_id'=>$request->property,
         	'service_provider_id'=>$request->service_provider,
+            'property_manager_id'=>$request->property_manager,
         	'start_date'=>$start_date,
         	'end_date'=>$end_date,
         	'contract_price'=>$request->contract_price,
@@ -333,7 +340,12 @@ class ContractController extends Controller
         ->whereHas('role.user_type',function($q){
             $q->where('slug','service-provider');
         })->get();
-
+        $this->data['property_managers']=User::whereHas('role')
+        ->whereHas('role.creator')
+        ->whereHas('role.user_type',function($q){
+            $q->where('slug','property-manager');
+        })
+        ->whereStatus('A')->get();
         $this->data['frequency_types']=FrequencyType::get();
 
         $this->data['properties']=Property::whereIsActive(true)->get();
@@ -365,6 +377,7 @@ class ContractController extends Controller
             'customer_id'=>$request->property_owner,
             'property_id'=>$request->property,
             'service_provider_id'=>$request->service_provider,
+            'property_manager_id'=>$request->property_manager,
             'start_date'=>$start_date,
             'end_date'=>$end_date,
             'contract_price'=>$request->contract_price,

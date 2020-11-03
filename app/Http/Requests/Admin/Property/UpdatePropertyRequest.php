@@ -26,7 +26,6 @@ class UpdatePropertyRequest extends FormRequest
             'address'=>'required|max:255',
             'location'=>'required|max:255',
             'property_owner'=>'required',
-            'property_manager'=>'required',
             'contact_number'=>'required|regex:/[0-9]{8,20}/',
             'contact_email'=>'required|email|max:100',
             'property_files.*' => [
@@ -49,7 +48,6 @@ class UpdatePropertyRequest extends FormRequest
             'location.required' => 'Location is required',
             'location.max'=>'Location should not be more then 255 characters',
             'property_owner.required'=>'Select property owner',
-            'property_manager.required'=>'Select property manager',
             'contact_number.required'=>'Contact number is required',
             'contact_number.regex'=>'Only number allowed'
         ];

@@ -9,12 +9,12 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>City Management</h1>
+            <h1>Task Management</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.cities.list')}}">City</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.task_management.list')}}">Task</a></li>
               <li class="breadcrumb-item active">Create</li>
             </ol>
           </div>
@@ -28,7 +28,7 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Create City</h3>
+                <h3 class="card-title">Create Task</h3>
               </div>
               <div class="card-body">
                   @if(Session::has('success'))
@@ -46,48 +46,104 @@
                   @endif
                   <div class="row justify-content-center">
                     <div class="col-md-10 col-sm-12">
-                      <form  method="post" id="admin_city_add_form" action="{{route('admin.cities.add')}}" method="post" enctype="multipart/form-data">
+                      <form  method="post" id="admin_task_add_form" action="{{route('admin.task_management.taskAdd')}}" method="post" enctype="multipart/form-data">
                         @csrf
-                        <div>                        
+                              <div>  
+                                </div>
+                                <div class="form-group required">
+                                  <label for="service_id">Contract Title <span class="error">*</span></label>
+                                  <select class="form-control parent_role_select2"  style="width: 100%;" name="contract_id" id="contract_id" 
+                                    onchange="onContractChange(this.value)">
+                                     <option value="">Select Contract</option>
+                                     @forelse($contract_list as $contract_data)
+                                           <option value="{{$contract_data->id}}" {{(old('contract_id')== $contract_data->id)? 'selected':''}}>{{@$contract_data->title}} ({{@$contract_data->code}})</option>
+                                      @empty
+                                      <option value="">No Contract Found</option>
+                                      @endforelse                             
+                                    </select>
+                                  @if($errors->has('contract_id'))
+                                  <span class="text-danger">{{$errors->first('contract_id')}}</span>
+                                  @endif
+                                </div>
+                                
+                                <div class="form-group required">
+                                  <label for="property_id">Property <span class="error">*</span></label>
+                                  <select class="form-control parent_role_select2" style="width: 100%;" name="property_id" id="property_id" >
+                                          <option value="">Select Property </option>
+                                    </select>
+                                  @if($errors->has('property_id'))
+                                  <span class="text-danger">{{$errors->first('property_id')}}</span>
+                                  @endif
+                                </div>
 
-                          <div class="form-group required">
-                            <label for="country_id">Country <span class="error">*</span></label>
-                            <select class="form-control parent_role_select2" onchange='onCountryChange(this.value)' style="width: 100%;" name="country_id" id="country_id">
-                                <option value="">Select a Country</option>
-                                @forelse($country_list as $country_data)
-                                   <option value="{{$country_data->id}}" {{(old('country_id')== $country_data->id)? 'selected':''}}>{{$country_data->name}}</option>
-                                @empty
-                               <option value="">No Country Found</option>
-                                @endforelse
-            
-                              </select>
-                            @if($errors->has('country_id'))
-                            <span class="text-danger">{{$errors->first('country_id')}}</span>
-                            @endif
-                          </div>
+                                <div class="form-group required">
+                                  <label for="service_id">Service <span class="error">*</span></label>
+                                  <select class="form-control parent_role_select2"  style="width: 100%;" name="service_id" id="service_id" 
+                                   >
+                                     <option>Select Service</option>
+                                                                 
+                                    </select>
+                                  @if($errors->has('service_id'))
+                                  <span class="text-danger">{{$errors->first('service_id')}}</span>
+                                  @endif
+                                </div>
 
-                          <div class="form-group required">
-                            <label for="country_id">State <span class="error">*</span></label>
-                             <select name="state_id" id="state_id" class="form-control">
-                                    <option value=""> Select State</option>
-                                   
-                             </select>
-                            @if($errors->has('state_id'))
-                            <span class="text-danger">{{$errors->first('state_id')}}</span>
-                            @endif
-                          </div>
+                                <div class="form-group required">
+                                  <label for="country_id">Country <span class="error">*</span></label>
+                                    <select class="form-control parent_role_select2" style="width: 100%;" name="country_id" id="country_id">
+                                          <option value="">Select Country</option>
+                                    </select>
+                                  @if($errors->has('country_id'))
+                                  <span class="text-danger">{{$errors->first('country_id')}}</span>
+                                  @endif
+                                </div>
 
-                          <div class="form-group required">
-                            <label for="name">City Name <span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('name')?old('name'):''}}" name="name" id="name"  placeholder="Please Enter Country Name">
-                            @if($errors->has('name'))
-                            <span class="text-danger">{{$errors->first('name')}}</span>
-                            @endif
-                          </div>
-                          
-                        </div>
-                        <div>
-                           <a href="{{route('admin.cities.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
+                                <div class="form-group required">
+                                  <label for="country_id">State <span class="error">*</span></label>
+                                   <select name="state_id" id="state_id" class="form-control">
+                                          <option value="">Select State</option>
+                                   </select>
+                                    @if($errors->has('state_id'))
+                                      <span class="text-danger">{{$errors->first('state_id')}}</span>
+                                    @endif
+                                </div>
+
+                                <div class="form-group required">
+                                  <label for="name">City Name <span class="error">*</span></label>
+                                  <select name="city_id" id="city_id" class="form-control">
+                                          <option value="">Select State</option>
+                                  </select>
+                                   @if($errors->has('city_id'))
+                                      <span class="text-danger">{{$errors->first('city_id')}}</span>
+                                   @endif
+                                </div>
+                                
+                                <div class="form-group">
+                                  <label>Date range <span class="error">*</span></label>
+
+                                  <div class="input-group">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text">
+                                        <i class="far fa-calendar-alt"></i>
+                                      </span>
+                                    </div>
+                                    <input type="text" class="form-control float-right" id="date_range" name="date_range">
+                                  </div>
+                                  <!-- /.input group -->
+                                </div>
+                                <div class="form-group required">
+                                  <label for="service_id">Task Title <span class="error">*</span></label>
+                                  <input type="text" class="form-control float-right" id="task_title" name="task_title">
+                                   @if($errors->has('task_title'))
+                                    <span class="text-danger">{{$errors->first('task_title')}}</span>
+                                   @endif
+                                </div>
+
+                                <div class="form-group">
+                                  <label for="service_id">Task Description</label>
+                                  <textarea class="form-control float-right" name="task_desc" id="task_desc">{{old('task_desc')}}</textarea>
+                                </div>                                            
+                            <div>
                            <button type="submit" class="btn btn-success">Submit</button> 
                         </div>
                       </form>
@@ -102,34 +158,76 @@
 </div>
 @endsection 
 @push('custom-scripts')
+
+
 <script type="text/javascript">
 
-  function onCountryChange(country_id){
+  function onContractChange(contract_id){
+
      $.ajax({
        
-        url: "{{route('admin.cities.getStates')}}",
-        type:'post',
+        url: "{{route('admin.task_management.getContractData')}}",
+        type:'get',
         dataType: "json",
-        data:{country_id:country_id,_token:"{{ csrf_token() }}"}
+        data:{contract_id:contract_id,_token:"{{ csrf_token() }}"}
         }).done(function(response) {
            
            console.log(response.status);
             if(response.status){
-             console.log(response.allState);
-             var stringified = JSON.stringify(response.allStates);
-            var statedata = JSON.parse(stringified);
-             var state_list = '<option value=""> Select State</option>';
-             $.each(statedata,function(index, state_id){
-                    state_list += '<option value="'+state_id.id+'">'+ state_id.name +'</option>';
-             });
+             console.log(response.sqlProperty);
+             console.log(response.sqlService);
+             var stringifiedProperty = JSON.stringify(response.sqlProperty);
+             var propertyData = JSON.parse(stringifiedProperty);
+                 var property_list= '<option value="'+propertyData.property.id+'">'+ propertyData.property.property_name +'</option>';
+                $("#property_id").html(property_list);
+                
+             var stringifiedService = JSON.stringify(response.sqlService);
+             var serviceData = JSON.parse(stringifiedService);
+             var service_list = '<option value=""> Select Service</option>';
+             if (serviceData.length > 0) {
+                  $.each(serviceData,function(index, service_id){
+                    service_list += '<option value="'+service_id.service_id+'">'+ service_id.service.service_name +' ('+service_id.service_type+')'+'</option>';
+                  });
+              }
+
+              else
+              {
+                  service_list = '<option value=""> No Service Available</option>';
+              }
+             
+                $("#service_id").html(service_list);
+                   
+             var stringifiedCity = JSON.stringify(response.sqlCity);
+             var cityData = JSON.parse(stringifiedCity);
+              var city_list = '<option value="'+cityData.id+'">'+ cityData.name +'</option>';
+                $("#city_id").html(city_list);
+
+             var stringifiedState = JSON.stringify(response.sqlState);
+             var stateData = JSON.parse(stringifiedState);
+              var state_list = '<option value="'+stateData.id+'">'+ stateData.name +'</option>';
                 $("#state_id").html(state_list);
+                
+             var stringifiedCountry = JSON.stringify(response.sqlCountry);
+             var countryData = JSON.parse(stringifiedCountry);
+              var country_list = '<option value="'+countryData.id+'">'+ countryData.name +'</option>';
+                $("#country_id").html(country_list);      
+
+              // *******Changing calendar start date and end date as per the service, alloted by the sub-admin********//
+
+              $('#date_range').daterangepicker({
+                 minDate: new Date(propertyData.start_date),
+                 maxDate: new Date(propertyData.end_date),
+                 startDate: new Date(propertyData.start_date),
+                 endDate: new Date(propertyData.end_date),
+              })
+
+              // *******Changing calendar start date and end date as per the service, alloted by the sub-admin********//
             }
         });
     }
-
 </script>
 
-<script type="text/javascript" src="{{asset('js/admin/city/create.js')}}">
+<script type="text/javascript" src="{{asset('js/admin/task_management/create.js')}}">
 
   
 </script>

@@ -33,9 +33,7 @@ $("#admin_property_create_form").validate({
         property_owner:{
             required: true, 
         },
-        property_manager:{
-            required: true, 
-        },
+
         contact_number:{
             required: true,
             minlength: 8,
@@ -79,9 +77,7 @@ $("#admin_property_create_form").validate({
         property_owner: {
             required:  "Please select property owner",
         },
-        property_manager: {
-            required:  "Please select property manager",
-        },
+
         contact_number: {
             required:  "Contact number is required",
             minlength: "Contact number should have minimum 8 characters",
