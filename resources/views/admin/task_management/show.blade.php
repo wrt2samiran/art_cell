@@ -44,7 +44,7 @@
                         </tr>
                         <tr>
                           <td >Property Name</td>
-                          <td >{{$task_list->task_title}}</td>
+                          <td >{{$task_list->property->property_name}}</td>
                         </tr>
                         <tr>
                           <td >Service</td>
