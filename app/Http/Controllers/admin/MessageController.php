@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\Message;
+use App\Models\Contract;
+use App\Models\User;
 use App\Models\ModuleFunctionality;
 use Helper, AdminHelper, Image, Auth, Hash, Redirect, Validator, View, Config;
 use Yajra\Datatables\Datatables;
@@ -54,11 +56,9 @@ class MessageController extends Controller
                 }
             })
             ->addColumn('action',function($sqlMessage){
-                $delete_url=route('admin.message.delete',$sqlMessage->id);
                 $details_url=route('admin.message.show',$sqlMessage->id);
-                $edit_url=route('admin.message.edit',$sqlMessage->id);
 
-                return '<a title="View Message Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>&nbsp;&nbsp;<a title="Edit Message" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>&nbsp;&nbsp;<a title="Delete message" href="javascript:delete_message('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
+                return '<a title="View Message Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
                 
             })
             ->rawColumns(['action','status'])
@@ -81,14 +81,42 @@ class MessageController extends Controller
     public function messageAdd(Request $request) {
 
         $data['page_title']     = 'Add Message';
-        $logedin_user=auth()->guard('admin')->user();
+        $current_user=auth()->guard('admin')->user();
     
         try
         {
+            $userData = [];
+            $contract = [];
+            if ($current_user->role->user_type->slug == 'super-admin'){
+                $userData = User::where('id','!=', '1')->get();
+            } else{
+                $contract = Contract::with(['property','customer','service_provider','property_manager','services','contract_status'])
+                ->whereHas('property')
+                ->whereHas('customer')
+                ->whereHas('service_provider')
+                ->whereHas('property_manager')
+                ->whereHas('services')
+                ->whereHas('contract_status')
+                ->where(function($q) use ($current_user){
+                    //if logged in user is the customer of the contract 
+                    $q->where('customer_id',$current_user->id)
+                    //OR if logged in user is the service_provider of the contract 
+                    ->orWhere('service_provider_id',$current_user->id)
+                    //OR if logged in user is the property manager of the contract 
+                    ->orWhere('property_manager_id',$current_user->id);
+                    
+                })->get();
+            }
+            $data['userData'] = $userData;
+            $data['contract'] = $contract;
+            // $data['userData'] = User::whereHas('role',function($query){
+            //         $query->whereIn('id', ['3','4']);
+            // })->where('is_deleted','N')->get();
+
         	if ($request->isMethod('POST'))
         	{
 				$validationCondition = array(
-                    'name'          => 'required|min:2|max:255|unique:'.(new Message)->getTable().',name',
+                    'name'         => 'required|min:2|max:255|unique:'.(new Message)->getTable().',name',
                     'description'  => 'required|min:2',
 				);
 				$validationMessages = array(
@@ -107,10 +135,10 @@ class MessageController extends Controller
                     
                     $new = new Message;
                     $new->name = trim($request->name, ' ');
+                    $new->to_user = $request->user_id;
+                    $new->from_user = $current_user->id;
                     $new->description  = $request->description;
                     $new->created_at = Carbon::now();
-                    $new->created_by = $logedin_user->id;
-                    $new->updated_by = $logedin_user->id;
                     $save = $new->save();
                 
 					if ($save) {						
@@ -128,76 +156,7 @@ class MessageController extends Controller
 		}
     }
 
-    /*****************************************************/
-    # MessageController
-    # Function name : edit
-    # Author        :
-    # Created Date  : 09-10-2020
-    # Purpose       : Edit Message
-    # Params        : Request $request
-    /*****************************************************/
-    public function edit(Request $request, $id = null) {
-        $data['page_title']     = 'Edit Message';
-        $data['panel_title']    = 'Edit Message';
-        $logedin_user=auth()->guard('admin')->user();
-
-        try
-        {           
-            //$pageNo = Session::get('pageNo') ? Session::get('pageNo') : '';
-           // $data['pageNo'] = $pageNo;
-           
-            $details = Message::find($id);
-            $data['id'] = $id;
-
-            if ($request->isMethod('POST')) {
-               // dd($request->all());
-                if ($id == null) {
-                    return redirect()->route('admin.shared-service.list');
-                }
-               
-                $validationCondition = array(
-                    'name'          => 'required|min:2|max:255|unique:'.(new Message)->getTable().',name,'.$id.'',
-                    'description'  => 'required|min:2',
-                );
-                $validationMessages = array(
-                    'name.required'                => 'Please enter name',
-                    'name.min'                     => 'Name should be should be at least 2 characters',
-                    'name.max'                     => 'Name should not be more than 255 characters',
-                    'description.required'         => 'Please enter message',
-                    'description.min'              => 'Message should be should be at least 2 characters',
-
-                );
-
-                
-                $Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);
-                if ($Validator->fails()) {
-                    
-                    return redirect()->back()->withErrors($Validator)->withInput();
-                } else {
-                    
-                    $details->name = trim($request->name, ' ');
-                    $details->description  = $request->description;
-                    $details->updated_at = Carbon::now();
-                    $details->updated_by = $logedin_user->id;
-                    $save = $details->save();                        
-                    if ($save) {
-                        $request->session()->flash('alert-success', 'Message has been updated successfully');
-                        return redirect()->route('admin.message.list');
-                    } else {
-                        $request->session()->flash('alert-danger', 'An error occurred while updating the state');
-                        return redirect()->back();
-                    }
-                }
-            }
-            
-            
-            return view('admin.message.edit', $data)->with(['details' => $details]);
-
-        } catch (Exception $e) {
-            return redirect()->route('admin.message.list')->with('error', $e->getMessage());
-        }
-    }
-
+    
     /*****************************************************/
     # MessageController
     # Function name : change_status
@@ -239,26 +198,7 @@ class MessageController extends Controller
         }
     }
 
-    /*****************************************************/
-    # MessageController
-    # Function name : delete
-    # Author        :
-    # Created Date  : 09-10-2020
-    # Purpose       : Delete Message
-    # Params        : Request $request
-    /*****************************************************/
-    public function delete(Request $request, $id = null)
-    {
-        
-            if ($id == null) {
-                return redirect()->route('admin.message.list');
-            }
-
-            $details = Message::where('id', $id)->first();
-            $delete = $details->delete();
-            return response()->json(['message'=>'Message successfully deleted.']);
-                   
-    }
+    
     
     /*****************************************************/
     # MessageController
@@ -274,5 +214,13 @@ class MessageController extends Controller
         $this->data['page_title']='Message Details';
         $this->data['messages']=$messageSql;
         return view($this->view_path.'.show',$this->data);
+    }
+
+    public function getUser(Request $request)
+    {
+      
+        $userIds = explode(' ', $request->userId);
+        $contractUser = User::whereIn('id', $userIds)->get();
+        return response()->json(['status'=>true, 'contractUser'=>$contractUser],200);
     }
 }

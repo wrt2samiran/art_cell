@@ -50,6 +50,49 @@
                         @csrf
                         
                         <div>
+                          <div class="row">
+                            
+                            <div class="col-md-12" id="contract">
+                              <div class="form-group required">
+                                <label for="contract_id">Select Contract<span class="error">*</span></label>
+                                 <select class="form-control " id="contract_id" name="contract_id" style="width: 100%;">
+                                   <option value="">Select Contract</option>
+                                   @forelse($contract as $property)
+                                      <option value="{{$property->id}}" @if($property->id == $details['contract_id']) selected="selected" @endif data-userId="{{ $property->property_manager_id }} {{ $property->service_provider_id }}">{{$property->title}}({{$property->code}})</option>
+                                   @empty
+                                   <option value="">No Property Found</option>
+                                   @endforelse
+                                 </select>
+                             </div>
+                            </div>
+
+                            <div class="col-md-12" id="user" style="display:none">
+                              <div class="form-group required">
+                                <label for="user_id">Select User<span class="error">*</span></label>
+                                 <select class="form-control " id="user_id" name="user_id" style="width: 100%;">
+                                   @forelse($userData as $data)
+                                      <option value="{{$data->id}}" @if($data->id == $details['user_id']) selected="selected" @endif>{{$data->name}}</option>
+                                   @empty
+                                   <option value="">No User Found</option>
+                                   @endforelse
+                                 </select>
+                             </div>
+                            </div>
+                            {{-- <div class="col-md-12" id="service_provider" style="display: none;">
+                              <div class="form-group required">
+                                <label for="service_id">Select Service Provider<span class="error">*</span></label>
+                                 <select class="form-control " id="service_id" name="service_id" style="width: 100%;">
+                                   <option value="">Select Service Provider</option>
+                                   @forelse($serviceData as $data)
+                                      <option value="{{$data->id}}" >{{$data->name}}</option>
+                                   @empty
+                                   <option value="">No Service Provider Found</option>
+                                   @endforelse
+                                 </select>
+                             </div>
+                            </div> --}}
+                               
+                        </div>
                           <div class="form-group required">
                             <label for="name">Message Title <span class="error">*</span></label>
                             <input type="text" class="form-control" value="{{old('name')?old('name'):$details->name}}" name="name" id="name"  placeholder="Shared Service Name">
@@ -88,6 +131,19 @@
 <script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
 <script>
 CKEDITOR.replace( 'description' );
+$(document).on('change','#contract_id',function(e){
+    e.preventDefault();
+    let userId = $(this).find(':selected').attr('data-userId');
+    $('#user_id').val(userId).trigger("change");
+  })
+  // $(document).on('change','#contract_id',function(e){
+  //   e.preventDefault();
+  //   let serviceId = $(this).find(':selected').attr('data-serviceId');
+  //   $('#service_id').val(serviceId).trigger("change");
+  // })
+  $('#contract').on('change', function() {
+    $('#user').show();
+  })
 </script>
 <!-- *********Used for CK Editor ***************-->
 <script type="text/javascript" src="{{asset('js/admin/message/edit.js')}}"></script>

@@ -290,6 +290,7 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             //Route::group(['prefix'=>'message','middleware'=>['check_permissions:manage-message'],'as'=>'message.'],function(){    
                 Route::get('/', 'MessageController@list')->name('list')->middleware('check_permissions:message-list');
                 Route::any('/add','MessageController@messageAdd')->name('add')->middleware('check_permissions:message-add');
+                Route::get('/get-user', 'MessageController@getUser')->name('get-user');
                 Route::any('/edit/{encryptCode}', 'MessageController@edit')->name('edit')->middleware('check_permissions:message-edit');
                 Route::get('/{id}/change-change', 'MessageController@change_status')->name('change_status')->middleware('check_permissions:message-change-status');
                 Route::get('/delete/{id}', 'MessageController@delete')->name('delete')->middleware('check_permissions:message-delete');
