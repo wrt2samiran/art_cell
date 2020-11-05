@@ -1,6 +1,6 @@
 <?php
 /*********************************************************/
-# Class name     : SparePartOrderController               #
+# Class name     : SharedServiceOrderController           #
 # Methods  :                                              #
 #    1. create_order                                      #
 #    2. add_to_cart                                       #
@@ -15,8 +15,8 @@
 #    11.order_list                                        #
 #    12.order_details                                     #
 #    13.update_order_status                               #
-# Created Date   : 02-11-2020                             #
-# Modified Date  : 03-11-2020                             #
+# Created Date   : 03-11-2020                             #
+# Modified Date  : 04-11-2020                             #
 # Purpose        : Shared Service Order Management        #
 /*********************************************************/
 namespace App\Http\Controllers\admin;
@@ -25,34 +25,48 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\UnitMaster;
-use App\Models\{SparePart,SparePartCart,City,SparePartOrder,SparePartDeliveryAddress,OrderedSparePartDetail};
+use App\Models\{SharedService,SharedServiceCart,City,SharedServiceOrder,SharedServiceDeliveryAddress,OrderedSharedServiceDetail};
 use Helper;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
-use App\Events\Order\SparePart\OrderPlaced;
-class SparePartOrderController extends Controller
+use App\Events\Order\SharedService\OrderPlaced;
+class SharedServiceOrderController extends Controller
 {
     //defining the view path
-    private $view_path='admin.spare_part_orders';
+    private $view_path='admin.shared_service_orders';
     //defining data array
     private $data=[];
 
     /************************************************************************/
-    # Function to display spare parts for order                              #
+    # Function to display shared services for order                          #
     # Function name    : create_order                                        #
-    # Created Date     : 02-11-2020                                          #
+    # Created Date     : 03-11-2020                                          #
     # Modified date    : 04-11-2020                                          #
-    # Purpose          : To display spare parts for order                    #
+    # Purpose          : To display shared services for order                #
 
     public function create_order(Request $request){
     	$this->data['page_title']='Order Spare Parts';
         if($request->ajax()){
 
-            $spareParts=SparePart::with('unitmaster')->orderBy('id','Desc');
-            return Datatables::of($spareParts)
-            ->addColumn('action',function($spare_part){
-            	$action_url=route('admin.spare_part_orders.add_to_cart',$spare_part->id);
-            	return '<form class="form-inline" action="'.$action_url.'"><input type="number" step="1" value="1" max="'.$spare_part->quantity_available.'" min="1" class="form-control mb-2 mr-sm-2" name="quantity" placeholder="Enter Quantity"><button type="submit" class="btn btn-primary mb-2">Add To Cart</button></form>';  
+            $shared_services=SharedService::orderBy('id','Desc');
+            return Datatables::of($shared_services)
+            ->addColumn('action',function($shared_service){
+            	$action_url=route('admin.shared_service_orders.add_to_cart',$shared_service->id);
+            	return '<form  action="'.$action_url.'">
+            	<div class="row">
+	            	<div class="col-md-3">
+	            	Quantity
+	            	<input type="number" step="1" value="1" max="'.$shared_service->quantity_available.'" min="1" class="form-control" name="quantity" placeholder="Enter Quantity">
+	            	</div>
+	            	<div class="col-md-3">
+	            	Extra Day <input type="number" step="1" value="0"  min="0" class="form-control" name="no_of_extra_days" placeholder="Extra Days">
+	            	</div>
+	            	<div class="col-md-6" style="padding-top:22px;">
+	            	<button type="submit" class="btn btn-primary mb-2">Add To Cart</button>
+	            	</div>
+            	</div>
+
+            	</form>';   
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -61,137 +75,147 @@ class SparePartOrderController extends Controller
     }
 
     /************************************************************************/
-    # Function to store spare part to cart                                   #
+    # Function to store shared service to cart                               #
     # Function name    : add_to_cart                                         #
-    # Created Date     : 02-11-2020                                          #
+    # Created Date     : 03-11-2020                                          #
     # Modified date    : 04-11-2020                                          #
-    # Purpose          : To store spare part to cart                         #
-    # Param            : spare_part_id,Request $request                      #
-    public function add_to_cart($spare_part_id,Request $request){
-        $spare_part=SparePart::findOrFail($spare_part_id);
+    # Purpose          : To store shared service to cart                     #
+    # Param            : shared_service_id,Request $request                  #
+
+    public function add_to_cart($shared_service_id,Request $request){
+        $shared_service=SharedService::findOrFail($shared_service_id);
         $current_user=auth()->guard('admin')->user();
         //checking sapre part status
-        if($spare_part->is_active){
+        if($shared_service->is_active){
             //checking quantity is available or not
-            if($request->quantity>$spare_part->quantity_available){
-                return redirect()->back()->with('error','Quantity you added not available for this spare part.');
+            if($request->quantity>$shared_service->quantity_available){
+                return redirect()->back()->with('error','Quantity you added not available for this shared service.');
             }else{
                 //check if the item already in cart 
-                $spare_part_cart=SparePartCart::where('spare_part_id',$spare_part_id)
+                $shared_service_cart=SharedServiceCart::where('shared_service_id',$shared_service_id)
                                 ->where('user_id',$current_user->id)
                                 ->first();
-                if($spare_part_cart){
-                    return redirect()->back()->with('error','Spare part already in your cart.');
+                if($shared_service_cart){
+                    return redirect()->back()->with('error','Shared service already in your cart.');
                 }else{
-                    SparePartCart::create([
+                    SharedServiceCart::create([
                         'user_id'=>$current_user->id,
-                        'spare_part_id'=>$spare_part_id,
-                        'quantity'=>$request->quantity
+                        'shared_service_id'=>$shared_service_id,
+                        'quantity'=>$request->quantity,
+                        'no_of_extra_days'=>$request->no_of_extra_days
                     ]);
-                    return redirect()->back()->with('success','Spare part added to the cart.');
+                    return redirect()->back()->with('success','Shared service added to the cart.');
                 }
             }
 
         }else{
-            return redirect()->back()->with('error','Spare part is not active.');
+            return redirect()->back()->with('error','Shared service is not active.');
         }
 
     }
 
     /************************************************************************/
-    # Function to display spare part cart data                               #
+    # Function to display shared service cart data                           #
     # Function name    : cart                                                #
-    # Created Date     : 02-11-2020                                          #
+    # Created Date     : 03-11-2020                                          #
     # Modified date    : 04-11-2020                                          #
-    # Purpose          : To display spare part cart data                     #
+    # Purpose          : To display shared service cart data                 #
 
     public function cart(){
-    	$this->data['page_title']='Spare Parts Cart';
+    	$this->data['page_title']='Shared Service Cart';
         $current_user=auth()->guard('admin')->user();
         $this->data['site_setting']=$site_setting=$this->site_setting();
-        $spare_part_carts=SparePartCart::with('spare_part_details')
-                        ->whereHas('spare_part_details')
+
+        $shared_service_carts=SharedServiceCart::with('shared_service_details')
+                        ->whereHas('shared_service_details')
                         ->where('user_id',$current_user->id)
                                 ->get();
 
+        if(count($shared_service_carts)){
+            foreach ($shared_service_carts as $cart) {
+                $total_unit_price=$cart->shared_service_details->price+($cart->no_of_extra_days*$cart->shared_service_details->extra_price_per_day);
 
-        $this->data['sub_total']=$sub_total=self::cart_total_without_tax($spare_part_carts);  
+                $cart_total=($cart->quantity*$total_unit_price);
 
+                $cart->total=$cart_total;
+                $sub_total_price_array[]=$cart_total;
+            }
+        } 
+        $this->data['sub_total']=$sub_total=self::cart_total_without_tax($shared_service_carts);  
         $this->data['tax_percentage']=$tax_percentage=$site_setting['tax'];
 
         $this->data['tax_amount']=$tax_amount=(($tax_percentage/100)*$sub_total);
-
         $this->data['total']=$sub_total+$tax_amount;
-
-        $this->data['spare_part_carts']=$spare_part_carts;                      
+        $this->data['shared_service_carts']=$shared_service_carts;                      
     	return view($this->view_path.'.cart',$this->data); 
     }
 
     /************************************************************************/
-    # Function to update spare part cart by cart id                          #
+    # Function to update shared service cart by cart id                      #
     # Function name    : update_cart                                         #
     # Created Date     : 03-11-2020                                          #
     # Modified date    : 04-11-2020                                          #
-    # Purpose          : To update spare part cart by cart id                #
+    # Purpose          : To update shared service cart by cart id            #
     # Param            : cart_id,Request $request                            #
-
     public function update_cart($cart_id,Request $request){
 
-        $spare_part_cart=SparePartCart::findOrFail($cart_id);
-        $spare_part=SparePart::findOrFail($spare_part_cart->spare_part_id);
+    	$shared_service_cart=SharedServiceCart::findOrFail($cart_id);
+ 
+        $shared_service=SharedService::findOrFail($shared_service_cart->shared_service_id);
         $current_user=auth()->guard('admin')->user();
 
-        if($spare_part->is_active){
+        if($shared_service->is_active){
             //checking quantity is available or not
-            if($request->quantity>$spare_part->quantity_available){
-                return redirect()->back()->with('error','Quantity you added not available for this spare part.');
+            if($request->quantity>$shared_service->quantity_available){
+                return redirect()->back()->with('error','Quantity you added not available for this shareed service.');
             }else{
-   
-                if($spare_part_cart->user_id!=$current_user->id){
+
+                if($shared_service_cart->user_id!=$current_user->id){
                     abort(403,'Cart not belongs to you'.'<a href="'.route('admin.dashboard').'" class="btn btn-success">Back to Dashboard</a>');
                 }
-                $spare_part_cart->update([
-                    'quantity'=>$request->quantity
+                $shared_service_cart->update([
+                    'quantity'=>$request->quantity,
+                    'no_of_extra_days'=>$request->no_of_extra_days
                 ]);
                 return redirect()->back()->with('success','Cart updated.');
             }
 
         }else{
-            return redirect()->back()->with('error','Spare part is not active.');
+            return redirect()->back()->with('error','Shared service is not active.');
         }
     }
 
     /************************************************************************/
-    # Function to delete spare part cart                                     #
+    # Function to delete shared service to cart                              #
     # Function name    : delete_cart                                         #
-    # Created Date     : 02-11-2020                                          #
+    # Created Date     : 03-11-2020                                          #
     # Modified date    : 04-11-2020                                          #
-    # Purpose          : To delete spare part cart                           #
+    # Purpose          : To delete shared service to cart                    #
     # Param            : cart_id                                             #
     public function delete_cart($cart_id){
 
         $current_user=auth()->guard('admin')->user();
         //check if the item already in cart 
-        $spare_part_cart=SparePartCart::findOrFail($cart_id);
+        $shared_service_cart=SharedServiceCart::findOrFail($cart_id);
 
-        if($spare_part_cart){
-            if($spare_part_cart->user_id!=$current_user->id){
+        if($shared_service_cart){
+            if($shared_service_cart->user_id!=$current_user->id){
                 abort(403,'Cart not belongs to you'.'<a href="'.route('admin.dashboard').'" class="btn btn-success">Back to Dashboard</a>');
             }
-            $spare_part_cart->delete();
+            $shared_service_cart->delete();
         }
-        return redirect()->back()->with('success','Spare part removed from cart'); 
+        return redirect()->back()->with('success','Shared service removed from cart'); 
     }
 
     /************************************************************************/
-    # Function to load spare part checkout page                              #
+    # Function to load shared service checkout page                          #
     # Function name    : checkout                                            #
-    # Created Date     : 02-11-2020                                          #
+    # Created Date     : 03-11-2020                                          #
     # Modified date    : 04-11-2020                                          #
-    # Purpose          : To load spare part checkout page                    #
+    # Purpose          : To load shared service checkout page                #
 
     public function checkout(){
-        $this->data['page_title']='Spare Parts Checkout';
+        $this->data['page_title']='Shared Services Checkout';
         $current_user=auth()->guard('admin')->user();
 
         $this->data['site_setting']=$site_setting=$this->site_setting();
@@ -201,12 +225,24 @@ class SparePartOrderController extends Controller
         ->whereHas('country')
         ->orderBy('id','Desc')->get();
         $this->data['cities']=$cities;
-        $spare_part_carts=SparePartCart::with('spare_part_details')
-                        ->whereHas('spare_part_details')
+        $shared_service_carts=SharedServiceCart::with('shared_service_details')
+                        ->whereHas('shared_service_details')
                         ->where('user_id',$current_user->id)
                                 ->get();
 
-        $this->data['sub_total']=$sub_total=self::cart_total_without_tax($spare_part_carts);  
+
+        if(count($shared_service_carts)){
+            foreach ($shared_service_carts as $cart) {
+                $total_unit_price=$cart->shared_service_details->price+($cart->no_of_extra_days*$cart->shared_service_details->extra_price_per_day);
+
+                $cart_total=($cart->quantity*$total_unit_price);
+
+                $cart->total=$cart_total;
+                $sub_total_price_array[]=$cart_total;
+            }
+        } 
+
+        $this->data['sub_total']=$sub_total=self::cart_total_without_tax($shared_service_carts);  
 
         $this->data['tax_percentage']=$tax_percentage=$site_setting['tax'];
 
@@ -215,37 +251,38 @@ class SparePartOrderController extends Controller
         $this->data['total']=$sub_total+$tax_amount;
 
 
-        $this->data['spare_part_carts']=$spare_part_carts;                      
+        $this->data['shared_service_carts']=$shared_service_carts;                      
         return view($this->view_path.'.checkout',$this->data); 
 
     }
 
     /************************************************************************/
-    # Function to submit spare part order                                    #
+    # Function to submit shared service order                                #
     # Function name    : submit_order                                        #
-    # Created Date     : 02-11-2020                                          #
+    # Created Date     : 03-11-2020                                          #
     # Modified date    : 04-11-2020                                          #
-    # Purpose          : To submit spare part order                          #
+    # Purpose          : To submit shared service order                      #
     # Param            : Request $request                                    #
     public function submit_order(Request $request){
 
         $current_user=auth()->guard('admin')->user();
         $site_setting=$this->site_setting();
-        $spare_part_carts=SparePartCart::with('spare_part_details')
-                        ->whereHas('spare_part_details')
+        $shared_service_carts=SharedServiceCart::with('shared_service_details')
+                        ->whereHas('shared_service_details')
                         ->where('user_id',$current_user->id)
                                 ->get();
 
         //checking stock available for all spare parts
-        if (count($spare_part_carts)){
-           foreach ($spare_part_carts as $spare_part_cart) {
-               if($spare_part_cart->quantity>$spare_part_cart->spare_part_details->quantity_available){
-                    return redirect()->route('admin.spare_part_orders.cart')->with('error','Can not place the order due to unavailability of stock for some spare parts in your cart');
+        if (count($shared_service_carts)){
+
+           foreach ($shared_service_carts as $shared_service_cart) {
+               if($shared_service_cart->quantity>$shared_service_cart->shared_service_details->quantity_available){
+                    return redirect()->route('admin.shared_service_orders.cart')->with('error','Can not place the order due to unavailability of stock for some shared services in your cart');
                }
            }
         }
 
-        $sub_total=self::cart_total_without_tax($spare_part_carts);  
+        $sub_total=self::cart_total_without_tax($shared_service_carts);  
 
         $tax_percentage=$site_setting['tax'];
 
@@ -254,7 +291,7 @@ class SparePartOrderController extends Controller
         $total=$sub_total+$tax_amount;
 
 
-        $order=SparePartOrder::create([
+        $order=SharedServiceOrder::create([
             'user_id'=>$current_user->id,
             'order_currency'=>Helper::getSiteCurrency(),
             'total_amount'=>$total,
@@ -267,27 +304,38 @@ class SparePartOrderController extends Controller
         ]);
 
         $order_items_array=[];
-        foreach ($spare_part_carts as $spare_part_cart) {
+        foreach ($shared_service_carts as $shared_service_cart) {
+
+            $shared_service=$shared_service_cart->shared_service_details;
+            $total_days=$shared_service->number_of_days+ $shared_service_cart->no_of_extra_days;
+
+            $total_unit_price=$shared_service->price+($shared_service_cart->no_of_extra_days*$shared_service->extra_price_per_day);
+
             $order_items_array[]=[
-                'spare_part_order_id'=>$order->id,
-                'spare_part_id'=>$spare_part_cart->spare_part_id,
-                'quantity'=>$spare_part_cart->quantity,
-                'price'=>$spare_part_cart->spare_part_details->price,
-                'total_price'=>($spare_part_cart->spare_part_details->price*$spare_part_cart->quantity)
+                'order_id'=>$order->id,
+                'shared_service_id'=>$shared_service_cart->shared_service_id,
+                'no_of_days'=>$shared_service->number_of_days,
+                'quantity'=>$shared_service_cart->quantity,
+                'price'=>$shared_service->price,
+                'no_of_extra_days'=>$shared_service_cart->no_of_extra_days,
+                'extra_days_price'=>$shared_service->extra_price_per_day,
+                'total_days'=>$total_days,
+                'total_unit_price'=>$total_unit_price,
+                'total_price'=>($total_unit_price*$shared_service_cart->quantity)
             ];
 
-            $quantity_available=($spare_part_cart->spare_part_details->quantity_available - $spare_part_cart->quantity);
+            $quantity_available=($shared_service_cart->shared_service_details->quantity_available - $shared_service_cart->quantity);
             //update quantity available for the spare part
-            SparePart::find($spare_part_cart->spare_part_id)->update([
+            SharedService::find($shared_service_cart->shared_service_id)->update([
                 'quantity_available'=>($quantity_available>0)?$quantity_available:'0'
             ]);
 
         }
 
-        OrderedSparePartDetail::insert($order_items_array);
+        OrderedSharedServiceDetail::insert($order_items_array);
 
         $city=City::find($request->city_id);
-        SparePartDeliveryAddress::create([
+        SharedServiceDeliveryAddress::create([
             'order_id'=>$order->id,
             'first_name'=>$request->first_name,
             'last_name'=>$request->last_name,
@@ -301,55 +349,57 @@ class SparePartOrderController extends Controller
         ]);
 
         //clear cart
-        SparePartCart::where('user_id',$current_user->id)->delete();
+        SharedServiceCart::where('user_id',$current_user->id)->delete();
 
-        $order_details=SparePartOrder::with(['ordered_spare_parts','user','delivery_address'])->where('id',$order->id)->first();
+        $order_details=SharedServiceOrder::with(['ordered_shared_services','user','delivery_address'])->where('id',$order->id)->first();
 
         event(new OrderPlaced($order_details));
-        return redirect()->route('admin.spare_part_orders.my_orders')->with('success','Order successfully placed.');
+
+        return redirect()->route('admin.shared_service_orders.my_orders')->with('success','Order successfully placed.');
     }
 
     /************************************************************************/
     # Function to return cart total price without tax                        #
     # Function name    : cart_total_without_tax                              #
-    # Created Date     : 02-11-2020                                          #
+    # Created Date     : 03-11-2020                                          #
     # Modified date    : 04-11-2020                                          #
     # Purpose          : To return cart total price without tax              #
-    # Param            : $spare_part_carts (Collection)                      #
-    public static function cart_total_without_tax($spare_part_carts){
-        $sub_total_price_array=[];
-        if(count($spare_part_carts)){
-            foreach ($spare_part_carts as $cart) {
+    # Param            : $shared_service_carts (Collection)                  #
 
-                $cart_total=($cart->quantity*$cart->spare_part_details->price);
-                $cart->total=$cart_total;
+    public static function cart_total_without_tax($shared_service_carts){
+        $sub_total_price_array=[];
+        if(count($shared_service_carts)){
+            foreach ($shared_service_carts as $cart) {
+                $total_unit_price=$cart->shared_service_details->price+($cart->no_of_extra_days*$cart->shared_service_details->extra_price_per_day);
+
+                $cart_total=($cart->quantity*$total_unit_price);
+
                 $sub_total_price_array[]=$cart_total;
             }
         }  
-
         return array_sum($sub_total_price_array);
     }
 
     /************************************************************************/
-    # Function to display my spare part orders                               #
+    # Function to display my shared service orders                           #
     # Function name    : my_orders                                           #
-    # Created Date     : 02-11-2020                                          #
+    # Created Date     : 03-11-2020                                          #
     # Modified date    : 04-11-2020                                          #
-    # Purpose          : To display my spare part orders                     #
+    # Purpose          : To display my shared service orders                 #
     # Param            : Request $request                                    #
 
     public function my_orders(Request $request){
-
-        $this->data['page_title']='Ordered Spare Parts';
+        $this->data['page_title']='Shared Services- My Orders';
         $current_user=auth()->guard('admin')->user();
         if($request->ajax()){
 
-            $spare_parts_ordered=SparePartOrder::where('user_id',$current_user->id)
-                        ->withCount('ordered_spare_parts')
+            $shared_service_ordered=SharedServiceOrder::where('user_id',$current_user->id)
+                        ->withCount('ordered_shared_services')
                         ->orderBy('id','Desc');
-            return Datatables::of($spare_parts_ordered)
+            return Datatables::of($shared_service_ordered)
             ->addColumn('action',function($order){
-                $details_ajax_url=route('admin.spare_part_orders.ajax_my_order_details',$order->id);
+
+                $details_ajax_url=route('admin.shared_service_orders.ajax_my_order_details',$order->id);
                 return '<a class="btn btn-success" href="javascript:order_details('."'".$details_ajax_url."'".')">Details</a>';
             })
             ->rawColumns(['action'])
@@ -361,38 +411,38 @@ class SparePartOrderController extends Controller
     /************************************************************************/
     # Function to return my order details html ajax response                 #
     # Function name    : ajax_my_order_details                               #
-    # Created Date     : 02-11-2020                                          #
+    # Created Date     : 03-11-2020                                          #
     # Modified date    : 04-11-2020                                          #
     # Purpose          : To return my order details html ajax response       #
     # Param            : order_id                                            #
 
     public function ajax_my_order_details($order_id){
-        $spare_part_order=SparePartOrder::with('ordered_spare_parts')->find($order_id);
-        $this->data['order']=$spare_part_order;
+        $shared_service_order=SharedServiceOrder::with('ordered_shared_services')->find($order_id);
+        $this->data['order']=$shared_service_order;
         $view=view($this->view_path.'.ajax.order_details',$this->data)->render();
         return response()->json(['html'=>$view]);
     }
 
     /************************************************************************/
-    # Function to load all spare part orders for admin                       #
+    # Function to load all shared service orders for admin                   #
     # Function name    : order_list                                          #
-    # Created Date     : 02-11-2020                                          #
+    # Created Date     : 04-11-2020                                          #
     # Modified date    : 04-11-2020                                          #
-    # Purpose          : To load all spare part orders for admin             #
+    # Purpose          : To load all shared service orders for admin         #
     # Param            : Request $request                                    #
 
     public function order_list(Request $request){
-        $this->data['page_title']='Spare Part Orders';
+        $this->data['page_title']='Shared Service Orders';
         $current_user=auth()->guard('admin')->user();
         if($request->ajax()){
 
-            $spare_parts_ordered=SparePartOrder::withCount('ordered_spare_parts')
+            $shared_services_ordered=SharedServiceOrder::withCount('ordered_shared_services')
                         ->with('user')
                         ->orderBy('id','Desc');
-            return Datatables::of($spare_parts_ordered)
+                        
+            return Datatables::of($shared_services_ordered)
             ->addColumn('action',function($order){
-                
-                return '<a class="btn btn-success" href="'.route('admin.spare_part_orders.order_details',$order->id).'">Details</a>';
+                return '<a class="btn btn-success" href="'.route('admin.shared_service_orders.order_details',$order->id).'">Details</a>';
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -401,15 +451,15 @@ class SparePartOrderController extends Controller
     }
 
     /************************************************************************/
-    # Function to load spare part order details for admin                    #
+    # Function to load shared service order details for admin                #
     # Function name    : order_list                                          #
     # Created Date     : 04-11-2020                                          #
     # Modified date    : 04-11-2020                                          #
-    # Purpose          : To load spare part order details for admin          #
+    # Purpose          : To load shared service order details for admin      #
     # Param            : order_id                                            #
     public function order_details($order_id){
-        $this->data['page_title']='Spare Part Order Details';
-        $spare_part_order=SparePartOrder::with('ordered_spare_parts','user')->find($order_id);
+        $this->data['page_title']='Shared Service Order Details';
+        $spare_part_order=SharedServiceOrder::with('ordered_shared_services','user')->find($order_id);
         $this->data['order']=$spare_part_order;
         return view($this->view_path.'.manage.order_details',$this->data);
     }
@@ -417,13 +467,13 @@ class SparePartOrderController extends Controller
     /************************************************************************/
     # Function to update order status                                        #
     # Function name    : update_order_status                                 #
-    # Created Date     : 02-11-2020                                          #
+    # Created Date     : 04-11-2020                                          #
     # Modified date    : 04-11-2020                                          #
     # Purpose          : To update order status                              #
     # Param            : order_id, Request $request                          #
 
     public function update_order_status($order_id,Request $request){
-        $spare_part_order=SparePartOrder::findOrFail($order_id);
+        $spare_part_order=SharedServiceOrder::findOrFail($order_id);
         $spare_part_order->update([
             'curent_status'=>$request->status,
             'updated_by'=>auth()->guard('admin')->id()

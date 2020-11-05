@@ -271,20 +271,72 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::get('/{id}', 'SparePartsController@show')->name('show')->middleware('check_permissions:spare-parts-show');
             });
 
-            /* route for order spare parts */
-            Route::get('/spare-parts-for-order', 'SparePartOrderController@spare_parts_for_orders')->name('spare_parts_for_order');
-            Route::get('/spare-parts/{spare_part_id}/add-to-cart', 'SparePartOrderController@add_to_cart')->name('spare_parts_add_to_cart');
-            Route::get('/spare-parts-cart', 'SparePartOrderController@spare_parts_cart')->name('spare_parts_cart');
-            Route::post('/spare-parts/{spare_part_id}/update-cart', 'SparePartOrderController@update_cart')->name('spare_parts_update_cart');
 
-            Route::delete('/spare-parts/{spare_part_id}/delete-cart', 'SparePartOrderController@delete_cart')->name('spare_parts_delete_cart');
-            Route::get('/spare-parts-checkout', 'SparePartOrderController@spare_parts_checkout')->name('spare_parts_checkout');
-            Route::post('/spare-parts-submit-order', 'SparePartOrderController@submit_order')->name('spare_parts_submit_order');
+            Route::group(['prefix' => 'spare-part-orders', 'as' => 'spare_part_orders.'], function () {
+                Route::get('/create-order','SparePartOrderController@create_order')->name('create_order');
 
-            Route::get('/spare-parts-ordered', 'SparePartOrderController@spare_parts_ordered')->name('spare_parts_ordered');
+                Route::get('/{shared_service_id}/add-to-cart', 'SparePartOrderController@add_to_cart')->name('add_to_cart');
 
-            Route::get('/spare-parts-ordered/{order_id}', 'SparePartOrderController@ajax_order_details')->name('ajax_order_details');
+                Route::get('/cart','SparePartOrderController@cart')->name('cart');
+
+                Route::delete('/cart/{cart_id}/delete', 'SparePartOrderController@delete_cart')->name('delete_cart');
+
+                Route::post('/{cart_id}/update-cart', 'SparePartOrderController@update_cart')->name('update_cart');
+
+                Route::get('/checkout','SparePartOrderController@checkout')->name('checkout');
+
+                Route::post('/submit-order', 'SparePartOrderController@submit_order')->name('submit_order');
+
+                Route::get('/my-orders', 'SparePartOrderController@my_orders')->name('my_orders');
+
+                Route::get('/my-orders/{order_id}/ajax', 'SparePartOrderController@ajax_my_order_details')->name('ajax_my_order_details');
+
+                /** manage spare part orders **/
+                Route::get('/manage/orders','SparePartOrderController@order_list')->name('order_list');
+
+                Route::put('/manage/orders/{order_id}/update_status','SparePartOrderController@update_order_status')->name('update_order_status');
+
+                Route::get('/manage/orders/{order_id}','SparePartOrderController@order_details')->name('order_details');
+                /******/
+
+            });
+
+            /**********/
+
+            /* route for order shared services */
+            Route::group(['prefix' => 'shared-service-orders', 'as' => 'shared_service_orders.'], function () {
+                Route::get('/create-order','SharedServiceOrderController@create_order')->name('create_order');
+
+                Route::get('/{shared_service_id}/add-to-cart', 'SharedServiceOrderController@add_to_cart')->name('add_to_cart');
+
+                Route::get('/cart','SharedServiceOrderController@cart')->name('cart');
+
+                Route::delete('/cart/{cart_id}/delete', 'SharedServiceOrderController@delete_cart')->name('delete_cart');
+
+                Route::post('/{cart_id}/update-cart', 'SharedServiceOrderController@update_cart')->name('update_cart');
+
+                Route::get('/checkout','SharedServiceOrderController@checkout')->name('checkout');
+
+                Route::post('/submit-order', 'SharedServiceOrderController@submit_order')->name('submit_order');
+
+                Route::get('/my-orders', 'SharedServiceOrderController@my_orders')->name('my_orders');
+
+                Route::get('/my-orders/{order_id}/ajax', 'SharedServiceOrderController@ajax_my_order_details')->name('ajax_my_order_details');
+
+                /** manage spare part orders **/
+                Route::get('/manage/orders','SharedServiceOrderController@order_list')->name('order_list');
+
+                Route::put('/manage/orders/{order_id}/update_status','SharedServiceOrderController@update_order_status')->name('update_order_status');
+
+                Route::get('/manage/orders/{order_id}','SharedServiceOrderController@order_details')->name('order_details');
+                /******/
+
+            });
+
             /*************/
+
+
+
 
             Route::group(['prefix' => 'message', 'as' => 'message.'], function () {
             //Route::group(['prefix'=>'message','middleware'=>['check_permissions:manage-message'],'as'=>'message.'],function(){    

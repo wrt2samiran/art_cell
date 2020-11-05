@@ -11,7 +11,9 @@ class SparePartOrder extends Model
     public function ordered_spare_parts(){
     	return $this->hasMany(OrderedSparePartDetail::class,'spare_part_order_id');
     }
-
+    public function user(){
+    	return $this->belongsTo(User::class);
+    }
     public function delivery_address(){
     	return $this->hasOne(SparePartDeliveryAddress::class,'order_id');
     }

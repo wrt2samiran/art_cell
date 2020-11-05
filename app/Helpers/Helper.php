@@ -9,7 +9,7 @@ use \App\Contract;
 use \Illuminate\Support\Facades\Session;
 use App\Http\Helpers\NotificationHelper;
 use DB;
-
+use App\Models\Setting;
 class Helper
 {
     public const NO_IMAGE_USER = 'user_img.jpg'; // Thumb no image user
@@ -443,6 +443,16 @@ class Helper
     }
 
     /*****************************************************/
+    # Function name : get_site_setting                    #
+    # Created Date  : 05-11-2020                          #
+    # Purpose       : Get site setting                    #
+    /*****************************************************/
+    public static function get_site_setting()
+    {
+        return Setting::pluck('value','slug')->toArray();
+    }
+
+    /*****************************************************/
     # Function name : getSiteCurrency                     #
     # Created Date  : 28-10-2020                          #
     # Purpose       : Get site currency                   #
@@ -451,5 +461,18 @@ class Helper
         return 'SAR';
     }
 
+    /*****************************************************/
+    # Function name : get_admin_contact_mail              #
+    # Created Date  : 05-11-2020                          #
+    # Purpose       : Get admin contact email             #
+    /*****************************************************/
+    public static function get_admin_contact_mail(){
+        if (array_key_exists("contact_email",self::get_site_setting())){
+            return self::get_site_setting()['contact_email'];
+        }else{
+            return '';
+        }
+        
+    }
 
 }
