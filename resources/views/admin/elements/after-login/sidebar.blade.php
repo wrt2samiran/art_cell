@@ -341,7 +341,7 @@
 
                 <li class="nav-item ">
                     <a href="{{route('admin.calendar.calendardata')}}"
-                    class="nav-link {{(request()->is('admin/task_management/*','admin/calendar'))?'active':''}}">
+                    class="nav-link {{(request()->is('admin/calendar/*','admin/calendar'))?'active':''}}">
                         <i class="nav-icon fas fa-quote-right"></i>
                         <p>{{__('nav_link_text.calendar')}}</p>
                     </a>

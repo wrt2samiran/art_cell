@@ -52,14 +52,21 @@
                         <div>
                           <div class="form-group required">
                             <label for="name">Teplate Name<span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('template_name')?old('template_name'):$details->template_name}}" name="template_name" id="template_name"  placeholder="Template Name">
+                            <input type="text" class="form-control" value="{{old('template_name')?old('template_name'):$details->template_name}}" name="template_name" id="template_name"  placeholder="Template Name" readonly>
                             @if($errors->has('template_name'))
                             <span class="text-danger">{{$errors->first('template_name')}}</span>
                             @endif
                           </div>
                           <div class="form-group required">
+                            <label for="name">Slug<span class="error">*</span></label>
+                            <input type="text" class="form-control" value="{{old('slug')?old('slug'):$details->slug}}" name="slug" id="slug"  placeholder="Slug" readonly>
+                            @if($errors->has('slug'))
+                            <span class="text-danger">{{$errors->first('slug')}}</span>
+                            @endif
+                          </div>
+                          <div class="form-group required">
                             <label for="name">Variables Name Comma Separator<span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('variable_name')?old('variable_name'):$details->variable_name}}" name="variable_name" id="variable_name"  placeholder="Template Name">
+                            <input type="text" class="form-control" value="{{old('variable_name')?old('variable_name'):$details->variable_name}}" name="variable_name" id="variable_name"  placeholder="Template Name" readonly>
                             @if($errors->has('variable_name'))
                             <span class="text-danger">{{$errors->first('variable_name')}}</span>
                             @endif

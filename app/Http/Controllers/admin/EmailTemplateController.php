@@ -41,11 +41,10 @@ class EmailTemplateController extends Controller
             })          
             
             ->addColumn('action',function($sqlEmailTemplate){
-                $delete_url=route('admin.email.delete',$sqlEmailTemplate->id);
                 $details_url=route('admin.email.show',$sqlEmailTemplate->id);
                 $edit_url=route('admin.email.edit',$sqlEmailTemplate->id);
 
-                return '<a title="View Email Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>&nbsp;&nbsp;<a title="Edit Email" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>&nbsp;&nbsp;<a title="Delete message"  href="javascript:delete_message('.$sqlEmailTemplate->id.')"><i class="far fa-minus-square text-danger"></i></a>';
+                return '<a title="View Email Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>&nbsp;&nbsp;<a title="Edit Email" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
                 
             })
             ->rawColumns(['action'])
@@ -75,8 +74,9 @@ class EmailTemplateController extends Controller
         	if ($request->isMethod('POST'))
         	{
 				$validationCondition = array(
-                    'template_name'          => 'required|min:2|max:255|unique:'.(new EmailTemplate)->getTable().',template_name',
-                    'content'  => 'required|min:2',
+                    'template_name' => 'required|min:2|max:255|unique:'.(new EmailTemplate)->getTable().',template_name',
+                    'content'       => 'required|min:2',
+                    'slug'          => 'required',      
 				);
 				$validationMessages = array(
 					'template_name.required'                => 'Please enter name',
@@ -84,6 +84,7 @@ class EmailTemplateController extends Controller
                     'template_name.max'                     => 'Name should not be more than 255 characters',
                     'content.required'                      => 'Please enter message',
                     'content.min'                           => 'Message should be should be at least 2 characters',
+                    'slug.required'                         => 'Please enter slug',
 
 				);
 
@@ -96,7 +97,7 @@ class EmailTemplateController extends Controller
                     $new->template_name     = trim($request->template_name, ' ');
                     $new->content           = $request->content;
                     $new->variable_name     = $request->variable_name;
-                    $new->slug              = Str::slug($request->template_name);
+                    $new->slug              = trim($request->slug, ' ');
                     $save = $new->save();
                 
 					if ($save) {						
@@ -140,7 +141,8 @@ class EmailTemplateController extends Controller
                
                 $validationCondition = array(
                     'template_name'          => 'required|min:2|max:255|unique:'.(new EmailTemplate)->getTable().',template_name,'.$id.'',
-                    'content'  => 'required|min:2',
+                    'content'                => 'required|min:2',
+                    'slug'                   => 'required',
                 );
                 $validationMessages = array(
                     'template_name.required'                => 'Please enter name',
@@ -148,6 +150,7 @@ class EmailTemplateController extends Controller
                     'template_name.max'                     => 'Name should not be more than 255 characters',
                     'content.required'                      => 'Please enter message',
                     'content.min'                           => 'Message should be should be at least 2 characters',
+                    'slug.required'                         => 'Please enter slug',
 
                 );
 
@@ -161,7 +164,7 @@ class EmailTemplateController extends Controller
                     $details->template_name     = trim($request->template_name, ' ');
                     $details->content           = $request->content;
                     $details->variable_name     = $request->variable_name;
-                    $details->slug              = Str::slug($request->template_name);
+                    $details->slug              = trim($request->slug, ' ');
                     $save = $details->save();                        
                     if ($save) {
                         $request->session()->flash('alert-success', 'Email Template has been updated successfully');
@@ -222,16 +225,19 @@ class EmailTemplateController extends Controller
     }
 
     public function sendMail(Request $request){
-        $mail = EmailTemplate::where('id','1')->first();
-        $message = $mail->content;
-        $message = str_replace("##USERNAME##", nl2br('SMMS'), $message);
-	    $message = str_replace("##Address##", nl2br('Kolkata'), $message);
-        $message = str_replace("##Employ-code##", ('000-421'), $message); 
+       $slug = 'registration-successfully';
+        $variable_value=[
+            '##USERNAME##'=>'raju',
+            '##Address##'=>'Kolkata',
+            '##Employ-code##'=>'000-421',
+        ];
+        $content = \Helper::emailTemplateMail($slug,$variable_value);
+         
         \Mail::send('emails.admin.blankmail',
         [
-            'templateForntend'=>$message,
-        ], function ($m) use ($message) {
-            $m->to('banksbi@yopmail.com')->subject('User Credential');
+            'templateForntend'=>$content,
+        ], function ($m) use ($content) {
+            $m->to('banksbi@yopmail.com')->subject('Registration');
         });
     }
 }

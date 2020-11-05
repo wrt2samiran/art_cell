@@ -25,4 +25,9 @@ class Property extends Model
     public function contracts(){
         return $this->hasMany(Contract::class);
     }
+
+    public function parent_user()
+    {
+        return $this->belongsTo(static::class, 'parent_id');
+    }
 }

@@ -56,6 +56,7 @@
                                         <tr>
                                             <th>Id</th>
                                             <th>Template For</th>
+                                            <th>Slug</th>
                                             <th>Created At</th>
                                             <th>Action</th>
                                         </tr>

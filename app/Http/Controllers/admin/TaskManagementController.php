@@ -29,8 +29,6 @@ class TaskManagementController extends Controller
     /*****************************************************/
     public function taskCreate(Request $request) {
 
-       // dd($request->all());
-
         $this->data['page_title']     = 'Create Task';
         $logedInUserRole = \Auth::guard('admin')->user()->role_id;
         $logedInUser = \Auth::guard('admin')->user()->id;
@@ -40,7 +38,7 @@ class TaskManagementController extends Controller
             if ($request->isMethod('POST'))
             {
                 $validationCondition = array(
-                    'task_title'     => 'required|min:2|max:255',
+                    'task_title'    => 'required|min:2|max:255',
                     'service_id'    => 'required',
                     'property_id'   => 'required',
                     'country_id'    => 'required',
@@ -49,9 +47,9 @@ class TaskManagementController extends Controller
                     'labour_id'     => 'required',
                 );
                 $validationMessages = array(
-                    'task_title.required'    => 'Please enter Task title',
-                    'task_title.min'         => 'Task title should be should be at least 2 characters',
-                    'task_title.max'         => 'Task title should not be more than 255 characters',
+                    'task_title.required'   => 'Please enter Task title',
+                    'task_title.min'        => 'Task title should be should be at least 2 characters',
+                    'task_title.max'        => 'Task title should not be more than 255 characters',
                     'service_id.required'   => 'Please select service',
                     'property_id.required'  => 'Please select property',
                     'country_id.required'   => 'Please select country',
@@ -94,35 +92,29 @@ class TaskManagementController extends Controller
                         {
                             return redirect()->route('admin.task_management.calendar',$request->service_allocation_id)->with('error', 'Task already been added for this user on '.date("o-m-d",$day_to_display).' for this Service.');
                         }
-                        
                          
                     }
-                  //  print_r($arr_days);
                  
                     $new = new TaskLists;
                     $new->service_allocation_id = $request->service_allocation_id;
-                    $new->service_id =  $request->service_id;
-                    $new->property_id = $request->property_id;
-                    $new->country_id =$request->country_id;
-                    $new->state_id =$request->state_id;
-                    $new->city_id =$request->city_id;
-                    $new->user_id =$request->labour_id;
-                    $new->task_title =$request->task_title;
-                    $new->task_desc =$request->task_desc;
+                    $new->service_id            = $request->service_id;
+                    $new->property_id           = $request->property_id;
+                    $new->country_id            = $request->country_id;
+                    $new->state_id              = $request->state_id;
+                    $new->city_id               = $request->city_id;
+                    $new->user_id               = $request->labour_id;
+                    $new->task_title            = $request->task_title;
+                    $new->task_desc             = $request->task_desc;
                    
-                    $new->start_date = date("Y-m-d", strtotime($rangeDate[0]));
-                    $new->end_date = date("Y-m-d", strtotime($rangeDate[1]));
-                    $new->status ='0';
-                    $new->created_by =auth()->guard('admin')->id();
-                    $new->updated_by =auth()->guard('admin')->id();
-
-                    $new->created_at = date('Y-m-d H:i:s');
+                    $new->start_date            = date("Y-m-d", strtotime($rangeDate[0]));
+                    $new->end_date              = date("Y-m-d", strtotime($rangeDate[1]));
+                    $new->status                = '0';
+                    $new->created_by            = auth()->guard('admin')->id();
+                    $new->updated_by            = auth()->guard('admin')->id();
+                    $new->created_at            = date('Y-m-d H:i:s');
+                    
                     $save = $new->save();
 
-                    
-                     
-                    
-                    //$arr_days []= date('o-m-d',$date_from);
                     
                     $temp = new TaskDetails;
                     $temp->service_allocation_id = $request->service_allocation_id;
@@ -166,10 +158,7 @@ class TaskManagementController extends Controller
             {
                 $this->data['contract_list']=Contract::whereIsActive('1')->whereNull('deleted_at')->orderBy('id','ASC')->get();
             }
-            
 
-            
-            //$this->data['country_list']=$country_list;
             return view($this->view_path.'.add',$this->data);
         } catch (Exception $e) {
             return redirect()->route('admin.task_management.calendar')->with('error', $e->getMessage());
@@ -178,7 +167,7 @@ class TaskManagementController extends Controller
 
     /*****************************************************/
     # TaskManagementController
-    # Function name : getData
+    # Function name : getContractData
     # Author        :
     # Created Date  : 14-10-2020
     # Purpose       : Get Task Related Data List
@@ -189,7 +178,6 @@ class TaskManagementController extends Controller
 
     public function getContractData(Request $request)
     {
-        //dd($request->all());
         $logedInUser = \Auth::guard('admin')->user()->id;
          $validator = Validator::make($request->all(), [ 
             'contract_id' => 'required',
@@ -205,7 +193,7 @@ class TaskManagementController extends Controller
         $sqlService = ContractService::with('service')->whereContractId($request->contract_id)->get();
         $restContractService = array();
         foreach ($sqlService as $key => $serviceValue) {
-            if($serviceValue->service_type=='General' and ($serviceValue->number_of_times_already_used=='NULL' || $serviceValue->number_of_times_already_used == ''))
+            if(($serviceValue->service_type=='General' || $serviceValue->service_type=='Free') and ($serviceValue->number_of_times_already_used=='NULL' || $serviceValue->number_of_times_already_used == ''))
             {
                 $restContractService[] = $serviceValue->id;
             }
@@ -236,7 +224,6 @@ class TaskManagementController extends Controller
             {
                 $restContractService[] = $serviceValue->id;
             }
-            
         }
 
         $sqlServiceFinal = ContractService::with('service')->whereContractId($request->contract_id)->whereIn('id', $restContractService)->get();
@@ -317,15 +304,15 @@ class TaskManagementController extends Controller
         $labour_list= User::whereStatus('A')->whereRoleId('5')->whereCreatedBy($logedInUser)->get();
 
 
-        $this->data['service_data'] = $service_data;
-        $this->data['task_id'] = $id;
-        $this->data['property_data'] = $sqlProperty;
-        $this->data['city_data'] = $sqlCity;
-        $this->data['state_data'] = $sqlState;
-        $this->data['country_data'] = $sqlCountry;
+        $this->data['service_data']          = $service_data;
+        $this->data['task_id']               = $id;
+        $this->data['property_data']         = $sqlProperty;
+        $this->data['city_data']             = $sqlCity;
+        $this->data['state_data']            = $sqlState;
+        $this->data['country_data']          = $sqlCountry;
         $this->data['service_allocation_id'] = $id;
 
-        $this->data['labour_list']  = $labour_list;
+        $this->data['labour_list']           = $labour_list;
 
         if ($request->has('search')) {
             
@@ -360,11 +347,8 @@ class TaskManagementController extends Controller
             $sqlTask=TaskLists::whereServiceAllocationId($id)->orderBy('id','Desc')->get();
         }
 
-        //dd($sqlCalendar);
         $this->data['tasks_list']  = $sqlTask;
         $this->data['request'] = $request;
-
-       // return view($this->view_path.'.add',$this->data);
 
         return view($this->view_path.'.calendar',$this->data);
     }
@@ -436,12 +420,12 @@ class TaskManagementController extends Controller
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Show Task" id="details_task" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
                 } 
 
-                // if($logedInUser==$tasks->created_by and $tasks->task_assigned=='N'){
-                //     $edit_url = route('admin.task_management.edit',$tasks->id);
-                //     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Task" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
-                // }
-               // dd($tasks);
+               
                 if($logedInUser==$tasks->created_by and $tasks->task_assigned=='N'){
+
+                    // $edit_url=route('admin.task_management.edit',$tasks->id);
+                    // $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Task" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
+
                     $delete_url=route('admin.task_management.delete',$tasks->id);
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete contract" href="javascript:delete_task('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
                 }
@@ -451,8 +435,6 @@ class TaskManagementController extends Controller
                 } 
                 return $action_buttons;
 
-               
-                
             })
             ->rawColumns(['action','status'])
             ->make(true);
@@ -576,9 +558,7 @@ class TaskManagementController extends Controller
         } catch (Exception $e) {
             return redirect()->route('admin.task_management.calendar')->with('error', $e->getMessage());
         }
-    }
-
-    
+    }    
 
     /*****************************************************/
     # TaskManagementController
@@ -589,8 +569,11 @@ class TaskManagementController extends Controller
     # Params        : Request $request
     /*****************************************************/
     public function edit(Request $request, $id = null) {
-        $this->data['page_title']     = 'Edit City';
-        $this->data['panel_title']    = 'Edit City';
+        $this->data['page_title']     = 'Edit Task';
+        $this->data['panel_title']    = 'Edit Task';
+
+        $logedInUserRole = \Auth::guard('admin')->user()->role_id;
+        $logedInUser = \Auth::guard('admin')->user()->id;
 
         try
         {           
@@ -637,10 +620,22 @@ class TaskManagementController extends Controller
                 }
             }
             
-            $country_list=Country::whereIsActive('1')->orderBy('id','ASC')->get();
-            $state_list=State::whereIsActive('1')->whereCountryId($details->country_id)->orderBy('id','ASC')->get();
-            $this->data['country_list']=$country_list;
-            $this->data['state_list']=$state_list;
+            
+            if($logedInUserRole==2)
+            {
+                $this->data['contract_list']=Contract::whereIsActive('1')->whereNull('deleted_at')->whereCustomerId($logedInUser)->orderBy('id','ASC')->get();
+            }
+            else
+            {
+                $this->data['contract_list']=Contract::whereIsActive('1')->whereNull('deleted_at')->orderBy('id','ASC')->get();
+            }
+
+
+
+            $this->data['property_list']=Property::with('parent_user')->whereIsActive('1')->whereNull('deleted_at')->orderBy('id','ASC')->get();
+
+
+
             return view($this->view_path.'.edit',$this->data)->with(['details' => $details]);
 
         } catch (Exception $e) {
@@ -691,7 +686,7 @@ class TaskManagementController extends Controller
 
     /*****************************************************/
     # TaskManagementController
-    # Function name : taskDelete
+    # Function name : delete
     # Author        :
     # Created Date  : 16-10-2020
     # Purpose       : delete task
@@ -758,41 +753,35 @@ class TaskManagementController extends Controller
         $this->data['task_list']=$tasks;
         return view($this->view_path.'.show',$this->data);
     }
-    /*****************************************************/
-    # TaskManagementController
-    # Function name : getCities
-    # Author        :
-    # Created Date  : 16-10-2020
-    # Purpose       : Get State wise City List
-    # Params        : Request $request
-    /*****************************************************/
+    // /*****************************************************/
+    // # TaskManagementController
+    // # Function name : getCities
+    // # Author        :
+    // # Created Date  : 16-10-2020
+    // # Purpose       : Get State wise City List
+    // # Params        : Request $request
+    // /*****************************************************/
 
-   
+    // public function getCities(Request $request)
+    // {
+    //      $validator = Validator::make($request->all(), [ 
+    //         'state_id' => 'required',
+    //         ]);
 
-    public function getCities(Request $request)
-    {
-         $validator = Validator::make($request->all(), [ 
-            'state_id' => 'required',
-            ]);
+    //        if ($validator->fails()) { 
+    //           return response()->json(['success' =>false,'message'=>$validator->errors()->first()], 200);
+    //         }
 
-           if ($validator->fails()) { 
-              return response()->json(['success' =>false,'message'=>$validator->errors()->first()], 200);
-            }
+    //     $allCities = City::whereIsActive('1')->where('state_id', $request->state_id)->get();
+    //     return response()->json(['status'=>true, 'allCities'=>$allCities,],200);
+    // }
 
-        $allCities = City::whereIsActive('1')->where('state_id', $request->state_id)->get();
-        return response()->json(['status'=>true, 'allCities'=>$allCities,],200);
-    }
-
-    
-
-
-    
     /*****************************************************/
     # TaskManagementController
     # Function name : dailyTask
     # Author        :
     # Created Date  : 16-10-2020
-    # Purpose       : Update Task Data
+    # Purpose       : Showing Labour Daily Task List
     # Params        : Request $request
     /*****************************************************/
 
@@ -875,7 +864,15 @@ class TaskManagementController extends Controller
         return view($this->view_path.'.daily-task-list',$this->data);
     }
 
-    
+    /*****************************************************/
+    # TaskManagementController
+    # Function name : taskFeedback
+    # Author        :
+    # Created Date  : 16-10-2020
+    # Purpose       : Labour Daily Task Feedback store
+    # Params        : Request $request
+    /*****************************************************/
+
     public function taskFeedback(Request $request) {
 
         //dd($request->all());
@@ -925,8 +922,8 @@ class TaskManagementController extends Controller
     # TaskManagementController
     # Function name : dailyTaskShow
     # Author        :
-    # Created Date  : 29-11-2020
-    # Purpose       : Showing Daily Task feedback
+    # Created Date  : 29-10-2020
+    # Purpose       : Showing Daily Task details
     # Params        : Request $request
     /*****************************************************/
 
@@ -942,11 +939,10 @@ class TaskManagementController extends Controller
     # TaskManagementController
     # Function name : updateTask
     # Author        :
-    # Created Date  : 16-10-2020
+    # Created Date  : 29-10-2020
     # Purpose       : Update Task Data
     # Params        : Request $request
     /*****************************************************/
-
 
     
     public function updateTask(Request $request)
@@ -964,83 +960,73 @@ class TaskManagementController extends Controller
 
          
          $sqlTask =  TaskLists::whereId($request->task_id)->first();    
-
          
 
-                    $start_date  = date('Y-m-d h:i:s', strtotime($request->modified_start_date));
-                    $end_date    = date('Y-m-d h:i:s', strtotime($request->modified_end_date));
+        $start_date  = date('Y-m-d h:i:s', strtotime($request->modified_start_date));
+        $end_date    = date('Y-m-d h:i:s', strtotime($request->modified_end_date));
 
 
-                    $date_from = strtotime($start_date);
-                    $date_to = strtotime($end_date);
+        $date_from = strtotime($start_date);
+        $date_to = strtotime($end_date);
 
-                    $array_all_days = array();
-                    $day_passed = ($date_to - $date_from); //seconds
-                    $day_passed = ($day_passed/86400); //days
-                    $arr_days=  array();
-                    $counter = 1;
-                    $day_to_display = $date_from;
-                    while($counter <= $day_passed){
-                        $day_to_display += 86400;
-                        //echo date("F j, Y \n", $day_to_display);
-                        $checkFreeDate = TaskDetails::whereTaskDate(date('o-m-d',$day_to_display))->whereServiceId($sqlTask->service_allocation_id)->whereUserId($sqlTask->user_id)->first();
-                        if(!$checkFreeDate)
-                        {
-                            $arr_days[] = date('o-m-d',$day_to_display);
-                            $counter++;
-                        }
-                        
-                        else
-                        {
+        $array_all_days = array();
+        $day_passed = ($date_to - $date_from); //seconds
+        $day_passed = ($day_passed/86400); //days
+        $arr_days=  array();
+        $counter = 1;
+        $day_to_display = $date_from;
+        while($counter <= $day_passed){
+            $day_to_display += 86400;
+            //echo date("F j, Y \n", $day_to_display);
+            $checkFreeDate = TaskDetails::whereTaskDate(date('o-m-d',$day_to_display))->whereServiceId($sqlTask->service_allocation_id)->whereUserId($sqlTask->user_id)->first();
+            if(!$checkFreeDate)
+            {
+                $arr_days[] = date('o-m-d',$day_to_display);
+                $counter++;
+            }
+            
+            else
+            {
+                session()->flash('error', 'Task already been added for this user on '.date("o-m-d",$day_to_display).' for this Service.');
+                return response()->json(['status'=>false],200);
+            }          
+             
+        }
 
-                            session()->flash('error', 'Task already been added for this user on '.date("o-m-d",$day_to_display).' for this Service.');
+        $sqlTask->start_date  = date('Y-m-d h:i:s', strtotime($request->modified_start_date));
+        $sqlTask->end_date    = date('Y-m-d h:i:s', strtotime($request->modified_end_date));
+        $sqlTask->updated_at  = date('Y-m-d H:i:s');
+        $sqlTask->updated_by  = $logedInUser;
+        $save = $sqlTask->save(); 
+        
+        $sqlTaskDetails = TaskDetails::whereServiceId($sqlTask->service_allocation_id)->whereTaskId($request->task_id)->whereUserId($sqlTask->user_id)->delete();
 
+        $tempTaskDetails = new TaskDetails;
 
-                            return response()->json(['status'=>false],200);
+        $tempTaskDetails->service_id = $sqlTask->service_allocation_id;
+        $tempTaskDetails->task_id = $request->task_id;
+        $tempTaskDetails->user_id = $sqlTask->user_id;
+        $tempTaskDetails->task_date = date('o-m-d',$date_from);
+        $tempTaskDetails->created_by = auth()->guard('admin')->id();
+        $tempTaskDetails->save();
 
-                        }
-                        
-                         
-                    }
-                  //  print_r($arr_days);
+        $array_all_days = array();
+        $day_passed = ($date_to - $date_from); //seconds
+        $day_passed = ($day_passed/86400); //days
 
-                    $sqlTask->start_date  = date('Y-m-d h:i:s', strtotime($request->modified_start_date));
-                    $sqlTask->end_date    = date('Y-m-d h:i:s', strtotime($request->modified_end_date));
-                    $sqlTask->updated_at  = date('Y-m-d H:i:s');
-                    $sqlTask->updated_by  = $logedInUser;
-                    $save = $sqlTask->save(); 
-                 
+        $counter = 1;
+        $day_to_display = $date_from;
 
-                    
-                    $sqlTaskDetails = TaskDetails::whereServiceId($sqlTask->service_allocation_id)->whereTaskId($request->task_id)->whereUserId($sqlTask->user_id)->delete();
+        foreach ($arr_days as $key => $value) {
 
-                    $tempTaskDetails = new TaskDetails;
-
-                    $tempTaskDetails->service_id = $sqlTask->service_allocation_id;
-                    $tempTaskDetails->task_id = $request->task_id;
-                    $tempTaskDetails->user_id = $sqlTask->user_id;
-                    $tempTaskDetails->task_date = date('o-m-d',$date_from);
-                    $tempTaskDetails->created_by = auth()->guard('admin')->id();
-                    $tempTaskDetails->save();
-
-                    $array_all_days = array();
-                    $day_passed = ($date_to - $date_from); //seconds
-                    $day_passed = ($day_passed/86400); //days
-
-                    $counter = 1;
-                    $day_to_display = $date_from;
-
-                    foreach ($arr_days as $key => $value) {
-
-                        $tempTaskDetails = new TaskDetails;
-                        $tempTaskDetails->service_id = $sqlTask->service_allocation_id;
-                        $tempTaskDetails->task_id = $request->task_id;
-                        $tempTaskDetails->user_id = $sqlTask->user_id;
-                        $tempTaskDetails->task_date = $value;
-                        $tempTaskDetails->created_by = auth()->guard('admin')->id();
-                        $tempTaskDetails->save();
-                    }
-
+            $tempTaskDetails = new TaskDetails;
+            $tempTaskDetails->service_id = $sqlTask->service_allocation_id;
+            $tempTaskDetails->task_id = $request->task_id;
+            $tempTaskDetails->user_id = $sqlTask->user_id;
+            $tempTaskDetails->task_date = $value;
+            $tempTaskDetails->created_by = auth()->guard('admin')->id();
+            $tempTaskDetails->save();
+        }
         
         return response()->json(['status'=>true],200);
     }
@@ -1177,10 +1163,10 @@ class TaskManagementController extends Controller
 
     /*****************************************************/
     # TaskManagementController
-    # Function name : Calendar
+    # Function name : labourTaskCreate
     # Author        :
-    # Created Date  : 16-10-2020
-    # Purpose       : Showing Task Calendar
+    # Created Date  : 02-11-2020
+    # Purpose       : Creating Labour Task
     # Params        : Request $request
     /*****************************************************/
        
@@ -1193,9 +1179,7 @@ class TaskManagementController extends Controller
         $this->data['sqltaskData']=TaskLists::with('property')->with('service')->with('country')->with('state')->with('city')->whereId($id)->whereIsDeleted('N')->first();
 
         $this->data['labour_list']= User::whereRoleId('5')->whereCreatedBy($logedInUser)->orderBy('name', 'Desc')->get();
-
         $labour_list= User::whereStatus('A')->whereRoleId('5')->whereCreatedBy($logedInUser)->get();
-
         return view($this->view_path.'.labour-task-add',$this->data);
     }
 
@@ -1206,12 +1190,10 @@ class TaskManagementController extends Controller
     # Function name : taskAssign
     # Author        :
     # Created Date  : 02-11-2020
-    # Purpose       : Assigning new Task
+    # Purpose       : Assigning new Task to Labour
     # Params        : Request $request
     /*****************************************************/
     public function taskAssign(Request $request) {
-
-       // dd($request->all());
 
         $this->data['page_title']     = 'Assign Task';
         
@@ -1224,13 +1206,13 @@ class TaskManagementController extends Controller
                 'service_id'        => 'required',
                 'date_range'        => 'required',
                 
-                'user_id'         => 'required',
+                'user_id'           => 'required',
                 'task_description'  => 'required|min:10|max:5000',
             );
             $validationMessages = array(
                 'task_id.required'             => 'Please select Task',
                 'service_id.required'          => 'Please select service',
-                'user_id.required'           => 'Please select user',
+                'user_id.required'             => 'Please select user',
                 'date_range.required'          => 'Please select date',
                 'task_description.required'    => 'Task Description is required',
                 'task_description.min'         => 'Task Description should be should be at least 10 characters',
@@ -1271,8 +1253,6 @@ class TaskManagementController extends Controller
                     {
                         return redirect()->route('admin.task_management.labourTaskList', $request->task_id)->with('error', 'Task already been added for this user on '.date("o-m-d",$day_to_display).' for this Service.');
                     }
-                    
-                     
                 }
               
                 
@@ -1310,14 +1290,10 @@ class TaskManagementController extends Controller
                 $task = TaskLists::whereId($request->task_id)->update([
                 'task_assigned'=>'Y'
                 ]);
-                $task->save();
-
 
                 TaskDetails::insert($task_details_data_array);
                 $request->session()->flash('success', 'Task has been added successfully');
-                return redirect()->route('admin.task_management.labourTaskList', $request->task_id);
-                
-                
+                return redirect()->route('admin.task_management.labourTaskList', $request->task_id);                
             }
 
         } catch (Exception $e) {
@@ -1329,10 +1305,10 @@ class TaskManagementController extends Controller
 
      /*****************************************************/
     # TaskManagementController
-    # Function name : taskEdit
+    # Function name : editDailyTask
     # Author        :
-    # Created Date  : 14-10-2020
-    # Purpose       : Editing task
+    # Created Date  : 02-11-2020
+    # Purpose       : Editing Labour Daily Task
     # Params        : Request $request
     /*****************************************************/
     public function editDailyTask(Request $request, $id = null) {
@@ -1344,15 +1320,11 @@ class TaskManagementController extends Controller
 
         try
         {          
-
             $data['id'] = $id; 
-
             $details = TaskDetails::with('task')->with('service')->whereId($id)->first();
             $this->data['labour_list']= User::whereRoleId('5')->whereCreatedBy($logedInUser)->orderBy('name', 'Desc')->get();
-            
 
             if ($request->isMethod('POST')) {
-
                 
                 if ($id == null) {
                     return redirect()->route('admin.task_management.labourTaskList', $details->task_id);
@@ -1362,13 +1334,13 @@ class TaskManagementController extends Controller
                 'service_id'        => 'required',
                 'date_range'        => 'required',
                 
-                'user_id'         => 'required',
+                'user_id'           => 'required',
                 'task_description'  => 'required|min:10|max:5000',
                 );
                 $validationMessages = array(
                     'task_id.required'             => 'Please select Task',
                     'service_id.required'          => 'Please select service',
-                    'user_id.required'           => 'Please select user',
+                    'user_id.required'             => 'Please select user',
                     'date_range.required'          => 'Please select date',
                     'task_description.required'    => 'Task Description is required',
                     'task_description.min'         => 'Task Description should be should be at least 10 characters',
@@ -1413,14 +1385,10 @@ class TaskManagementController extends Controller
                     else
                     {
                         return redirect()->route('admin.task_management.labourTaskList', $request->task_id)->with('error', 'Task already been added for this user on '.date("o-m-d",$date_from).' for this Service.');
-                    }
-
-
-                    
+                    }                   
                 }
             }
             
-           
             return view($this->view_path.'.labour-task-edit',$this->data)->with(['sqltaskData' => $details]);
 
         } catch (Exception $e) {
@@ -1430,15 +1398,14 @@ class TaskManagementController extends Controller
 
     /*****************************************************/
     # TaskManagementController
-    # Function name : taskDelete
+    # Function name : deleteLabourTask
     # Author        :
-    # Created Date  : 16-10-2020
-    # Purpose       : delete task
+    # Created Date  : 02-11-2020
+    # Purpose       : Delete Labour Daily Task
     # Params        : Request $request
     /*****************************************************/
     public function deleteLabourTask($id)
     {
-        
 
         $checkTaskDetails = TaskDetails::whereId($id)->first();
         $sqlTotalTask = TaskDetails::whereTaskId($checkTaskDetails->task_id)->get();
@@ -1456,8 +1423,6 @@ class TaskManagementController extends Controller
         }
         
         return response()->json(['message'=>'Labour Task successfully deleted.']);
-
-       
 
     }
 }

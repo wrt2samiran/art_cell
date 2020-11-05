@@ -20,8 +20,14 @@ class AccountCreationMailToUser extends Mailable
      */
     public function __construct($data)
     {
-        $this->data=$data; 
-        $this->mail_content="<div>Hello {$data['user']['first_name']},</div><br><div>You have been added as an user to <b>{$data['user']['role']['role_name']}</b> group in <b>SMMS System</b>. Please use below credentials to login into the system and make sure to change your password after login.</div><br><div><p>Email : {$data['user']['email']}</p><p>Password : {$data['user_password']}</p></div><div>Thanks & Regards<br> SMMS Team</div>";
+        $this->data=$data;
+        $slug = 'registration-successfully';
+        $variable_value=[
+            '##USERNAME##'=>"{$data['user']['first_name']}",
+            '##Address##'=>"{$data['user']['email']}",
+            '##Employ-code##'=>"{$data['user_password']}",
+        ]; 
+        $this->mail_content=\Helper::emailTemplateMail($slug,$variable_value);
     }
 
     /**

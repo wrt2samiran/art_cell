@@ -57,6 +57,13 @@
                             @endif
                           </div>
                           <div class="form-group required">
+                            <label for="name">Slug<span class="error">*</span></label>
+                            <input type="text" class="form-control" value="{{old('slug')?old('slug'):''}}" name="slug" id="slug"  placeholder="Please Enter slug">
+                            @if($errors->has('slug'))
+                            <span class="text-danger">{{$errors->first('slug')}}</span>
+                            @endif
+                          </div>
+                          <div class="form-group required">
                             <label for="name">Variables Name Comma Separator<span class="error">*</span></label>
                             <input type="text" class="form-control" value="{{old('variable_name')?old('variable_name'):''}}" name="variable_name" id="variable_name"  placeholder="Please Enter variables name">
                             @if($errors->has('variable_name'))

@@ -36,28 +36,13 @@ class CalendarController extends Controller
 
         $sqlService=ServiceAllocationManagement::with('service')->with('contract')->whereStatus('A')->where('work_status', '<>','2')->whereServiceProviderId($logedInUser)->get();
 
-
-        // $sqlProperty = DB::table('service_allocation_management')
-        // ->join('contracts', 'contracts.id', '=', 'service_allocation_management.contract_id')
-        // ->join('properties', 'properties.id', '=', 'contracts.property_id')
-        // ->where('service_allocation_management.service_provider_id', $logedInUser)
-        // ->get();
-
-        // $sqlCity    = City::whereIsActive('1')->where('id', $sqlProperty->city_id)->first();
-        // $sqlState   = State::whereIsActive('1')->where('id', $sqlCity->state_id)->first();
-        // $sqlCountry = Country::whereIsActive('1')->where('id', $sqlState->country_id)->first();
-
         $labour_list= User::whereStatus('A')->whereRoleId('5')->whereCreatedBy($logedInUser)->get();
-
-
         $this->data['service_list'] = $sqlService;
-        
-
         $this->data['labour_list']  = $labour_list;
 
         if ($request->has('search')) {
             
-            $sqlCalendar = TaskLists::where(function ($q) use ($request) {
+            $sqlCalendar = TaskLists::with('property')->with('service')->with('country')->with('state')->with('city')->with('contract_services')->where(function ($q) use ($request) {
                 
                 if ($request->has('user_labour_id')) {
                    
@@ -85,24 +70,15 @@ class CalendarController extends Controller
             })->get();
 
         } else {
-           // if($logedInUserRole != 4 ){
-                $sqlTask=TaskLists::whereCreatedBy($logedInUser)->orWhere('user_id',$logedInUser)->orderBy('id','Desc')->get();
-           // }
-            // else
-            // {
-            //     $sqlTask=TaskDetails::whereCreatedBy($logedInUser)->orderBy('id','Desc')->get();
-            // }
+                $sqlTask=TaskLists::with('property')->with('service')->with('country')->with('state')->with('city')->with('contract_services')->whereCreatedBy($logedInUser)->orWhere('user_id',$logedInUser)->orderBy('id','Desc')->get();
         }
 
         //dd($sqlCalendar);
         $this->data['tasks_list']  = $sqlTask;
         $this->data['request'] = $request;
 
-       // return view($this->view_path.'.add',$this->data);
-
         return view($this->view_path.'.calendar',$this->data);
     }
-
 
 
     /*****************************************************/
@@ -175,8 +151,6 @@ class CalendarController extends Controller
                 } 
                 return $action_buttons;
 
-               
-                
             })
             ->rawColumns(['action','status'])
             ->make(true);
@@ -188,10 +162,10 @@ class CalendarController extends Controller
 
    /*****************************************************/
     # CalendarController
-    # Function name : taskAdd
+    # Function name : calendardataAdd
     # Author        :
     # Created Date  : 14-10-2020
-    # Purpose       : Adding new Task
+    # Purpose       : Adding new Task from Calendar
     # Params        : Request $request
     /*****************************************************/
     public function calendardataAdd(Request $request) {
@@ -199,14 +173,13 @@ class CalendarController extends Controller
        // dd($request->all());
 
         $this->data['page_title']     = 'Add Task';
-        
 
         try
         {
             if ($request->isMethod('POST'))
             {
                 $validationCondition = array(
-                    'task_title'     => 'required|min:2|max:255',
+                    'task_title'    => 'required|min:2|max:255',
                     'service_id'    => 'required',
                     'property_id'   => 'required',
                     'country_id'    => 'required',
@@ -215,9 +188,9 @@ class CalendarController extends Controller
                     'labour_id'     => 'required',
                 );
                 $validationMessages = array(
-                    'task_title.required'    => 'Please enter Task title',
-                    'task_title.min'         => 'Task title should be should be at least 2 characters',
-                    'task_title.max'         => 'Task title should not be more than 255 characters',
+                    'task_title.required'   => 'Please enter Task title',
+                    'task_title.min'        => 'Task title should be should be at least 2 characters',
+                    'task_title.max'        => 'Task title should not be more than 255 characters',
                     'service_id.required'   => 'Please select service',
                     'property_id.required'  => 'Please select property',
                     'country_id.required'   => 'Please select country',
@@ -260,10 +233,8 @@ class CalendarController extends Controller
                         {
                             return redirect()->route('admin.calendar.calendardata')->with('error', 'Task already been added for this user on '.date("o-m-d",$day_to_display).' for this Service.');
                         }
-                        
                          
                     }
-                  //  print_r($arr_days);
 
                     $sqlServiceData = ServiceAllocationManagement::find($request->service_id);
 
@@ -325,8 +296,6 @@ class CalendarController extends Controller
                 }
             }
 
-            // $country_list=Country::whereIsActive('1')->orderBy('id','ASC')->get();
-            // $this->data['country_list']=$country_list;
             return view($this->view_path.'.add',$this->data);
         } catch (Exception $e) {
             return redirect()->route('admin.calendar.calendardata')->with('error', $e->getMessage());
@@ -334,8 +303,8 @@ class CalendarController extends Controller
     }
 
     /*****************************************************/
-    # TaskManagementController
-    # Function name : taskEdit
+    # CalendarController
+    # Function name : edit
     # Author        :
     # Created Date  : 14-10-2020
     # Purpose       : Editing task
@@ -347,7 +316,6 @@ class CalendarController extends Controller
 
         try
         {           
-
             $details = TaskLists::find($id);
             $data['id'] = $id;
 
@@ -401,107 +369,15 @@ class CalendarController extends Controller
         }
     }
 
-    /*****************************************************/
-    # TaskManagementController
-    # Function name : change_status
-    # Author        :
-    # Created Date  : 16-10-2020
-    # Purpose       : Change task status
-    # Params        : Request $request
-    /*****************************************************/
-    public function change_status(Request $request, $id = null)
-    {
-        try
-        {
-            if ($id == null) {
-                return redirect()->route('admin.service_management.calendar');
-            }
-            $details = TaskLists::where('id', $id)->first();
-            if ($details != null) {
-                if ($details->is_active == 1) {
-                    
-                    $details->is_active = '0';
-                    $details->save();
-                        
-                    $request->session()->flash('alert-success', 'Status updated successfully');                 
-                     } else if ($details->status == 0) {
-                    $details->is_active = '1';
-                    $details->save();
-                    $request->session()->flash('alert-success', 'Status updated successfully');
-                   
-                } else {
-                    $request->session()->flash('alert-danger', 'Something went wrong');
-                    
-                }
-                return redirect()->back();
-            } else {
-                return redirect()->route('admin.service_management.calendar')->with('error', 'Invalid city');
-            }
-        } catch (Exception $e) {
-            return redirect()->route('admin.service_management.calendar')->with('error', $e->getMessage());
-        }
-    }
+ 
 
-    /*****************************************************/
-    # TaskManagementController
-    # Function name : taskDelete
-    # Author        :
-    # Created Date  : 16-10-2020
-    # Purpose       : delete task
-    # Params        : Request $request
-    /*****************************************************/
-    public function delete(Request $request, $id = null)
-    {
-        try
-        {
-            if ($id == null) {
-                return redirect()->route('admin.service_management.calendar');
-            }
-
-            $details = TaskLists::where('id', $id)->first();
-            if ($details != null) {
-                    $delete = $details->delete();
-                    if ($delete) {
-                        $request->session()->flash('alert-danger', 'City has been deleted successfully');
-                    } else {
-                        $request->session()->flash('alert-danger', 'An error occurred while deleting the city');
-                    }
-            } else {
-                $request->session()->flash('alert-danger', 'Invalid city');
-                
-            }
-            return redirect()->back();
-        } catch (Exception $e) {
-            return redirect()->route('admin.service_management.calendar')->with('error', $e->getMessage());
-        }
-    }
-    
-
-    /*****************************************************/
-    # TaskManagementController
-    # Function name : show
-    # Author        :
-    # Created Date  : 16-10-2020
-    # Purpose       : Showing Task details
-    # Params        : Request $request
-    /*****************************************************/
-
-    public function show($id){
-        $city=City::findOrFail($id);
-        $this->data['page_title']='Country Details';
-        $this->data['city']=$city;
-        return view($this->view_path.'.show',$this->data);
-    }
-    /*****************************************************/
-    # TaskManagementController
+    # CalendarController
     # Function name : getCities
     # Author        :
     # Created Date  : 16-10-2020
     # Purpose       : Get State wise City List
     # Params        : Request $request
     /*****************************************************/
-
-   
 
     public function getCities(Request $request)
     {
@@ -517,10 +393,9 @@ class CalendarController extends Controller
         return response()->json(['status'=>true, 'allCities'=>$allCities,],200);
     }
 
-    
 
     /*****************************************************/
-    # TaskManagementController
+    # CalendarController
     # Function name : getData
     # Author        :
     # Created Date  : 14-10-2020
@@ -559,7 +434,7 @@ class CalendarController extends Controller
 
 
     /*****************************************************/
-    # TaskManagementController
+    # CalendarController
     # Function name : updateTask
     # Author        :
     # Created Date  : 16-10-2020
@@ -582,9 +457,6 @@ class CalendarController extends Controller
         if ($validator->fails()) { 
           return response()->json(['success' =>false,'message'=>$validator->errors()->first()], 200);
          }
-
-         
-         
 
         if($logedInUserRole==4)
         {
@@ -613,23 +485,15 @@ class CalendarController extends Controller
                 
                 else
                 {
-
                     session()->flash('error', 'Task already been added for this user on '.date("o-m-d",$day_to_display).' for this Service.');
-
-
                     return response()->json(['status'=>false],200);
-
                 }
                 
-                 
             }
             
-             
 
             if($sqlTask->created_by == $logedInUser)
             { 
-
-           
 
             $sqlTask->start_date  = date('Y-m-d h:i:s', strtotime($request->modified_start_date));
             $sqlTask->end_date    = date('Y-m-d h:i:s', strtotime($request->modified_end_date));
