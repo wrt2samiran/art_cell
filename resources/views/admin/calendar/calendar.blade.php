@@ -35,7 +35,7 @@
                       {{ Session::get('error') }}
                   </div>
               @endif
-              <form  method="get" id="task_list" action="{{route('admin.task_management.calendar')}}" method="post" enctype="multipart/form-data">
+              <!-- <form  method="get" id="task_list" action="{{route('admin.task_management.calendar')}}" method="post" enctype="multipart/form-data">
                     <div class="row">
                       <div class="call-lg-3">
                           <input type="hidden" name="search" value="search">
@@ -61,7 +61,7 @@
 
                     </div>
 
-              </form>
+              </form> -->
                 
                 <section class="content">
                   <div class="container-fluid">

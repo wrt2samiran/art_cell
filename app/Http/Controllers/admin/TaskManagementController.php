@@ -191,51 +191,126 @@ class TaskManagementController extends Controller
         $sqlProperty = Contract::with('property')->whereId($request->contract_id)->whereIsActive('1')->whereNull('deleted_at')->first();
 
         $sqlService = ContractService::with('service')->whereContractId($request->contract_id)->get();
-        $restContractService = array();
-        foreach ($sqlService as $key => $serviceValue) {
-            if(($serviceValue->service_type=='General' || $serviceValue->service_type=='Free') and ($serviceValue->number_of_times_already_used=='NULL' || $serviceValue->number_of_times_already_used == ''))
-            {
-                $restContractService[] = $serviceValue->id;
-            }
-            elseif($serviceValue->service_type=='Maintenance')
-            {
-                $sqlTaskData = TaskLists::whereContractId($serviceValue->contract_id)->whereServiceId($serviceValue->service_id)->whereNull('deleted_at')->first();
-                if($sqlTaskData)
-                {
-                   // if(strtotime($sqlTaskData->start_date) < strtotime('-"'.$serviceValue->interval_days.'" days')) {
-                    $addedOn = new \DateTime($sqlTaskData->start_date);
-                    $now = new \DateTime();
+        // $restContractService = array();
+        // foreach ($sqlService as $key => $serviceValue) {
+        //     if(($serviceValue->service_type=='General' || $serviceValue->service_type=='Free') and ($serviceValue->number_of_times_already_used=='NULL' || $serviceValue->number_of_times_already_used == ''))
+        //     {
+        //         $restContractService[] = $serviceValue->id;
+        //     }
+        //     elseif($serviceValue->service_type=='Maintenance')
+        //     {
+        //         $sqlTaskData = TaskLists::whereContractId($serviceValue->contract_id)->whereServiceId($serviceValue->service_id)->whereNull('deleted_at')->first();
+        //         if($sqlTaskData)
+        //         {
+        //            // if(strtotime($sqlTaskData->start_date) < strtotime('-"'.$serviceValue->interval_days.'" days')) {
+        //             $addedOn = new \DateTime($sqlTaskData->start_date);
+        //             $now = new \DateTime();
 
-                    if($addedOn->diff($now)->days > $serviceValue->interval_days) {
+        //             if($addedOn->diff($now)->days > $serviceValue->interval_days) {
                         
                       
-                        $restContractService[] = $serviceValue->id;
-                    }
-                }
-                else
-                {
-                    $restContractService[] = $serviceValue->id;
-                }
+        //                 $restContractService[] = $serviceValue->id;
+        //             }
+        //         }
+        //         else
+        //         {
+        //             $restContractService[] = $serviceValue->id;
+        //         }
                 
 
-                //where('start_date', '<=', Carbon::now()->subDays($serviceValue->interval_days)->toDateTimeString())
-            }
-            elseif($serviceValue->service_type=='On Demand' and ($serviceValue->number_of_times_already_used=='NULL' || $serviceValue->number_of_times_already_used < $serviceValue->number_of_time_can_used))
-            {
-                $restContractService[] = $serviceValue->id;
-            }
-        }
+        //         //where('start_date', '<=', Carbon::now()->subDays($serviceValue->interval_days)->toDateTimeString())
+        //     }
+        //     elseif($serviceValue->service_type=='On Demand' and ($serviceValue->number_of_times_already_used=='NULL' || $serviceValue->number_of_times_already_used < $serviceValue->number_of_time_can_used))
+        //     {
+        //         $restContractService[] = $serviceValue->id;
+        //     }
+        // }
 
-        $sqlServiceFinal = ContractService::with('service')->whereContractId($request->contract_id)->whereIn('id', $restContractService)->get();
+        // $sqlServiceFinal = ContractService::with('service')->whereContractId($request->contract_id)->whereIn('id', $restContractService)->get();
 
         $sqlCity    = City::whereId($sqlProperty->property->city_id)->whereIsActive('1')->first();
         $sqlState   = State::whereIsActive('1')->where('id', $sqlProperty->property->state_id)->first();
         $sqlCountry = Country::whereIsActive('1')->where('id', $sqlProperty->property->country_id)->first();
         
-        return response()->json(['status'=>true, 'sqlProperty'=>$sqlProperty, 'sqlCity'=>$sqlCity, 'sqlState'=>$sqlState, 'sqlCountry'=>$sqlCountry, 'sqlService'=>$sqlServiceFinal],200);
+        return response()->json(['status'=>true, 'sqlProperty'=>$sqlProperty, 'sqlCity'=>$sqlCity, 'sqlState'=>$sqlState, 'sqlCountry'=>$sqlCountry, 'sqlService'=>$sqlService],200);
     }
 
     
+    
+
+    /*****************************************************/
+    # TaskManagementController
+    # Function name : getContractServiceStatus
+    # Author        :
+    # Created Date  : 05-11-2020
+    # Purpose       : Checking whether a service is available to create a new task or not
+    # Params        : Request $request
+    /*****************************************************/
+
+   
+
+    public function getContractServiceStatus(Request $request)
+    {
+        $logedInUser = \Auth::guard('admin')->user()->id;
+         $validator = Validator::make($request->all(), [ 
+            'service_id'  => 'required',
+            'contract_id' => 'required'
+            ]);
+
+           if ($validator->fails()) { 
+              return response()->json(['success' =>false,'message'=>$validator->errors()->first()], 200);
+            }
+        
+        $sqlService = ContractService::with('service')->whereContractId($request->contract_id)->whereServiceId($request->service_id)->first();
+        if($sqlService){
+
+            if(($sqlService->service_type=='General' || $sqlService->service_type=='Free') and $sqlService->number_of_times_already_used=='NULL'){
+                $service_status = 'Available';
+            }
+            elseif(($sqlService->service_type=='General' || $sqlService->service_type=='Free') and $sqlService->number_of_times_already_used!='NULL'){
+                $service_status = 'Not Available';
+            }
+            
+
+            elseif($sqlService->service_type=='On Demand' and $sqlService->number_of_times_already_used < $sqlService->number_of_time_can_used){
+                $service_status = 'Available';
+            }
+            elseif($sqlService->service_type=='On Demand' and $sqlService->number_of_times_already_used >= $sqlService->number_of_time_can_used){
+                $service_status = 'Not Available';
+            }
+
+            elseif($sqlService->service_type=='Maintenance' and $sqlService->number_of_times_already_used=='NULL'){
+                $service_status = 'Available';
+            }
+            elseif($sqlService->service_type=='Maintenance' and $sqlService->number_of_times_already_used!='NULL'){
+                
+                    if($sqlService->number_of_times_already_used < $sqlService->frequency_number)
+                    {
+                        $sqlTask = TaskLists::whereContractId($request->contract_id)->whereContractServiceId($sqlService->id)->whereServiceId($request->service_id)->whereIsDeleted('N')->whereNull('deleted_at')->latest()->first();
+
+                        $addedOn = new \DateTime($sqlTask->start_date);
+                        $now = new \DateTime();
+
+                        if($addedOn->diff($now)->days > $sqlService->interval_days) {
+                          $service_status = 'Available';
+                        }
+                    
+                        else
+                        {
+                            $service_status = 'Out of period';
+                        }
+                    }
+                    else{
+                        $service_status = 'Not Available';
+                    }
+                    
+            }
+
+        }
+
+        return response()->json(['status'=>true, 'service_status'=>$service_status],200);
+    }
+
 
     /*****************************************************/
     # TaskManagementController

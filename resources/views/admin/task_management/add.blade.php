@@ -51,7 +51,7 @@
                               <div>  
                                 </div>
                                 <div class="form-group required">
-                                  <label for="service_id">Contract Title <span class="error">*</span></label>
+                                  <label for="contract_id">Contract Title <span class="error">*</span></label>
                                   <select class="form-control parent_role_select2"  style="width: 100%;" name="contract_id" id="contract_id" 
                                     onchange="onContractChange(this.value)">
                                      <option value="">Select Contract</option>
@@ -78,8 +78,7 @@
 
                                 <div class="form-group required">
                                   <label for="service_id">Service <span class="error">*</span></label>
-                                  <select class="form-control parent_role_select2"  style="width: 100%;" name="service_id" id="service_id" 
-                                   >
+                                  <select class="form-control parent_role_select2"  style="width: 100%;" name="service_id" id="service_id" onchange="onServiceSelect(this.value)">
                                      <option>Select Service</option>
                                                                  
                                     </select>
@@ -144,7 +143,7 @@
                                   <textarea class="form-control float-right" name="task_desc" id="task_desc">{{old('task_desc')}}</textarea>
                                 </div>                                            
                             <div>
-                           <button type="submit" class="btn btn-success">Submit</button> 
+                           <button type="submit" disabled="" class="btn btn-success disable-button">Submit</button> 
                         </div>
                       </form>
                     </div>
@@ -199,20 +198,20 @@
                    
              var stringifiedCity = JSON.stringify(response.sqlCity);
              var cityData = JSON.parse(stringifiedCity);
-              var city_list = '<option value="'+cityData.id+'">'+ cityData.name +'</option>';
+             var city_list = '<option value="'+cityData.id+'">'+ cityData.name +'</option>';
                 $("#city_id").html(city_list);
 
              var stringifiedState = JSON.stringify(response.sqlState);
              var stateData = JSON.parse(stringifiedState);
-              var state_list = '<option value="'+stateData.id+'">'+ stateData.name +'</option>';
+             var state_list = '<option value="'+stateData.id+'">'+ stateData.name +'</option>';
                 $("#state_id").html(state_list);
                 
              var stringifiedCountry = JSON.stringify(response.sqlCountry);
              var countryData = JSON.parse(stringifiedCountry);
-              var country_list = '<option value="'+countryData.id+'">'+ countryData.name +'</option>';
+             var country_list = '<option value="'+countryData.id+'">'+ countryData.name +'</option>';
                 $("#country_id").html(country_list);      
 
-              // *******Changing calendar start date and end date as per the service, alloted by the sub-admin********//
+              // *******Changing calendar start date and end date as per the service, alloted to the contract********//
 
               $('#date_range').daterangepicker({
                  minDate: new Date(propertyData.start_date),
@@ -221,10 +220,71 @@
                  endDate: new Date(propertyData.end_date),
               })
 
-              // *******Changing calendar start date and end date as per the service, alloted by the sub-admin********//
+              // *******Changing calendar start date and end date as per the service, alloted to the contract********//
+            }
+
+            else{
+
+
+                var property_list = '<option value=""> Select Property</option>';
+                $("#property_id").html(property_list);
+                var service_list = '<option value=""> Select Service</option>';
+                $("#service_id").html(service_list);
+                var city_list = '<option value=""> Select City</option>';
+                $("#city_id").html(city_list);
+                var state_list = '<option value=""> Select State</option>';
+                $("#state_id").html(state_list);
+                var country_list = '<option value=""> Select Country</option>';
+                $("#country_id").html(country_list);
+                $('#date_range').daterangepicker({
+                 minDate: new Date(),
+                 maxDate: new Date(),
+                 startDate: new Date(),
+                 endDate: new Date(),
+              })
             }
         });
-    }
+  }
+
+  
+  function onServiceSelect(service_id){
+    var contract_id = $('#contract_id option:selected').val();
+
+     $.ajax({
+       
+        url: "{{route('admin.task_management.getContractServiceStatus')}}",
+        type:'get',
+        dataType: "json",
+        data:{service_id:service_id,contract_id:contract_id,_token:"{{ csrf_token() }}"}
+        }).done(function(response) {
+           
+           console.log(response.status);
+           console.log(response.service_status);
+            if(response.status){
+              console.log(response.sqlProperty);
+              console.log(response.sqlService);
+
+              if(response.service_status=='Out of period' || response.service_status=='Not Available'){
+                  swal({
+                  title: response.service_status,
+                  text: "This service is "+response.service_status+ " to add for a new task! Please contact with Admin.",
+                  icon: "warning",
+                  dangerMode: true,
+                  showCancelButton: false,
+                  })
+                
+                    $('#service_id').val('');
+                    $('.disable-button').prop("disabled", true); // Submit button is now disabled.
+                  
+              }
+              else{
+                $('.disable-button').prop("disabled", false); // Submit button is now enabled.
+              }
+            
+            }
+        });
+  }  
+
 </script>
 
 <script type="text/javascript" src="{{asset('js/admin/task_management/create.js')}}">
