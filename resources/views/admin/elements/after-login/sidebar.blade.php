@@ -153,9 +153,6 @@
                     
                     <li class="nav-item">
                             <a href="{{ route('admin.message.list') }}" class="nav-link {{(request()->is('admin/message/*','admin/message'))?'active':''}}">
-                              
-                               
-                               
                                 <i class="nav-icon fas fa-envelope-open-text"></i>
                                 <p>{{__('nav_link_text.message_management')}}</p>
                             </a>
@@ -288,7 +285,7 @@
                 </li>
                 @endif 
 
-                @if(auth()->guard('admin')->user()->hasAllPermission(['service_management_list']))
+                <!-- @if(auth()->guard('admin')->user()->hasAllPermission(['service_management_list']))
                 <li class="nav-item ">
                     <a href="{{route('admin.service_management.list')}}"
                     class="nav-link {{(request()->is('admin/service_management/*','admin/service_management'))?'active':''}}">
@@ -296,15 +293,17 @@
                         <p>{{__('nav_link_text.service_management')}}</p>
                     </a>
                 </li>
-                @endif
+                @endif -->
 
+                @if(auth()->guard('admin')->user()->hasAllPermission(['calendar-data']))
                 <li class="nav-item ">
                     <a href="{{route('admin.calendar.calendardata')}}"
                     class="nav-link {{(request()->is('admin/calendar/*','admin/calendar'))?'active':''}}">
-                        <i class="nav-icon fas fa-quote-right"></i>
+                        <i class="nav-icon far fa-calendar-alt"></i>
                         <p>{{__('nav_link_text.calendar')}}</p>
                     </a>
                 </li>
+                @endif
 
                 <li class="nav-item ">
                     <a href="{{route('admin.email.list')}}"

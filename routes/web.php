@@ -327,6 +327,8 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::any('/create','TaskManagementController@taskCreate')->name('taskCreate');
                 Route::any('/add','TaskManagementController@taskAdd')->name('taskAdd');
                 Route::get('/get-contract-data', 'TaskManagementController@getContractData')->name('getContractData');
+                Route::get('/get-contract-service-status', 'TaskManagementController@getContractServiceStatus')->name('getContractServiceStatus');
+                
 
 
                 Route::post('/get-cities', 'TaskManagementController@getCities')->name('getCities');
@@ -356,7 +358,7 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             });
 
             Route::group(['prefix' => 'calendar', 'as' => 'calendar.'], function () {
-                Route::get('/calendar-data', 'CalendarController@calendardata')->name('calendardata');  
+                Route::get('/calendar-data', 'CalendarController@calendardata')->name('calendardata')->middleware('check_permissions:calendar-data');  
                 Route::any('/calendar-data-add','CalendarController@calendardataAdd')->name('calendardataAdd');
                 Route::get('/{id}', 'TaskManagementController@show')->name('show');
                 Route::post('/update-task', 'CalendarController@updateTask')->name('updateTask');  

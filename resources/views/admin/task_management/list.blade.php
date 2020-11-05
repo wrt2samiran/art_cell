@@ -29,11 +29,13 @@
                             <div class="card-header">
                                 <div class="d-flex justify-content-between" >
                                     <div><span>Task List</span></div>
-                                  <div>
-                                    <a class="btn btn-success" href="{{route('admin.task_management.taskCreate')}}">
-                                     Add Task
-                                    </a>
-                                  </div>
+                                    @if(\Auth::guard('admin')->user()->role_id==3 || \Auth::guard('admin')->user()->role_id == 2)
+                                      <div>
+                                        <a class="btn btn-success" href="{{route('admin.task_management.taskCreate')}}">
+                                         Add Task
+                                        </a>
+                                      </div>
+                                    @endif
                                 </div>
                             </div>
 
