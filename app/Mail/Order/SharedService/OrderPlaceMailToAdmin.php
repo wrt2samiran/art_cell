@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Mail\Admin\User;
+namespace App\Mail\Order\SharedService;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class AccountCreationMailToUser extends Mailable
+class OrderPlaceMailToAdmin extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -20,14 +20,10 @@ class AccountCreationMailToUser extends Mailable
      */
     public function __construct($data)
     {
-        $this->data=$data;
-        $slug = 'registration-successfully';
-        $variable_value=[
-            '##USERNAME##'=>"{$data['user']['first_name']}",
-            '##Address##'=>"{$data['user']['email']}",
-            '##Employ-code##'=>"{$data['user_password']}",
-        ]; 
-        $this->mail_content=\Helper::emailTemplateMail($slug,$variable_value);
+        $this->data=$data; 
+
+        $content=view('emails.admin.order.partials.shared_service_order_content_admin',$data)->render();
+        $this->mail_content=$content;
     }
 
     /**
@@ -40,7 +36,7 @@ class AccountCreationMailToUser extends Mailable
         return $this->from($this->data['from_email'], $this->data['from_name'])
                     ->replyTo($this->data['from_email'], $this->data['from_name'])
                     ->subject($this->data['subject'])
-                    ->view('emails.admin.users.account_creation_mail_to_user',[
+                    ->view('emails.admin.order.order_placed',[
                         'mail_content'=>$this->mail_content
                     ]);
 

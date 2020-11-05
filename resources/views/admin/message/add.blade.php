@@ -2,6 +2,7 @@
 
 
 @section('unique-content')
+@php $current_user=auth()->guard('admin')->user(); @endphp
 
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -49,6 +50,37 @@
                       <form  method="post" id="admin_message_add_form" action="{{route('admin.message.add')}}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div>
+                          <div class="row">
+                            @if ($current_user->role->user_type->slug !='super-admin')
+                            <div class="col-md-12" id="contract">
+                              <div class="form-group required">
+                                <label for="contract_id">Select Contract<span class="error">*</span></label>
+                                 <select class="form-control " id="contract_id" name="contract_id" style="width: 100%;">
+                                   <option value="">Select Contract</option>
+                                   @forelse($contract as $property)
+                                      <option value="{{$property->id}}" data-userId="{{ $property->property_manager_id }} {{ $property->service_provider_id }}">{{$property->title}}({{$property->code}})</option>
+                                   @empty
+                                   <option value="">No Property Found</option>
+                                   @endforelse
+                                 </select>
+                             </div>
+                            </div>
+                            @endif
+
+                            <div class="col-md-12" id="user" @if ($current_user->role->user_type->slug =='super-admin') style="display:block" @else style="display:none" @endif>
+                              <div class="form-group required">
+                                <label for="user_id">Select User<span class="error">*</span></label>
+                                 <select class="form-control " id="user_id" name="user_id" style="width: 100%;">
+                                   @forelse($userData as $data)
+                                      <option value="{{$data->id}}" >{{$data->name}}</option>
+                                   @empty
+                                   <option value="">No User Found</option>
+                                   @endforelse
+                                 </select>
+                             </div>
+                            </div>
+                               
+                        </div>
                           <div class="form-group required">
                             <label for="name">Message Title <span class="error">*</span></label>
                             <input type="text" class="form-control" value="{{old('name')?old('name'):''}}" name="name" id="name"  placeholder="Please Enter Country Name">
@@ -88,6 +120,47 @@
 <script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
 <script>
 CKEDITOR.replace( 'description' );
+
+  $(document).on('change','#contract_id',function(e){
+    e.preventDefault();
+    let userId = $(this).find(':selected').attr('data-userId');
+    // console.log(userId);
+    // $('#user_id').val(userId).trigger("change");
+    getUser(userId);
+  })
+  
+  $('#contract').on('change', function() {
+    $('#user').show();
+  })
+
+  function getUser(user_id){
+    console.log(user_id);
+    // return false;
+
+$.ajax({
+  
+   url: "{{route('admin.message.get-user')}}",
+   type:'get',
+   dataType: "json",
+   data:{userId:user_id,_token:"{{ csrf_token() }}"}
+  // data:{bank_id:bank_id}
+   }).done(function(response) {
+      
+      console.log(response.status);
+       if(response.status){
+        // console.log(response.contractUser);
+        var stringified = JSON.stringify(response.contractUser);
+       var contractUserData = JSON.parse(stringified);
+        var user_list = '<option value=""> Select User</option>';
+        $.each(contractUserData,function(index, user_rec){
+               user_list += '<option value="'+user_rec.id+'">'+ user_rec.name +'</option>';
+        });
+           $("#user_id").html(user_list);
+       }
+   });
+}
+
+
 </script>
 <!-- *********Used for CK Editor ***************-->
 <script type="text/javascript" src="{{asset('js/admin/message/create.js')}}"></script>

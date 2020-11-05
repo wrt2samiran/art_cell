@@ -14,7 +14,7 @@ class CreateOrderedSharedServiceDetailsTable extends Migration
     public function up()
     {
         Schema::disableForeignKeyConstraints();
-        Schema::create('ordered_shared_servcie_details', function (Blueprint $table) {
+        Schema::create('ordered_shared_service_details', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('order_id')->index()->comment = 'order_id=shared service order id';
             $table->unsignedBigInteger('shared_service_id')->index();
