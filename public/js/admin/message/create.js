@@ -5,6 +5,12 @@ $("#admin_message_add_form").validate({
             minlength: 3,
             maxlength: 50,
         },
+        contract_id: {
+            required: true,
+        },
+        user_id: {
+            required: true,
+        },
         description: {
             required: true,
             minlength: 3,
@@ -16,6 +22,12 @@ $("#admin_message_add_form").validate({
             required:  "Message Title is required",
             minlength: "Message Title should have 3 characters",
             maxlength: "Message Title should not be more then 50 characters",
+        },
+        contract_id: {
+            required:"Contract is required" ,
+        },
+        user_id: {
+            required:"User is required" ,
         },
         description: {
             required:  "Description is required",

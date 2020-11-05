@@ -71,8 +71,9 @@
                               <div class="form-group required">
                                 <label for="user_id">Select User<span class="error">*</span></label>
                                  <select class="form-control " id="user_id" name="user_id" style="width: 100%;">
+                                  <option value="">--Select User--</option>
                                    @forelse($userData as $data)
-                                      <option value="{{$data->id}}" >{{$data->name}}</option>
+                                      <option value="{{$data->id}}" >{{$data->name}} ({{$data->role->role_name}})</option>
                                    @empty
                                    <option value="">No User Found</option>
                                    @endforelse
@@ -82,14 +83,14 @@
                                
                         </div>
                           <div class="form-group required">
-                            <label for="name">Message Title <span class="error">*</span></label>
+                            <label for="name">Subject<span class="error">*</span></label>
                             <input type="text" class="form-control" value="{{old('name')?old('name'):''}}" name="name" id="name"  placeholder="Please Enter Country Name">
                             @if($errors->has('name'))
                             <span class="text-danger">{{$errors->first('name')}}</span>
                             @endif
                           </div>
                           <div class="form-group required">
-                            <label for="description">Description </label>
+                            <label for="description">Description</label>
                            <textarea rows="5" class="form-control"  name="description" id="description"  placeholder="Description">
                            {{old('description')?old('description'):''}}</textarea>
 
@@ -153,7 +154,8 @@ $.ajax({
        var contractUserData = JSON.parse(stringified);
         var user_list = '<option value=""> Select User</option>';
         $.each(contractUserData,function(index, user_rec){
-               user_list += '<option value="'+user_rec.id+'">'+ user_rec.name +'</option>';
+          console.log(user_rec);
+               user_list += '<option value="'+user_rec.id+'">'+ user_rec.name + ' ('+user_rec.role.role_name+')</option>';
         });
            $("#user_id").html(user_list);
        }
