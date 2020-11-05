@@ -266,13 +266,12 @@ $list = json_encode($filtered);
 
 <!-- fullCalendar 2.2.5 -->
 <script src="{{asset('assets/plugins/moment/moment.min.js')}}"></script>
-<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.4.2/main.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.4.2/main.min.js"></script>
+<script src="{{asset('assets/plugins/fullcalendar/main.min.js')}}"></script>
+<script src="{{asset('assets/plugins/fullcalendar-daygrid/main.min.js')}}"></script>
 <script src="{{asset('assets/plugins/fullcalendar-timegrid/main.min.js')}}"></script>
 <script src="{{asset('assets/plugins/fullcalendar-interaction/main.min.js')}}"></script>
 <script src="{{asset('assets/plugins/fullcalendar-bootstrap/main.min.js')}}"></script>
-<script src="https://unpkg.com/popper.js/dist/umd/popper.min.js"></script>
-<script src="https://unpkg.com/tooltip.js/dist/umd/tooltip.min.js"></script>
+
 <script>
   $(function () {
 
@@ -334,11 +333,11 @@ $list = json_encode($filtered);
     });
      const colors = <?=$list?>;
 
-  function iterate(item, index) {
-    console.log(`${item} has index ${index}`);
-  }
+function iterate(item, index) {
+  console.log(`${item} has index ${index}`);
+}
 
-  colors.forEach(iterate);
+colors.forEach(iterate);
 
 
 
@@ -371,31 +370,61 @@ $list = json_encode($filtered);
 
         ?>
 
+
         {
-          title          : '<?=$task_data->task_title?>(<?=$user?>)',
+          title          : '<?=$task_data->job_title?>(<?=$user?>)',
           start          : '<?=$task_data->start_date?>',
           end            : '<?=$task_data->end_date?>',
           backgroundColor: '<?=$color?>', //red
           borderColor    : '<?=$color?>', //red
           url            : '<?=$task_data->id?>',
           allDay         : true,
-          
-          description: 'Task Title : <?=$task_data->task_title?><br>Property Name : <?=$task_data->property->property_name?><br>Service : <?=$task_data->service->service_name?><br>Service Type : <?=$task_data->contract_services->service_type?><br>Country : <?=$task_data->country->name?><br>State : <?=$task_data->state->name?><br>City : <?=$task_data->city->name?><br>Task Start Date : <?=$task_data->start_date?><br>Task End Date : <?=$task_data->end_date?>'
+          description: 'This is a cool event'
         },
 
         <?php } ?>
+
+        // {
+        //   title          : 'Long Event',
+        //   start          : new Date(y, m, d - 5),
+        //   end            : new Date(y, m, d - 2),
+        //   backgroundColor: '#f39c12', //yellow
+        //   borderColor    : '#f39c12' //yellow
+        // },
+        // {
+        //   title          : 'Meeting',
+        //   start          : new Date(y, m, d, 10, 30),
+        //   allDay         : false,
+        //   backgroundColor: '#0073b7', //Blue
+        //   borderColor    : '#0073b7' //Blue
+        // },
+        // {
+        //   title          : 'Lunch',
+        //   start          : new Date(y, m, d, 12, 0),
+        //   end            : new Date(y, m, d, 14, 0),
+        //   allDay         : false,
+        //   backgroundColor: '#00c0ef', //Info (aqua)
+        //   borderColor    : '#00c0ef' //Info (aqua)
+        // },
+        // {
+        //   title          : 'Birthday Party',
+        //   start          : new Date(y, m, d + 1, 19, 0),
+        //   end            : new Date(y, m, d + 1, 22, 30),
+        //   allDay         : false,
+        //   backgroundColor: '#00a65a', //Success (green)
+        //   borderColor    : '#00a65a' //Success (green)
+        // },
+        // {
+        //   title          : 'Click for Google',
+        //   start          : new Date(y, m, 28),
+        //   end            : new Date(y, m, 29),
+        //   url            : 'http://google.com/',
+        //   backgroundColor: '#3c8dbc', //Primary (light-blue)
+        //   borderColor    : '#3c8dbc' //Primary (light-blue)
+        // }
       ],
 
-      eventRender: function(info) {
-        var tooltip = new Tooltip(info.el, {
-          title: info.event.extendedProps.description,
-          placement: 'top',
-          trigger: 'hover',
-          html: true,
-          container: 'body'
-        });
-      },
-
+        
       editable  : true,
       droppable : true, // this allows things to be dropped onto the calendar !!!
       eventDrop: function(info) {
@@ -465,12 +494,12 @@ $list = json_encode($filtered);
   });
 
 
-
-
 $(document).on('click', 'td.fc-today,td.fc-future', function() {
   <?php if(\Auth::guard('admin')->user()->role_id==4){ ?>
       $('#addTaskModal').modal('show');
   <?php } ?>
+
+
 
  });
 

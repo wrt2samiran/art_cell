@@ -4073,7 +4073,7 @@ Docs & License: https://fullcalendar.io/
         };
         return DateComponent;
     }(Component));
-    DateComponent.prototype.fgSegSelector = '.fc-event-container-demo > *';
+    DateComponent.prototype.fgSegSelector = '.fc-event-container > *';
     DateComponent.prototype.bgSegSelector = '.fc-bgevent:not(.fc-nonbusiness)';
 
     var uid$1 = 0;

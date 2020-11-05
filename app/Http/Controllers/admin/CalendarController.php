@@ -42,7 +42,7 @@ class CalendarController extends Controller
 
         if ($request->has('search')) {
             
-            $sqlCalendar = TaskLists::where(function ($q) use ($request) {
+            $sqlCalendar = TaskLists::with('property')->with('service')->with('country')->with('state')->with('city')->with('contract_services')->where(function ($q) use ($request) {
                 
                 if ($request->has('user_labour_id')) {
                    
@@ -70,7 +70,7 @@ class CalendarController extends Controller
             })->get();
 
         } else {
-                $sqlTask=TaskLists::whereCreatedBy($logedInUser)->orWhere('user_id',$logedInUser)->orderBy('id','Desc')->get();
+                $sqlTask=TaskLists::with('property')->with('service')->with('country')->with('state')->with('city')->with('contract_services')->whereCreatedBy($logedInUser)->orWhere('user_id',$logedInUser)->orderBy('id','Desc')->get();
         }
 
         //dd($sqlCalendar);
