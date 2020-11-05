@@ -57,6 +57,14 @@ class PropertyController extends Controller
                     $q->whereCreatedBy($current_user->id);
                 }
             })
+            
+            ->when($request->city_id,function($query) use($request){
+            	$query->where('city_id',$request->city_id);
+            })
+            ->when($request->property_name,function($query) use($request){
+            	$query->where('property_name',$request->property_name);
+            })
+            
             ->whereHas('property_type')->with('city')->select('properties.*');
             return Datatables::of($properties)
             ->editColumn('created_at', function ($property) {
@@ -104,7 +112,9 @@ class PropertyController extends Controller
             })
             ->rawColumns(['action','is_active'])
             ->make(true);
-        }     
+        }
+        $this->data['propertyCity']=City::whereIsActive('1')->get();
+        $this->data['propertyName']=Property::whereIsActive('1')->get();   
         return view($this->view_path.'.list',$this->data);
     }
 
