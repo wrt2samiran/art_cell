@@ -186,7 +186,8 @@ class PropertyController extends Controller
     		'property_name'=>$request->property_name,
             'property_type_id'=>$request->property_type_id,
     		'description'=>$request->description,
-    		'no_of_units'=>$request->no_of_units,
+            'no_of_units'=>$request->no_of_units,
+            'no_of_inactive_units'=>$request->no_of_inactive_units,
     		'country_id'=>$city->country_id,
     		'state_id'=>$city->state_id,
     		'city_id'=>$request->city_id,
@@ -200,12 +201,13 @@ class PropertyController extends Controller
     		'created_by'=>auth()->guard('admin')->id(),
     		'updated_by'=>auth()->guard('admin')->id()
     	]);
-
+        
        if($request->hasFile('property_files')){
 
             foreach ($request->file('property_files')  as $key=>$property_file) {
+               
               
-                    $file_name = 'property-file-'.time().$key.'.'.$property_file->getClientOriginalExtension();
+                   $file_name = 'property-file-'.time().$key.'.'.$property_file->getClientOriginalExtension();
                  
                     $destinationPath = public_path('/uploads/property_attachments');
                  
@@ -224,9 +226,10 @@ class PropertyController extends Controller
                     }else{
                          $file_type='file';
                     }
-
+                    
                     PropertyAttachment::create([
-                     'property_id'=>$id,
+                     'property_id'=>$property->id,
+                     'title'      => $request->title[$key],
                      'file_name'=>$file_name,
                      'file_type'=>$file_type,
                      'created_by'=>auth()->guard('admin')->id()
@@ -329,6 +332,7 @@ class PropertyController extends Controller
             'property_type_id'=>$request->property_type_id,
             'description'=>$request->description,
             'no_of_units'=>$request->no_of_units,
+            'no_of_inactive_units'=>$request->no_of_inactive_units,
             'country_id'=>$city->country_id,
             'state_id'=>$city->state_id,
             'city_id'=>$request->city_id,
@@ -345,7 +349,7 @@ class PropertyController extends Controller
         if($request->hasFile('property_files')){
 
             foreach ($request->file('property_files')  as $key=>$property_file) {
-          
+                if(!empty($property_file)) {
                 $file_name = 'property-file-'.time().$key.'.'.$property_file->getClientOriginalExtension();
              
                 $destinationPath = public_path('/uploads/property_attachments');
@@ -368,12 +372,14 @@ class PropertyController extends Controller
 
 
                 PropertyAttachment::create([
-                 'property_id'=>$id,
+                 'property_id'=>$property->id,
+                 'title'      => $request->title[$key],
                  'file_name'=>$file_name,
                  'file_type'=>$file_type,
                  'created_by'=>auth()->guard('admin')->id()
                 ]);
             }
+          }
         }
         
         return redirect()->route('admin.properties.list')->with('success','Property successfully updated.');
