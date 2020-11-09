@@ -216,7 +216,7 @@ class PropertyController extends Controller
                     }
 
                     PropertyAttachment::create([
-                     'property_id'=>$id,
+                     'property_id'=>$property->id,
                      'file_name'=>$file_name,
                      'file_type'=>$file_type,
                      'created_by'=>auth()->guard('admin')->id()
@@ -358,7 +358,7 @@ class PropertyController extends Controller
 
 
                 PropertyAttachment::create([
-                 'property_id'=>$id,
+                 'property_id'=>$property->id,
                  'file_name'=>$file_name,
                  'file_type'=>$file_type,
                  'created_by'=>auth()->guard('admin')->id()
