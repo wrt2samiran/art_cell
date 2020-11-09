@@ -38,16 +38,48 @@
                           <td >{{$contract->code}}</td>
                         </tr>
                         <tr>
-                          <td>Contract Info</td>
-                          <td >{{$contract->description}}</td>
+                          <td>Contract Title</td>
+                          <td >{{$contract->title}}</td>
+                        </tr>
+                        <tr>
+                          <td>Contract Description</td>
+                          <td >{!!$contract->description!!}</td>
                         </tr>
                         <tr>
                           <td>Services Required</td>
-                          <td>{!!
-                              $contract->services->map(function($service) {
-                                  return $service->service_name;
-                              })->implode(',<br>')
-                              !!}
+                          <td>
+                            @if(count($contract->services))
+                            <table class="table table-bordered">
+                              <thead>
+                                <tr>
+                                  <th>Service Name</th>
+                                  <th>Service Type</th>
+                                  <th>How Frequently</th>
+                                  <th>Service Price</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                @foreach($contract->services as $service)
+                                <tr>
+                                  <td>{{$service->service->service_name}}</td>
+                                  <td>{{$service->service_type}}</td>
+                                  <td>
+                                    @if($service->frequency_type)
+                                    {{$service->frequency_type->type}}
+                                    @endif
+                                    @if($service->number_of_time_can_used)
+                                    <span>Can use {{$service->number_of_time_can_used}} times</span>
+                                    @endif
+                                  </td>
+                                  <td>{{$service->currency}} {{$service->price}}</td>
+                                </tr>
+                                @endforeach
+                              </tbody>
+                            </table>
+                            @else
+                            <span>No services</span>
+                            @endif
+
                           </td>
                         </tr>
                         <tr>

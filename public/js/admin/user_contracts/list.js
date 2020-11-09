@@ -16,7 +16,7 @@
         columns: [
             { data: 'id', name: 'id' },
             { data: 'code', name: 'code'},
-            { data: 'description', name: 'description'},
+            { data: 'title', name: 'title'},
             { data: 'start_date', name: 'start_date'},
             { data: 'end_date', name: 'end_date'},
             { data: 'property.location', name: 'property.location'},
