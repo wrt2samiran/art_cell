@@ -8,7 +8,6 @@ var email_table=$('#email_table').DataTable({
     columns: [
         { data: 'id', name: 'id' },
         { data: 'template_name', name: 'template_name'},
-        { data: 'slug', name: 'slug'},
         { data: 'created_at', name: 'created_at' },
         {data: 'action', name: 'action', orderable: false, searchable: false}
     ],

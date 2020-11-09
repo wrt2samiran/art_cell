@@ -19,6 +19,10 @@ $("#admin_property_create_form").validate({
             required:true,
             number:true
         },
+        no_of_inactive_units: {
+            required:true,
+            number:true
+        },
         city_id:{
             required: true, 
         },
@@ -32,6 +36,12 @@ $("#admin_property_create_form").validate({
         },
         property_owner:{
             required: true, 
+        },
+        'title[]': {
+            required : true,
+        },
+        'property_files[]': {
+            required : true,
         },
 
         contact_number:{
@@ -61,8 +71,11 @@ $("#admin_property_create_form").validate({
             maxlength: "Description should not be more then 1000 characters",
         },
         no_of_units:{
-             required:  "Please enter number of units of the property",
+             required:  "Please enter number of active units of the property",
         },
+        no_of_inactive_units:{
+            required:  "Please enter number of inactive units of the property",
+       },
         city_id: {
             required:  "Please select city from dropdown list",
         },
@@ -76,6 +89,12 @@ $("#admin_property_create_form").validate({
         },
         property_owner: {
             required:  "Please select property owner",
+        },
+        'title[]': {
+            required : "Please Enter Title",
+        },
+        'property_files[]': {
+            required : "Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files",
         },
 
         contact_number: {
@@ -117,14 +136,6 @@ $('#property_type_id').select2({
     placeholder:'Select property type'
 });
 
-$('#electricity_account_day').select2({
-    theme: 'bootstrap4',
-    placeholder:'Select electricity account day'
-});
-$('#water_acount_day').select2({
-    theme: 'bootstrap4',
-    placeholder:'Select water account day'
-});
 
 
 $('#property_owner').select2({
@@ -171,12 +182,12 @@ $('#property_files').on('change',function(){
         var allowed_file_types=['application/pdf',
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         'application/msword',
-        'application/jpeg',
-        'application/jpg',
-        'application/png',
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
         'text/plain'
         ];
-
+        console.log(file_type);
         if(!allowed_file_types.includes(file_type)){
             file_type_error=true;
         }
@@ -209,4 +220,6 @@ window.reset = function (e) {
     e.wrap('<form>').closest('form').get(0).reset();
     e.unwrap();
 }
+
+
 

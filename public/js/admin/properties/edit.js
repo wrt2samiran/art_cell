@@ -115,14 +115,6 @@ $('#property_type_id').select2({
     placeholder:'Select property type'
 });
 
-$('#electricity_account_day').select2({
-    theme: 'bootstrap4',
-    placeholder:'Select electricity account day'
-});
-$('#water_acount_day').select2({
-    theme: 'bootstrap4',
-    placeholder:'Select water account day'
-});
 
 
 $('#property_owner').select2({
@@ -169,9 +161,9 @@ $('#property_files').on('change',function(){
         var allowed_file_types=['application/pdf',
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         'application/msword',
-        'application/jpeg',
-        'application/jpg',
-        'application/png',
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
         'text/plain'
         ];
 
@@ -214,6 +206,8 @@ window.reset = function (e) {
 
  //function to delete quotation
  function delete_attach_file(url,file_id){
+     alert(file_id);
+     
   swal({
   title: "Are you sure?",
   text: "Once deleted, you will not be able to recover this file!",
@@ -232,6 +226,7 @@ window.reset = function (e) {
         success: function (data) {
 
           $('#attachment_file_'+file_id).remove();
+          $('#property_file_'+file_id).remove();
 
           var NumberOfFilePresent = $('.attachment_files').length;
           if(NumberOfFilePresent=='0'){
