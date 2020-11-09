@@ -34,26 +34,12 @@ $("#admin_property_create_form").validate({
             required: true,
             maxlength: 255,  
         },
-        property_owner:{
-            required: true, 
-        },
+        
         'title[]': {
             required : true,
         },
         'property_files[]': {
             required : true,
-        },
-
-        contact_number:{
-            required: true,
-            minlength: 8,
-            maxlength: 20,
-            number:true  
-        },
-        contact_email:{
-            required: true,
-            email: true,
-            maxlength: 100,  
         },
  
     },
@@ -87,26 +73,12 @@ $("#admin_property_create_form").validate({
             required:  "Location is required",
             maxlength: "Location should not be more then 255 characters",
         },
-        property_owner: {
-            required:  "Please select property owner",
-        },
+        
         'title[]': {
             required : "Please Enter Title",
         },
         'property_files[]': {
             required : "Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files",
-        },
-
-        contact_number: {
-            required:  "Contact number is required",
-            minlength: "Contact number should have minimum 8 characters",
-            maxlength: "Contact number should not be more then 20 characters",
-            number:"Only number allowed"
-        },
-        contact_email: {
-            required:  "Contact email is required",
-            email: "Please enter valid email address",
-            maxlength: "Email should not be more then 100 characters"
         },
 
     },
@@ -120,10 +92,12 @@ $("#admin_property_create_form").validate({
     unhighlight: function (element, errorClass, validClass) {
         $(element).removeClass('is-invalid');    
     },
+    
     submitHandler: function(form) {
         $.LoadingOverlay("show");
         form.submit();
-    }
+    },
+    
 });
 
 $('#city_id').select2({
@@ -151,18 +125,18 @@ $('#property_owner').select2({
     },
 });
 
-$('#property_manager').select2({
-    theme: 'bootstrap4',
-    placeholder:'Select property manager',
-    "language": {
-        "noResults": function(){
-            return "No Property Manager Found <a href='"+$('#property_manager_create_url').val()+"' target='_blank' class='btn btn-success'>Create New One</a>";
-        }
-    },
-    escapeMarkup: function(markup) {
-        return markup;
-    },
-});
+// $('#property_manager').select2({
+//     theme: 'bootstrap4',
+//     placeholder:'Select property manager',
+//     "language": {
+//         "noResults": function(){
+//             return "No Property Manager Found <a href='"+$('#property_manager_create_url').val()+"' target='_blank' class='btn btn-success'>Create New One</a>";
+//         }
+//     },
+//     escapeMarkup: function(markup) {
+//         return markup;
+//     },
+// });
 
 
 $('#property_files').on('change',function(){

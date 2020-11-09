@@ -42,6 +42,14 @@
                           <td >{{$property->property_name}}</td>
                         </tr>
                         <tr>
+                          <td>Number Of Active Units</td>
+                          <td >{{$property->no_of_units}}</td>
+                        </tr>
+                        <tr>
+                          <td>Number Of Inactive Units</td>
+                          <td >{{$property->no_of_inactive_units}}</td>
+                        </tr>
+                        <tr>
                           <td>Property Type</td>
                           <td >{{($property->property_type)?$property->property_type->type_name:'N/A'}}</td>
                         </tr>
@@ -93,7 +101,7 @@
                         </tr>
 
                         <tr>
-                          <td >Electricity Account Due Date</td>
+                          <td >Electricity Account Number</td>
                           <td >
                             @if($property->electricity_account_day)
                               {{App\Http\Helpers\Helper::Ordinal($property->electricity_account_day)}} day of every month
@@ -105,7 +113,7 @@
                         </tr>
 
                         <tr>
-                          <td >Water Account Due Date</td>
+                          <td >Water Account Number</td>
                           <td >
              
 

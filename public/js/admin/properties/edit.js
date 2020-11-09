@@ -28,21 +28,6 @@ $("#admin_property_edit_form").validate({
             required: true,
             maxlength: 255,  
         },
-        property_owner:{
-            required: true, 
-        },
-
-        contact_number:{
-            required: true,
-            minlength: 8,
-            maxlength: 20,
-            number:true  
-        },
-        contact_email:{
-            required: true,
-            email: true,
-            maxlength: 100,  
-        },
 
     },
     messages: {
@@ -71,21 +56,6 @@ $("#admin_property_edit_form").validate({
         location:{
             required:  "Location is required",
             maxlength: "Location should not be more then 255 characters",
-        },
-        property_owner: {
-            required:  "Please select property owner",
-        },
-
-        contact_number: {
-            required:  "Contact number is required",
-            minlength: "Contact number should have minimum 8 characters",
-            maxlength: "Contact number should not be more then 20 characters",
-            number:"Only number allowed"
-        },
-        contact_email: {
-            required:  "Contact email is required",
-            email: "Please enter valid email address",
-            maxlength: "Email should not be more then 100 characters"
         },
 
     },
@@ -117,18 +87,18 @@ $('#property_type_id').select2({
 
 
 
-$('#property_owner').select2({
-    theme: 'bootstrap4',
-    placeholder:'Select property owner',
-    "language": {
-       "noResults": function(){
-           return "No Property Owner Found <a href='"+$('#property_owner_create_url').val()+"' target='_blank' class='btn btn-success'>Create New One</a>";
-       }
-    },
-    escapeMarkup: function(markup) {
-      return markup;
-    },
-});
+// $('#property_owner').select2({
+//     theme: 'bootstrap4',
+//     placeholder:'Select property owner',
+//     "language": {
+//        "noResults": function(){
+//            return "No Property Owner Found <a href='"+$('#property_owner_create_url').val()+"' target='_blank' class='btn btn-success'>Create New One</a>";
+//        }
+//     },
+//     escapeMarkup: function(markup) {
+//       return markup;
+//     },
+// });
 
 $('#property_manager').select2({
     theme: 'bootstrap4',

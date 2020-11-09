@@ -2,7 +2,7 @@
 
 
 @section('unique-content')
-
+@php $current_user=auth()->guard('admin')->user(); @endphp
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -117,22 +117,22 @@
                             @endif
                           </div>
                           <div class="form-group required">
-                            <label for="contact_number">Contact Number <span class="error">*</span></label>
+                            <label for="contact_number">Contact Number</label>
                             <input type="text" class="form-control" value="{{old('contact_number')?old('contact_number'):''}}" name="contact_number" id="contact_number"  placeholder="Contact Number">
                             @if($errors->has('contact_number'))
                             <span class="text-danger">{{$errors->first('contact_number')}}</span>
                             @endif
                           </div>
                           <div class="form-group required">
-                            <label for="contact_email">Contact Email <span class="error">*</span></label>
+                            <label for="contact_email">Contact Email</label>
                             <input type="text" class="form-control" value="{{old('contact_email')?old('contact_email'):''}}" name="contact_email" id="contact_email"  placeholder="Contact Email">
                             @if($errors->has('contact_email'))
                             <span class="text-danger">{{$errors->first('contact_email')}}</span>
                             @endif
                           </div>
-
+                          @if ($current_user->role->user_type->slug != 'property-owner')
                           <div class="form-group required">
-                             <label for="property_owner">Property Owner <span class="error">*</span></label>
+                             <label for="property_owner">Property Owner<span class="error">*</span></label>
                               <select class="form-control " name="property_owner" id="property_owner" style="width: 100%;">
                                 <option value="">Select property owner</option>
                                 @forelse($property_owners as $property_owner)
@@ -142,6 +142,20 @@
                                 @endforelse                                
                               </select>
                           </div>
+                          @endif
+                          @if ($current_user->role->user_type->slug == 'property-owner')
+                          <div class="form-group required">
+                            <label for="property_manager">Property Manager</label>
+                             <select class="form-control " name="property_manager" id="property_manager" style="width: 100%;">
+                               <option value="">Select property manager</option>
+                               @forelse($property_managers as $property_manager)
+                                  <option value="{{$property_manager->id}}" >{{$property_manager->name}} ({{$property_manager->email}})</option>
+                               @empty
+                               <option value="">No Property Manager Found</option>
+                               @endforelse                                
+                             </select>
+                         </div>
+                         @endif
                           <div class="form-group">
                             <label for="electricity_account_day">Electricity Account Number</label>
                             <input type="number" min="1" class="form-control" value="{{old('electricity_account_day')?old('electricity_account_day'):''}}" name="electricity_account_day" id="electricity_account_day"  placeholder="Electricity Account Number">
@@ -157,16 +171,18 @@
                             <span class="text-danger">{{$errors->first('water_account_day')}}</span>
                             @endif
                           </div>
-                          <div class="addField">
+                          <div class="addField form-group">
+                            <label for="water_account_day">Property Attach File</label>
                             <div class="row">
-                                <div class="col-md-3">
+                              
+                                {{-- <div class="col-md-3">
                                     <label for="title">Title</label>
-                                     <input type="text" name="title[]" id="title[]" placeholder="Title" class="form-control" required>
+                                     <input type="text" name="title[]" placeholder="Title" class="form-control title" required>
                                 </div>
                                 <div class="col-md-7">
                                     <label for="property_files">Attach Files</label>
-                                    <input  type="file"  class="form-control"
-                                    name="property_files[]" id="property_files" aria-describedby="propertyFilesHelp" required>
+                                    <input  type="file"  class="form-control property_files"
+                                    name="property_files[]" required>
                                     <small id="propertyFilesHelp" class="form-text text-muted">Upload PDF/DOC/JPEG/PNG/TEXT files of max. 1mb</small>
                                     @if($errors->get('property_files.*'))
                             
@@ -176,11 +192,12 @@
                                         @endforeach
                                   
                                     @endif
-                                </div>
+                                </div> --}}
                                 <div class="col-md-2">
                                     <label for="title">&nbsp;</label><br />
                                     <button class="btn btn-success add-more" id="addrow" type="button"><i class="fa fa-plus"></i></button>
                                 </div>
+                                
                             </div>
                           </div>
 
@@ -214,8 +231,8 @@
           counter++;
           var cols = '';
           var newRow = $('<div class="row" style="margin-top: 10px;">');
-          cols += '<div class="col-md-3"><input placeholder="Title" class="form-control" required="required" name="title[]" type="text"></div>';
-          cols += '<div class="col-md-7"><input placeholder="File" class="form-control" required="required" name="property_files[]" type="file"></div>';
+          cols += '<div class="col-md-3"><input placeholder="Title" class="form-control title" required="required" name="title[]" type="text"></div>';
+          cols += '<div class="col-md-7"><input placeholder="File" class="form-control property_files" required="required" name="property_files[]" type="file"></div>';
           cols += '<div class="col-md-2"><a class="deleteRow btn btn-danger ibtnDel" href="javascript: void(0);"><i class="fa fa-trash" aria-hidden="true"></i></a></div>';
   
           newRow.append(cols);
@@ -230,5 +247,31 @@
           
           
   });
+
+//   $('#admin_property_create_form').on('submit', function(event) {
+//         //Add validation rule for dynamically generated name fields
+//     $('.title').each(function() {
+//         $(this).rules("#addrow", 
+//             {
+//                 required: true,
+//                 messages: {
+//                     required: "Name is required",
+//                 }
+//             });
+//     });
+//     //addrow validation rule for dynamically generated email fields
+//     $('.property_files').each(function() {
+//         $(this).rules("#addrow", 
+//             {
+//                 required: true,
+//                 email: true,
+//                 messages: {
+//                     required: "Email is required",
+//                     email: "Invalid email",
+//                   }
+//             });
+//     });
+// });
+// $("#admin_property_create_form").validate();
   </script>
 @endpush
