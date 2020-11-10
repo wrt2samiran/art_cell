@@ -93,13 +93,14 @@
                             <span class="text-danger">{{$errors->first('quantity_available')}}</span>
                             @endif
                           </div>
-                          <!-- <div class="form-group required">
+                          
+                          {{-- <div class="form-group required">
                             <label for="currency">Currency <span class="error">*</span></label>
                             <input type="text" class="form-control" value="{{old('currency')?old('currency'):''}}" name="currency" id="currency"  placeholder="Please Enter Currency">
                             @if($errors->has('currency'))
                             <span class="text-danger">{{$errors->first('currency')}}</span>
                             @endif
-                          </div> -->
+                          </div>  --}}
                           
                           
                           

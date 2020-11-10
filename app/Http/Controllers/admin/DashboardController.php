@@ -15,6 +15,9 @@ use App\Models\Setting;
 use App\Models\Transaction;
 use App\Models\MasterCategory;
 use App\Models\OurService;
+use App\Models\{Country,State,City,TaskLists, TaskDetails, ServiceAllocationManagement, Property, Contract, ContractService};
+
+use App\Models\ModuleFunctionality;
 use Yajra\Datatables\Datatables;
 use Config;
 use Carbon\Carbon;
@@ -53,10 +56,14 @@ class DashboardController extends Controller
     {
         $this->data['page_title'] = 'Control Panel | Dashboard';
         $this->data['panel_title'] = 'Admin Dashboard';
-       
-                                              
+        $logedInUser = \Auth::guard('admin')->user()->id;
+        $logedInUserRole = \Auth::guard('admin')->user()->role_id;
 
-        return view('admin.dashboard.index', $this->data);
+            $tasks=TaskLists::with('property')->with('service')->with('country')->with('state')->with('city')->orderBy('id','Desc')->get();
+
+        // dd($tasks);
+
+        return view('admin.dashboard.index', $this->data)->with(['tasks' => $tasks]);
     }
 
     /*****************************************************/

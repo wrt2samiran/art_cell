@@ -20,10 +20,10 @@
             quantity_available:{
                 required: true,
                 number:true
-            }
-            // currency: {
-            //     required: true,
-            // },
+            },
+            image: {
+                required: true,
+            },
         },
         messages: {
             name: {
@@ -45,9 +45,9 @@
             quantity_available: {
                 required:  "Enter available quantity",
             },
-            // currency: {
-            //     required:  "Currency is required",
-            // },
+            image: {
+                required:  "Image is required",
+            },
 
         },
 

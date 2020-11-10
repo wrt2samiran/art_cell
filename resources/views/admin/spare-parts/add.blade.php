@@ -101,6 +101,13 @@
                             <span class="text-danger">{{$errors->first('quantity_available')}}</span>
                             @endif
                           </div>
+                          <div class="form-group required">
+                            <label for="image">Image<span class="error">*</span></label>
+                            <input type="file" class="form-control" name="image" id="image">
+                            @if($errors->has('image'))
+                            <span class="text-danger">{{$errors->first('image')}}</span>
+                            @endif
+                          </div>
 
                         </div>
                         <div>

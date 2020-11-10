@@ -111,7 +111,7 @@
                           </div>                           
                           <div class="form-group required">
                             <label for="location">Location <span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('location')?old('location'):''}}" name="location" id="location"  placeholder="Property Name">
+                            <input type="text" class="form-control" value="{{old('location')?old('location'):''}}" name="location" id="location"  placeholder="Location">
                             @if($errors->has('location'))
                             <span class="text-danger">{{$errors->first('location')}}</span>
                             @endif
@@ -223,7 +223,14 @@
 @push('custom-scripts')
 
 <script type="text/javascript" src="{{asset('js/admin/properties/create.js')}}"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAOAl0P8rnQSpLJlHq4Y12J9e9IGHpvIqk&sensor=false&libraries=places"></script>
 <script type="text/javascript">
+google.maps.event.addDomListener(window, 'load', function () {
+        var places = new google.maps.places.Autocomplete(document.getElementById('address'));
+        google.maps.event.addListener(places, 'place_changed', function () {
+
+        });
+    });
   $(function () {
       // Attribute section start //
       var counter = 0;
@@ -248,30 +255,8 @@
           
   });
 
-//   $('#admin_property_create_form').on('submit', function(event) {
-//         //Add validation rule for dynamically generated name fields
-//     $('.title').each(function() {
-//         $(this).rules("#addrow", 
-//             {
-//                 required: true,
-//                 messages: {
-//                     required: "Name is required",
-//                 }
-//             });
-//     });
-//     //addrow validation rule for dynamically generated email fields
-//     $('.property_files').each(function() {
-//         $(this).rules("#addrow", 
-//             {
-//                 required: true,
-//                 email: true,
-//                 messages: {
-//                     required: "Email is required",
-//                     email: "Invalid email",
-//                   }
-//             });
-//     });
-// });
-// $("#admin_property_create_form").validate();
+    
+
   </script>
+  
 @endpush
