@@ -378,7 +378,7 @@ $list = json_encode($filtered);
           backgroundColor: '<?=$color?>', //red
           borderColor    : '<?=$color?>', //red
           url            : '<?=$task_data->id?>',
-          allDay         : true,
+          allDay         : false,
           
           description: 'Task Title : <?=$task_data->task_title?><br>Property Name : <?=$task_data->property->property_name?><br>Service : <?=$task_data->service->service_name?><br>Service Type : <?=$task_data->contract_services->service_type?><br>Country : <?=$task_data->country->name?><br>State : <?=$task_data->state->name?><br>City : <?=$task_data->city->name?><br>Task Start Date : <?=$task_data->start_date?><br>Task End Date : <?=$task_data->end_date?>'
         },
