@@ -55,6 +55,7 @@
                                 <p>{{__('nav_link_text.dashboard')}}</p>
                             </a>
                         </li>
+                        @if ($admin->role_id == '1')
                         <li class="nav-item">
                             <a href="{{ route('admin.settings') }}"
                                class="nav-link @if(Route::currentRouteName()=='admin.settings'){{'active'}}@endif">
@@ -62,6 +63,7 @@
                                 <p>{{__('nav_link_text.settings')}}</p>
                             </a>
                         </li>
+                        @endif
                     </ul>
                     
                 </li>

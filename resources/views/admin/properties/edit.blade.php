@@ -2,7 +2,7 @@
 
 
 @section('unique-content')
-
+@php $current_user=auth()->guard('admin')->user(); @endphp
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -78,13 +78,22 @@
                             <span class="text-danger">{{$errors->first('description')}}</span>
                             @endif
                           </div>
-                          <div class="form-group ">
-                            <label for="no_of_units">Number Of Units <span class="error">*</span></label>
-                            <input type="number" min="1" class="form-control" value="{{old('no_of_units')?old('no_of_units'):$property->no_of_units}}" name="no_of_units" id="no_of_units"  placeholder="Number Of Units">
-                            @if($errors->has('no_of_units'))
-                            <span class="text-danger">{{$errors->first('no_of_units')}}</span>
-                            @endif
-                          </div>
+                          <div class="row">
+                            <div class="col-md-6 form-group">
+                              <label for="no_of_units">Number Of Active Units <span class="error">*</span></label>
+                              <input type="number" min="1" class="form-control" value="{{old('no_of_units')?old('no_of_units'):$property->no_of_units}}" name="no_of_units" id="no_of_units"  placeholder="Number Of Units">
+                              @if($errors->has('no_of_units'))
+                              <span class="text-danger">{{$errors->first('no_of_units')}}</span>
+                              @endif
+                            </div>
+                            <div class="col-md-6 form-group">
+                              <label for="no_of_inactive_units">Number Of Inactive Units<span class="error">*</span></label>
+                              <input type="number" min="1" class="form-control" value="{{old('no_of_inactive_units')?old('no_of_inactive_units'):$property->no_of_inactive_units}}" name="no_of_inactive_units" id="no_of_inactive_units"  placeholder="Number Of Units">
+                              @if($errors->has('no_of_inactive_units'))
+                              <span class="text-danger">{{$errors->first('no_of_inactive_units')}}</span>
+                              @endif
+                            </div>
+                        </div>
                           <div class="form-group required">
                              <label for="city_id">City <span class="error">*</span></label>
                               <select class="form-control " id="city_id" name="city_id" style="width: 100%;">
@@ -111,20 +120,20 @@
                             @endif
                           </div>
                           <div class="form-group required">
-                            <label for="contact_number">Contact Number <span class="error">*</span></label>
+                            <label for="contact_number">Contact Number</label>
                             <input type="text" class="form-control" value="{{old('contact_number')?old('contact_number'):$property->contact_number}}" name="contact_number" id="contact_number"  placeholder="Contact Number">
                             @if($errors->has('contact_number'))
                             <span class="text-danger">{{$errors->first('contact_number')}}</span>
                             @endif
                           </div>
                           <div class="form-group required">
-                            <label for="contact_email">Contact Email <span class="error">*</span></label>
+                            <label for="contact_email">Contact Email</label>
                             <input type="text" class="form-control" value="{{old('contact_email')?old('contact_email'):$property->contact_email}}" name="contact_email" id="contact_email"  placeholder="Contact Email">
                             @if($errors->has('contact_email'))
                             <span class="text-danger">{{$errors->first('contact_email')}}</span>
                             @endif
                           </div>
-
+                          @if ($current_user->role->user_type->slug != 'property-owner')
                           <div class="form-group required">
                              <label for="property_owner">Property Owner <span class="error">*</span></label>
                               <select class="form-control " name="property_owner" id="property_owner" style="width: 100%;">
@@ -136,43 +145,36 @@
                                 @endforelse                                
                               </select>
                           </div>
+                          @endif
+                          @if ($current_user->role->user_type->slug == 'property-owner')
+                          <div class="form-group required">
+                            <label for="property_manager">Property Manager</label>
+                             <select class="form-control " name="property_manager" id="property_manager" style="width: 100%;">
+                               <option value="">Select property manager</option>
+                               @forelse($property_managers as $property_manager)
+                                  <option value="{{$property_manager->id}}" {{($property_manager->id==$property->property_manager)?'selected':''}}  >{{$property_manager->name}} ({{$property_manager->email}})</option>
+                               @empty
+                               <option value="">No Property Manager Found</option>
+                               @endforelse                                
+                             </select>
+                         </div>
+                         @endif
 
 
                           <div class="form-group">
-                            <label for="electricity_account_day">Electricity Account Day</label>
-                            <select class="form-control " id="electricity_account_day" name="electricity_account_day" style="width: 100%;">
-                              <option value="">Select electricity account day</option>
-                              @forelse($days_array as $day)
-                                 <option value="{{$day}}" 
-                                  {{($day==$property->electricity_account_day)?'selected':''}}
-                                 >{{App\Http\Helpers\Helper::Ordinal($day)}}</option>
-                              @empty
-                              <option value="">No Day Found</option>
-                              @endforelse 
-                            </select>
-                            @if($errors->has('electricity_account_day'))
-                            <span class="text-danger">{{$errors->first('electricity_account_day')}}</span>
-                            @endif
+                            <label for="electricity_account_day">Electricity Account Number</label>
+                            <input type="number" min="1" class="form-control" value="{{old('electricity_account_day')?old('electricity_account_day'):$property->electricity_account_day}}" name="electricity_account_day" id="electricity_account_day"  placeholder="Number Of Units">
                           </div>
 
                           <div class="form-group">
-                            <label for="water_account_day">Water Account Day</label>
-                            <select class="form-control " id="water_account_day" name="water_account_day" style="width: 100%;">
-                              <option value="">Select water account day</option>
-                              @forelse($days_array as $day)
-                                 <option value="{{$day}}" 
-                                {{($day==$property->water_account_day)?'selected':''}}
-                                 >{{App\Http\Helpers\Helper::Ordinal($day)}}</option>
-                              @empty
-                              <option value="">No Day Found</option>
-                              @endforelse 
-                            </select>
+                            <label for="water_account_day">Water Account Number</label>
+                            <input type="number" min="1" class="form-control" value="{{old('water_account_day')?old('water_account_day'):$property->water_account_day}}" name="water_account_day" id="water_account_day"  placeholder="Number Of Units">
                             @if($errors->has('water_acount_day'))
                             <span class="text-danger">{{$errors->first('water_acount_day')}}</span>
                             @endif
                           </div>
 
-                          <div class="row attachment_files_container">
+                          {{-- <div class="row attachment_files_container">
                             <div class="col-sm-12 mb-1">
                               <b>Find already attached files</b>
                             </div>
@@ -214,22 +216,68 @@
                             <div class="col-md-12 text-muted">No files attached to this property</div>
                             @endif
                           </div>
-                          <hr>
-                          <div class="form-group">
-                            <label for="property_files">Attach Files</label>
-                            <input  type="file" multiple class="form-control"
-                            name="property_files[]" id="property_files" aria-describedby="propertyFilesHelp" >
-
-                            <small id="propertyFilesHelp" class="form-text text-muted">Upload PDF/DOC/JPEG/PNG/TEXT files of max. 1mb</small>
-                            @if($errors->get('property_files.*'))
+                          <hr> --}}
+                          <div class="addField form-group">
+                            @foreach ($property->property_attachments as $item)
+                          <div class="row" id="property_file_{{$item->id}}">
+                                <div class="col-md-3">
+                                    <label for="title">Title</label>
+                                <input type="text" name="title[]" id="title[]" value="{{$item->title}}" placeholder="Title" class="form-control">
+                                </div>
+                                <div class="col-md-7">
+                                    <label for="title">File</label>
+                                    <input  type="file"  class="form-control"
+                                name="property_files[]" id="property_files" aria-describedby="propertyFilesHelp" >
+                                    <small id="propertyFilesHelp" class="form-text text-muted">Upload PDF/DOC/JPEG/PNG/TEXT files of max. 1mb</small>
+                                    @if($errors->get('property_files.*'))
                             
-                             @foreach($errors->get('property_files.*') as $err)
-                              <span class="text-danger">{{$err[0]}}</span><br>
-                              @break
-                             @endforeach
-                           
+                                        @foreach($errors->get('property_files.*') as $err)
+                                          <span class="text-danger">{{$err[0]}}</span><br>
+                                          @break
+                                        @endforeach
+                                  
+                                    @endif
+                                    
+                                    @php
+    
+                            if (isset($item->file_name)) {
+                              if ($item->file_name != null) {
+                                if(file_exists(public_path('/uploads/property_attachments'.'/'.$item->file_name))) {
+                                $path = \URL::asset('/uploads/property_attachments').'/'.$item->file_name;
+                                $fileName = $item->file_name;
+                                } else {
+                                  $fileName = Null;
+                                  $path = Null;
+                                }
+                              } else {
+                                  $fileName = Null;
+                                  $path = Null;
+                                }
+                            } else {
+                                  $fileName = Null;
+                                  $path = Null;
+                                }
+                            @endphp
+                              @if($path != null && @fileName != null)<a href="{{$path}}" download>{{$fileName}}</a>@else
+                            'No file found'
                             @endif
+                              
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="title">&nbsp;</label><br />
+                                    <a title="Click to delete the file" href="javascript:delete_attach_file('{{route('admin.properties.delete_attachment_through_ajax',$item->id)}}','{{$item->id}}')"><i style="color: red;" class="fas fa-trash"></i></a>
+                                </div>
+                            </div>
+                            @endforeach
+                            <div class="col-md-2">
+                              <label for="water_account_day">Property Attach File</label>
+                              <button class="btn btn-success add-more" id="addrow" type="button"><i class="fa fa-plus"></i></button>
+                              
                           </div>
+                          <p>&nbsp;</p>
+                          </div>
+                          
+                          
 
                           <input type="hidden" id="property_manager_create_url" value="{{route('admin.users.create')}}">
                           <input type="hidden" id="property_owner_create_url" value="{{route('admin.users.create')}}">
@@ -252,4 +300,36 @@
 
 @push('custom-scripts')
 <script type="text/javascript" src="{{asset('js/admin/properties/edit.js')}}"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAOAl0P8rnQSpLJlHq4Y12J9e9IGHpvIqk&sensor=false&libraries=places"></script>
+<script type="text/javascript">
+google.maps.event.addDomListener(window, 'load', function () {
+        var places = new google.maps.places.Autocomplete(document.getElementById('address'));
+        google.maps.event.addListener(places, 'place_changed', function () {
+
+        });
+    });
+  $(function () {
+      // Attribute section start //
+      var counter = 0;
+      $("#addrow").on("click", function () {
+          counter++;
+          var cols = '';
+          var newRow = $('<div class="row" style="margin-top: 10px;">');
+          cols += '<div class="col-md-3"><input placeholder="Title" class="form-control" required="required" name="title[]" type="text"></div>';
+          cols += '<div class="col-md-7"><input placeholder="File" class="form-control" required="required" name="property_files[]" type="file"></div>';
+          cols += '<div class="col-md-2"><a class="deleteRow btn btn-danger ibtnDel" href="javascript: void(0);"><i class="fa fa-trash" aria-hidden="true"></i></a></div>';
+  
+          newRow.append(cols);
+          $(".addField").append(newRow);
+         
+      });
+      $(".row").on("click", ".ibtnDel", function (event) {
+          $(this).closest(".row").remove();
+          counter--;
+      });
+      // Attribute section end //
+          
+          
+  });
+</script>
 @endpush

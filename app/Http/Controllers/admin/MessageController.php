@@ -88,7 +88,7 @@ class MessageController extends Controller
             $userData = [];
             $contract = [];
             if ($current_user->role->user_type->slug == 'super-admin'){
-                $userData = User::where('id','!=', '1')->get();
+                $userData = User::where('role_id','!=', '1')->get();
             } else{
                 $contract = Contract::with(['property','customer','service_provider','property_manager','services','contract_status'])
                 ->whereHas('property')
@@ -220,7 +220,7 @@ class MessageController extends Controller
     {
       
         $userIds = explode(' ', $request->userId);
-        $contractUser = User::whereIn('id', $userIds)->get();
+        $contractUser = User::whereIn('id', $userIds)->with('role')->get();
         return response()->json(['status'=>true, 'contractUser'=>$contractUser],200);
     }
 }

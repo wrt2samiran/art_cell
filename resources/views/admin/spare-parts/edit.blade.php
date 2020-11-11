@@ -46,7 +46,7 @@
                   @endif
                   <div class="row justify-content-center">
                     <div class="col-md-10 col-sm-12">
-                      <form  method="post" id="admin_shared_service_edit_form" action="{{route('admin.spare-parts.edit',$details->id)}}" method="post" >
+                      <form  method="post" id="admin_shared_service_edit_form" action="{{route('admin.spare-parts.edit',$details->id)}}" method="post" enctype="multipart/form-data">
                         @csrf
                         
                         <div>
@@ -100,6 +100,23 @@
                             @if($errors->has('quantity_available'))
                             <span class="text-danger">{{$errors->first('quantity_available')}}</span>
                             @endif
+                          </div>
+
+                          <div class="form-group">
+                            <label for="image">Image</label>
+                            <input type="file" class="form-control" name="image" id="image">
+                            <br>
+                              
+                                  @php
+                                  $imgPath = \URL:: asset('images').'/admin/'.Helper::NO_IMAGE;
+                                  if ($details->image != null) {
+                                      if(file_exists(public_path('/uploads/sparepart/'.'/'.$details->image))) {
+                                      $imgPath = \URL::asset('uploads/sparepart/').'/'.$details->image;
+                                      }
+                                  }
+                                  @endphp
+                                  <img src="{{ $imgPath }}" alt="" height="50px">
+                            
                           </div>
                          
                         </div>

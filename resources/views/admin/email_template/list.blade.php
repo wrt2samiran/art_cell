@@ -29,11 +29,11 @@
 				            <div class="card-header">
 				                <div class="d-flex justify-content-between" >
 				                    <div><span>Email Template List</span></div>
-					                <div>
+					                {{-- <div>
 						                <a class="btn btn-success" href="{{route('admin.email.add')}}">
 						                 Create Email Template
 						                </a>
-					                </div>
+					                </div> --}}
 				                </div>
 				            </div>
 
@@ -56,7 +56,6 @@
                                         <tr>
                                             <th>Id</th>
                                             <th>Template For</th>
-                                            <th>Slug</th>
                                             <th>Created At</th>
                                             <th>Action</th>
                                         </tr>

@@ -57,6 +57,14 @@ class PropertyController extends Controller
                     $q->whereCreatedBy($current_user->id);
                 }
             })
+            
+            ->when($request->city_id,function($query) use($request){
+            	$query->where('city_id',$request->city_id);
+            })
+            ->when($request->property_name,function($query) use($request){
+            	$query->where('property_name',$request->property_name);
+            })
+            
             ->whereHas('property_type')->with('city')->select('properties.*');
             return Datatables::of($properties)
             ->editColumn('created_at', function ($property) {
@@ -104,7 +112,9 @@ class PropertyController extends Controller
             })
             ->rawColumns(['action','is_active'])
             ->make(true);
-        }     
+        }
+        $this->data['propertyCity']=City::whereIsActive('1')->get();
+        $this->data['propertyName']=Property::whereIsActive('1')->get();   
         return view($this->view_path.'.list',$this->data);
     }
 
@@ -176,7 +186,8 @@ class PropertyController extends Controller
     		'property_name'=>$request->property_name,
             'property_type_id'=>$request->property_type_id,
     		'description'=>$request->description,
-    		'no_of_units'=>$request->no_of_units,
+            'no_of_units'=>$request->no_of_units,
+            'no_of_inactive_units'=>$request->no_of_inactive_units,
     		'country_id'=>$city->country_id,
     		'state_id'=>$city->state_id,
     		'city_id'=>$request->city_id,
@@ -184,18 +195,20 @@ class PropertyController extends Controller
     		'location'=>$request->location,
     		'contact_number'=>$request->contact_number,
             'contact_email'=>$request->contact_email,
-    		'property_owner'=>$request->property_owner,
+            'property_owner'=>$request->property_owner,
+            'property_manager'=>$request->property_manager,
     		'electricity_account_day'=>$request->electricity_account_day,
     		'water_account_day'=>$request->water_account_day,
     		'created_by'=>auth()->guard('admin')->id(),
     		'updated_by'=>auth()->guard('admin')->id()
     	]);
-
+        
        if($request->hasFile('property_files')){
 
             foreach ($request->file('property_files')  as $key=>$property_file) {
+               
               
-                    $file_name = 'property-file-'.time().$key.'.'.$property_file->getClientOriginalExtension();
+                   $file_name = 'property-file-'.time().$key.'.'.$property_file->getClientOriginalExtension();
                  
                     $destinationPath = public_path('/uploads/property_attachments');
                  
@@ -214,9 +227,10 @@ class PropertyController extends Controller
                     }else{
                          $file_type='file';
                     }
-
+                    
                     PropertyAttachment::create([
-                     'property_id'=>$id,
+                     'property_id'=>$property->id,
+                     'title'      => $request->title[$key],
                      'file_name'=>$file_name,
                      'file_type'=>$file_type,
                      'created_by'=>auth()->guard('admin')->id()
@@ -319,6 +333,7 @@ class PropertyController extends Controller
             'property_type_id'=>$request->property_type_id,
             'description'=>$request->description,
             'no_of_units'=>$request->no_of_units,
+            'no_of_inactive_units'=>$request->no_of_inactive_units,
             'country_id'=>$city->country_id,
             'state_id'=>$city->state_id,
             'city_id'=>$request->city_id,
@@ -327,6 +342,7 @@ class PropertyController extends Controller
             'contact_number'=>$request->contact_number,
             'contact_email'=>$request->contact_email,
             'property_owner'=>$request->property_owner,
+            'property_manager'=>$request->property_manager,
             'electricity_account_day'=>$request->electricity_account_day,
             'water_account_day'=>$request->water_account_day,
             'updated_by'=>auth()->guard('admin')->id()
@@ -335,7 +351,7 @@ class PropertyController extends Controller
         if($request->hasFile('property_files')){
 
             foreach ($request->file('property_files')  as $key=>$property_file) {
-          
+                if(!empty($property_file)) {
                 $file_name = 'property-file-'.time().$key.'.'.$property_file->getClientOriginalExtension();
              
                 $destinationPath = public_path('/uploads/property_attachments');
@@ -358,12 +374,14 @@ class PropertyController extends Controller
 
 
                 PropertyAttachment::create([
-                 'property_id'=>$id,
+                 'property_id'=>$property->id,
+                 'title'      => $request->title[$key],
                  'file_name'=>$file_name,
                  'file_type'=>$file_type,
                  'created_by'=>auth()->guard('admin')->id()
                 ]);
             }
+          }
         }
         
         return redirect()->route('admin.properties.list')->with('success','Property successfully updated.');

@@ -103,13 +103,13 @@ class PropertyPolicy
         //check if the logged in user authorize to view the property
         /* if logged in user is the property_owner/property_manager of this property or he is the service_provider/customer of the contracts related to this property then he can view thre property details */
         $current_user=$user;
-        if(count($property->contracts) && $property->property_owner!=$current_user->id && $property->contracts[0]->property_manager_id!=$current_user->id && $property->contracts[0]->customer_id!=$current_user->id && $property->contracts[0]->service_provider_id!=$current_user->id){
+        // if(count($property->contracts) && $property->property_owner!=$current_user->id && $property->contracts[0]->property_manager_id!=$current_user->id && $property->contracts[0]->customer_id!=$current_user->id && $property->contracts[0]->service_provider_id!=$current_user->id){
 
-            return  Response::deny('You do not have permission to access this page. '.'<a href="'.route('admin.dashboard').'" class="btn btn-success">Back to Dashboard</a>');
-        }
-        elseif($property->property_owner!=$current_user->id){
-            return  Response::deny('You do not have permission to access this page. '.'<a href="'.route('admin.dashboard').'" class="btn btn-success">Back to Dashboard</a>');
-        }
+        //     return  Response::deny('You do not have permission to access this page. '.'<a href="'.route('admin.dashboard').'" class="btn btn-success">Back to Dashboard</a>');
+        // }
+        // elseif($property->property_owner!=$current_user->id){
+        //     return  Response::deny('You do not have permission to access this page. '.'<a href="'.route('admin.dashboard').'" class="btn btn-success">Back to Dashboard</a>');
+        // }
         return Response::allow();
 
     }

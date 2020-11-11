@@ -28,21 +28,6 @@ $("#admin_property_edit_form").validate({
             required: true,
             maxlength: 255,  
         },
-        property_owner:{
-            required: true, 
-        },
-
-        contact_number:{
-            required: true,
-            minlength: 8,
-            maxlength: 20,
-            number:true  
-        },
-        contact_email:{
-            required: true,
-            email: true,
-            maxlength: 100,  
-        },
 
     },
     messages: {
@@ -72,21 +57,6 @@ $("#admin_property_edit_form").validate({
             required:  "Location is required",
             maxlength: "Location should not be more then 255 characters",
         },
-        property_owner: {
-            required:  "Please select property owner",
-        },
-
-        contact_number: {
-            required:  "Contact number is required",
-            minlength: "Contact number should have minimum 8 characters",
-            maxlength: "Contact number should not be more then 20 characters",
-            number:"Only number allowed"
-        },
-        contact_email: {
-            required:  "Contact email is required",
-            email: "Please enter valid email address",
-            maxlength: "Email should not be more then 100 characters"
-        },
 
     },
     errorPlacement: function (error, element) {
@@ -115,28 +85,20 @@ $('#property_type_id').select2({
     placeholder:'Select property type'
 });
 
-$('#electricity_account_day').select2({
-    theme: 'bootstrap4',
-    placeholder:'Select electricity account day'
-});
-$('#water_acount_day').select2({
-    theme: 'bootstrap4',
-    placeholder:'Select water account day'
-});
 
 
-$('#property_owner').select2({
-    theme: 'bootstrap4',
-    placeholder:'Select property owner',
-    "language": {
-       "noResults": function(){
-           return "No Property Owner Found <a href='"+$('#property_owner_create_url').val()+"' target='_blank' class='btn btn-success'>Create New One</a>";
-       }
-    },
-    escapeMarkup: function(markup) {
-      return markup;
-    },
-});
+// $('#property_owner').select2({
+//     theme: 'bootstrap4',
+//     placeholder:'Select property owner',
+//     "language": {
+//        "noResults": function(){
+//            return "No Property Owner Found <a href='"+$('#property_owner_create_url').val()+"' target='_blank' class='btn btn-success'>Create New One</a>";
+//        }
+//     },
+//     escapeMarkup: function(markup) {
+//       return markup;
+//     },
+// });
 
 $('#property_manager').select2({
     theme: 'bootstrap4',
@@ -169,9 +131,9 @@ $('#property_files').on('change',function(){
         var allowed_file_types=['application/pdf',
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         'application/msword',
-        'application/jpeg',
-        'application/jpg',
-        'application/png',
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
         'text/plain'
         ];
 
@@ -214,6 +176,8 @@ window.reset = function (e) {
 
  //function to delete quotation
  function delete_attach_file(url,file_id){
+     alert(file_id);
+     
   swal({
   title: "Are you sure?",
   text: "Once deleted, you will not be able to recover this file!",
@@ -232,6 +196,7 @@ window.reset = function (e) {
         success: function (data) {
 
           $('#attachment_file_'+file_id).remove();
+          $('#property_file_'+file_id).remove();
 
           var NumberOfFilePresent = $('.attachment_files').length;
           if(NumberOfFilePresent=='0'){

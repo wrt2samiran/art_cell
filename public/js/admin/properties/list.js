@@ -4,13 +4,22 @@
         "autoWidth": false,
         processing: true,
         serverSide: true,
-        ajax: $('#properties_data_url').val(),
+        ajax: {
+          url:$('#properties_data_url').val(),
+          
+          data: function (d) {
+            d.city_id = $('#city_id').val();
+            d.property_name = $('#property_name').val();
+            
+            
+            
+        }
+        },
         columns: [
             { data: 'id', name: 'id' },
             { data: 'code', name: 'code'},
             { data: 'property_name', name: 'property_name'},
             { data: 'city.name', name: 'city.name'},
-            { data: 'no_of_units', name: 'no_of_units'},
             { data: 'is_active', name: 'is_active',orderable: false },
             { data: 'created_at', name: 'created_at' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
@@ -20,7 +29,10 @@
         {   "targets": [0],
             "visible": false,
             "searchable": false
-        }]
+        }],
+        "drawCallback": function( settings ) {
+          $.LoadingOverlay("hide");
+      }
 
     });
 
@@ -102,4 +114,44 @@
     } 
   });
 
+  
+
  }
+
+ $('.city-name').select2({
+  theme: 'bootstrap4',
+  placeholder:'Filter by City'
+});
+$('#city_id').on('change', function(e) {
+  if(this.value!=''){
+    $('#city-name-clear').show();
+  }else{
+    $('#city-name-clear').hide();
+  }
+  
+  $.LoadingOverlay("show");
+  property_table.draw();
+});
+$('#city-name-clear').on('click',function(){
+  $('#city_id').val("").change();
+});
+
+$('.property-name').select2({
+  theme: 'bootstrap4',
+  placeholder:'Filter by City'
+});
+$('#property_name').on('change', function(e) {
+  if(this.value!=''){
+    $('#property-name-clear').show();
+  }else{
+    $('#property-name-clear').hide();
+  }
+  
+  $.LoadingOverlay("show");
+  property_table.draw();
+});
+$('#property-name-clear').on('click',function(){
+  $('#property_name').val("").change();
+});
+
+ 

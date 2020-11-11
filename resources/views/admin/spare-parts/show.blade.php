@@ -49,6 +49,18 @@
                           <td>Description</td>
                           <td>{!!$spareParts->description!!}</td>
                         </tr>
+                        <tr>
+                          <td>Image</td>
+                          <td> @php
+                            $imgPath = \URL:: asset('images').'/admin/'.Helper::NO_IMAGE;
+                            if ($spareParts->image != null) {
+                                if(file_exists(public_path('/uploads/sparepart/'.'/'.$spareParts->image))) {
+                                $imgPath = \URL::asset('uploads/sparepart/').'/'.$spareParts->image;
+                                }
+                            }
+                            @endphp
+                            <img src="{{ $imgPath }}" alt="" height="50px"></td>
+                        </tr>
                         
                         <tr>
                           <td>Price</td>

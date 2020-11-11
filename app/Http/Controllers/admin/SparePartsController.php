@@ -104,8 +104,8 @@ class SparePartsController extends Controller
                     'manufacturer'    => 'required|min:2|max:255',
                     'unit_master_id'  => 'required',
                     'price'     => 'required',
-                    'quantity_available'=>'required|numeric'
-                   // 'currency'     => 'required',
+                    'quantity_available'=>'required|numeric',
+                    'image'             => 'mimes:jpeg,jpg,png,gif|required|max:10000', //10000kb
 				);
 				$validationMessages = array(
 					'name.required'                => 'Please enter name',
@@ -116,17 +116,30 @@ class SparePartsController extends Controller
                     'manufacturer.max'             => 'Manufacturer name should not be more than 255 characters',
                     'unit_master_id.required'      => 'Unit is required',
                     'price.required'               => 'Price is required',
-                   // 'currency.required'            => 'Currency is required',               
+                    'image.mimes'                  => 'Image Upload only jpeg,jpg,png,gif',
+                    'image.required'               => 'Image field is required',
+                    'image.max'                    => 'Image max uploaded size 10000kb',               
 				);
 
 				$Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);
 				if ($Validator->fails()) {
 					return redirect()->route('admin.spare-parts.add')->withErrors($Validator)->withInput();
 				} else {
+                    $image = $request->file('image');
+                    if ($image != '') {
+                        $originalFileName =  $image->getClientOriginalName();
+                        $extension = pathinfo($originalFileName, PATHINFO_EXTENSION);
+                        $filename = 'sparepart_'.strtotime(date('Y-m-d H:i:s')).'.'.$extension;
+                        
+                        $imageResize = \Image::make($image->getRealPath());
+                        $imageResize->save(public_path('uploads/sparepart/' . $filename));
+                        $imageResize->save(public_path('uploads/sparepart/'.$filename));
+                    }
                     
                     $new = new SparePart;
                     $new->name = trim($request->name, ' ');
                     $new->manufacturer  = $request->manufacturer;
+                    $new->image         = $filename;
                     $new->description  = $request->description;
                     $new->unit_master_id  = $request->unit_master_id;
                     $new->price  = $request->price;
@@ -173,7 +186,7 @@ class SparePartsController extends Controller
             $data['id'] = $id;
 
             if ($request->isMethod('POST')) {
-               // dd($request->all());
+            //    dd($details->image);
                 if ($id == null) {
                     return redirect()->route('admin.spare-parts.list');
                 }
@@ -183,8 +196,7 @@ class SparePartsController extends Controller
                     'manufacturer'    => 'required|min:2|max:255',
                     'unit_master_id'  => 'required',
                     'price'     => 'required',
-                    'quantity_available'=>'required|numeric'
-                  //  'currency'     => 'required',
+                    'quantity_available'=>'required|numeric',
                 );
                 $validationMessages = array(
                     'name.required'                => 'Please enter name',
@@ -194,8 +206,7 @@ class SparePartsController extends Controller
                     'manufacturer.min'             => 'Manufacturer name should be at least 2 characters',
                     'manufacturer.max'             => 'Manufacturer name should not be more than 255 characters',
                     'unit_master_id.required'      => 'Unit is required',
-                    'price.required'               => 'Price is required',
-                  //  'currency.required'            => 'Currency is required',               
+                    'price.required'               => 'Price is required',             
                 );
 
                 
@@ -204,6 +215,21 @@ class SparePartsController extends Controller
                     
                     return redirect()->back()->withErrors($Validator)->withInput();
                 } else {
+                    $image = $request->file('image');
+                    if ($image != '') {                        
+                        $originalFileName   = $image->getClientOriginalName();
+                        $extension          = pathinfo($originalFileName, PATHINFO_EXTENSION);
+                        $filename           = 'sparepart_'.strtotime(date('Y-m-d H:i:s')).'.'.$extension;                        
+                        $imageResize        = \Image::make($image->getRealPath());
+                        $imageResize->save(public_path('uploads/sparepart/' . $filename));
+                        $imageResize->save(public_path('uploads/sparepart/' . $filename));
+
+                        $largeImage = public_path().'/uploads/sparepart/'.$details->image;
+                        @unlink($largeImage);
+                       
+
+                        $details->image  = $filename;
+                    }
                     
                     $details->name = trim($request->name, ' ');
                     $details->manufacturer  = $request->manufacturer;

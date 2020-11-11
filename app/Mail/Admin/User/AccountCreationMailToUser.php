@@ -24,8 +24,9 @@ class AccountCreationMailToUser extends Mailable
         $slug = 'registration-successfully';
         $variable_value=[
             '##USERNAME##'=>"{$data['user']['first_name']}",
-            '##Address##'=>"{$data['user']['email']}",
-            '##Employ-code##'=>"{$data['user_password']}",
+            '##EMAIL##'=>"{$data['user']['email']}",
+            '##PASSWORD##'=>"{$data['user_password']}",
+            '##SITELINK##'=>"https://www.demoyourprojects.com/cmms/public/admin",
         ]; 
         $this->mail_content=\Helper::emailTemplateMail($slug,$variable_value);
     }
