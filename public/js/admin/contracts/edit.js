@@ -13,19 +13,11 @@ $("#admin_contract_edit_form").validate({
              return true;
             },
         },
-        total_service:{
-            required:true
-        },
+ 
         property:{
             required: true
         },
         service_provider:{
-            required: true, 
-        },
-        property_manager:{
-            required: true, 
-        },
-        property_owner:{
             required: true, 
         },
         start_date:{
@@ -36,15 +28,6 @@ $("#admin_contract_edit_form").validate({
             required: true,
             maxlength: 10, 
         },
-        contract_price:{
-            required: true, 
-            number:true
-        },
-
-
-        contract_status_id:{
-            required: true,
-        }
     },
     messages: {
         title: {
@@ -54,20 +37,10 @@ $("#admin_contract_edit_form").validate({
             required:  "Select property",
         },
         description: {
-            required:  "Contract info is required",
-            maxlength: "Info should not be more then 1000 characters",
-        },
-        total_service:{
-            required:  "Add services required for the contract",
-        },
-        property_owner: {
-            required:  "Please select property owner",
+            required:  "Contract description is required",
         },
         service_provider:{
             required:  "Please select service provider",
-        },
-        property_manager: {
-            required:  "Please select property manager",
         },
         contract_price:{
             required:  "Enter contract price",
@@ -78,21 +51,12 @@ $("#admin_contract_edit_form").validate({
         end_date:{
             required:  "Enter end date in dd/mm/yyy format",
         },
-        "services[]":{
-            required:  "Select services required for the contract",
-        },
 
-        contract_status_id: {
-            required:  "Status is required",
-        },
     },
     errorPlacement: function (error, element) {
         error.addClass('invalid-feedback');
         if(element.attr('name')=='description'){
             error.appendTo($('#description_error'));
-        }
-        else if(element.attr('name')=='total_service'){
-            error.appendTo($('#services_error'));
         }
         else{
             error.insertAfter(element);

@@ -22,3 +22,27 @@ button.editable-cancel{
 	border: none!important;
 	border-radius: 10%;
 }
+
+.multistep-row .multistep-div{
+	padding: 5px;
+	text-align: center;
+	border-right:1px solid #0e4505;
+	border-left:1px solid #0e4505;
+	border-top:1px solid #0e4505;
+}
+.multistep-row .multistep-div.active{
+	background: white!important;
+	color: green!important;
+}
+.multistep-row .multistep-div.active a{
+	color: green!important;
+}
+.multistep-row .multistep-div a{
+	display: inline-block;
+	height: 100%;
+	width: 100%;
+}
+.multistep-row{
+	border-radius: 10px;
+	padding: 0 8px;
+}

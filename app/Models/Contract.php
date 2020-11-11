@@ -20,12 +20,6 @@ class Contract extends Model
     public function property(){
     	return $this->belongsTo(Property::class,'property_id','id');
     }
-    public function property_manager(){
-        return $this->belongsTo(User::class,'property_manager_id','id');
-    }
-    public function customer(){
-    	return $this->belongsTo(User::class,'customer_id','id');
-    }
     public function contract_attachments(){
         return $this->hasMany(ContractAttachment::class);
     }

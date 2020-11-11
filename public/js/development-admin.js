@@ -1208,4 +1208,10 @@ $(document).ready(function () {
     });
 
 });
+
+if($('.alert').length>0){
+    setTimeout(function(){
+     $('.alert').hide();
+    }, 4000);
+}
 //============= create addon==========================

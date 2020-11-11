@@ -9,9 +9,7 @@
           
           data: function (d) {
             d.contract_status_id = $('#contract_status_id').val();
-            d.daterange = $('#daterange').val();
-            
-            
+            d.daterange = $('#daterange').val();  
             
         }
         },
@@ -21,9 +19,8 @@
             { data: 'title', name: 'title'},
             { data: 'start_date', name: 'start_date'},
             { data: 'end_date', name: 'end_date'},
-            { data: 'property.location', name: 'property.location'},
+            { data: 'creation_complete', name: 'creation_complete'},
             { data: 'contract_status.status_name', name: 'contract_status.status_name'},
-            { data: 'created_at', name: 'created_at' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
         order: [ [0, 'desc'] ],

@@ -6,14 +6,10 @@
         serverSide: true,
         ajax: {
           url:$('#properties_data_url').val(),
-          
           data: function (d) {
             d.city_id = $('#city_id').val();
             d.property_name = $('#property_name').val();
-            
-            
-            
-        }
+          }
         },
         columns: [
             { data: 'id', name: 'id' },

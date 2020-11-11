@@ -465,7 +465,25 @@ class Helper
     public static function getSiteCurrency(){
         return 'SAR';
     }
-
+    /*****************************************************/
+    # Function name : get_file_type_by_mime_type          #
+    # Created Date  : 05-11-2020                          #
+    # Purpose       : Get file type by mimetype           #
+    /*****************************************************/
+    public static function get_file_type_by_mime_type($mime_type){
+        if(in_array($mime_type,['image/jpeg','image/png','image/jpg'])){
+            $file_type='image';
+        }elseif (in_array($mime_type,['application/pdf'])) {
+            $file_type='pdf';
+        }elseif (in_array($mime_type,['application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/msword'])) {
+            $file_type='doc';
+        }elseif(in_array($mime_type,['text/plain'])){
+             $file_type='text';
+        }else{
+             $file_type='file';
+        }
+        return $file_type;
+    }
 
     /*****************************************************/
     # Function name : get_admin_contact_mail              #
