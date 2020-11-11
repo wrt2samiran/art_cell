@@ -34,7 +34,6 @@
               <div class="card-body"> 
                  <table class="table table-bordered table-hover" id="country-details-table">
                       <tbody>
-                        
                         <tr>
                           <td >Task Title</td>
                           <td >{{$task_data->task->task_title}}</td>

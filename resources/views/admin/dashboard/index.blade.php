@@ -107,12 +107,68 @@
         <!-- /.row -->
         <!-- Main row -->
         <div class="row">
-          <!-- Left col -->
-
-          <!-- /.Left col -->
-          <!-- right col (We are only adding the ID to make the widgets sortable)-->
-
-          <!-- right col -->
+          <div class="card">
+            <div class="card-header border-transparent">
+              <h3 class="card-title">Latest Task</h3>
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body col-12">
+              <div class="table-responsive">
+                <table class="table m-0">
+                  <thead>
+                  <tr>
+                    <th>Task Title</th>
+                    <th>Property Name</th>
+                    <th>Service</th>
+                    <th>Country</th>
+                    <th>State</th>
+                    <th>City</th>
+                    <th>Service Start Date</th>
+                    <th>Service End Date</th>
+                  </tr>
+                  </thead>
+                  @if(isset($tasks))
+                  @if(count($tasks)>0)
+                  @foreach ($tasks as $key => $row)
+                  <tbody>
+                  <tr>
+                  <td>{{$row->task_title}}</td>
+                  <td>{{$row->property->property_name}}</td>
+                  <td>{{$row['service']['service_name']}}</td>
+                  <td>{{$row->country->name}}</td>
+                  <td>{{$row->state->name}}</td>
+                  <td>{{$row->city->name}}</td>
+                  <td>{{$row->start_date}}</td>
+                  <td>{{$row->end_date}}</td>
+                    
+                  </tr>
+                  
+                  </tbody>
+                  @endforeach
+                  @else
+                  <p>
+                  <span style="color:red">No Records Found</span>
+                  </p>  
+                  @endif
+                  @endif
+                </table>
+              </div>
+              <!-- /.table-responsive -->
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer clearfix">
+              <a href="{{route('admin.task_management.list')}}" class="btn btn-sm btn-info float-left">Task Management</a>
+            </div>
+            <!-- /.card-footer -->
+          </div>
         </div>
         <!-- /.row (main row) -->
       </div><!-- /.container-fluid -->

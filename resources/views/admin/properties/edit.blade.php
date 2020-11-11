@@ -2,7 +2,7 @@
 
 
 @section('unique-content')
-
+@php $current_user=auth()->guard('admin')->user(); @endphp
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -120,20 +120,20 @@
                             @endif
                           </div>
                           <div class="form-group required">
-                            <label for="contact_number">Contact Number <span class="error">*</span></label>
+                            <label for="contact_number">Contact Number</label>
                             <input type="text" class="form-control" value="{{old('contact_number')?old('contact_number'):$property->contact_number}}" name="contact_number" id="contact_number"  placeholder="Contact Number">
                             @if($errors->has('contact_number'))
                             <span class="text-danger">{{$errors->first('contact_number')}}</span>
                             @endif
                           </div>
                           <div class="form-group required">
-                            <label for="contact_email">Contact Email <span class="error">*</span></label>
+                            <label for="contact_email">Contact Email</label>
                             <input type="text" class="form-control" value="{{old('contact_email')?old('contact_email'):$property->contact_email}}" name="contact_email" id="contact_email"  placeholder="Contact Email">
                             @if($errors->has('contact_email'))
                             <span class="text-danger">{{$errors->first('contact_email')}}</span>
                             @endif
                           </div>
-
+                          @if ($current_user->role->user_type->slug != 'property-owner')
                           <div class="form-group required">
                              <label for="property_owner">Property Owner <span class="error">*</span></label>
                               <select class="form-control " name="property_owner" id="property_owner" style="width: 100%;">
@@ -145,6 +145,20 @@
                                 @endforelse                                
                               </select>
                           </div>
+                          @endif
+                          @if ($current_user->role->user_type->slug == 'property-owner')
+                          <div class="form-group required">
+                            <label for="property_manager">Property Manager</label>
+                             <select class="form-control " name="property_manager" id="property_manager" style="width: 100%;">
+                               <option value="">Select property manager</option>
+                               @forelse($property_managers as $property_manager)
+                                  <option value="{{$property_manager->id}}" {{($property_manager->id==$property->property_manager)?'selected':''}}  >{{$property_manager->name}} ({{$property_manager->email}})</option>
+                               @empty
+                               <option value="">No Property Manager Found</option>
+                               @endforelse                                
+                             </select>
+                         </div>
+                         @endif
 
 
                           <div class="form-group">
@@ -203,7 +217,7 @@
                             @endif
                           </div>
                           <hr> --}}
-                          <div class="addField">
+                          <div class="addField form-group">
                             @foreach ($property->property_attachments as $item)
                           <div class="row" id="property_file_{{$item->id}}">
                                 <div class="col-md-3">
@@ -256,7 +270,7 @@
                             </div>
                             @endforeach
                             <div class="col-md-2">
-                              <label for="title">&nbsp;</label><br />
+                              <label for="water_account_day">Property Attach File</label>
                               <button class="btn btn-success add-more" id="addrow" type="button"><i class="fa fa-plus"></i></button>
                               
                           </div>
@@ -286,7 +300,14 @@
 
 @push('custom-scripts')
 <script type="text/javascript" src="{{asset('js/admin/properties/edit.js')}}"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAOAl0P8rnQSpLJlHq4Y12J9e9IGHpvIqk&sensor=false&libraries=places"></script>
 <script type="text/javascript">
+google.maps.event.addDomListener(window, 'load', function () {
+        var places = new google.maps.places.Autocomplete(document.getElementById('address'));
+        google.maps.event.addListener(places, 'place_changed', function () {
+
+        });
+    });
   $(function () {
       // Attribute section start //
       var counter = 0;

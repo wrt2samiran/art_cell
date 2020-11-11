@@ -44,9 +44,10 @@
                         {{ Session::get('error') }}
                     </div>
                   @endif
+                  
                   <div class="row justify-content-center">
                     <div class="col-md-10 col-sm-12">
-                      <form  method="post" id="admin_task_add_form" action="{{route('admin.task_management.taskAdd')}}" method="post" enctype="multipart/form-data">
+                      <form  method="post" id="admin_task_add_form" action="{{route('admin.task_management.taskCreate')}}" method="post" enctype="multipart/form-data">
                         @csrf
                               <div>  
                                 </div>
@@ -110,7 +111,7 @@
                                 <div class="form-group required">
                                   <label for="name">City Name <span class="error">*</span></label>
                                   <select name="city_id" id="city_id" class="form-control">
-                                          <option value="">Select State</option>
+                                          <option value="">Select City</option>
                                   </select>
                                    @if($errors->has('city_id'))
                                       <span class="text-danger">{{$errors->first('city_id')}}</span>
@@ -118,7 +119,7 @@
                                 </div>
                                 
                                 <div class="form-group">
-                                  <label>Date range <span class="error">*</span></label>
+                                  <label>Task Date <span class="error">*</span></label>
 
                                   <div class="input-group">
                                     <div class="input-group-prepend">
@@ -126,7 +127,7 @@
                                         <i class="far fa-calendar-alt"></i>
                                       </span>
                                     </div>
-                                    <input type="text" class="form-control float-right" id="date_range" name="date_range">
+                                    <input type="text" class="form-control float-right" id="date_range" name="date_range" autocomplete="off">
                                   </div>
                                   <!-- /.input group -->
                                 </div>
@@ -213,11 +214,12 @@
 
               // *******Changing calendar start date and end date as per the service, alloted to the contract********//
 
-              $('#date_range').daterangepicker({
+              $('#date_range').datepicker({
                  minDate: new Date(propertyData.start_date),
                  maxDate: new Date(propertyData.end_date),
                  startDate: new Date(propertyData.start_date),
                  endDate: new Date(propertyData.end_date),
+                 dateFormat: 'dd/mm/yy',
               })
 
               // *******Changing calendar start date and end date as per the service, alloted to the contract********//
@@ -236,11 +238,12 @@
                 $("#state_id").html(state_list);
                 var country_list = '<option value=""> Select Country</option>';
                 $("#country_id").html(country_list);
-                $('#date_range').daterangepicker({
+                $('#date_range').datepicker({
                  minDate: new Date(),
                  maxDate: new Date(),
                  startDate: new Date(),
                  endDate: new Date(),
+                 dateFormat: 'dd/mm/yy',
               })
             }
         });

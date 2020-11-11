@@ -83,6 +83,7 @@ $("#admin_task_add_form").validate({
           $(element).removeClass('is-invalid');
         },
         submitHandler: function(form) {
+            $.LoadingOverlay("show");
             form.submit();
         }
     });

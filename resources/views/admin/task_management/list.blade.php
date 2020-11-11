@@ -53,6 +53,7 @@
                                         {{ Session::get('error') }}
                                     </div>
                                 @endif
+                                
                                 <table class="table table-bordered" id="task_management_table">
                                     <thead>
                                         <tr>

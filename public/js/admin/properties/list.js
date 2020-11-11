@@ -16,7 +16,6 @@
             { data: 'code', name: 'code'},
             { data: 'property_name', name: 'property_name'},
             { data: 'city.name', name: 'city.name'},
-            { data: 'no_of_units', name: 'no_of_units'},
             { data: 'is_active', name: 'is_active',orderable: false },
             { data: 'created_at', name: 'created_at' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
