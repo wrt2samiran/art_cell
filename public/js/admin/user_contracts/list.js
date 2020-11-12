@@ -19,9 +19,9 @@
             { data: 'title', name: 'title'},
             { data: 'start_date', name: 'start_date'},
             { data: 'end_date', name: 'end_date'},
-            { data: 'property.location', name: 'property.location'},
+          
             { data: 'contract_status.status_name', name: 'contract_status.status_name'},
-            { data: 'created_at', name: 'created_at' },
+           
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
         order: [ [0, 'desc'] ],

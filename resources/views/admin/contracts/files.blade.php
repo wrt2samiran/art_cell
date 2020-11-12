@@ -14,7 +14,7 @@
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
               <li class="breadcrumb-item"><a href="{{route('admin.contracts.list')}}">Contracts</a></li>
-              <li class="breadcrumb-item active">Create</li>
+              <li class="breadcrumb-item active">{{($contract->creation_complete)?'Edit':'Create'}}</li>
             </ol>
           </div>
         </div>
@@ -27,7 +27,7 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Create Contract</h3>
+                <h3 class="card-title">{{($contract->creation_complete)?'Edit':'Create'}} Contract</h3>
               </div>
               <div class="card-body">
 

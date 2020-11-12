@@ -17,7 +17,7 @@ $(document).ready(function(){
               required:  "Enter contract price",
           },
           notify_installment_before_days:{
-              required:  "Notify user before home may days from due date.",
+              required:  "Notify user before how may days from due date.",
           },
       },
       errorPlacement: function (error, element) {
@@ -33,8 +33,37 @@ $(document).ready(function(){
           $(element).removeClass('is-invalid');    
       },
       submitHandler: function(form) {
-          $.LoadingOverlay("show");
-          form.submit();
+
+          var services_price_total=parseFloat($('#services_price_total').val());
+          var contract_price=parseFloat($('#contract_price').val());
+          if(contract_price<services_price_total){
+            toastr.error('Contract price should not be less than total price for the list of services you added for the contract.', 'Error', {timeOut: 5000});
+          }else{
+
+            if($("#in_installment").prop('checked') == true){
+              var total_amount=parseFloat(0);
+
+              $('.amount_input_list').each(function(i, obj) {
+                  var amount=parseFloat($(this).val());
+                  total_amount=total_amount+amount
+              });
+
+              if(contract_price!=total_amount){
+                  toastr.error('Sum of total installment price should be equal to your contract price.', 'Error', {timeOut: 5000});
+              }else{
+                  $.LoadingOverlay("show");
+                  form.submit();
+              }
+
+               
+            }else{
+              $.LoadingOverlay("show");
+              form.submit();
+            }
+          }
+
+
+
       }
   });
 
@@ -129,7 +158,8 @@ $('#in_installment').on('change',function(){
 
 
 $('.datepicker').datepicker({
-      dateFormat:'dd/mm/yy'
+      dateFormat:'dd/mm/yy',
+      minDate: 0
 });
 
 

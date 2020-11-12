@@ -22,7 +22,7 @@ class CreatePropertyRequest extends FormRequest
             'property_name'=>'required|min:2|max:100',
             'property_type_id'=>'required',
             'description'=>'required|max:1000',
-            'no_of_units'=>'required|numeric',
+            'no_of_active_units'=>'required|numeric',
             'no_of_inactive_units' =>'required|numeric',
             'city_id'=>'required',
             'address'=>'required|max:255',

@@ -86,12 +86,10 @@
                                         <tr>
                                             <th>Id</th>
                                             <th>Contract Code</th>
-                                            <th>Info</th>
+                                            <th>Title</th>
                                             <th>Start Date</th>
                                             <th>End Date</th>
-                                            <th>Location</th>
                                             <th>Status</th>
-                                            <th>Created At</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>

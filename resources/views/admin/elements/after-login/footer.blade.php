@@ -58,9 +58,6 @@
 <script src="{{asset('assets//plugins/select2/js/select2.full.min.js')}}"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="{{asset('assets/dist/js/demo.js')}}"></script>
-<!-- Jquery form-validate -->
-<!-- <script src="{{asset('js/jquery.validate.js')}}"></script> -->
-
 
 <!-- <script src="{{asset('assets/plugins/jquery-validation/jquery.validate.min.js')}}"></script> -->
 

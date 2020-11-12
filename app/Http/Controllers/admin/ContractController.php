@@ -22,7 +22,7 @@ use App\Models\{ContractStatus,Contract,User,Property,Service,ContractAttachment
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
-use App\Http\Requests\Admin\Contract\{CreateContractRequest,UpdateContractRequest};
+use App\Http\Requests\Admin\Contract\{CreateContractRequest,UpdateContractRequest,StoreFileRequest,StorePaymentInfoRequest,StoreServiceRequest};
 use File;
 use Helper;
 class ContractController extends Controller
@@ -205,6 +205,7 @@ class ContractController extends Controller
 
     public function services($contract_id,Request $request){
         $contract=Contract::findOrFail($contract_id);
+        $this->authorize('store_service',$contract);
         if($request->ajax()){
             $contract_services=ContractService::with(['service'=>function($q){
                 $q->withTrashed();
@@ -276,8 +277,9 @@ class ContractController extends Controller
     }
 
 
-    public function store_service($contract_id,Request $request){
+    public function store_service($contract_id,StoreServiceRequest $request){
         $contract=Contract::findOrFail($contract_id);
+        $this->authorize('store_service',$contract);
         $current_user=auth()->guard('admin')->user();
         if($request->frequency_type){
             $frequency_type=FrequencyType::findOrFail($request->frequency_type);
@@ -307,6 +309,7 @@ class ContractController extends Controller
 
     public function service_delete($contract_id,$service_id){
         $contract=Contract::findOrFail($contract_id);
+        $this->authorize('store_service',$contract);
         $contract_service=ContractService::findOrFail($service_id);
         
         //if contract creation_complete then there should be atleast one service for the contract
@@ -325,6 +328,7 @@ class ContractController extends Controller
 
     public function service_enable_disable($contract_id,$service_id){
         $contract=Contract::findOrFail($contract_id);
+        $this->authorize('store_service',$contract);
         $contract_service=ContractService::findOrFail($service_id);
 
         $change_status_to=($contract_service->is_enable)?false:true;
@@ -353,16 +357,20 @@ class ContractController extends Controller
     }
     public function payment_info($contract_id){
         $contract=Contract::findOrFail($contract_id);
+        $this->authorize('store_payment_info',$contract);
         if(!count($contract->services)){
             return redirect()->back()->with('error','Please add atleast one service for the contract');
         }
+        $this->data['services_price_total']=$contract->services_price_total();
+
         $this->data['page_title']='Contract Payment Info';
         $this->data['contract']=$contract;
         return view($this->view_path.'.payment_info',$this->data);
     }
 
-    public function store_payment_info($contract_id, Request $request){
+    public function store_payment_info($contract_id, StorePaymentInfoRequest $request){
         $contract=Contract::findOrFail($contract_id);
+        $this->authorize('store_payment_info',$contract);
         $current_user=auth()->guard('admin')->user();
 
         $contract->update([
@@ -417,15 +425,17 @@ class ContractController extends Controller
     public function files($contract_id){
 
         $contract=Contract::findOrFail($contract_id);
+        $this->authorize('store_file',$contract);
         $this->data['page_title']='Contract Files';
         $this->data['contract']=$contract;
         return view($this->view_path.'.files',$this->data);
 
     }
 
-    public function store_files($contract_id,Request $request){
+    public function store_files($contract_id,StoreFileRequest $request){
 
         $contract=Contract::findOrFail($contract_id);
+        $this->authorize('store_file',$contract);
         $current_user=auth()->guard('admin')->user();
         if(isset($request->title) && count($request->title)){
             foreach ($request->title as $key => $value) {
@@ -530,8 +540,6 @@ class ContractController extends Controller
             ->whereHas('property')
             ->whereHas('service_provider')
             ->findOrFail($id);
-        //policy is defined in App\Policies\ContractPolicy
-        $this->authorize('view',$contract);
         $this->data['page_title']='Contract Details';
         $this->data['contract']=$contract;
         return view($this->view_path.'.show',$this->data);

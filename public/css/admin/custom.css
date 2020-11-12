@@ -46,3 +46,52 @@ button.editable-cancel{
 	border-radius: 10px;
 	padding: 0 8px;
 }
+
+.navbar-white {background-color: #4f008c;}
+.navbar-light .navbar-nav .nav-link, .navbar-light .navbar-nav .nav-link:focus { color: #fff; }
+.navbar-light .navbar-nav .nav-link:hover { color: #fff; opacity: 0.5; }
+.main-header .navbar-nav .nav-item.dropdown .btn-primary { overflow: hidden; }
+.main-header .navbar-nav .nav-item.dropdown .btn-primary .text-muted {color: #fff!important; }
+.layout-fixed .main-sidebar {background-color: #1d252d;}
+.sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active, .sidebar-light-primary .nav-sidebar > .nav-item > .nav-link.active {background-color: #00c48c;}
+
+.nav-sidebar .nav-treeview {padding-left: 15px; background-color: rgba(255, 255, 255, 0.1)!important;}
+
+.user-panel .image img { background: #fff; }
+
+.bg-info {background-color: #1bced8!important;}
+
+.bg-success {background-color: #00c48c!important;}
+
+.bg-warning {background-color: #ff375e!important;}
+
+.bg-info, .bg-info > a, .bg-success, .bg-success > a, .bg-warning, .bg-warning > a {color: #fff !important;}
+
+.btn-primary {border-color: #4f008c; background-color: #4f008c;}
+.btn-primary:hover {border-color: #39035e; background-color: #39035e;}
+
+.btn-success {border-color: #00c48c; background-color: #00c48c;}
+.btn-success:hover {border-color: #03835f; background-color: #03835f;}
+
+#language { width: 120px; }
+
+
+.card-success:not(.card-outline) > .card-header {background-color: #00c48c;}
+
+#external-events { display: flex; align-items: center; flex-wrap: wrap; }
+#external-events div, #external-events h4 { margin-right: 5px; }
+#external-events .bg-success {background-color: #3ea846!important;}
+#external-events .bg-warning {background-color: #ffc344!important;}
+#external-events .bg-danger  {background-color: #dc3d45!important;}
+
+#task_list, #task_list select { margin-bottom: 10px; }
+
+@media (max-width: 991px) {
+ #external-events {margin: 10px 0 0; }
+
+}
+
+@media (max-width: 479px) {
+ #external-events h4 { width: 100%; margin: 0 0 10px; }
+
+}
