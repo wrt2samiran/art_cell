@@ -161,7 +161,7 @@ $("#add_new_file").on("click", function () {
     var row=`<div class="row mt-1 files_row">`;
     row += `<div class="col-md-6"><input placeholder="Title" class="form-control file_title_list"  id="title_`+random_string+`" name="title[]" type="text"></div>`;
     row += `<div class="col-md-5">
-    <input placeholder="File" required class="form-control file_list"  id="property_files_`+random_string+`" name="contract_files[]" type="file">
+    <input placeholder="File" required class="form-control file_list"  id="property_files_`+random_string+`" name="property_files[]" type="file">
       <small class="form-text text-muted">
         Upload PDF/DOC/JPEG/PNG/TEXT files of max. 1mb
       </small>

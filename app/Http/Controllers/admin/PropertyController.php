@@ -170,7 +170,7 @@ class PropertyController extends Controller
         if($current_user->role->user_type->slug == 'property-owner'){
             $property_owner=$current_user->id;
         }else{
-            $property_owner=$request->$property_owner;
+            $property_owner=$request->property_owner;
         }
 
     	$property=Property::create([
@@ -195,26 +195,33 @@ class PropertyController extends Controller
     		'updated_by'=>auth()->guard('admin')->id()
     	]);
         
-        if($request->hasFile('property_files')){
-            foreach ($request->file('property_files')  as $key=>$property_file) {
+        if(isset($request->title) && count($request->title)){
+            foreach ($request->title  as $key=>$title) {
                
-                   $file_name = 'property-file-'.time().$key.'.'.$property_file->getClientOriginalExtension();
-                 
-                    $destinationPath = public_path('/uploads/property_attachments');
-                 
-                    $property_file->move($destinationPath, $file_name);
-                    
-                    $mime_type=$property_file->getClientMimeType();
+                    if($request->hasFile('property_files') && isset($request->file('property_files')[$key])){
 
-                    $file_type=Helper::get_file_type_by_mime_type($mime_type);
-                    
-                    PropertyAttachment::create([
-                     'property_id'=>$property->id,
-                     'title'      => $request->title[$key],
-                     'file_name'=>$file_name,
-                     'file_type'=>$file_type,
-                     'created_by'=>auth()->guard('admin')->id()
-                    ]);
+                        $file=$request->file('property_files')[$key];
+                        //upload new file
+                        $file_name = 'property-file-'.time().$key.'.'.$file->getClientOriginalExtension();
+     
+                        $destinationPath = public_path('/uploads/property_attachments');
+                     
+                        $file->move($destinationPath, $file_name);
+                        $mime_type=$file->getClientMimeType();
+
+                        $file_type=Helper::get_file_type_by_mime_type($mime_type);
+
+                        PropertyAttachment::create([
+                            'property_id'=>$property->id,
+                            'file_name'=>$file_name,
+                            'file_type'=>$file_type,
+                            'title'=>$title,
+                            'created_by'=>$current_user->id
+                        ]);
+
+                    }
+
+
             }
         }
     	return redirect()->route('admin.properties.list')->with('success','Property successfully created');
@@ -296,7 +303,7 @@ class PropertyController extends Controller
         if($current_user->role->user_type->slug == 'property-owner'){
             $property_owner=$current_user->id;
         }else{
-            $property_owner=$request->$property_owner;
+            $property_owner=$request->property_owner;
         }
         
     	$property->update([
