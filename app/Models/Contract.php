@@ -41,7 +41,15 @@ class Contract extends Model
         return $this->belongsTo(ContractStatus::class);
     }
 
-    
+    public function services_price_total(){
+        $price_array=[];
+        if(count($this->services)){
+            foreach ($this->services as $service) {
+                $price_array[]=$service->price;
+            }
+        }
+        return array_sum($price_array);
+    }
     
 
 }

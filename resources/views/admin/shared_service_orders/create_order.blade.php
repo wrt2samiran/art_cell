@@ -54,7 +54,7 @@
                                             <th>Price</th>
                                             <th>Extra Price/Day</th>
                                             <th>Quantity Available</th>
-                                            <th style="width: 25%;">Add To Cart</th>
+                                            <th style="width: 35%;">Add To Cart</th>
                                         </tr>
                                     </thead>
                                 </table>

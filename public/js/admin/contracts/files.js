@@ -154,7 +154,7 @@ $(document).on('click', '.files_row_del_btn', function(){
 });
 
 
-   //function to delete quotation
+
  function delete_attach_file(url,file_id){
   swal({
   title: "Are you sure?",

@@ -80,10 +80,10 @@
                           </div>
                           <div class="row">
                             <div class="col-md-6 form-group">
-                              <label for="no_of_units">Number Of Active Units <span class="error">*</span></label>
-                              <input type="number" min="1" class="form-control" value="{{old('no_of_units')?old('no_of_units'):$property->no_of_units}}" name="no_of_units" id="no_of_units"  placeholder="Number Of Units">
-                              @if($errors->has('no_of_units'))
-                              <span class="text-danger">{{$errors->first('no_of_units')}}</span>
+                              <label for="no_of_active_units">Number Of Active Units <span class="error">*</span></label>
+                              <input type="number" min="1" class="form-control" value="{{old('no_of_active_units')?old('no_of_active_units'):$property->no_of_active_units}}" name="no_of_active_units" id="no_of_active_units"  placeholder="Number Of Units">
+                              @if($errors->has('no_of_active_units'))
+                              <span class="text-danger">{{$errors->first('no_of_active_units')}}</span>
                               @endif
                             </div>
                             <div class="col-md-6 form-group">
@@ -162,122 +162,45 @@
 
 
                           <div class="form-group">
-                            <label for="electricity_account_day">Electricity Account Number</label>
-                            <input type="number" min="1" class="form-control" value="{{old('electricity_account_day')?old('electricity_account_day'):$property->electricity_account_day}}" name="electricity_account_day" id="electricity_account_day"  placeholder="Number Of Units">
+                            <label for="electricity_account_number">Electricity Account Number</label>
+                            <input type="number" min="1" class="form-control" value="{{old('electricity_account_number')?old('electricity_account_number'):$property->electricity_account_number}}" name="electricity_account_number" id="electricity_account_number"  placeholder="Number Of Units">
                           </div>
 
                           <div class="form-group">
-                            <label for="water_account_day">Water Account Number</label>
-                            <input type="number" min="1" class="form-control" value="{{old('water_account_day')?old('water_account_day'):$property->water_account_day}}" name="water_account_day" id="water_account_day"  placeholder="Number Of Units">
-                            @if($errors->has('water_acount_day'))
-                            <span class="text-danger">{{$errors->first('water_acount_day')}}</span>
+                            <label for="water_account_number">Water Account Number</label>
+                            <input type="number" min="1" class="form-control" value="{{old('water_account_number')?old('water_account_number'):$property->water_account_number}}" name="water_account_number" id="water_account_number"  placeholder="Number Of Units">
+                            @if($errors->has('water_account_number'))
+                            <span class="text-danger">{{$errors->first('water_account_number')}}</span>
                             @endif
                           </div>
-
-                          {{-- <div class="row attachment_files_container">
-                            <div class="col-sm-12 mb-1">
-                              <b>Find already attached files</b>
+                          <div class="form-group required">
+                            <label>Attach Files</label>
+                            <div>
+                              <button type="button" id="add_new_file" class="btn btn-outline-success"><i class="fa fa-plus"></i>&nbsp;Add File</button>
                             </div>
+                          </div>
+                          <div id="files_container">
                             @if(count($files=$property->property_attachments))
                               @foreach($files as $file)
-
-                                  @php
-                                    if($file->file_type=='pdf'){
-                                      $font_icon='far fa-file-pdf';
-                                      $color='red';
-                                    }elseif($file->file_type=='doc'){
-                                      $font_icon='far fa-file-word';
-                                      $color='blue';
-                                    }elseif($file->file_type=='text'){
-                                      $font_icon='far fa-file-alt';
-                                      $color='white';
-                                    }elseif($file->file_type=='image'){
-                                      $font_icon='far fa-file-image';
-                                      $color='grey';
-                                    }else{
-                                      $font_icon='fas fa-file';
-                                      $color='grey';
-                                    }
-                                  @endphp
-                                <div class="col-sm-1 col-xs-1 attachment_files" id="attachment_file_{{$file->id}}" style="height:55px">
-                                  <div class="d-flex align-items-start" >
-                                   <div>
-                                    <a title="Click to download the file" href="{{route('admin.properties.download_attachment',$file->id)}}">
-                                      <i style="color:{{$color}} ;" class="fa-4x {{$font_icon}}"></i>
-                                    </a>
-                                   </div>
-                                   <div class="ml-1">
-                                     <a title="Click to delete the file" href="javascript:delete_attach_file('{{route('admin.properties.delete_attachment_through_ajax',$file->id)}}','{{$file->id}}')"><i style="color: red;" class="fas fa-window-close"></i></a>
-                                   </div>
+                                <div class="row mt-1 files_row">
+                                  <div class="col-md-6">
+                                    <input placeholder="Title" class="form-control file_title_list"  id="title_{{$file->id}}" value="{{$file->title}}" name="title[]" type="text">
                                   </div>
+                                  <div class="col-md-5">
+                                    <input data-is_required="no" placeholder="File" class="form-control file_list"  id="property_files_{{$file->id}}" name="property_files[]" type="file" aria-describedby="imageHelp{{$file->id}}">
+                                    <small class="form-text text-muted">
+                                      Upload PDF/DOC/JPEG/PNG/TEXT files of max. 1mb
+                                    </small>
+                                    <small id="imageHelp{{$file->id}}" class="form-text text-muted"><b>Leave blank if you do not want to update image.(<a href="{{route('admin.properties.download_attachment',$file->id)}}">download file</a>)</b></small>
+                                  </div>
+                                  <div class="col-md-1">
+                                    <button type="button" data-delete_url="{{route('admin.properties.delete_attachment_through_ajax',$file->id)}}" class="btn btn-danger files_row_del_btn"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                                  </div>
+                                  <input type="hidden" name="file_id[]" value="{{$file->id}}">
                                 </div>
                               @endforeach
-                            @else
-                            <div class="col-md-12 text-muted">No files attached to this property</div>
                             @endif
                           </div>
-                          <hr> --}}
-                          <div class="addField form-group">
-                            @foreach ($property->property_attachments as $item)
-                          <div class="row" id="property_file_{{$item->id}}">
-                                <div class="col-md-3">
-                                    <label for="title">Title</label>
-                                <input type="text" name="title[]" id="title[]" value="{{$item->title}}" placeholder="Title" class="form-control">
-                                </div>
-                                <div class="col-md-7">
-                                    <label for="title">File</label>
-                                    <input  type="file"  class="form-control"
-                                name="property_files[]" id="property_files" aria-describedby="propertyFilesHelp" >
-                                    <small id="propertyFilesHelp" class="form-text text-muted">Upload PDF/DOC/JPEG/PNG/TEXT files of max. 1mb</small>
-                                    @if($errors->get('property_files.*'))
-                            
-                                        @foreach($errors->get('property_files.*') as $err)
-                                          <span class="text-danger">{{$err[0]}}</span><br>
-                                          @break
-                                        @endforeach
-                                  
-                                    @endif
-                                    
-                                    @php
-    
-                            if (isset($item->file_name)) {
-                              if ($item->file_name != null) {
-                                if(file_exists(public_path('/uploads/property_attachments'.'/'.$item->file_name))) {
-                                $path = \URL::asset('/uploads/property_attachments').'/'.$item->file_name;
-                                $fileName = $item->file_name;
-                                } else {
-                                  $fileName = Null;
-                                  $path = Null;
-                                }
-                              } else {
-                                  $fileName = Null;
-                                  $path = Null;
-                                }
-                            } else {
-                                  $fileName = Null;
-                                  $path = Null;
-                                }
-                            @endphp
-                              @if($path != null && @fileName != null)<a href="{{$path}}" download>{{$fileName}}</a>@else
-                            'No file found'
-                            @endif
-                              
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="title">&nbsp;</label><br />
-                                    <a title="Click to delete the file" href="javascript:delete_attach_file('{{route('admin.properties.delete_attachment_through_ajax',$item->id)}}','{{$item->id}}')"><i style="color: red;" class="fas fa-trash"></i></a>
-                                </div>
-                            </div>
-                            @endforeach
-                            <div class="col-md-2">
-                              <label for="water_account_day">Property Attach File</label>
-                              <button class="btn btn-success add-more" id="addrow" type="button"><i class="fa fa-plus"></i></button>
-                              
-                          </div>
-                          <p>&nbsp;</p>
-                          </div>
-                          
-                          
 
                           <input type="hidden" id="property_manager_create_url" value="{{route('admin.users.create')}}">
                           <input type="hidden" id="property_owner_create_url" value="{{route('admin.users.create')}}">

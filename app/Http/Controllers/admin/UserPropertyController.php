@@ -46,10 +46,12 @@ class UserPropertyController extends Controller
             ->where(function($q) use ($current_user){
                 //if logged in user is the property_owner of the property 
                 $q->where('property_owner',$current_user->id)
-
-                 //OR if the property has contracts and logged in user is one of them i.e service_provider/customer 
+                //if logged in user is assigns as property manager
+                ->orWhere('property_manager',$current_user->id)
+                
+                 //OR if the property has contracts and logged in user is  service_provider of the contracts
                 ->orWhereHas('contracts',function($q1) use ($current_user){
-                    $q1->where('service_provider_id',$current_user->id)->orWhere('customer_id',$current_user->id)->orWhere('property_manager_id',$current_user->id);
+                    $q1->where('service_provider_id',$current_user->id);
                 });
             })
             ->select('properties.*');
@@ -78,11 +80,7 @@ class UserPropertyController extends Controller
       
                 $action_buttons='';
 
-
                 $action_buttons=$action_buttons.'<a title="View Proprty Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
-               
-   
-
                 if($action_buttons==''){
                     $action_buttons=$action_buttons.'<span class="text-muted">No access</span>';
                 } 

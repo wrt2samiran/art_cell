@@ -42,6 +42,14 @@
                           <td >{{$property->property_name}}</td>
                         </tr>
                         <tr>
+                          <td>Number Of Active Units</td>
+                          <td >{{$property->number_of_active_units}}</td>
+                        </tr>
+                        <tr>
+                          <td>Number Of Inctive Units</td>
+                          <td >{{$property->number_of_inactive_units}}</td>
+                        </tr>
+                        <tr>
                           <td>Property Type</td>
                           <td >{{($property->property_type)?$property->property_type->type_name:'N/A'}}</td>
                         </tr>
@@ -93,25 +101,15 @@
                         </tr>
 
                         <tr>
-                          <td >Electricity Account Due Date</td>
+                          <td >Electricity Account Number</td>
                           <td >
-                            @if($property->electricity_account_day)
-                              {{App\Http\Helpers\Helper::Ordinal($property->electricity_account_day)}} day of every month
-                            @else
-                            N/A
-                            @endif
-                            
-                          </td>
+                          {{$property->electricity_account_number}}   </td>
                         </tr>
 
                         <tr>
                           <td >Water Account Due Date</td>
                           <td >
-                            @if($property->water_account_day)
-                              {{App\Http\Helpers\Helper::Ordinal($property->water_account_day)}} day of every month
-                            @else
-                            N/A
-                            @endif
+                            {{$property->water_account_number}}
                           </td>
                         </tr>
                         <tr>
@@ -140,7 +138,7 @@
                                   @endphp
                             
                                   <div style="height: 55px" class="col-sm-1 col-xs-1">
-                                    <a title="Click to download" href="{{route('admin.properties.download_attachment',$file->id)}}"><i style="color: {{$color}};" class="fa-4x {{$font_icon}}"></i></a>
+                                    <a title="{{$file->title}}" href="{{route('admin.properties.download_attachment',$file->id)}}"><i style="color: {{$color}};" class="fa-4x {{$font_icon}}"></i></a>
                                   </div>
                                 @endforeach
                               @else
