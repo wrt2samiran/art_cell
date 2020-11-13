@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\{User,Country,State,City,TaskLists, TaskDetails, ServiceAllocationManagement, Property};
-
-use App\Models\ModuleFunctionality;
 use Auth, Validator;
 use Yajra\Datatables\Datatables;
 

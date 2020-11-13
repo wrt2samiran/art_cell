@@ -190,9 +190,9 @@
                                               <td>{{$row->task_title}}</td>
                                               <td>{{$row->property->property_name}}</td>
                                               <td>{{$row['service']['service_name']}}</td>
-                                              <td>{{$row->country->name}}</td>
-                                              <td>{{$row->state->name}}</td>
-                                              <td>{{$row->city->name}}</td>
+                                              <td>{{@$row->country->name}}</td>
+                                              <td>{{@$row->state->name}}</td>
+                                              <td>{{@$row->city->name}}</td>
                                               <td>{{$row->start_date}}</td>
                                               <td>{{$row->end_date}}</td>
                                           </tr>

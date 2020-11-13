@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\Country;
-use App\Models\ModuleFunctionality;
 use Validator;
 use Yajra\Datatables\Datatables;
 
