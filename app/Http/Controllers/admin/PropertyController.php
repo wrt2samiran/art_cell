@@ -27,7 +27,7 @@ use App\Http\Requests\Admin\Property\{CreatePropertyRequest,UpdatePropertyReques
 use Illuminate\Support\Str;
 use File;
 use Auth;
-
+use Helper;
 class PropertyController extends Controller
 {
 
@@ -54,10 +54,9 @@ class PropertyController extends Controller
             ->where(function($q)use ($current_user){
                 //if logged in user is not super admin then fetch only those properties which are crated by logged in user
                 if($current_user->role->user_type->slug!='super-admin'){
-                    $q->whereCreatedBy($current_user->id);
+                    $q->where('property_owner',$current_user->id);
                 }
             })
-            
             ->when($request->city_id,function($query) use($request){
             	$query->where('city_id',$request->city_id);
             })
@@ -129,39 +128,22 @@ class PropertyController extends Controller
         $this->data['page_title']='Create Property';
         $this->data['cities']=City::whereHas('state')->whereHas('country')->whereIsActive(true)->get();
         $current_user=auth()->guard('admin')->user();
+
+        //property manager can add when property owner logged in and he can add a user created by himself as a property manager
         $this->data['property_managers']=User::whereHas('role')
         ->whereHas('role.creator')
-        ->whereHas('role.user_type',function($q){
-            $q->where('slug','property-manager');
-        })
+        ->where('created_by',$current_user->id)
         ->whereStatus('A')->get();
 
         $this->data['property_owners']=User::whereHas('role')
         ->whereHas('role.creator')
         ->whereHas('role.user_type',function($q){
-        	$q->where('slug','property-owner');
-        })
-        ->where(function($q)use ($current_user){
-            //if logged in user is not super admin then fetch only those property owner which are crated by logged in user and if the logged in user is a property owner then include his record to property owner list
-            if($current_user->role->user_type->slug!='super-admin'){
-                if($current_user->role->user_type->slug=='property-owner'){
-                  $q->whereCreatedBy($current_user->id)
-                  ->orWhere('id',$current_user->id);   
-                }else{
-                  $q->whereCreatedBy($current_user->id);
-                }
-               
-            }
+            $q->where('slug','property-owner');
         })
         ->whereStatus('A')->get();
 
         $this->data['property_types']=PropertyType::whereIsActive(true)->get();
         
-        $days_array=[];
-        for ($i=1; $i < 31; $i++) { 
-            $days_array[]= $i;
-        }
-        $this->data['days_array']=$days_array;
         return view($this->view_path.'.create',$this->data);
     }
 
@@ -181,12 +163,22 @@ class PropertyController extends Controller
         }
     	//system generated property code
     	$property_code='PROP'.Carbon::now()->timestamp;
+
+        //if logged in user type super-admin then property owner will come through form else property owner will be logged in user (i.e property owner creating property);
+        $current_user=auth()->guard('admin')->user();
+
+        if($current_user->role->user_type->slug == 'property-owner'){
+            $property_owner=$current_user->id;
+        }else{
+            $property_owner=$request->property_owner;
+        }
+
     	$property=Property::create([
     		'code'=>$property_code,
     		'property_name'=>$request->property_name,
             'property_type_id'=>$request->property_type_id,
     		'description'=>$request->description,
-            'no_of_units'=>$request->no_of_units,
+            'no_of_active_units'=>$request->no_of_active_units,
             'no_of_inactive_units'=>$request->no_of_inactive_units,
     		'country_id'=>$city->country_id,
     		'state_id'=>$city->state_id,
@@ -195,49 +187,43 @@ class PropertyController extends Controller
     		'location'=>$request->location,
     		'contact_number'=>$request->contact_number,
             'contact_email'=>$request->contact_email,
-            'property_owner'=>$request->property_owner,
+            'property_owner'=>$property_owner,
             'property_manager'=>$request->property_manager,
-    		'electricity_account_day'=>$request->electricity_account_day,
-    		'water_account_day'=>$request->water_account_day,
+    		'electricity_account_number'=>$request->electricity_account_number,
+    		'water_account_number'=>$request->water_account_number,
     		'created_by'=>auth()->guard('admin')->id(),
     		'updated_by'=>auth()->guard('admin')->id()
     	]);
         
-       if($request->hasFile('property_files')){
-
-            foreach ($request->file('property_files')  as $key=>$property_file) {
+        if(isset($request->title) && count($request->title)){
+            foreach ($request->title  as $key=>$title) {
                
-              
-                   $file_name = 'property-file-'.time().$key.'.'.$property_file->getClientOriginalExtension();
-                 
-                    $destinationPath = public_path('/uploads/property_attachments');
-                 
-                    $property_file->move($destinationPath, $file_name);
-                    
-                    $mime_type=$property_file->getClientMimeType();
+                    if($request->hasFile('property_files') && isset($request->file('property_files')[$key])){
 
-                    if(in_array($mime_type,['image/jpeg','image/png','image/jpg'])){
-                        $file_type='image';
-                    }elseif (in_array($mime_type,['application/pdf'])) {
-                        $file_type='pdf';
-                    }elseif (in_array($mime_type,['application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/msword'])) {
-                        $file_type='doc';
-                    }elseif(in_array($mime_type,['text/plain'])){
-                         $file_type='text';
-                    }else{
-                         $file_type='file';
+                        $file=$request->file('property_files')[$key];
+                        //upload new file
+                        $file_name = 'property-file-'.time().$key.'.'.$file->getClientOriginalExtension();
+     
+                        $destinationPath = public_path('/uploads/property_attachments');
+                     
+                        $file->move($destinationPath, $file_name);
+                        $mime_type=$file->getClientMimeType();
+
+                        $file_type=Helper::get_file_type_by_mime_type($mime_type);
+
+                        PropertyAttachment::create([
+                            'property_id'=>$property->id,
+                            'file_name'=>$file_name,
+                            'file_type'=>$file_type,
+                            'title'=>$title,
+                            'created_by'=>$current_user->id
+                        ]);
+
                     }
-                    
-                    PropertyAttachment::create([
-                     'property_id'=>$property->id,
-                     'title'      => $request->title[$key],
-                     'file_name'=>$file_name,
-                     'file_type'=>$file_type,
-                     'created_by'=>auth()->guard('admin')->id()
-                    ]);
+
+
             }
         }
-
     	return redirect()->route('admin.properties.list')->with('success','Property successfully created');
 
     }
@@ -253,7 +239,7 @@ class PropertyController extends Controller
     public function show($id){
         $property=Property::findOrFail($id);
         //policy is defined in App\Policies\PropertyPolicy
-        $this->authorize('update',$property);
+        $this->authorize('view',$property);
         $this->data['page_title']='Property Details';
         $this->data['property']=$property;
         return view($this->view_path.'.show',$this->data);
@@ -276,38 +262,22 @@ class PropertyController extends Controller
         $this->data['property']=$property;
         $current_user=auth()->guard('admin')->user();
         $this->data['cities']=City::whereHas('state')->whereHas('country')->whereIsActive(true)->get();
+
+        //property manager can add when property owner logged in and he can add a user created by himself as a property manager
         $this->data['property_managers']=User::whereHas('role')
         ->whereHas('role.creator')
-        ->whereHas('role.user_type',function($q){
-            $q->where('slug','property-manager');
-        })
+        ->where('created_by',$current_user->id)
         ->whereStatus('A')->get();
+
         $this->data['property_owners']=User::whereHas('role')
         ->whereHas('role.creator')
         ->whereHas('role.user_type',function($q){
             $q->where('slug','property-owner');
         })
-        ->where(function($q)use ($current_user){
-            //if logged in user is not super admin then fetch only those property owner which are crated by logged in user and if the logged in user is a property owner then include his record to property owner list
-            if($current_user->role->user_type->slug!='super-admin'){
-                if($current_user->role->user_type->slug=='property-owner'){
-                  $q->whereCreatedBy($current_user->id)
-                  ->orWhere('id',$current_user->id);   
-                }else{
-                  $q->whereCreatedBy($current_user->id);
-                }
-               
-            }
-        })
         ->whereStatus('A')->get();
         
         $this->data['property_types']=PropertyType::whereIsActive(true)->get();
 
-        $days_array=[];
-        for ($i=1; $i < 31; $i++) { 
-            $days_array[]= $i;
-        }
-        $this->data['days_array']=$days_array;
         return view($this->view_path.'.edit',$this->data);
     }
 
@@ -321,18 +291,26 @@ class PropertyController extends Controller
     public function update(UpdatePropertyRequest $request,$id){
 
     	$property=Property::findOrFail($id);
+        $current_user=auth()->guard('admin')->user();
         //policy is defined in App\Policies\PropertyPolicy
         $this->authorize('update',$property);
+
     	$city=City::find($request->city_id);
         if(!$city){
            return redirect()->back()->with('error','City not found.'); 
         }
 
+        if($current_user->role->user_type->slug == 'property-owner'){
+            $property_owner=$current_user->id;
+        }else{
+            $property_owner=$request->property_owner;
+        }
+        
     	$property->update([
             'property_name'=>$request->property_name,
             'property_type_id'=>$request->property_type_id,
             'description'=>$request->description,
-            'no_of_units'=>$request->no_of_units,
+            'no_of_active_units'=>$request->no_of_active_units,
             'no_of_inactive_units'=>$request->no_of_inactive_units,
             'country_id'=>$city->country_id,
             'state_id'=>$city->state_id,
@@ -341,47 +319,87 @@ class PropertyController extends Controller
             'location'=>$request->location,
             'contact_number'=>$request->contact_number,
             'contact_email'=>$request->contact_email,
-            'property_owner'=>$request->property_owner,
+            'property_owner'=>$property_owner,
             'property_manager'=>$request->property_manager,
-            'electricity_account_day'=>$request->electricity_account_day,
-            'water_account_day'=>$request->water_account_day,
+            'electricity_account_number'=>$request->electricity_account_number,
+            'water_account_number'=>$request->water_account_number,
             'updated_by'=>auth()->guard('admin')->id()
         ]);
 
-        if($request->hasFile('property_files')){
+        if(isset($request->title) && count($request->title)){
+            foreach ($request->title as $key => $value) {
 
-            foreach ($request->file('property_files')  as $key=>$property_file) {
-                if(!empty($property_file)) {
-                $file_name = 'property-file-'.time().$key.'.'.$property_file->getClientOriginalExtension();
-             
-                $destinationPath = public_path('/uploads/property_attachments');
-             
-                $property_file->move($destinationPath, $file_name);
-                
-                $mime_type=$property_file->getClientMimeType();
+                if($request->file_id[$key]!=''){
+                     
+                    $property_file=PropertyAttachment::find($request->file_id[$key]);
 
-                if(in_array($mime_type,['image/jpeg','image/png','image/jpg'])){
-                    $file_type='image';
-                }elseif (in_array($mime_type,['application/pdf'])) {
-                    $file_type='pdf';
-                }elseif (in_array($mime_type,['application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/msword'])) {
-                    $file_type='doc';
-                }elseif(in_array($mime_type,['text/plain'])){
-                     $file_type='text';
                 }else{
-                     $file_type='file';
+                    $property_file=null;
+                }
+                
+                if($property_file){
+
+                    //if image is updating then remove previous image and upload ne one
+                    if($request->hasFile('property_files') && isset($request->file('property_files')[$key])){
+
+                        $file=$request->file('property_files')[$key];
+                        //remove previous file if exists
+                        $file_path=public_path().'/uploads/property_attachments/'.$property_file->file_name;
+                        if(File::exists($file_path)){
+                            File::delete($file_path);
+                        }
+                        //upload new file
+                        $file_name = 'property-file-'.time().$key.'.'.$file->getClientOriginalExtension();
+     
+                        $destinationPath = public_path('/uploads/property_attachments');
+                     
+                        $file->move($destinationPath, $file_name);
+                        $mime_type=$file->getClientMimeType();
+
+                        $file_type=Helper::get_file_type_by_mime_type($mime_type);
+
+                    }else{
+                        $file_name=$property_file->file_name;
+                        $file_type=$property_file->file_type;
+                    }
+
+                    $property_file->update([
+                     'file_name'=>$file_name,
+                     'file_type'=>$file_type,
+                     'title'=>$request->title[$key],
+                     'created_by'=>$current_user->id
+                    ]);
+
+                }else{
+                    //if it is new file
+                    if($request->hasFile('property_files') && isset($request->file('property_files')[$key])){
+
+                        $file=$request->file('property_files')[$key];
+                        //upload new file
+                        $file_name = 'property-file-'.time().$key.'.'.$file->getClientOriginalExtension();
+     
+                        $destinationPath = public_path('/uploads/property_attachments');
+                     
+                        $file->move($destinationPath, $file_name);
+                        $mime_type=$file->getClientMimeType();
+
+                        $file_type=Helper::get_file_type_by_mime_type($mime_type);
+
+                        PropertyAttachment::create([
+                            'property_id'=>$property->id,
+                            'file_name'=>$file_name,
+                            'file_type'=>$file_type,
+                            'title'=>$request->title[$key],
+                            'created_by'=>$current_user->id
+                        ]);
+
+                    }
+
+
                 }
 
 
-                PropertyAttachment::create([
-                 'property_id'=>$property->id,
-                 'title'      => $request->title[$key],
-                 'file_name'=>$file_name,
-                 'file_type'=>$file_type,
-                 'created_by'=>auth()->guard('admin')->id()
-                ]);
             }
-          }
         }
         
         return redirect()->route('admin.properties.list')->with('success','Property successfully updated.');

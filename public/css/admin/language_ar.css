@@ -1,0 +1,154 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;700;900&display=swap');
+
+html,body {font-family: 'Cairo', sans-serif;}
+
+*{
+    direction: rtl !important;
+}
+.layout-fixed .main-sidebar {
+    right: 0;
+}
+.layout-fixed .brand-link { text-align: right; }
+.brand-image, .brand-link .brand-image {
+    float: right;
+}
+.brand-link .brand-image { margin-right: 0; }
+.content-wrapper, .main-footer, .main-header {
+    margin-left: 0px!important;
+    margin-right: 250px;
+}
+.mr-auto-navbav, .ml-auto, .mx-auto {
+    margin-right: auto!important;
+    margin-left: 0!important;
+}
+.navbar-expand .navbar-nav .nav-link {
+    padding-right: 1rem;
+    padding-left: 1rem;
+}
+
+[class*=icheck-]>input:first-child:checked+input[type=hidden]+label::after, 
+[class*=icheck-]>input:first-child:checked+label::after {
+    right: 15px;
+    left: auto;
+}
+.nav-sidebar .nav-link>.right, 
+.nav-sidebar .nav-link>p>.right {
+    left: 1rem;
+    right: auto!important;
+}
+.nav-sidebar .nav-link>.right:nth-child(2), 
+.nav-sidebar .nav-link>p>.right:nth-child(2) {
+    left: 2.2rem;
+    right: auto;    
+}
+.nav, .navbar-nav { padding-right: 0; }
+.nav-sidebar > .nav-item .nav-icon {margin-right: .05rem; margin-left: .2rem;}
+.nav-sidebar > .nav-item {text-align: right;}
+
+.dropdown-menu-right {right: auto!important; left: 0!important;}
+
+.main-sidebar, .main-sidebar::before {transition: margin-right .3s ease-in-out,width .3s ease-in-out;}
+
+.text-sm .content-header .breadcrumb { float: left!important; }
+.breadcrumb-item + .breadcrumb-item::before {padding-left: .5rem; padding-right: 0;}
+.breadcrumb-item + .breadcrumb-item {padding-right: .5rem; padding-left: 0;}
+.text-sm .content-header h1, .card-header, .form-group, .card-body {text-align: right;}
+.card-title { float: right!important; }
+.small-box .icon>i {left: 15px; right: auto;}
+
+
+
+select {font-family: "Source Sans Pro",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";}
+
+.bg-info, .bg-info > a, .bg-success, .bg-success > a, .bg-warning, .bg-warning > a {text-align: right;}
+
+.select2-container--bootstrap4 .select2-selection--single .select2-selection__arrow { left: 3px; right: auto; }
+.select2-container .select2-selection--single .select2-selection__rendered { padding-left: 20px; padding-right: 8px; }
+.select2-container--bootstrap4 .select2-dropdown { text-align: right; }
+
+
+.page-link {margin-right: -1px; margin-left: 0;}
+.page-item:first-child .page-link {    
+    border-top-left-radius: 0;
+    border-bottom-left-radius: .0;
+     border-top-right-radius: .25rem;
+    border-bottom-right-radius: .25rem;
+}
+
+.page-item:last-child .page-link {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: .25rem;
+    border-bottom-left-radius: .25rem;
+}
+
+/* data table start */
+
+table.table-bordered.dataTable th:last-child, table.table-bordered.dataTable th:last-child, table.table-bordered.dataTable td:last-child, table.table-bordered.dataTable td:last-child {
+    border-left-width: 0;
+    border-right-width: 1px;
+}
+
+table.dataTable thead .sorting::after, table.dataTable thead .sorting_asc::after, table.dataTable thead .sorting_desc::after, table.dataTable thead .sorting_asc_disabled::after, table.dataTable thead .sorting_desc_disabled::after 
+{left: 0.5em; right: auto; font-family: "Source Sans Pro",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";}
+
+table.dataTable thead .sorting::before, table.dataTable thead .sorting_asc::before, table.dataTable thead .sorting_desc::before, table.dataTable thead .sorting_asc_disabled::before, table.dataTable thead .sorting_desc_disabled::before
+{left: 1em; right: auto; font-family: "Source Sans Pro",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";}
+
+table.dataTable thead > tr > th.sorting_asc, table.dataTable thead > tr > th.sorting_desc, table.dataTable thead > tr > th.sorting, table.dataTable thead > tr > td.sorting_asc, table.dataTable thead > tr > td.sorting_desc, table.dataTable thead > tr > td.sorting
+{ padding-left: 30px; padding-right: .75rem; }
+
+div.dataTables_wrapper div.dataTables_filter input {margin-right: 0.5em; margin-left:0;}
+
+div.dataTables_wrapper div.dataTables_filter { text-align: left; }
+
+/* data table end */
+
+
+
+@media (min-width: 992px){
+    .sidebar-mini.sidebar-collapse .content-wrapper, .sidebar-mini.sidebar-collapse .main-footer, .sidebar-mini.sidebar-collapse .main-header {
+        margin-right: 4.6rem!important;
+    }
+    .sidebar-mini.sidebar-collapse .content-wrapper, .sidebar-mini.sidebar-collapse .main-footer, .sidebar-mini.sidebar-collapse .main-header {
+        margin-right: 4.6rem!important;
+        margin-left: 0!important;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .main-sidebar, .main-sidebar::before {
+        box-shadow: none !important;
+        margin-right: -250px;
+    }
+
+    .content-wrapper, .content-wrapper::before, .main-footer, .main-footer::before, .main-header, .main-header::before {
+        margin-right: 0;
+    }
+
+    .sidebar-open .main-sidebar, .sidebar-open .main-sidebar::before {
+        margin-right: 0;
+    }
+}
+
+@media (max-width: 767px) {
+
+.bg-info, .bg-info > a, .bg-success, .bg-success > a, .bg-warning, .bg-warning > a {text-align: center;}
+
+}
+
+@media (max-width: 574px) {
+
+ .text-sm .content-header .breadcrumb {float: none !important;}   
+
+}
+
+@media (max-width: 555px) {
+table.dataTable.dtr-inline.collapsed > tbody > tr[role="row"] > td:first-child, table.dataTable.dtr-inline.collapsed > tbody > tr[role="row"] > th:first-child
+{padding-right: 30px; padding-left: .75rem;}
+
+table.dataTable.dtr-inline.collapsed > tbody > tr[role="row"] > td:first-child::before, table.dataTable.dtr-inline.collapsed > tbody > tr[role="row"] > th:first-child::before
+{right: 4px; left: auto;}
+
+}

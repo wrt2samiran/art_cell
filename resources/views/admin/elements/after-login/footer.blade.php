@@ -58,11 +58,13 @@
 <script src="{{asset('assets//plugins/select2/js/select2.full.min.js')}}"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="{{asset('assets/dist/js/demo.js')}}"></script>
-<!-- Jquery form-validate -->
-<!-- <script src="{{asset('js/jquery.validate.js')}}"></script> -->
 
+<!-- <script src="{{asset('assets/plugins/jquery-validation/jquery.validate.min.js')}}"></script> -->
 
-<script src="{{asset('assets/plugins/jquery-validation/jquery.validate.min.js')}}"></script>
+<!--**********important note about custom jquery validate***********-->
+<!-- We modified default jquery validator in checkForm method for array name field validation got the solution from https://stackoverflow.com/questions/24670447/how-to-validate-array-of-inputs-using-validate-plugin-jquery -->
+<script src="{{asset('js/jquery.validate.js')}}"></script>
+<!---------------->
 <script src="{{asset('assets/plugins/jquery-validation/additional-methods.min.js')}}"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

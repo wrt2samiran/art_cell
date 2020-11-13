@@ -56,7 +56,6 @@
                                             <th>Property Code</th>
                                             <th>Name</th>
                                             <th>City</th>
-                                            <th>No. of Units</th>
                                             <th>Status</th>
                                             <th>Created At</th>
                                             <th>Action</th>

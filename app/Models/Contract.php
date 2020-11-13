@@ -20,12 +20,6 @@ class Contract extends Model
     public function property(){
     	return $this->belongsTo(Property::class,'property_id','id');
     }
-    public function property_manager(){
-        return $this->belongsTo(User::class,'property_manager_id','id');
-    }
-    public function customer(){
-    	return $this->belongsTo(User::class,'customer_id','id');
-    }
     public function contract_attachments(){
         return $this->hasMany(ContractAttachment::class);
     }
@@ -47,7 +41,15 @@ class Contract extends Model
         return $this->belongsTo(ContractStatus::class);
     }
 
-    
+    public function services_price_total(){
+        $price_array=[];
+        if(count($this->services)){
+            foreach ($this->services as $service) {
+                $price_array[]=$service->price;
+            }
+        }
+        return array_sum($price_array);
+    }
     
 
 }

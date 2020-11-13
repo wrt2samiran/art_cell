@@ -91,20 +91,7 @@
                           <td>End Date</td>
                           <td >{{Carbon\Carbon::createFromFormat('Y-m-d', $contract->end_date)->format('d/m/Y')}}</td>
                         </tr>
-                        <tr>
-                          <td>Customer</td>
-                          <td>
-                            @if($customer=$contract->customer()->withTrashed()->first())
-                              @if($customer->deleted_at)
-                                <span class="text-danger"><del>{{$customer->name}} </del>(user deleted)</span>
-                              @else
-                                <a target="_blank" href="{{route('admin.property_owners.show',$customer->id)}}">{{$customer->name}}</a>
-                              @endif
-                            @else
-                            N/A
-                            @endif
-                          </td>
-                        </tr>
+
                         <tr>
                           <td >Service Provider</td>
                           <td>
@@ -119,20 +106,7 @@
                             @endif
                           </td>
                         </tr>
-                        <tr>
-                          <td >Property Manager</td>
-                          <td>
-                            @if($property_manager=$contract->property_manager()->withTrashed()->first())
-                              @if($property_manager->deleted_at)
-                                <span class="text-danger"><del>{{$property_manager->name}} </del>(user deleted)</span>
-                              @else
-                                <a target="_blank" href="{{route('admin.users.show',$property_manager->id)}}">{{$property_manager->name}}</a>
-                              @endif
-                            @else
-                            N/A
-                            @endif
-                          </td>
-                        </tr>
+    
                         <tr>
                           <td>Property</td>
                           <td >{{$contract->property->property_name}}</td>
@@ -145,10 +119,7 @@
                           <td>Location/Landmark</td>
                           <td >{{$contract->property->location}}</td>
                         </tr>
-                        <tr>
-                          <td>No. of Units</td>
-                          <td >{{$contract->property->no_of_units}}</td>
-                        </tr>
+   
 
                         <tr>
                           <td>Status</td>
@@ -186,7 +157,7 @@
                                   @endphp
 
                                   <div style="height: 55px" class="col-sm-1 col-xs-1">
-                                    <a title="Click to download" href="{{route('admin.contracts.download_attachment',$file->id)}}"><i style="color: {{$color}};" class="fa-4x {{$font_icon}}"></i></a>
+                                    <a title="{{$file->title}}" href="{{route('admin.contracts.download_attachment',$file->id)}}"><i style="color: {{$color}};" class="fa-4x {{$font_icon}}"></i></a>
                                   </div>
                                 @endforeach
                               @else

@@ -177,13 +177,33 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 
                 Route::get('/create', 'ContractController@create')->name('create')->middleware('check_permissions:contract-create');
                 Route::post('/store', 'ContractController@store')->name('store')->middleware('check_permissions:contract-create');
+
+
+                Route::get('/{contract_id}/services', 'ContractController@services')->name('services');
+
+                Route::delete('/{contract_id}/services/{service_id}/delete', 'ContractController@service_delete')->name('service_delete');
+
+                Route::get('/{contract_id}/services/{service_id}/enable-disable', 'ContractController@service_enable_disable')->name('service_enable_disable');
+
+                Route::get('/{contract_id}/services/{service_id}/details', 'ContractController@service_details')->name('service_details');
+
+                Route::post('/{contract_id}/services/store', 'ContractController@store_service')->name('services.store');
+
+                Route::get('/{contract_id}/payment-info', 'ContractController@payment_info')->name('payment_info');
+
+                Route::post('/{contract_id}/store-payment-info', 'ContractController@store_payment_info')->name('store_payment_info');
+
+                Route::get('/{contract_id}/files', 'ContractController@files')->name('files');
+
+                Route::post('/{contract_id}/store-files', 'ContractController@store_files')->name('store_files');
+
                 Route::get('/{id}', 'ContractController@show')->name('show')->middleware('check_permissions:contract-details');
                 Route::get('/{id}/edit', 'ContractController@edit')->name('edit')->middleware('check_permissions:contract-edit');
                 Route::put('/{id}', 'ContractController@update')->name('update')->middleware('check_permissions:contract-edit');
                 Route::delete('/{id}/delete', 'ContractController@delete')->name('delete')->middleware('check_permissions:contract-delete');
                 Route::get('attachment/{id}/download', 'ContractController@download_attachment')->name('download_attachment');
                 
-                Route::delete('attachment/{id}/delete_attachment_through_ajax', 'ContractController@delete_attachment_through_ajax')->name('delete_attachment_through_ajax');
+                Route::delete('attachment/{file_id}/delete_attachment_through_ajax', 'ContractController@delete_attachment_through_ajax')->name('delete_attachment_through_ajax');
             });
             
             /************************************/

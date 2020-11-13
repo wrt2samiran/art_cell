@@ -77,10 +77,10 @@
                           </div>
                           <div class="row">
                             <div class="col-md-6 form-group">
-                              <label for="no_of_units">Number Of Active Units<span class="error">*</span></label>
-                              <input type="number" min="1" class="form-control" value="{{old('no_of_units')?old('no_of_units'):''}}" name="no_of_units" id="no_of_units"  placeholder="Number Of Active Units">
-                              @if($errors->has('no_of_units'))
-                              <span class="text-danger">{{$errors->first('no_of_units')}}</span>
+                              <label for="no_of_active_units">Number Of Active Units<span class="error">*</span></label>
+                              <input type="number" min="1" class="form-control" value="{{old('no_of_active_units')?old('no_of_active_units'):''}}" name="no_of_active_units" id="no_of_active_units"  placeholder="Number Of Active Units">
+                              @if($errors->has('no_of_active_units'))
+                              <span class="text-danger">{{$errors->first('no_of_active_units')}}</span>
                               @endif
                             </div>
                             <div class="col-md-6 form-group">
@@ -157,48 +157,29 @@
                          </div>
                          @endif
                           <div class="form-group">
-                            <label for="electricity_account_day">Electricity Account Number</label>
-                            <input type="number" min="1" class="form-control" value="{{old('electricity_account_day')?old('electricity_account_day'):''}}" name="electricity_account_day" id="electricity_account_day"  placeholder="Electricity Account Number">
-                            @if($errors->has('electricity_account_day'))
-                            <span class="text-danger">{{$errors->first('electricity_account_day')}}</span>
+                            <label for="electricity_account_number">Electricity Account Number</label>
+                            <input type="number" min="1" class="form-control" value="{{old('electricity_account_number')?old('electricity_account_number'):''}}" name="electricity_account_number" id="electricity_account_number"  placeholder="Electricity Account Number">
+                            @if($errors->has('electricity_account_number'))
+                            <span class="text-danger">{{$errors->first('electricity_account_number')}}</span>
                             @endif
                           </div>
 
                           <div class="form-group">
-                            <label for="water_account_day">Water Account Number</label>
-                            <input type="number" min="1" class="form-control" value="{{old('water_account_day')?old('water_account_day'):''}}" name="water_account_day" id="water_account_day"  placeholder="Water Account Number">
-                            @if($errors->has('water_account_day'))
-                            <span class="text-danger">{{$errors->first('water_account_day')}}</span>
+                            <label for="water_account_number">Water Account Number</label>
+                            <input type="number" min="1" class="form-control" value="{{old('water_account_number')?old('water_account_number'):''}}" name="water_account_number" id="water_account_number"  placeholder="Water Account Number">
+                            @if($errors->has('water_account_number'))
+                            <span class="text-danger">{{$errors->first('water_account_number')}}</span>
                             @endif
                           </div>
-                          <div class="addField form-group">
-                            <label for="water_account_day">Property Attach File</label>
-                            <div class="row">
-                              
-                                {{-- <div class="col-md-3">
-                                    <label for="title">Title</label>
-                                     <input type="text" name="title[]" placeholder="Title" class="form-control title" required>
-                                </div>
-                                <div class="col-md-7">
-                                    <label for="property_files">Attach Files</label>
-                                    <input  type="file"  class="form-control property_files"
-                                    name="property_files[]" required>
-                                    <small id="propertyFilesHelp" class="form-text text-muted">Upload PDF/DOC/JPEG/PNG/TEXT files of max. 1mb</small>
-                                    @if($errors->get('property_files.*'))
-                            
-                                        @foreach($errors->get('property_files.*') as $err)
-                                          <span class="text-danger">{{$err[0]}}</span><br>
-                                          @break
-                                        @endforeach
-                                  
-                                    @endif
-                                </div> --}}
-                                <div class="col-md-2">
-                                    <label for="title">&nbsp;</label><br />
-                                    <button class="btn btn-success add-more" id="addrow" type="button"><i class="fa fa-plus"></i></button>
-                                </div>
-                                
+
+                          <div class="form-group required">
+                            <label>Attach Files</label>
+                            <div>
+                              <button type="button" id="add_new_file" class="btn btn-outline-success"><i class="fa fa-plus"></i>&nbsp;Add File</button>
                             </div>
+                          </div>
+                          <div id="files_container">
+
                           </div>
 
                           <input type="hidden" id="property_manager_create_url" value="{{route('admin.users.create')}}">
@@ -231,31 +212,6 @@ google.maps.event.addDomListener(window, 'load', function () {
 
         });
     });
-  $(function () {
-      // Attribute section start //
-      var counter = 0;
-      $("#addrow").on("click", function () {
-          counter++;
-          var cols = '';
-          var newRow = $('<div class="row" style="margin-top: 10px;">');
-          cols += '<div class="col-md-3"><input placeholder="Title" class="form-control title" required="required" name="title[]" type="text"></div>';
-          cols += '<div class="col-md-7"><input placeholder="File" class="form-control property_files" required="required" name="property_files[]" type="file"></div>';
-          cols += '<div class="col-md-2"><a class="deleteRow btn btn-danger ibtnDel" href="javascript: void(0);"><i class="fa fa-trash" aria-hidden="true"></i></a></div>';
-  
-          newRow.append(cols);
-          $(".addField").append(newRow);
-         
-      });
-      $(".row").on("click", ".ibtnDel", function (event) {
-          $(this).closest(".row").remove();
-          counter--;
-      });
-      // Attribute section end //
-          
-          
-  });
-
-    
 
   </script>
   

@@ -43,7 +43,7 @@
                         </tr>
                         <tr>
                           <td>Number Of Active Units</td>
-                          <td >{{$property->no_of_units}}</td>
+                          <td >{{$property->no_of_active_units}}</td>
                         </tr>
                         <tr>
                           <td>Number Of Inactive Units</td>
@@ -103,25 +103,14 @@
                         <tr>
                           <td >Electricity Account Number</td>
                           <td >
-                            @if($property->electricity_account_day)
-                              {{App\Http\Helpers\Helper::Ordinal($property->electricity_account_day)}} day of every month
-                            @else
-                            N/A
-                            @endif
-                            
+                            {{$property->electricity_account_numver}}
                           </td>
                         </tr>
 
                         <tr>
                           <td >Water Account Number</td>
                           <td >
-             
-
-                            @if($property->water_account_day)
-                              {{App\Http\Helpers\Helper::Ordinal($property->water_account_day)}} day of every month
-                            @else
-                            N/A
-                            @endif
+                          {{$property->water_account_number}}
                           </td>
                         </tr>
                         <tr>
