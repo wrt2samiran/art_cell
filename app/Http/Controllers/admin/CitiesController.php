@@ -9,10 +9,8 @@ use App\Models\Country;
 use App\Models\State;
 use App\Models\City;
 use App\Models\CityTranslation;
-use App\Models\ModuleFunctionality;
-use Helper, AdminHelper, Image, Auth, Hash, Redirect, Validator, View, Config;
+use Helper, Auth, Validator;
 use Yajra\Datatables\Datatables;
-use Illuminate\Support\Str;
 
 class CitiesController extends Controller
 {

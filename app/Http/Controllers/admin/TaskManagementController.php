@@ -692,10 +692,10 @@ class TaskManagementController extends Controller
 
     /*****************************************************/
     # TaskManagementController
-    # Function name : taskEdit
+    # Function name : update
     # Author        :
-    # Created Date  : 14-10-2020
-    # Purpose       : Editing task
+    # Created Date  : 10-11-2020
+    # Purpose       : Updating the task
     # Params        : Request $request
     /*****************************************************/
     public function update(Request $request, $id) {
@@ -744,8 +744,46 @@ class TaskManagementController extends Controller
                     return redirect()->back()->withErrors($Validator)->withInput();
                 } else {
 
-                    $sqlContract = Contract::findOrFail($request->contract_id);
                     $sqlContractService = ContractService::where('contract_id', $request->contract_id)->whereServiceId($request->service_id)->first();
+
+                    $checkContractService = ContractService::whereId($details->contract_service_id)->first();
+                    if($checkContractService->contract_id != $request->contract_id || $checkContractService->service_id != $request->service_id)
+                    {
+                        if($sqlContractService->service_type=='General' || $sqlContractService->service_type=='Free')  
+                            {
+                                $sqlContractService->number_of_times_already_used = '1';
+                                $sqlContractService->updated_by = $logedInUser;
+                                $sqlContractService->save();
+                            }
+                          else
+                            {
+                                $sqlContractService->number_of_times_already_used = ($sqlContractService->number_of_times_already_used+1);
+                                $sqlContractService->updated_by = $logedInUser;
+                                $sqlContractService->save();
+                            }  
+
+
+                           if($checkContractService->service_type=='General' || $checkContractService->service_type=='Free')
+                                {
+                                    $checkContractService->number_of_times_already_used = 'Null';
+                                }
+                                else
+                                {
+                                    if($checkContractService->number_of_times_already_used>1)
+                                    {
+                                        $checkContractService->number_of_times_already_used = ($checkContractService->number_of_times_already_used-1);
+                                    }
+                                    else
+                                    {
+                                        $checkContractService->number_of_times_already_used = 'Null';   
+                                    }
+                                    
+                                }
+
+                                $contractUpdate = $checkContractService->save(); 
+                    }
+                    $sqlContract = Contract::findOrFail($request->contract_id);
+                    
 
                     $details->update([
                         'contract_id'=>$request->contract_id,
@@ -835,7 +873,7 @@ class TaskManagementController extends Controller
 
             if($contractService)
             {
-                if($contractService->service_type=='General')
+                if($contractService->service_type=='General' || $contractService->service_type=='Free')
                 {
                     $contractService->number_of_times_already_used = 'Null';
                 }
@@ -851,6 +889,8 @@ class TaskManagementController extends Controller
                     }
                     
                 }
+
+                $contractUpdate = $contractService->save();
                
             }
 
