@@ -31,7 +31,8 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
         Route::get('/testing','AuthController@mailTest');
         Route::get('/test', 'AuthController@test');
         Route::get('/', 'AuthController@index');
-        Route::get('/login', 'AuthController@index')->name('login');
+        Route::any('/login', 'AuthController@index')->name('login');
+        Route::post('/quotetion', 'AuthController@quotetion')->name('quotetion');
         Route::post('/authentication','AuthController@verifyCredentials')->name('authentication');
         Route::any('/forgot-password', 'AuthController@forgotPassword')->name('forgot.password');
         Route::any('/reset-password/{encryptCode}','AuthController@resetPassword')->name('reset.password');

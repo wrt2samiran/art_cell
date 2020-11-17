@@ -5,6 +5,8 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Quotation;
+use App\Models\{Country,State,City,Service,ServiceTranslation,QuotationService,CountryTranslation};
 use Auth;
 use Config;
 use Mail;
@@ -35,8 +37,116 @@ class   AuthController extends Controller
             // If admin is logged in, redirect him to dashboard page //
             return Redirect::route('admin.dashboard');
         } else {
-            return view('admin.login.admin_login', $this->data);
+            
+            $countryList = CountryTranslation::select('id','name')->where('locale', 'en')->where('is_active', '1')->orderBy('name', 'asc')->get();
+            $cityList = City::select('id','name')->where('is_active', '1')->orderBy('name', 'asc')->get();
+            $stateList = State::select('id','name')->where('is_active', '1')->orderBy('name', 'asc')->get();
+            $serviceList = ServiceTranslation::with(['service'])->where('locale', 'en')->orderBy('service_name', 'asc')->get();
+            // dd($serviceList);
+            return view('admin.login.admin_login', $this->data)->with(['cityList'=>$cityList, 'stateList'=>$stateList,'serviceList'=>$serviceList,'countryList'=>$countryList]);
         }
+    }
+
+    /*****************************************************/
+    # AuthController
+    # Function name : quotetion
+    # Author        :
+    # Created Date  : 20-07-2020
+    # Purpose       : Login page display
+    #
+    #
+    # Params        : Request $request
+    /*****************************************************/
+    public function quotetion(Request $request)
+    {
+        $this->data['page_title'] = 'Control Panel:Login';
+        $this->data['panel_title'] = 'Control Panel:Login';
+        try
+        {
+        	if ($request->isMethod('POST'))
+        	{
+				$validationCondition = array(
+                    'first_name'        => 'required|min:2|max:255',
+                    'last_name'         => 'required|min:2|max:255',
+                    'email'             => 'required',
+                    'contact_number'    => 'required',
+                    // 'country_id'        => 'required',
+                    'state_id'          => 'required',
+                    'city_id'           => 'required',
+                    'landmark'          => 'required',
+                    'contract_duration' => 'required',
+				);
+				$validationMessages = array(
+					'first_name.required'    => 'Please enter first_name',
+					'first_name.min'         => 'First Name should be should be at least 2 characters',
+                    'first_name.max'         => 'First Name should not be more than 255 characters',
+                    'last_name.required'     => 'Please enter last_name',
+					'last_name.min'          => 'Last Name should be should be at least 2 characters',
+                    'last_name.max'          => 'Last Name should not be more than 255 characters',
+                    'email.required'         => 'Email is required',
+                    'contact_number.required'=> 'Contact Number is required',
+                    // 'country_id.required'    => 'Country is required',
+                    'state_id.required'      => 'State is required',
+                    'city_id.required'       => 'City is required',
+                    'landmark.required'      => 'Landmark is required',
+                    'contract_duration.required' => 'Duration is required',
+				);
+
+				$Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);
+				if ($Validator->fails()) {
+					return redirect()->route('admin.quotetion')->withErrors($Validator)->withInput();
+				} else {
+                    
+                    $new = new Quotation;
+                    $new->first_name = trim($request->first_name, ' ');
+                    $new->last_name = trim($request->last_name, ' ');
+                    $new->email = trim($request->email, ' ');
+                    $new->contact_number = trim($request->contact_number, ' ');
+                    $new->country_id  = $request->country_id;
+                    $new->state_id  = $request->state_id;
+                    $new->city_id  = $request->city_id;
+                    $new->landmark  = $request->landmark;
+                    $new->details  = $request->details;
+                    $new->service_type = $request->service_type;
+                    $new->contract_duration  = $request->contract_duration;
+                    $save = $new->save();
+                
+					if ($save) {
+                        foreach($request->service_id as $key => $val){
+                            $serviceUser = new QuotationService;
+                            $serviceUser->quotation_id = $new->id;
+                            $serviceUser->service_id = $val;
+                            $save = $serviceUser->save();
+
+                        }
+                        // $adminEmailDetails = User::where('role_id','1')->first();
+                        
+                        // \Mail::send('emails.admin.blankmail',
+                        //     [
+                        //         'user' => $adminEmailDetails,
+                        //         'newData'       => $new,
+                                
+                        //     ], function ($m) use ($adminEmailDetails,$new) {
+                        //         $m->to($adminEmailDetails->email)->subject('Quotetions');
+                        //     });
+						$request->session()->flash('alert-success', 'Quotetion has been added successfully');
+						return redirect()->route('admin.login');
+					} else {
+						$request->session()->flash('alert-danger', 'An error occurred while adding the Quotetion');
+						return redirect()->back();
+					}
+				}
+            }
+            $countryList = CountryTranslation::select('id','name')->where('locale', 'en')->where('is_active', '1')->orderBy('name', 'asc')->get();
+            $cityList = City::select('id','name')->where('is_active', '1')->orderBy('name', 'asc')->get();
+            $stateList = State::select('id','name')->where('is_active', '1')->orderBy('name', 'asc')->get();
+            $serviceList = ServiceTranslation::with(['service'])->where('locale', 'en')->orderBy('service_name', 'asc')->get();
+            
+			return view('admin.login.admin_login', $this->data)->with(['cityList'=>$cityList,'stateList'=>$stateList,'serviceList'=>$serviceList,'countryList'=>$countryList]);
+		} catch (Exception $e) {
+			return redirect()->route('admin.login')->with('error', $e->getMessage());
+		}
+        
     }
 
      /*****************************************************/

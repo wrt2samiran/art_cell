@@ -4,7 +4,7 @@
 <body class="hold-transition login-page">
 <div class="login-box">
   <div class="login-logo">
-    <a href="../../index2.html"><b>SMMS </b>Admin Login</a>
+    <a href=""><b>SMMS </b>Admin Login</a>
   </div>
   <!-- /.login-logo -->
   <div class="card">
@@ -77,198 +77,186 @@
 
     <!-- /.login-card-body -->
   </div>
-  <div class="card-body" style="background-color: white">
-    <button type="submit" onclick="showQuotation()" class="btn btn-primary btn-block">Submit Quotation</button>
-    <div class="modal fade" id="addQuotationModal" role="dialog">
-      <div class="modal-dialog">
-        <!-- Modal content-->
-        <div class="modal-content" style="width: 200%">
-          <div class="modal-header">
-            
-            <h4 class="modal-title">Submit Quotation</h4>
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-          </div>
-          <div class="modal-body">
-            <div class="card-body">
-                    @if(Session::has('success'))
-                      <div class="alert alert-success alert-dismissable __web-inspector-hide-shortcut__">
-                          <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-                          {{ Session::get('success') }}
-                      </div>
-                    @endif
+  <div class="card-body">
+    @if(Session::has('success'))
+      <div class="alert alert-success alert-dismissable __web-inspector-hide-shortcut__">
+          <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+          {{ Session::get('success') }}
+      </div>
+    @endif
 
-                    @if(Session::has('error'))
-                      <div class="alert alert-danger alert-dismissable">
-                          <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-                          {{ Session::get('error') }}
-                      </div>
-                    @endif
+    @if(Session::has('error'))
+      <div class="alert alert-danger alert-dismissable">
+          <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+          {{ Session::get('error') }}
+      </div>
+    @endif
 
 
-                    <div class="row justify-content-center">
-                      <div class="col-md-10 col-sm-12">
-                        <form  method="post" id="admin_labour_task_add_form" action="{{route('admin.calendar.calendardataAdd')}}" method="post" enctype="multipart/form-data">
-                          @csrf
-                                <div>  
-                                  </div>
-                                  
-                                  
-                                  <div class="row">
-                                    <div class="col-md-6">
-                                      <label for="property_id">First Name <span class="error">*</span></label>
-                                      <input type="text" class="form-control float-right" id="first_name" name="first_name">
-                                      @if($errors->has('first_name'))
-                                        <span class="text-danger">{{$errors->first('first_name')}}</span>
-                                      @endif
-                                    </div>
-                                    <div class="col-md-6">
-                                      <label for="property_id">Last Name <span class="error">*</span></label>
-                                      <input type="text" class="form-control float-right" id="last_name" name="last_name">
-                                      @if($errors->has('first_name'))
-                                        <span class="text-danger">{{$errors->first('last_name')}}</span>
-                                      @endif
-                                    </div>
-                                  </div>
-
-                                  <div class="row">
-                                    <div class="col-md-6">
-                                      <label for="property_id">Email <span class="error">*</span></label>
-                                      <input type="text" class="form-control float-right" id="email" name="email">
-                                      @if($errors->has('email'))
-                                        <span class="text-danger">{{$errors->first('email')}}</span>
-                                      @endif
-                                    </div>
-                                    <div class="col-md-6">
-                                      <label for="property_id">Contact Number <span class="error">*</span></label>
-                                      <input type="text" class="form-control float-right" id="contact_number" name="contact_number">
-                                      @if($errors->has('contact_number'))
-                                        <span class="text-danger">{{$errors->first('contact_number')}}</span>
-                                      @endif
-                                    </div>
-                                  </div>
-
-                                  
-
-                                  <div class="row">
-                                    <div class="col-md-6">
-                                      <label for="country_id">Country <span class="error">*</span></label>
-                                        <select class="form-control parent_role_select2" style="width: 100%;" name="country_id" id="country_id">
-                                              <option value="">Select Country</option>
-                                        </select>
-                                      @if($errors->has('country_id'))
-                                      <span class="text-danger">{{$errors->first('country_id')}}</span>
-                                      @endif
-                                    </div>
-                                    <div class="col-md-6">
-                                      <label for="country_id">State <span class="error">*</span></label>
-                                       <select name="state_id" id="state_id" class="form-control">
-                                              <option value="">Select State</option>
-                                       </select>
-                                       @if($errors->has('state_id'))
-                                          <span class="text-danger">{{$errors->first('state_id')}}</span>
-                                       @endif
-                                    </div>
-                                  </div>
-
-                                  <div class="row">
-                                    <div class="col-md-6">
-                                      <label for="name">City Name <span class="error">*</span></label>
-                                        <select name="city_id" id="city_id" class="form-control">
-                                                <option value="">Select City</option>
-                                        </select>
-                                          @if($errors->has('city_id'))
-                                            <span class="text-danger">{{$errors->first('city_id')}}</span>
-                                          @endif
-                                    </div>
-                                    <div class="col-md-6">
-                                      <label for="property_id">Address <span class="error">*</span></label>
-                                        <textarea name="" id="" class="form-control"></textarea>
-                                          @if($errors->has('property_id'))
-                                            <span class="text-danger">{{$errors->first('property_id')}}</span>
-                                          @endif
-                                    </div>
-                                  </div>
-
-                                  <div class="row">
-                                    <div class="col-md-6">
-                                      <label for="country_id">Property Type <span class="error">*</span></label>
-                                        <select class="form-control parent_role_select2" style="width: 100%;" name="country_id" id="country_id">
-                                              <option value="">Select Property Type</option>
-                                        </select>
-                                      @if($errors->has('country_id'))
-                                      <span class="text-danger">{{$errors->first('country_id')}}</span>
-                                      @endif
-                                    </div>
-                                    <div class="col-md-6">
-                                      <div class="row">
-                                        <div class="col-md-6">
-                                          <label for="country_id">Contrat Period <span class="error">*</span></label>
-                                          <input type="text" class="form-control float-right" id="date_range" name="date_range">
-                                        </div>
-                                        <div class="col-md-6">
-                                          <label for="country_id">Type <span class="error">*</span></label>
-                                          <select class="form-control parent_role_select2" style="width: 100%;" name="country_id" id="country_id">
-                                              <option value="">Select Property Type</option>
-                                        </select>
-                                        </div> 
-                                      </div>  
-                                      @if($errors->has('country_id'))
-                                      <span class="text-danger">{{$errors->first('country_id')}}</span>
-                                      @endif
-                                    </div>
-                                  </div>
-
-                                  <div class="row">
-                                    <div class="col-md-6">
-                                      <label for="country_id">Select Service <span class="error">*</span></label>
-                                        <select class="form-control parent_role_select2" style="width: 100%;" name="country_id" id="country_id">
-                                              <option value="">Select Property Type</option>
-                                        </select>
-                                      @if($errors->has('country_id'))
-                                      <span class="text-danger">{{$errors->first('country_id')}}</span>
-                                      @endif
-                                    </div>
-                                    <div class="col-md-6">
-                                      <label for="country_id">Service Type <span class="error">*</span></label>
-                                        <select class="form-control parent_role_select2" style="width: 100%;" name="country_id" id="country_id">
-                                              <option value="">Select Property Type</option>
-                                        </select>
-                                      @if($errors->has('country_id'))
-                                      <span class="text-danger">{{$errors->first('country_id')}}</span>
-                                      @endif
-                                    </div>
-                                  </div>
-
-                                  
-
-                                  <div class="form-group">
-                                    <label for="service_id">Task Description</label>
-                                    <textarea class="form-control float-right" name="job_desc" id="job_desc">{{old('job_desc')}}</textarea>
-                                  </div>                                            
-                              <div>
-                             <button type="submit" class="btn btn-success">Submit</button> 
-                          </div>
-                        </form>
-                      </div>
+    <div class="row justify-content-center">
+      <div class="col-md-10 col-sm-12">
+        <h3>Submit Quotetion</h3>
+        <form  method="POST" id="admin_quotetion" action="{{route('admin.quotetion')}}" enctype="multipart/form-data">
+          @csrf
+                <div>  
+                  </div>
+                  
+                  
+                  <div class="row form-group">
+                    <div class="col-md-6">
+                      <label for="property_id">First Name<span class="error">*</span></label>
+                      <input type="text" class="form-control" id="first_name" name="first_name">
+                      @if($errors->has('first_name'))
+                        <span class="text-danger">{{$errors->first('first_name')}}</span>
+                      @endif
                     </div>
-                </div>
-            </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <div class="col-md-6">
+                      <label for="property_id">Last Name<span class="error">*</span></label>
+                      <input type="text" class="form-control" id="last_name" name="last_name">
+                      @if($errors->has('last_name'))
+                        <span class="text-danger">{{$errors->first('last_name')}}</span>
+                      @endif
+                    </div>
+                  </div>
+
+                  <div class="row form-group">
+                    <div class="col-md-6">
+                      <label for="property_id">Email<span class="error">*</span></label>
+                      <input type="text" class="form-control" id="email" name="email">
+                      @if($errors->has('email'))
+                        <span class="text-danger">{{$errors->first('email')}}</span>
+                      @endif
+                    </div>
+                    <div class="col-md-6">
+                      <label for="property_id">Contact Number<span class="error">*</span></label>
+                      <input type="text" class="form-control" id="contact_number" name="contact_number">
+                      @if($errors->has('contact_number'))
+                        <span class="text-danger">{{$errors->first('contact_number')}}</span>
+                      @endif
+                    </div>
+                  </div>
+
+                  
+
+                  <div class="row form-group">
+                    {{-- <div class="col-md-6 form-group">
+                      <label for="name">Country Name<span class="error">*</span></label>
+                      <select class="form-control" id="country_id" name="country_id" style="width: 100%;">
+                        <option value="">Select Country</option>
+                        @forelse($countryList as $country)
+                           <option value="{{$country->id}}" >{{$country->name}}</option>
+                        @empty
+                        <option value="">No City Found</option>
+                        @endforelse
+                      </select>
+                          @if($errors->has('country_id'))
+                            <span class="text-danger">{{$errors->first('country_id')}}</span>
+                          @endif
+                    </div> --}}
+                    <div class="col-md-6">
+                      <label for="country_id">State<span class="error">*</span></label>
+                      <select class="form-control " id="state_id" name="state_id" style="width: 100%;">
+                        <option value="">Select State</option>
+                        @forelse($stateList as $state)
+                           <option value="{{$state->id}}" >{{$state->name}}</option>
+                        @empty
+                        <option value="">No State Found</option>
+                        @endforelse
+                      </select>
+                       @if($errors->has('state_id'))
+                          <span class="text-danger">{{$errors->first('state_id')}}</span>
+                       @endif
+                    </div>
+                  </div>
+
+                  <div class="row form-group">
+                    <div class="col-md-6">
+                      <label for="name">City Name<span class="error">*</span></label>
+                      <select class="form-control" id="city_id" name="city_id" style="width: 100%;">
+                        <option value="">Select city</option>
+                        @forelse($cityList as $city)
+                           <option value="{{$city->id}}" >{{$city->name}}</option>
+                        @empty
+                        <option value="">No City Found</option>
+                        @endforelse
+                      </select>
+                          @if($errors->has('city_id'))
+                            <span class="text-danger">{{$errors->first('city_id')}}</span>
+                          @endif
+                    </div>
+                    <div class="col-md-6">
+                      <label for="landmark">Address<span class="error">*</span></label>
+                        <textarea name="landmark" id="landmark" class="form-control"></textarea>
+                          @if($errors->has('landmark'))
+                            <span class="text-danger">{{$errors->first('landmark')}}</span>
+                          @endif
+                    </div>
+                  </div>
+
+                  <div class="row form-group">
+                    <div class="col-md-6">
+                      <label for="contract_duration">Contract Period<span class="error">*</span></label>
+                      <input type="text" class="form-control" id="contract_duration" name="contract_duration">
+                      @if($errors->has('contract_duration'))
+                      <span class="text-danger">{{$errors->first('contract_duration')}}</span>
+                      @endif
+                    </div>
+                    
+                  </div>
+
+                 
+                  <div class="row form-group">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                      <label for="">Select Service<span class="error">*</span></label>
+                      <select class="select2" multiple="multiple" data-placeholder="Select a service" data-dropdown-css-class="select2-purple" name="service_id[]" id="service_id" style="width: 100%;">
+                                            
+                        @if (count($serviceList))
+                                @foreach ($serviceList as $service)
+                                    <option value="{{$service->id}}" data-object="{{ json_encode($service['service']['price']) }}">{{$service->service_name}}</option>
+                                @endforeach
+                        @endif
+                    </select>
+                      @if($errors->has('service_id'))
+                      <span class="text-danger">{{$errors->first('service_id')}}</span>
+                      @endif
+                    </div>
+                    
+                    </div>
+                    <div class="col-md-6">
+                      <label for="name">Service Type<span class="error">*</span></label>
+                      <select class="form-control" id="service_type" name="service_type" style="width: 100%;">
+                        <option value="">Select Service Type</option>
+                        <option value="F">Free</option>
+                        <option value="OD">On Demand</option>
+                        <option value="M">Maintenance</option>
+                       
+                      </select>
+                          @if($errors->has('service_type'))
+                            <span class="text-danger">{{$errors->first('service_type')}}</span>
+                          @endif
+                    </div>
+                  </div>
+                    <p>Total Amount : </p>
+                    <p id="totalAmountText">0</p>
+
+                  <div class="form-group">
+                    <label for="details">Description</label>
+                    <textarea class="form-control float-right" name="details" id="details">{{old('details')}}</textarea>
+                  </div>                                            
+              <div>
+             <button type="submit" class="btn btn-success">Submit</button> 
           </div>
-        </div>
+        </form>
       </div>
     </div>
-  </div>
+</div>
+  
 </div>
 <!-- /.login-box -->
 
-<!-- jQuery -->
 
-<script type="text/javascript">
-  function showQuotation() {
-    $('#addQuotationModal').modal('show');
-  }
-</script>
 
 @endsection
+
+
