@@ -41,7 +41,7 @@ class   AuthController extends Controller
             $countryList = CountryTranslation::select('id','name')->where('locale', 'en')->where('is_active', '1')->orderBy('name', 'asc')->get();
             $cityList = City::select('id','name')->where('is_active', '1')->orderBy('name', 'asc')->get();
             $stateList = State::select('id','name')->where('is_active', '1')->orderBy('name', 'asc')->get();
-            $serviceList = ServiceTranslation::with(['service'])->where('locale', 'en')->orderBy('service_name', 'asc')->get();
+            $serviceList = Service::get();
             // dd($serviceList);
             return view('admin.login.admin_login', $this->data)->with(['cityList'=>$cityList, 'stateList'=>$stateList,'serviceList'=>$serviceList,'countryList'=>$countryList]);
         }
@@ -116,6 +116,7 @@ class   AuthController extends Controller
                             $serviceUser = new QuotationService;
                             $serviceUser->quotation_id = $new->id;
                             $serviceUser->service_id = $val;
+                            $serviceUser->title = $request->title[$key];
                             $save = $serviceUser->save();
 
                         }
@@ -140,7 +141,7 @@ class   AuthController extends Controller
             $countryList = CountryTranslation::select('id','name')->where('locale', 'en')->where('is_active', '1')->orderBy('name', 'asc')->get();
             $cityList = City::select('id','name')->where('is_active', '1')->orderBy('name', 'asc')->get();
             $stateList = State::select('id','name')->where('is_active', '1')->orderBy('name', 'asc')->get();
-            $serviceList = ServiceTranslation::with(['service'])->where('locale', 'en')->orderBy('service_name', 'asc')->get();
+            $serviceList = Service::get();
             
 			return view('admin.login.admin_login', $this->data)->with(['cityList'=>$cityList,'stateList'=>$stateList,'serviceList'=>$serviceList,'countryList'=>$countryList]);
 		} catch (Exception $e) {

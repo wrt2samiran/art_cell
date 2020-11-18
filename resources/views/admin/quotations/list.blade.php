@@ -80,8 +80,6 @@
                                             <th>Id</th>
                                             <th>User Name</th>
                                             <th>Email</th>
-                                            <th>Services</th>
-                                            <th>Property Types</th>
                                             <th>Description</th>
                                             <th>Created At</th>
                                             <th>Action</th>

@@ -203,43 +203,20 @@
                     </div>
                     
                   </div>
-
-                 
-                  <div class="row form-group">
-                    <div class="col-md-6">
-                      <div class="form-group">
-                      <label for="">Select Service<span class="error">*</span></label>
-                      <select class="select2" multiple="multiple" data-placeholder="Select a service" data-dropdown-css-class="select2-purple" name="service_id[]" id="service_id" style="width: 100%;">
-                                            
-                        @if (count($serviceList))
-                                @foreach ($serviceList as $service)
-                                    <option value="{{$service->id}}" data-object="{{ json_encode($service['service']['price']) }}">{{$service->service_name}}</option>
-                                @endforeach
-                        @endif
-                    </select>
-                      @if($errors->has('service_id'))
-                      <span class="text-danger">{{$errors->first('service_id')}}</span>
-                      @endif
-                    </div>
+                  
                     
-                    </div>
-                    <div class="col-md-6">
-                      <label for="name">Service Type<span class="error">*</span></label>
-                      <select class="form-control" id="service_type" name="service_type" style="width: 100%;">
-                        <option value="">Select Service Type</option>
-                        <option value="F">Free</option>
-                        <option value="OD">On Demand</option>
-                        <option value="M">Maintenance</option>
-                       
-                      </select>
-                          @if($errors->has('service_type'))
-                            <span class="text-danger">{{$errors->first('service_type')}}</span>
-                          @endif
-                    </div>
-                  </div>
-                    <p>Total Amount : </p>
-                    <p id="totalAmountText">0</p>
 
+                    <div class="form-group required">
+                      <label>Add Service</label>
+                      <div>
+                        <button type="button" id="add_new_file" class="btn btn-outline-success"><i class="fa fa-plus"></i>&nbsp;Add Service</button>
+                      </div>
+                    </div>
+                    <div id="files_container">
+
+                    </div>
+                    {{-- <p>Total Amount : </p>
+                    <p id="totalAmountText">0</p> --}}
                   <div class="form-group">
                     <label for="details">Description</label>
                     <textarea class="form-control float-right" name="details" id="details">{{old('details')}}</textarea>
