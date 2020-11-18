@@ -95,7 +95,7 @@
 
     <div class="row justify-content-center">
       <div class="col-md-10 col-sm-12">
-        <h3>Submit Quotetion</h3>
+        <h3>Submit Quotation</h3>
         <form  method="POST" id="admin_quotetion" action="{{route('admin.quotetion')}}" enctype="multipart/form-data">
           @csrf
                 <div>  
