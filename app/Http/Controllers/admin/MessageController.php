@@ -8,8 +8,7 @@ use Carbon\Carbon;
 use App\Models\Message;
 use App\Models\Contract;
 use App\Models\User;
-use App\Models\ModuleFunctionality;
-use Helper, AdminHelper, Image, Auth, Hash, Redirect, Validator, View, Config;
+use Auth, Validator;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
 

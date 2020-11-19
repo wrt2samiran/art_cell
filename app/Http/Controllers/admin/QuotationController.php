@@ -83,7 +83,8 @@ class QuotationController extends Controller
     }
 
     public function show($id){
-        $quotation=Quotation::findOrFail($id);
+        $quotation=Quotation::with(['serviceRelatedQuotetion'])->findOrFail($id);
+        
         $this->data['page_title']='Quotation Details';
         $this->data['quotation']=$quotation;
         return view($this->view_path.'.show',$this->data);

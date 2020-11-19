@@ -6,10 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\Country;
-use App\Models\ModuleFunctionality;
-use Helper, AdminHelper, Image, Auth, Hash, Redirect, Validator, View, Config;
+use Validator;
 use Yajra\Datatables\Datatables;
-use Illuminate\Support\Str;
 
 class CountryController extends Controller
 {
@@ -183,10 +181,6 @@ class CountryController extends Controller
                 if ($Validator->fails()) {
                     return redirect()->back()->withErrors($Validator)->withInput();
                 } else {
-                    // $details->name        = trim($request->name, ' ');
-                    // $details->country_code    = $request->country_code;
-                    // $details->dial_code       = $request->dial_code;
-                    // $details->updated_at      = date('Y-m-d H:i:s');
 
                     $post = [
                        'en' => [

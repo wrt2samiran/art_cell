@@ -5,19 +5,14 @@ namespace App\Http\Controllers\admin;
 use App;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Helper, AdminHelper, Image, Auth, Hash, Redirect, Validator, View;
-use Illuminate\Support\Facades\File as FileSystem;
+use Helper, Auth, Hash, Validator;
 use App\Models\User;
-use  App\Models\PressRelease;
-use  App\Models\PrCopywriterContent;
 use App\Models\Timezone;
 use App\Models\Setting;
-use App\Models\Transaction;
 use App\Models\MasterCategory;
 use App\Models\OurService;
-use App\Models\{Country,State,City,TaskLists, TaskDetails, ServiceAllocationManagement, Property, Contract, ContractService};
+use App\Models\{Country,State,City,TaskLists, TaskDetails, Property, Contract, ContractService};
 
-use App\Models\ModuleFunctionality;
 use Yajra\Datatables\Datatables;
 use Config;
 use Carbon\Carbon;
@@ -52,18 +47,34 @@ class DashboardController extends Controller
     # Params        : 
     /*****************************************************/
 
-    public function dashboardView()
+    public function dashboardView(Request $request)
     {
         $this->data['page_title'] = 'Control Panel | Dashboard';
         $this->data['panel_title'] = 'Admin Dashboard';
         $logedInUser = \Auth::guard('admin')->user()->id;
         $logedInUserRole = \Auth::guard('admin')->user()->role_id;
 
-            $tasks=TaskLists::with('property')->with('service')->with('country')->with('state')->with('city')->orderBy('id','Desc')->get();
+        $this->data['city_id']   = isset($request->city_id) ? $request->city_id : '';
+        $this->data['state_id']  = isset($request->state_id) ? $request->state_id : '';
+        $this->data['property_id']  = isset($request->property_id) ? $request->property_id : '';
+        $cityData = TaskLists::with(['city'])->groupBy('city_id')->get();
+        $stateData = TaskLists::with(['state'])->groupBy('state_id')->get();
+        $popertyData = TaskLists::with(['property'])->groupBy('property_id')->get();
 
-        // dd($tasks);
+        $tasks=TaskLists::with('property')->with('service')->with('country')->with('state')->with('city')->orderBy('id','Desc')->get();
+        
+        if ($request->city_id) {
+            $tasks = $tasks->where('city_id', $request->city_id);
+        }
+        if ($request->state_id) {
+            $tasks = $tasks->where('state_id', $request->state_id);
+        }
+        if ($request->property_id) {
+            $tasks = $tasks->where('property_id', $request->property_id);
+        }
+        
 
-        return view('admin.dashboard.index', $this->data)->with(['tasks' => $tasks]);
+        return view('admin.dashboard.index', $this->data)->with(['tasks' => $tasks,'cityData' => $cityData,'stateData'=>$stateData,'popertyData'=>$popertyData]);
     }
 
     /*****************************************************/
