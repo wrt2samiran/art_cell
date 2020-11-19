@@ -33,25 +33,33 @@ class SharedServiceController extends Controller
             $sharedService=SharedService::orderBy('id','Desc');
             return Datatables::of($sharedService)
             ->editColumn('created_at', function ($sharedService) {
-                return $sharedService->created_at ? with(new Carbon($sharedService->created_at))->format('m/d/Y') : '';
+                return $sharedService->created_at ? with(new Carbon($sharedService->created_at))->format('d/m/Y') : '';
             })
             ->editColumn('description', function ($sharedService) {
                 return Str::limit($sharedService->description,100);
             })
-            ->editColumn('number_of_days', function ($sharedService) {
-                return Str::limit($sharedService->number_of_days,100);
-            })
             ->editColumn('price', function ($sharedService) {
-                return Str::limit($sharedService->price,100);
+                if($sharedService->is_sharing){
+                    return "<div><span>".$sharedService->currency.number_format($sharedService->price, 2, '.', '')."</span> for ".$sharedService->number_of_days." days</div><div>+ ".$sharedService->currency.number_format($sharedService->extra_price_per_day, 2, '.', '')."/day</div>";
+                }else{
+                    return '<span class="text-muted">Not Available</span>';
+                }
             })
-            ->editColumn('extra_price_per_day', function ($sharedService) {
-                return Str::limit($sharedService->extra_price_per_day,100);
+            ->editColumn('selling_price', function ($sharedService) {
+                if($sharedService->is_selling){
+                    return "<div><span>".$sharedService->currency.number_format($sharedService->selling_price, 2, '.', '')."</span></div>";
+                }else{
+                    return '<span class="text-muted">Not Available</span>';
+                }
             })
-            ->editColumn('currency', function ($sharedService) {
-                return Str::limit($sharedService->currency,100);
+            ->orderColumn('price', function ($query, $order) {
+                 $query->orderBy('price',$order);
+            })
+            ->orderColumn('selling_price', function ($query, $order) {
+                 $query->orderBy('selling_price',$order);
             })
             ->filterColumn('created_at', function ($query, $keyword) {
-                $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
+                $query->whereRaw("DATE_FORMAT(created_at,'%d/%m/%Y') like ?", ["%$keyword%"]);
             })
             ->addColumn('is_active',function($sharedService){
                 if($sharedService->is_active=='1'){
@@ -71,7 +79,7 @@ class SharedServiceController extends Controller
                 return '<a title="View Shared Service Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>&nbsp;&nbsp;<a title="Edit Shared Service" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>&nbsp;&nbsp;<a title="Delete shared service" href="javascript:delete_shared_service('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
                 
             })
-            ->rawColumns(['action','is_active'])
+            ->rawColumns(['action','is_active','price','selling_price'])
             ->make(true);
         }
 
@@ -99,23 +107,20 @@ class SharedServiceController extends Controller
         	{
 				$validationCondition = array(
                     'name'          => 'required|min:2|max:255|unique:'.(new SharedService)->getTable().',name',
-                    'number_of_days'  => 'required',
-                    'price'     => 'required',
-                    'extra_price_per_day'  => 'required',
-                    'quantity_available'=>'required|numeric'
-                    //'currency'     => 'required',
 				);
+                if($request->is_sharing){
+                    $validationCondition['number_of_days']='required|numeric';
+                    $validationCondition['price']='required|numeric';
+                    $validationCondition['extra_price_per_day']='required|numeric';
+                }
+                if($request->is_selling){
+                    $validationCondition['selling_price']='required|numeric';
+                }
+
 				$validationMessages = array(
 					'name.required'                => 'Please enter name',
 					'name.min'                     => 'Name should be should be at least 2 characters',
                     'name.max'                     => 'Name should not be more than 255 characters',
-                    'number_of_days.required'      => 'Number of Days is required',
-                    'price.required'               => 'Price is required',
-                    'extra_price_per_day.required' => 'Extra Price/day is required',
-                   // 'currency.required'            => 'Currency is required',
-                    
-
-               
 				);
 
 				$Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);
@@ -126,10 +131,12 @@ class SharedServiceController extends Controller
                     $new = new SharedService;
                     $new->name = trim($request->name, ' ');
                     $new->description  = $request->description;
+                    $new->is_sharing  = ($request->is_sharing)?true:false;
                     $new->number_of_days  = $request->number_of_days;
                     $new->price  = $request->price;
                     $new->extra_price_per_day  = $request->extra_price_per_day;
-                    $new->quantity_available=$request->quantity_available;
+                    $new->is_selling  = ($request->is_selling)?true:false;
+                    $new->selling_price  = $request->selling_price;
                     $new->currency  = Helper::getSiteCurrency();
                     $new->created_at = Carbon::now();
                     $new->created_by = $logedin_user->id;
@@ -179,23 +186,19 @@ class SharedServiceController extends Controller
                
                 $validationCondition = array(
                     'name'          => 'required|min:2|max:255|unique:'.(new SharedService)->getTable().',name,'.$id.'',
-                    'number_of_days'  => 'required',
-                    'price'     => 'required',
-                    'extra_price_per_day'  => 'required',
-                    'quantity_available'=>'required|numeric'
-                    //'currency'     => 'required',
                 );
+                if($request->is_sharing){
+                    $validationCondition['number_of_days']='required|numeric';
+                    $validationCondition['price']='required|numeric';
+                    $validationCondition['extra_price_per_day']='required|numeric';
+                }
+                if($request->is_selling){
+                    $validationCondition['selling_price']='required|numeric';
+                }
                 $validationMessages = array(
                     'name.required'                => 'Please enter name',
                     'name.min'                     => 'Name should be should be at least 2 characters',
                     'name.max'                     => 'Name should not be more than 255 characters',
-                    'number_of_days.required'      => 'Number of Days is required',
-                    'price.required'               => 'Price is required',
-                    'extra_price_per_day.required' => 'Extra Price/day is required',
-                    //'currency.required'            => 'Currency is required',
-                    
-
-               
                 );
                 
                 $Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);
@@ -206,10 +209,12 @@ class SharedServiceController extends Controller
                     
                     $details->name = trim($request->name, ' ');
                     $details->description  = $request->description;
+                    $details->is_sharing  = ($request->is_sharing)?true:false;
                     $details->number_of_days  = $request->number_of_days;
                     $details->price  = $request->price;
                     $details->extra_price_per_day  = $request->extra_price_per_day;
-                    $details->quantity_available=$request->quantity_available;
+                    $details->is_selling  = ($request->is_selling)?true:false;
+                    $details->selling_price  = $request->selling_price;
                     $details->currency  = Helper::getSiteCurrency();
                     $details->updated_at = Carbon::now();
                     $details->updated_by = $logedin_user->id;

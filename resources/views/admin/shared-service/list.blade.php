@@ -56,10 +56,8 @@
                                         <tr>
                                             <th>Id</th>
                                             <th>Shared Service Name</th>
-                                            <th>Number of Days</th>
-                                            <th>Price</th>
-                                            <th>Extra Price/Day</th>
-                                            
+                                            <th>Selling Price</th>
+                                            <th>Sharing Price</th>
                                             <th>Status</th>
                                             <th>Created At</th>
                                             <th>Action</th>

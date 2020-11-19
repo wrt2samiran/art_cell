@@ -35,21 +35,6 @@ class SparePartsController extends Controller
             ->editColumn('created_at', function ($spareParts) {
                 return $spareParts->created_at ? with(new Carbon($spareParts->created_at))->format('m/d/Y') : '';
             })
-            // ->editColumn('description', function ($sharedService) {
-            //     return Str::limit($sharedService->description,100);
-            // })
-            // ->editColumn('number_of_days', function ($sharedService) {
-            //     return Str::limit($sharedService->number_of_days,100);
-            // })
-            // ->editColumn('price', function ($sharedService) {
-            //     return Str::limit($sharedService->price,100);
-            // })
-            // ->editColumn('extra_price_per_day', function ($sharedService) {
-            //     return Str::limit($sharedService->extra_price_per_day,100);
-            // })
-            // ->editColumn('currency', function ($sharedService) {
-            //     return Str::limit($sharedService->currency,100);
-            // })
             ->filterColumn('created_at', function ($query, $keyword) {
                 $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
             })
@@ -104,7 +89,6 @@ class SparePartsController extends Controller
                     'manufacturer'    => 'required|min:2|max:255',
                     'unit_master_id'  => 'required',
                     'price'     => 'required',
-                    'quantity_available'=>'required|numeric',
                     'image'             => 'mimes:jpeg,jpg,png,gif|required|max:10000', //10000kb
 				);
 				$validationMessages = array(
@@ -143,7 +127,7 @@ class SparePartsController extends Controller
                     $new->description  = $request->description;
                     $new->unit_master_id  = $request->unit_master_id;
                     $new->price  = $request->price;
-                    $new->quantity_available=$request->quantity_available;
+
                     $new->currency  = Helper::getSiteCurrency();
                     $new->created_at = Carbon::now();
                     $new->created_by = $logedin_user->id;
@@ -196,7 +180,6 @@ class SparePartsController extends Controller
                     'manufacturer'    => 'required|min:2|max:255',
                     'unit_master_id'  => 'required',
                     'price'     => 'required',
-                    'quantity_available'=>'required|numeric',
                 );
                 $validationMessages = array(
                     'name.required'                => 'Please enter name',
@@ -236,7 +219,6 @@ class SparePartsController extends Controller
                     $details->description  = $request->description;
                     $details->unit_master_id  = $request->unit_master_id;
                     $details->price  = $request->price;
-                    $details->quantity_available=$request->quantity_available;
                     $details->currency  = Helper::getSiteCurrency();
                     $details->updated_at = Carbon::now();
                     $details->updated_by = $logedin_user->id;

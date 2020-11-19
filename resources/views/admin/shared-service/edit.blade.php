@@ -65,32 +65,45 @@
                              @endif
                           </div>
 
-                          <div class="form-group required">
+                          <div class="form-group">
+                            
+                            <label for="is_sharing" class="">Are you sharing the service ?</label><br>
+                            <input type="checkbox" id="is_sharing" name="is_sharing" {{($details->is_sharing)?'checked':''}} data-bootstrap-switch data-off-color="danger" data-on-color="success"
+                            data-off-text="no" data-on-text="yes">
+                          </div>
+
+                          <div style="display:{{($details->is_sharing)?'block':'none'}}" class="form-group required is_sharing_field">
                             <label for="number_of_days">Number of Days <span class="error">*</span></label>
                             <input type="number" class="form-control" value="{{old('number_of_days')?old('number_of_days'):$details->number_of_days}}" name="number_of_days" id="number_of_days"  placeholder="Please Enter Number of Days">
                             @if($errors->has('number_of_days'))
                             <span class="text-danger">{{$errors->first('number_of_days')}}</span>
                             @endif
                           </div>
-                          <div class="form-group required">
+                          <div style="display:{{($details->is_sharing)?'block':'none'}}" class="form-group required is_sharing_field">
                             <label for="price">Price <span class="error">*</span></label>
                             <input type="text" class="form-control" value="{{old('price')?old('price'):$details->price}}" name="price" id="price"  placeholder="Please Enter Price">
                             @if($errors->has('price'))
                             <span class="text-danger">{{$errors->first('price')}}</span>
                             @endif
                           </div>
-                          <div class="form-group required">
+                          <div style="display:{{($details->is_sharing)?'block':'none'}}" class="form-group required is_sharing_field">
                             <label for="extra_price_per_day">Extra Price/Day <span class="error">*</span></label>
                             <input type="text" class="form-control" value="{{old('extra_price_per_day')?old('extra_price_per_day'):$details->extra_price_per_day}}" name="extra_price_per_day" id="extra_price_per_day"  placeholder="Please Enter Extra Price/Day">
                             @if($errors->has('extra_price_per_day'))
                             <span class="text-danger">{{$errors->first('extra_price_per_day')}}</span>
                             @endif
                           </div>
-                          <div class="form-group required">
-                            <label for="quantity_available">Quantity Available <span class="error">*</span></label>
-                            <input type="number" min="0" step="1" class="form-control" value="{{old('quantity_available')?old('quantity_available'):$details->quantity_available}}" name="quantity_available" id="quantity_available"  placeholder="Quantity Available">
-                            @if($errors->has('quantity_available'))
-                            <span class="text-danger">{{$errors->first('quantity_available')}}</span>
+                          <div class="form-group">
+                            <label for="is_selling" class="">Are you selling the shared service ?</label><br>
+                            <input type="checkbox" id="is_selling" name="is_selling" {{($details->is_selling)?'checked':''}} data-bootstrap-switch data-off-color="danger" data-on-color="success"
+                            data-off-text="no" data-on-text="yes">
+                          </div>
+
+                          <div class="form-group required" id="selling_price_container" style="display: {{($details->is_selling)?'block':'none'}};">
+                            <label for="selling_price">Selling Price <span class="error">*</span></label>
+                            <input type="text" class="form-control" value="{{old('selling_price')?old('selling_price'):$details->selling_price}}" name="selling_price" id="selling_price"  placeholder="Please Enter Selling Price">
+                            @if($errors->has('selling_price'))
+                            <span class="text-danger">{{$errors->first('selling_price')}}</span>
                             @endif
                           </div>
 
@@ -111,6 +124,7 @@
 </div>
 @endsection 
 @push('custom-scripts')
+<script src="{{asset('assets/plugins/bootstrap-switch/js/bootstrap-switch.min.js')}}"></script>
 <!-- *********Used for CK Editor ***************-->
 <script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
 <script>

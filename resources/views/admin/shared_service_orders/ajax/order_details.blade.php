@@ -16,16 +16,20 @@
                         <tr>
                             <td >
                                 <div class="media">
-            
                                     <div class="media-body">
-                                        <h4 class="media-heading">
-                                            <a href="#">{{$ordered_shared_service->shared_service->name}}
-                                            </a><br>
+
+                                        <h5 class="media-heading">
                                             <span>
-                                            {{$ordered_shared_service->no_of_days}} {{($ordered_shared_service->no_of_extra_days>0)? '+ '.$ordered_shared_service->no_of_extra_days :'' }} Days
+                                            {{$ordered_shared_service->shared_service->name}}
                                             </span>
-                                            
-                                        </h4>
+                                        </h5>
+                                        @if($ordered_shared_service->buy_or_rent=='rent')
+                                        <h6 class="media-heading"> 
+                                        <span>
+                                        For - {{$ordered_shared_service->no_of_days}} {{($ordered_shared_service->no_of_extra_days>0)?'+ '.$ordered_shared_service->no_of_extra_days:''}} Days
+                                        </span>
+                                        </h6>
+                                        @endif
                                     </div>
                                 </div>
                             </td>
@@ -33,14 +37,22 @@
                             	<strong>{{$ordered_shared_service->quantity}}</strong>
                             </td>
                             <td class=" text-right">
-                                <strong>{{$order->order_currency}} {{number_format($ordered_shared_service->price, 2, '.', '')}}</strong>
 
-                                @if($ordered_shared_service->no_of_extra_days>0)
-                               
-                                <div><strong >+</strong></div>
-                                <strong>{{$order->order_currency}} {{number_format($ordered_shared_service->extra_days_price, 2, '.', '')}}</strong>
+                                <strong>
+                                {{$order->order_currency}}
+                                @if($ordered_shared_service->buy_or_rent=='rent')
+                                {{number_format($ordered_shared_service->price, 2, '.', '')}}
+                                @else
+                                {{number_format($ordered_shared_service->buy_price, 2, '.', '')}}
                                 @endif
+                                </strong>
 
+                                @if($ordered_shared_service->no_of_extra_days>0 && $ordered_shared_service->buy_or_rent=='rent')
+                                <br>
+                                <strong>+</strong><br>
+                                 <strong>{{$order->order_currency}}{{number_format($ordered_shared_service->extra_days_price, 2, '.', '')}}/day
+                                 </strong>
+                                @endif
                             </td>
                             <td class="text-right">
                                 <strong>{{$order->order_currency}}

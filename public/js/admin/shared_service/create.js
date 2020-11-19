@@ -12,19 +12,17 @@
             
             price: {
                 required: true,
+                number:true
             },
            
             extra_price_per_day: {
                 required: true,
+                number:true
             },
-            quantity_available:{
+            selling_price: {
                 required: true,
                 number:true
-            }
-
-            // currency: {
-            //     required: true,
-            // },
+            },
         },
         messages: {
             name: {
@@ -38,17 +36,12 @@
             price: {
                 required:  "Price is required",
             },
-
             extra_price_per_day: {
                 required:  "Extra Price/day is required",
             },
-            quantity_available: {
-                required:  "Enter available quantity",
+            selling_price: {
+                required:  "Selling price is required",
             },
-            // currency: {
-            //     required:  "Currency is required",
-            // },
-
         },
 
         errorPlacement: function (error, element) {
@@ -66,3 +59,27 @@
         }
 
     });
+
+
+$("input[data-bootstrap-switch]").each(function(){
+  $(this).bootstrapSwitch('state', $(this).prop('checked'));
+});
+
+$('#is_selling').on('switchChange.bootstrapSwitch', function (event, state) {
+
+    if($("#is_selling").is(':checked')) {
+      $('#selling_price_container').show();
+    } else {
+      $('#selling_price_container').hide();
+    }
+});
+
+$('#is_sharing').on('switchChange.bootstrapSwitch', function (event, state) {
+
+    if($("#is_sharing").is(':checked')) {
+      $('.is_sharing_field').show();
+    } else {
+      $('.is_sharing_field').hide();
+    }
+});
+

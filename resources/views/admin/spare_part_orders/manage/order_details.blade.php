@@ -198,13 +198,14 @@
                                             </select>
                                          
                         
-                                          <button type="submit" class="btn btn-primary mb-2">Update</button>
+                                          <button type="submit" class="btn btn-success mb-2">Update</button>
                                         </form>
                                     </div>
                                 </div>
                             </div>
-
-
+                            <div class="card-footer">
+                                <a class="btn btn-primary" href="{{route('admin.spare_part_orders.order_list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a>
+                            </div>
                             </div>
                         </div>
                     </div>

@@ -41,21 +41,27 @@
                           <td>Description</td>
                           <td>{!! $sharedServices->description !!}</td>
                         </tr>
+
                         <tr>
-                          <td>Number of Days</td>
-                          <td >{{$sharedServices->number_of_days}}</td>
+                          <td>Sharing Price</td>
+                          <td >
+                            @if($sharedServices->is_sharing)
+                            <div><span>{{$sharedServices->currency}} {{number_format($sharedServices->price, 2, '.', '')}}</span> for {{$sharedServices->number_of_days}} days</div>
+                            <div>+{{$sharedServices->currency}}{{number_format($sharedServices->extra_price_per_day, 2, '.', '')}}/day</div>
+                            @else 
+                            <span class="text-muted">Not Available</span>
+                            @endif
+                          </td>
                         </tr>
                         <tr>
-                          <td>Price</td>
-                          <td >{{$sharedServices->currency}} {{$sharedServices->price}}</td>
-                        </tr>
-                        <tr>
-                          <td>Extra Price/Day</td>
-                          <td >{{$sharedServices->currency}} {{$sharedServices->extra_price_per_day}}</td>
-                        </tr>
-                        <tr>
-                          <td>Quantity Available</td>
-                          <td >{{$sharedServices->quantity_available}}</td>
+                          <td>Selling Price</td>
+                          <td>
+                            @if($sharedServices->is_selling)
+                            <div><span>{{$sharedServices->currency}}{{number_format($sharedServices->selling_price, 2, '.', '')}}</span></div>
+                            @else 
+                            <span class="text-muted">Not Available</span>
+                            @endif
+                          </td>
                         </tr>
                         <tr>
                           <td>Status</td>

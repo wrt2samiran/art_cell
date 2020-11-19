@@ -17,10 +17,6 @@
             price: {
                 required: true,
             },
-            quantity_available:{
-                required: true,
-                number:true
-            },
             image: {
                 required: true,
             },
@@ -41,9 +37,6 @@
             },
             price: {
                 required:  "Price is required",
-            },
-            quantity_available: {
-                required:  "Enter available quantity",
             },
             image: {
                 required:  "Image is required",

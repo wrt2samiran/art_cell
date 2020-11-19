@@ -10,10 +10,8 @@
 
             { data: 'id', name: 'id' },
             { data: 'name', name: 'name'},
-            { data: 'number_of_days', name: 'number_of_days' },
-            { data: "price", render: function ( data, type, row, meta ) {return row['currency'] + ' ' + data ;} },
-            { data: 'extra_price_per_day', render: function ( data, type, row, meta ) {return row['currency'] + ' ' + data ;}  },
-            { data: 'quantity_available', name: 'quantity_available'},
+            { data: 'selling_price', name: 'selling_price' },
+            { data: "price", name:'price' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
          order: [ [0, 'asc'] ],
@@ -163,3 +161,18 @@ $("#shared_services_checkout_form").validate({
         form.submit();
     }
 });
+
+$(document).on('click', '.buy_or_rent', function(){ 
+    var id=$(this).attr('id').split('_')[3];
+
+    if(this.value=='rent'){
+        if($('#extra_day_cont_'+id).length>0){
+            $('#extra_day_cont_'+id).show();
+        }
+        
+    }else{
+        if($('#extra_day_cont_'+id).length>0){
+            $('#extra_day_cont_'+id).hide();
+        }
+    }
+})

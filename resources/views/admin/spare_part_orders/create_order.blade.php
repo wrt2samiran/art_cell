@@ -49,11 +49,11 @@
                                     <thead>
                                         <tr>
                                             <th>Id</th>
+                                            <th style="width: 15%;">Image</th>
                                             <th>Spare Part Name</th>
                                             <th>Manufacturer</th>
-                                            <th>Quantity Available</th>
                                             <th>Price</th>
-                                            <th style="width: 30%">Add To Cart</th>
+                                            <th style="width: 25%;" >Add To Cart</th>
                                         </tr>
                                     </thead>
                                 </table>
