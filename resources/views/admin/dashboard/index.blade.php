@@ -119,7 +119,7 @@
                       <h3 class="box-title">Latest Task</h3>
                       <div class="pull-right">
                           <form name="tasks" id="tasks" method="GET" action="{{ route('admin.dashboard') }}">
-                              <div class="col-md-4 card-body">
+                                <div class="col-md-4 card-body">
                                   <label for="title">City</label>
                                           <select name="city_id" id="city_id" class="form-control">
                                               <option value="">-Select-</option>

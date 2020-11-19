@@ -9,7 +9,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Task Management</h1>
+            <h1>Work Order Management</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -28,63 +28,66 @@
             <!-- Default box -->
             <div class="card card-success">
                 <div class="card-header">
-                  Task Deatils
+                  Work Order Deatils
                 </div> 
               <div class="card-body"> 
                   <table class="table table-bordered table-hover" id="country-details-table">
                       <tbody>
-                        
+                
+
+                       
                         <tr>
-                          <td >Task Title</td>
-                          <td >{{$task_list->task_title}}</td>
+                          <td >Contract Id</td>
+                          <td >{{$work_order_list->contract->code}}</td>
                         </tr>
                         <tr>
-                          <td >Task Details</td>
-                          <td >{!!$task_list->task_desc!!}</td>
+                          <td >Title</td>
+                          <td >{{$work_order_list->task_title}}</td>
+                        </tr>
+                        <tr>
+                          <td >Details</td>
+                          <td >{!!$work_order_list->task_desc!!}</td>
                         </tr>
                         <tr>
                           <td >Property Name</td>
-                          <td >{{$task_list->property->property_name}}</td>
+                          <td >{{$work_order_list->property->property_name}}</td>
                         </tr>
                         <tr>
                           <td >Service</td>
-                          <td >{{$task_list->service->service_name}}</td>
+                          <td >{{$work_order_list->service->service_name}}</td>
                         </tr>
                         <tr>
                           <td >Service Type</td>
-                          <td >{{$task_list->contract_services->service_type}}</td>
+                          <td >{{$work_order_list->contract_services->service_type}}</td>
                         </tr>
                         <tr>
                           <td >Country</td>
-                          <td >{{$task_list->country->name}}</td>
+                          <td >{{$work_order_list->property->country->name}}</td>
                         </tr>
                         <tr>
                           <td >State</td>
-                          <td >{{$task_list->state->name}}</td>
+                          <td >{{$work_order_list->property->state->name}}</td>
                         </tr>
                         <tr>
                           <td >City</td>
-                          <td >{{$task_list->city->name}}</td>
+                          <td >{{$work_order_list->property->city->name}}</td>
                         </tr>
                         <tr>
-                          <td >Task Start Date</td>
-                          <td >{{$task_list->start_date}}</td>
+                          <td >Start Date</td>
+                          <td >{{$work_order_list->start_date}}</td>
                         </tr>
-                        <tr>
-                          <td >Task End Date</td>
-                          <td >{{$task_list->end_date}}</td>
-                        </tr>
+                        
                        
                         <tr>
                           <td>Status</td>
                           <td>
                             @php
-                              if($task_list->status=='0'){
+                              if($work_order_list->status=='0'){
                                   $button = 'warning';
                                   $status = 'Pending';
                                 }
                                 
-                              else if($task_list->status=='1'){
+                              else if($work_order_list->status=='1'){
                                   $button = 'danger';
                                   $status = 'Over Due';
 
@@ -106,7 +109,7 @@
                       </tbody>
                       <tfoot>
                         <tr>
-                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.task_management.labourTaskList', $task_list->id)}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
+                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.work-order-management.list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
                         </tr>
                       </tfoot>
                   </table>

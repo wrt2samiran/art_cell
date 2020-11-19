@@ -87,7 +87,18 @@ $("#admin_task_add_form").validate({
             form.submit();
         }
     });
-
+// $('#service_id').select2({
+//     theme: 'bootstrap4',
+//     placeholder:'Select Service',
+//     "language": {
+//         "noResults": function(){
+//             return "No Service Found";
+//         }
+//     },
+//     escapeMarkup: function(markup) {
+//         return markup;
+//     },
+// });
 
 $("#admin_labour_assign_form").validate({
         rules: {

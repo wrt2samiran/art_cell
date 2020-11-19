@@ -35,7 +35,7 @@
         "autoWidth": false,
         processing: true,
         serverSide: true,
-        ajax: baseUrl+'/admin/task_management',
+        ajax: baseUrl+'/admin/work-order-management',
         columns: [
             { data: 'id', name: 'id' },
             // { data: 'task.property.property_name', name: 'task.property.property_name' },

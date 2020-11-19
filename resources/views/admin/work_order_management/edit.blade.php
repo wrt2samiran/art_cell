@@ -9,12 +9,12 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Task</h1>
+            <h1>Work Order</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.task_management.list')}}">Task</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.work-order-management.list')}}">Work Order</a></li>
               <li class="breadcrumb-item active">Edit</li>
             </ol>
           </div>
@@ -28,7 +28,7 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Edit Task</h3>
+                <h3 class="card-title">Edit Work Order</h3>
               </div>
               <div class="card-body">
                   @if(Session::has('success'))
@@ -47,7 +47,7 @@
                   <div class="row justify-content-center">
                     <div class="col-md-10 col-sm-12">
                      
-                      <form  method="post" id="admin_task_add_form" action="{{route('admin.task_management.update', $details->id)}}" method="post" enctype="multipart/form-data">
+                      <form  method="post" id="admin_task_add_form" action="{{route('admin.work-order-management.update', $details->id)}}" method="post" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                             <div>  
@@ -100,7 +100,7 @@
                                 <label for="country_id">Country <span class="error">*</span></label>
                                   <select class="form-control parent_role_select2" style="width: 100%;" name="country_id" id="country_id">
                                        
-                                        <option value="{{$details->country_id}}" >{{$details->country->name}} </option>
+                                        <option value="{{$details->property->country->id}}" >{{$details->property->country->name}} </option>
                                   </select>
                                 @if($errors->has('country_id'))
                                 <span class="text-danger">{{$errors->first('country_id')}}</span>
@@ -110,7 +110,7 @@
                               <div class="form-group required">
                                 <label for="country_id">State <span class="error">*</span></label>
                                  <select name="state_id" id="state_id" class="form-control">
-                                        <option value="{{$details->state_id}}" >{{$details->state->name}} </option>
+                                        <option value="{{$details->property->state->id}}" >{{$details->property->state->name}} </option>
                                  </select>
                                   @if($errors->has('state_id'))
                                     <span class="text-danger">{{$errors->first('state_id')}}</span>
@@ -120,7 +120,7 @@
                               <div class="form-group required">
                                 <label for="name">City Name <span class="error">*</span></label>
                                 <select name="city_id" id="city_id" class="form-control">
-                                        <option value="{{$details->city_id}}" >{{$details->city->name}} </option>
+                                        <option value="{{$details->property->city->id}}" >{{$details->property->city->name}} </option>
                                 </select>
                                  @if($errors->has('city_id'))
                                     <span class="text-danger">{{$errors->first('city_id')}}</span>
@@ -128,7 +128,7 @@
                               </div>
                               
                               <div class="form-group">
-                                <label>Task Date <span class="error">*</span></label>
+                                <label>Work Date <span class="error">*</span></label>
 
                                 <div class="input-group">
                                   <div class="input-group-prepend">
@@ -141,7 +141,7 @@
                                 <!-- /.input group -->
                               </div>
                               <div class="form-group required">
-                                <label for="service_id">Task Title <span class="error">*</span></label>
+                                <label for="service_id">Work Title <span class="error">*</span></label>
                                 <input type="text" class="form-control float-right" id="task_title" name="task_title" value="{{$details->task_title}}">
                                  @if($errors->has('task_title'))
                                   <span class="text-danger">{{$errors->first('task_title')}}</span>
@@ -149,7 +149,7 @@
                               </div>
 
                               <div class="form-group">
-                                <label for="service_id">Task Description</label>
+                                <label for="service_id">Work Description</label>
                                 <textarea class="form-control float-right" name="task_desc" id="task_desc">{{$details->task_desc}}</textarea>
                               </div>                                            
                             <div>
@@ -185,7 +185,7 @@ $( document ).ready(function() {
 
      $.ajax({
        
-        url: "{{route('admin.task_management.getContractData')}}",
+        url: "{{route('admin.work-order-management.getContractData')}}",
         type:'get',
         dataType: "json",
         data:{contract_id:contract_id,_token:"{{ csrf_token() }}"}
@@ -273,7 +273,7 @@ $( document ).ready(function() {
 
      $.ajax({
        
-        url: "{{route('admin.task_management.getContractServiceStatus')}}",
+        url: "{{route('admin.work-order-management.getContractServiceStatus')}}",
         type:'get',
         dataType: "json",
         data:{service_id:service_id,contract_id:contract_id,_token:"{{ csrf_token() }}"}
@@ -307,5 +307,5 @@ $( document ).ready(function() {
   } 
 
 </script>
-<script type="text/javascript" src="{{asset('js/admin/task_management/create.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/admin/work_order_management/create.js')}}"></script>
 @endpush

@@ -9,12 +9,12 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Task Management</h1>
+                <h1>Work Order Management</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                   <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item active">Task</li>
+                  <li class="breadcrumb-item active">Work Order</li>
                 </ol>
               </div>
             </div>
@@ -28,11 +28,11 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="d-flex justify-content-between" >
-                                    <div><span>Task List</span></div>
+                                    <div><span>Work Order List</span></div>
                                     @if(\Auth::guard('admin')->user()->role_id==3 || \Auth::guard('admin')->user()->role_id == 2)
                                       <div>
-                                        <a class="btn btn-success" href="{{route('admin.task_management.taskCreate')}}">
-                                         Add Task
+                                        <a class="btn btn-success" href="{{route('admin.work-order-management.workOrderCreate')}}">
+                                         Work Order List
                                         </a>
                                       </div>
                                     @endif
@@ -54,24 +54,26 @@
                                     </div>
                                 @endif
                                 
-                                <table class="table table-bordered" id="task_management_table">
+                                <table class="table table-bordered" id="work_order_management_table">
                                     <thead>
                                         <tr>
                                             <th>Id</th>
-                                            <th>Task Title</th>
+                                            <th>Contract Id</th>
+                                            <th>Title</th>
                                             <th>Property Name</th>
                                             <th>Service</th>
                                             <th>Country</th>
                                             <th>State</th>
                                             <th>City</th>
                                             <th>Service Start Date</th>
-                                            <th>Service End Date</th>
+                                            
                                             <th>Status</th>
                                             
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                 </table>
+                                <input type="hidden" id="work_order_data_url" value="{{route('admin.work-order-management.list')}}">
                             </div>
                         </div>
                     </div>
@@ -84,7 +86,7 @@
 @endsection
 
 @push('custom-scripts')
-<script type="text/javascript" src="{{asset('js/admin/task_management/list.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/admin/work_order_management/list.js')}}"></script>
 @endpush
 
 

@@ -31,7 +31,7 @@
                                 <div class="d-flex justify-content-between" >
                                     <div><span>Task List</span></div>
                                   <div>
-                                    <a class="btn btn-success" href="{{route('admin.task_management.taskCreate')}}">
+                                    <a class="btn btn-success" href="{{route('admin.work-order-management.taskCreate')}}">
                                      Add Task
                                     </a>
                                   </div>
@@ -91,7 +91,7 @@
                                           <div class="row justify-content-center">
                                             <div class="col-md-10 col-sm-12">
                                               
-                                              <form  method="post" id="admin_labour_task_feedback_form" action="{{route('admin.task_management.taskFeedback')}}" method="post" enctype="multipart/form-data">
+                                              <form  method="post" id="admin_labour_task_feedback_form" action="{{route('admin.work-order-management.taskFeedback')}}" method="post" enctype="multipart/form-data">
                                                 @csrf
                                                       <div>  
                                                         <input type="hidden" name="task_details_id" id="task_details_id" />
@@ -141,7 +141,7 @@
     }, 5000); 
 </script>
 
-<script type="text/javascript" src="{{asset('js/admin/task_management/daily-task-list.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/admin/work_order_management/daily-task-list.js')}}"></script>
 @endpush
 
 

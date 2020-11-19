@@ -31,7 +31,7 @@ return array (
   'order_shared_service' => 'Order Shared Service',
   'state_management' => 'State Management',
   'task_assign_labour' => 'Task Assign Labour',
-  'task_management' => 'Task Management',
+  'work-order-management' => 'Work Order Management',
   'translation_management' => 'Translation Management',
   'user_management' => 'User Management',
   'email_templete' => 'Email Template Management',

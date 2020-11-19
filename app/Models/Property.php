@@ -30,4 +30,14 @@ class Property extends Model
     {
         return $this->belongsTo(static::class, 'parent_id');
     }
+
+    public function country(){
+        return $this->belongsTo(Country::class, 'country_id', 'id');
+    }
+
+    public function state(){
+        return $this->belongsTo(State::class, 'state_id', 'id');
+    }
+
+   
 }

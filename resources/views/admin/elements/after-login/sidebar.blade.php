@@ -358,12 +358,12 @@
                 
 
 
-                @if(auth()->guard('admin')->user()->hasAllPermission(['task-list']))
+                @if(auth()->guard('admin')->user()->hasAllPermission(['work-order-list']))
                 <li class="nav-item ">
-                    <a href="{{route('admin.task_management.list')}}"
-                    class="nav-link {{(request()->is('admin/task_management/*','admin/task_management'))?'active':''}}">
+                    <a href="{{route('admin.work-order-management.list')}}"
+                    class="nav-link {{(request()->is('admin/work-order-management/*','admin/work-order-management'))?'active':''}}">
                         <i class="nav-icon fas fa-quote-right"></i>
-                        <p>{{__('nav_link_text.task_management')}}</p>
+                        <p>{{__('nav_link_text.work-order-management')}}</p>
                     </a>
                 </li>            
                 @endif
