@@ -50,10 +50,8 @@
                                         <tr>
                                             <th>Id</th>
                                             <th>Service Name</th>
-                                            <th>No. of Days</th>
-                                            <th>Price</th>
-                                            <th>Extra Price/Day</th>
-                                            <th>Quantity Available</th>
+                                            <th>Selling Price</th>
+                                            <th>Sharing Price</th>
                                             <th style="width: 35%;">Add To Cart</th>
                                         </tr>
                                     </thead>

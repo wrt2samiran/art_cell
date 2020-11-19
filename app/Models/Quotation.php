@@ -27,4 +27,8 @@ class Quotation extends Model
     public function property_types(){
     	return $this->belongsToMany(PropertyType::class);
     }
+
+    public function serviceRelatedQuotetion(){
+    	return $this->hasMany('App\Models\QuotationService','quotation_id');
+    }
 }

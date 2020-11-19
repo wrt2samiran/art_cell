@@ -7,9 +7,9 @@
         ajax: $('#spare_parts_for_order_data_url').val(),
         columns: [
             { data: 'id', name: 'id' },
+            { data: 'image', name: 'image'},
             { data: 'name', name: 'name'},
             { data: 'manufacturer', name: 'manufacturer'},
-            { data: 'quantity_available', name: 'quantity_available'},
             { 
                 data: "price",
                 render: function ( data, type, row, meta ) {

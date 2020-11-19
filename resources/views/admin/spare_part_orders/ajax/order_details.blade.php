@@ -16,7 +16,6 @@
                         <tr>
                             <td >
                                 <div class="media">
-            
                                     <div class="media-body">
                                         <h4 class="media-heading">
                                             <a href="#">{{$order_spare_part->spare_part->name}}

@@ -67,10 +67,6 @@
                           <td >{{$spareParts->currency}} {{$spareParts->price}}</td>
                         </tr>
                         <tr>
-                          <td>Quantity Available</td>
-                          <td >{{$spareParts->quantity_available}}</td>
-                        </tr>
-                        <tr>
                           <td>Status</td>
                           <td>
                             <button role="button" class="btn btn-{{($spareParts->is_active=='1')?'success':'danger'}}">{{($spareParts->is_active=='1')?'Active':'Inactive'}}</button>

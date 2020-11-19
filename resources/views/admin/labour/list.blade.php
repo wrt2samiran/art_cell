@@ -9,12 +9,12 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Order Spare Parts</h1>
+                <h1>User Manageent</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                   <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item active">Spare Parts</li>
+                  <li class="breadcrumb-item active">Users</li>
                 </ol>
               </div>
             </div>
@@ -26,13 +26,19 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-<!-- 				            <div class="card-header">
-
-				            </div> -->
+				            <div class="card-header">
+				                <div class="d-flex justify-content-between" >
+				                    <div><span>Labour List</span></div>
+					                <div>
+						                <a class="btn btn-success" href="{{route('admin.labour.create')}}">
+						                 Create User
+						                </a>
+					                </div>
+				                </div>
+				            </div>
 
                             <!-- /.card-header -->
                             <div class="card-body">
-                                @include('admin.spare_part_orders.partials.navbar')
                                 @if(Session::has('success'))
                                     <div class="alert alert-success alert-dismissable __web-inspector-hide-shortcut__">
                                         <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
@@ -45,20 +51,23 @@
                                         {{ Session::get('error') }}
                                     </div>
                                 @endif
-                                <table class="table table-bordered" id="spare_parts_for_order_table">
+                                
+                                <hr class="mt-3 mb-3"/>
+                                <table class="table table-bordered" id="labour_table">
                                     <thead>
                                         <tr>
                                             <th>Id</th>
-                                            <th style="width: 15%;">Image</th>
-                                            <th>Spare Part Name</th>
-                                            <th>Manufacturer</th>
-                                            <th>Price</th>
-                                            <th style="width: 25%;" >Add To Cart</th>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Group</th>
+                                            <th>Status</th>
+                                            <th>Created At</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                 </table>
-
-                                <input type="hidden" id="spare_parts_for_order_data_url" value="{{route('admin.spare_part_orders.create_order')}}">
+                                <!-- calling this url from datatable data which is inside public\js\admin\users\list.js-->
+                                <input type="hidden" id="labour_data_url" value="{{route('admin.labour.list')}}">
                             </div>
                         </div>
                     </div>
@@ -71,7 +80,7 @@
 @endsection
 
 @push('custom-scripts')
-<script type="text/javascript" src="{{asset('js/admin/spare_part_orders/common.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/admin/labour/list.js')}}"></script>
 @endpush
 
 

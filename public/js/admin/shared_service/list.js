@@ -9,12 +9,13 @@
 
             { data: 'id', name: 'id' },
             { data: 'name', name: 'name'},
-            
-            { data: 'number_of_days', name: 'number_of_days' },
-            
-            { data: "price", render: function ( data, type, row, meta ) {return row['currency'] + ' ' + data ;} },
-
-            { data: 'extra_price_per_day', render: function ( data, type, row, meta ) {return row['currency'] + ' ' + data ;}  },
+            { 
+              data: 'selling_price', name:'selling_price'
+            },
+            { 
+              data: 'price', name: 'price'
+            },
+            // { data: 'extra_price_per_day', render: function ( data, type, row, meta ) {return row['currency'] + ' ' + data ;}  },
             { data: 'is_active', name: 'is_active' },
             { data: 'created_at', name: 'created_at' },
             {data: 'action', name: 'action', orderable: false, searchable: false}

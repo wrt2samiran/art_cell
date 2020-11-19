@@ -52,10 +52,14 @@
 <td  align="left" valign="top" style="padding:10px; font-size:14px; border: 1px solid #666;">
   <div> 
     <a href="#">{{$ordered_shared_service->shared_service->name}}
-    </a><br>
+    </a>
+    @if($ordered_shared_service->buy_or_rent=='rent')
+    <br>
     <span>
-    {{$ordered_shared_service->no_of_days}} {{($ordered_shared_service->no_of_extra_days>0)? '+ '.$ordered_shared_service->no_of_extra_days :'' }} Days
+    For - {{$ordered_shared_service->no_of_days}} {{($ordered_shared_service->no_of_extra_days>0)?'+ '.$ordered_shared_service->no_of_extra_days:''}} Days
     </span>
+    @endif
+
   </div>
 </td>
 <td align="left" valign="top" style="padding:10px; font-size:14px; border: 1px solid #666;">{{$ordered_shared_service->quantity}}</td>

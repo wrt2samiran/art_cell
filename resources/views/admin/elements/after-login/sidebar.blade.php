@@ -367,6 +367,17 @@
                     </a>
                 </li>            
                 @endif
+                @if ($admin->role->user_type->slug =='super-admin' || $admin->role->user_type->slug =='service-provider')
+                <li class="nav-item has-treeview {{(request()->is('admin/labour/*','admin/labour'))?'menu-open':''}}">
+                    
+                    <li class="nav-item">
+                            <a href="{{ route('admin.labour.list') }}" class="nav-link {{(request()->is('admin/labour/*','admin/labour'))?'active':''}}">
+                                <i class="nav-icon fas fa-envelope-open-text"></i>
+                                <p>{{__('nav_link_text.labour_management')}}</p>
+                            </a>
+                        </li>
+                </li>
+                @endif
             </ul>
 
         </nav>

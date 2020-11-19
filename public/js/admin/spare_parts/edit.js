@@ -16,14 +16,8 @@
            
             extra_price_per_day: {
                 required: true,
-            },
-            quantity_available:{
-                required: true,
-                number:true
             }
-            // currency: {
-            //     required: true,
-            // },
+
         },
         messages: {
             name: {
@@ -43,10 +37,7 @@
             },
             quantity_available: {
                 required:  "Enter available quantity",
-            },
-            // currency: {
-            //     required:  "Currency is required",
-            // },
+            }
 
         },
 

@@ -65,21 +65,13 @@
 
                         <tr>
                           <td>Required Services</td>
-                          <td>{!!
-                              $quotation->services->map(function($service) {
-                                  return $service->service_name;
-                              })->implode(',<br>')
-                              !!}
+                          <td>@foreach ($quotation->serviceRelatedQuotetion as $item)
+                             {{$item['service']['service_name']}}<br>
+                          @endforeach
                           </td>
                         </tr>
                         <tr>
-                          <td>Property Types</td>
-                          <td>{!!
-                              $quotation->property_types->map(function($property_type) {
-                                  return $property_type->type_name;
-                              })->implode(',<br>')
-                              !!}
-                          </td>
+                          
                         </tr>
                         <tr>
                           <td>Created At</td>

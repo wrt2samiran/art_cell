@@ -31,7 +31,8 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
         Route::get('/testing','AuthController@mailTest');
         Route::get('/test', 'AuthController@test');
         Route::get('/', 'AuthController@index');
-        Route::get('/login', 'AuthController@index')->name('login');
+        Route::any('/login', 'AuthController@index')->name('login');
+        Route::post('/quotetion', 'AuthController@quotetion')->name('quotetion');
         Route::post('/authentication','AuthController@verifyCredentials')->name('authentication');
         Route::any('/forgot-password', 'AuthController@forgotPassword')->name('forgot.password');
         Route::any('/reset-password/{encryptCode}','AuthController@resetPassword')->name('reset.password');
@@ -426,6 +427,21 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::post('/update-task', 'CalendarController@updateTask')->name('updateTask');  
                 Route::post('/get-data', 'CalendarController@getData')->name('getData');       
                 
+            });
+
+            /************************************/
+
+            /*Routes for labour management */
+            Route::group(['prefix'=>'labour','as'=>'labour.'],function(){
+                Route::get('/', 'LabourController@list')->name('list');
+                Route::get('/create', 'LabourController@create')->name('create');
+                Route::post('/store', 'LabourController@store')->name('store');
+                Route::get('/{id}', 'LabourController@show')->name('show');
+                Route::get('/{id}/edit', 'LabourController@edit')->name('edit');
+                Route::put('/{id}', 'LabourController@update')->name('update');
+                Route::delete('/{id}/delete', 'LabourController@delete')->name('delete');
+                Route::get('/{id}/change-change', 'LabourController@change_status')->name('change_status');
+  
             });
 
             

@@ -94,13 +94,7 @@
                             @endif
                           </div>
 
-                          <div class="form-group required">
-                            <label for="quantity_available">Quantity Available <span class="error">*</span></label>
-                            <input type="number" min="0" step="1" class="form-control" value="{{old('quantity_available')?old('quantity_available'):''}}" name="quantity_available" id="quantity_available"  placeholder="Quantity Available">
-                            @if($errors->has('quantity_available'))
-                            <span class="text-danger">{{$errors->first('quantity_available')}}</span>
-                            @endif
-                          </div>
+
                           <div class="form-group required">
                             <label for="image">Image<span class="error">*</span></label>
                             <input type="file" class="form-control" name="image" id="image">

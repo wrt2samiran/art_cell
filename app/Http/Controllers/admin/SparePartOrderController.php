@@ -50,11 +50,25 @@ class SparePartOrderController extends Controller
 
             $spareParts=SparePart::with('unitmaster')->orderBy('id','Desc');
             return Datatables::of($spareParts)
+            ->editColumn('image',function($spare_part){
+                return '<div>
+                <img style="height:80px;width:100px" src="'.$spare_part->image_url.'"/>
+                </div>';
+            })
             ->addColumn('action',function($spare_part){
             	$action_url=route('admin.spare_part_orders.add_to_cart',$spare_part->id);
-            	return '<form class="form-inline" action="'.$action_url.'"><input type="number" step="1" value="1" max="'.$spare_part->quantity_available.'" min="1" class="form-control mb-2 mr-sm-2" name="quantity" placeholder="Enter Quantity"><button type="submit" class="btn btn-primary mb-2">Add To Cart</button></form>';  
+            	return '<form action="'.$action_url.'">
+                    <div class="row">
+                    <div class="col-md-6">
+                    <input type="number" step="1" value="1"  min="1" class="form-control mb-2 mr-sm-2" name="quantity" placeholder="Enter Quantity">
+                    </div>
+                    <div class="col-md-6">
+                    <button type="submit" class="btn btn-primary mb-2">Add To Cart</button>
+                    </div>
+                    </div>
+                    </form>';  
             })
-            ->rawColumns(['action'])
+            ->rawColumns(['action','image'])
             ->make(true);
         }
         return view($this->view_path.'.create_order',$this->data);
@@ -72,24 +86,20 @@ class SparePartOrderController extends Controller
         $current_user=auth()->guard('admin')->user();
         //checking sapre part status
         if($spare_part->is_active){
-            //checking quantity is available or not
-            if($request->quantity>$spare_part->quantity_available){
-                return redirect()->back()->with('error','Quantity you added not available for this spare part.');
+
+            //check if the item already in cart 
+            $spare_part_cart=SparePartCart::where('spare_part_id',$spare_part_id)
+                            ->where('user_id',$current_user->id)
+                            ->first();
+            if($spare_part_cart){
+                return redirect()->back()->with('error','Spare part already in your cart.');
             }else{
-                //check if the item already in cart 
-                $spare_part_cart=SparePartCart::where('spare_part_id',$spare_part_id)
-                                ->where('user_id',$current_user->id)
-                                ->first();
-                if($spare_part_cart){
-                    return redirect()->back()->with('error','Spare part already in your cart.');
-                }else{
-                    SparePartCart::create([
-                        'user_id'=>$current_user->id,
-                        'spare_part_id'=>$spare_part_id,
-                        'quantity'=>$request->quantity
-                    ]);
-                    return redirect()->back()->with('success','Spare part added to the cart.');
-                }
+                SparePartCart::create([
+                    'user_id'=>$current_user->id,
+                    'spare_part_id'=>$spare_part_id,
+                    'quantity'=>$request->quantity
+                ]);
+                return redirect()->back()->with('success','Spare part added to the cart.');
             }
 
         }else{
@@ -142,19 +152,14 @@ class SparePartOrderController extends Controller
         $current_user=auth()->guard('admin')->user();
 
         if($spare_part->is_active){
-            //checking quantity is available or not
-            if($request->quantity>$spare_part->quantity_available){
-                return redirect()->back()->with('error','Quantity you added not available for this spare part.');
-            }else{
    
-                if($spare_part_cart->user_id!=$current_user->id){
-                    abort(403,'Cart not belongs to you'.'<a href="'.route('admin.dashboard').'" class="btn btn-success">Back to Dashboard</a>');
-                }
-                $spare_part_cart->update([
-                    'quantity'=>$request->quantity
-                ]);
-                return redirect()->back()->with('success','Cart updated.');
+            if($spare_part_cart->user_id!=$current_user->id){
+                abort(403,'Cart not belongs to you'.'<a href="'.route('admin.dashboard').'" class="btn btn-success">Back to Dashboard</a>');
             }
+            $spare_part_cart->update([
+                'quantity'=>$request->quantity
+            ]);
+            return redirect()->back()->with('success','Cart updated.');
 
         }else{
             return redirect()->back()->with('error','Spare part is not active.');
@@ -236,15 +241,6 @@ class SparePartOrderController extends Controller
                         ->where('user_id',$current_user->id)
                                 ->get();
 
-        //checking stock available for all spare parts
-        if (count($spare_part_carts)){
-           foreach ($spare_part_carts as $spare_part_cart) {
-               if($spare_part_cart->quantity>$spare_part_cart->spare_part_details->quantity_available){
-                    return redirect()->route('admin.spare_part_orders.cart')->with('error','Can not place the order due to unavailability of stock for some spare parts in your cart');
-               }
-           }
-        }
-
         $sub_total=self::cart_total_without_tax($spare_part_carts);  
 
         $tax_percentage=$site_setting['tax'];
@@ -252,7 +248,6 @@ class SparePartOrderController extends Controller
         $tax_amount=(($tax_percentage/100)*$sub_total);
 
         $total=$sub_total+$tax_amount;
-
 
         $order=SparePartOrder::create([
             'user_id'=>$current_user->id,
@@ -275,12 +270,6 @@ class SparePartOrderController extends Controller
                 'price'=>$spare_part_cart->spare_part_details->price,
                 'total_price'=>($spare_part_cart->spare_part_details->price*$spare_part_cart->quantity)
             ];
-
-            $quantity_available=($spare_part_cart->spare_part_details->quantity_available - $spare_part_cart->quantity);
-            //update quantity available for the spare part
-            SparePart::find($spare_part_cart->spare_part_id)->update([
-                'quantity_available'=>($quantity_available>0)?$quantity_available:'0'
-            ]);
 
         }
 

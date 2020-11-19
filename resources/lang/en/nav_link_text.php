@@ -36,5 +36,6 @@ return array (
   'user_management' => 'User Management',
   'email_templete' => 'Email Template Management',
   'calendar'  => 'Calendar',
+  'labour_management' => 'Labour Management',
 
 );

@@ -151,16 +151,17 @@
                                                     <tr>
                                                         <td >
                                                             <div class="media">
-                                        
+                                                                <img style="height: 40px;width: 50px" class="mr-3" src="{{$cart->spare_part_details->image_url}}" alt="{{$cart->spare_part_details->name}}">
                                                                 <div class="media-body">
-                                                                    <h4 class="media-heading">
-                                                                        <a href="#">{{$cart->spare_part_details->name}}
-                                                                        </a>
-                                                                    </h4>
-                                                                    <h5 class="media-heading"> BY- <a href="#">
-                                                                        {{$cart->spare_part_details->manufacturer}}
-                                                                    </a></h5>
-                                                                    <span>Status: </span><span class="text-success"><strong>In Stock</strong></span>
+                                                                    
+                                                                   
+                                                                    <span>{{$cart->spare_part_details->name}}
+                                                                    </span>
+                                                                    <br>
+                                                                    <span>
+                                                                       By :  {{$cart->spare_part_details->manufacturer}}
+                                                                    </span>
+                                                                  
                                                                 </div>
                                                             </div>
                                                         </td>

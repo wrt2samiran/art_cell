@@ -67,20 +67,27 @@
                                                 @if(count($shared_service_carts))
                                                     @foreach($shared_service_carts as $cart)
                                                     <tr>
-                                                        <td >
-                                                            <div class="media">
-                                                                <div class="media-body">
-                                                                    <h4 class="media-heading">
-                                                                        <a href="#">{{$cart->shared_service_details->name}}
-                                                                        </a><br>
-                                                                        <span>
-                                                                        {{$cart->shared_service_details->number_of_days}}
-                                                                        Days
-                                                                        </span>
-                                                                          
-                                                                    </h4>
-                                                                </div>
+                                                        <td>
+                              
+                                                        <div class="media">
+                                                            <div class="media-body">
+                                                                @if($cart->buy_or_rent=='buy')
+                                                                <div>Buying</div>
+                                                                @endif
+                                                                <h5 class="media-heading">
+                                                                    <span>
+                                                                    {{$cart->shared_service_details->name}}
+                                                                    </span>
+                                                                </h5>
+                                                                @if($cart->buy_or_rent=='rent')
+                                                                <h6 class="media-heading"> 
+                                                                <span>
+                                                                For - {{$cart->shared_service_details->number_of_days}} {{($cart->no_of_extra_days>0)?'+ '.$cart->no_of_extra_days:''}} Days
+                                                                </span>
+                                                                </h6>
+                                                                @endif
                                                             </div>
+                                                        </div>
                                                         </td>
                                                         <td  style="text-align: center">
                                                             <form method="post" action="{{route('admin.shared_service_orders.update_cart',$cart->id)}}">
@@ -88,11 +95,13 @@
                                                             <div class="row">
                                                                 <div class="col-md-6">
                                                                 Quantity
-                                                                <input type="number"  step="1" value="{{$cart->quantity}}" max="'.$shared_service->quantity_available.'" min="1" class="form-control update_quantity" data-cart_id="{{$cart->id}}" name="quantity" placeholder="Enter Quantity">
+                                                                <input type="number"  step="1" value="{{$cart->quantity}}" min="1" class="form-control update_quantity" data-cart_id="{{$cart->id}}" name="quantity" placeholder="Enter Quantity">
                                                                 </div>
+                                                                @if($cart->buy_or_rent=='rent')
                                                                 <div class="col-md-6">
                                                                 Extra Day <input type="number" data-cart_id="{{$cart->id}}" step="1" value="{{$cart->no_of_extra_days}}"  min="0" class="form-control update_no_of_extra_days" name="no_of_extra_days" placeholder="Extra Days">
                                                                 </div>
+                                                                @endif
                                                                 <div class="col-md-12">
                                                                    <button id="cart_update_{{$cart->id}}" style="width: 100%;display: none" class="btn btn-primary mt-1">Update</button>
                                                                 </div>
@@ -100,9 +109,16 @@
                                                             </form>
                                                         </td>
                                                         <td class=" text-center">
-                                                            <strong>{{$cart->shared_service_details->currency}} {{number_format($cart->shared_service_details->price, 2, '.', '')}}</strong>
+                                                            <strong>
+                                                            {{$cart->shared_service_details->currency}}
+                                                            @if($cart->buy_or_rent=='rent')
+                                                            {{number_format($cart->shared_service_details->price, 2, '.', '')}}
+                                                            @else
+                                                            {{number_format($cart->shared_service_details->selling_price, 2, '.', '')}}
+                                                            @endif
+                                                            </strong>
 
-                                                            @if($cart->no_of_extra_days>0)
+                                                            @if($cart->no_of_extra_days>0 && $cart->buy_or_rent=='rent')
                                                             <br>
                                                             <strong>+</strong><br>
                                                              <strong>{{$cart->shared_service_details->currency}} {{number_format($cart->shared_service_details->extra_price_per_day, 2, '.', '')}}/day

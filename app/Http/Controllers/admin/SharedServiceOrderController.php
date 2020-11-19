@@ -48,27 +48,68 @@ class SharedServiceOrderController extends Controller
     	$this->data['page_title']='Order Spare Parts';
         if($request->ajax()){
 
-            $shared_services=SharedService::orderBy('id','Desc');
+            $shared_services=SharedService::where(function($q){
+                $q->where('is_selling',true)->orWhere('is_sharing',true);
+            })
+            ->whereIsActive(true)
+            ->orderBy('id','Desc');
             return Datatables::of($shared_services)
+            ->editColumn('price', function ($sharedService) {
+                if($sharedService->is_sharing){
+                    return "<div><span>".$sharedService->currency.number_format($sharedService->price, 2, '.', '')."</span> for ".$sharedService->number_of_days." days</div><div>+ ".$sharedService->currency.number_format($sharedService->extra_price_per_day, 2, '.', '')."/day</div>";
+                }else{
+                    return '<span class="text-muted">Not Available</span>';
+                }
+            })
+            ->editColumn('selling_price', function ($sharedService) {
+
+                if($sharedService->is_selling){
+                    return "<div><span>".$sharedService->currency.number_format($sharedService->selling_price, 2, '.', '')."</span></div>";
+                }else{
+                    return '<span class="text-muted">Not Available</span>';
+                }
+            })
+            ->orderColumn('price', function ($query, $order) {
+                 $query->orderBy('price',$order);
+            })
+            ->orderColumn('selling_price', function ($query, $order) {
+                 $query->orderBy('selling_price',$order);
+            })
             ->addColumn('action',function($shared_service){
             	$action_url=route('admin.shared_service_orders.add_to_cart',$shared_service->id);
+
+                $extra_day_visibility=($shared_service->is_sharing)?'block':'none';
+
+                $buy_or_rent_select_field='<select class="form-control buy_or_rent" name="buy_or_rent" id="buy_or_rent_'.$shared_service->id.'">';
+                if($shared_service->is_sharing){
+                   $buy_or_rent_select_field.='<option value="rent">Rent</option>';
+                }
+                if($shared_service->is_selling){
+                   $buy_or_rent_select_field.='<option value="buy">Buy</option>';
+                }
+                $buy_or_rent_select_field.='</select>';
+
             	return '<form  action="'.$action_url.'">
             	<div class="row">
+                    <div class="col-md-6" >
+                    <span>Rent/Buy</span>
+                    '.$buy_or_rent_select_field.'
+                    </div>
 	            	<div class="col-md-3">
 	            	Quantity
-	            	<input type="number" step="1" value="1" max="'.$shared_service->quantity_available.'" min="1" class="form-control" name="quantity" placeholder="Enter Quantity">
+	            	<input type="number" step="1" value="1"  min="1" class="form-control" name="quantity" placeholder="Enter Quantity">
 	            	</div>
-	            	<div class="col-md-3">
+	            	<div style="display:'.$extra_day_visibility.'" class="col-md-3" id="extra_day_cont_'.$shared_service->id.'">
 	            	Extra Day <input type="number" step="1" value="0"  min="0" class="form-control" name="no_of_extra_days" placeholder="Extra Days">
 	            	</div>
-	            	<div class="col-md-6" style="padding-top:22px;">
+	            	<div class="col-md-12 pt-2" >
 	            	<button type="submit" class="btn btn-primary mb-2">Add To Cart</button>
 	            	</div>
             	</div>
-
             	</form>';   
+
             })
-            ->rawColumns(['action'])
+            ->rawColumns(['action','price','selling_price'])
             ->make(true);
         }
         return view($this->view_path.'.create_order',$this->data);
@@ -87,25 +128,21 @@ class SharedServiceOrderController extends Controller
         $current_user=auth()->guard('admin')->user();
         //checking sapre part status
         if($shared_service->is_active){
-            //checking quantity is available or not
-            if($request->quantity>$shared_service->quantity_available){
-                return redirect()->back()->with('error','Quantity you added not available for this shared service.');
+            //check if the item already in cart 
+            $shared_service_cart=SharedServiceCart::where('shared_service_id',$shared_service_id)
+                            ->where('user_id',$current_user->id)
+                            ->first();
+            if($shared_service_cart){
+                return redirect()->back()->with('error','Shared service already in your cart.');
             }else{
-                //check if the item already in cart 
-                $shared_service_cart=SharedServiceCart::where('shared_service_id',$shared_service_id)
-                                ->where('user_id',$current_user->id)
-                                ->first();
-                if($shared_service_cart){
-                    return redirect()->back()->with('error','Shared service already in your cart.');
-                }else{
-                    SharedServiceCart::create([
-                        'user_id'=>$current_user->id,
-                        'shared_service_id'=>$shared_service_id,
-                        'quantity'=>$request->quantity,
-                        'no_of_extra_days'=>$request->no_of_extra_days
-                    ]);
-                    return redirect()->back()->with('success','Shared service added to the cart.');
-                }
+                SharedServiceCart::create([
+                    'user_id'=>$current_user->id,
+                    'shared_service_id'=>$shared_service_id,
+                    'quantity'=>$request->quantity,
+                    'buy_or_rent'=>$request->buy_or_rent,
+                    'no_of_extra_days'=>$request->no_of_extra_days
+                ]);
+                return redirect()->back()->with('success','Shared service added to the cart.');
             }
 
         }else{
@@ -133,8 +170,12 @@ class SharedServiceOrderController extends Controller
 
         if(count($shared_service_carts)){
             foreach ($shared_service_carts as $cart) {
-                $total_unit_price=$cart->shared_service_details->price+($cart->no_of_extra_days*$cart->shared_service_details->extra_price_per_day);
-
+                if($cart->buy_or_rent=='rent'){
+                    $total_unit_price=$cart->shared_service_details->price+($cart->no_of_extra_days*$cart->shared_service_details->extra_price_per_day);
+                }else{
+                    $total_unit_price=$cart->shared_service_details->selling_price;
+                }
+                
                 $cart_total=($cart->quantity*$total_unit_price);
 
                 $cart->total=$cart_total;
@@ -165,20 +206,15 @@ class SharedServiceOrderController extends Controller
         $current_user=auth()->guard('admin')->user();
 
         if($shared_service->is_active){
-            //checking quantity is available or not
-            if($request->quantity>$shared_service->quantity_available){
-                return redirect()->back()->with('error','Quantity you added not available for this shareed service.');
-            }else{
 
-                if($shared_service_cart->user_id!=$current_user->id){
-                    abort(403,'Cart not belongs to you'.'<a href="'.route('admin.dashboard').'" class="btn btn-success">Back to Dashboard</a>');
-                }
-                $shared_service_cart->update([
-                    'quantity'=>$request->quantity,
-                    'no_of_extra_days'=>$request->no_of_extra_days
-                ]);
-                return redirect()->back()->with('success','Cart updated.');
+            if($shared_service_cart->user_id!=$current_user->id){
+                abort(403,'Cart not belongs to you'.'<a href="'.route('admin.dashboard').'" class="btn btn-success">Back to Dashboard</a>');
             }
+            $shared_service_cart->update([
+                'quantity'=>$request->quantity,
+                'no_of_extra_days'=>$request->no_of_extra_days
+            ]);
+            return redirect()->back()->with('success','Cart updated.');
 
         }else{
             return redirect()->back()->with('error','Shared service is not active.');
@@ -233,7 +269,12 @@ class SharedServiceOrderController extends Controller
 
         if(count($shared_service_carts)){
             foreach ($shared_service_carts as $cart) {
-                $total_unit_price=$cart->shared_service_details->price+($cart->no_of_extra_days*$cart->shared_service_details->extra_price_per_day);
+                if($cart->buy_or_rent=='rent'){
+                    $total_unit_price=$cart->shared_service_details->price+($cart->no_of_extra_days*$cart->shared_service_details->extra_price_per_day);
+                }else{
+                    $total_unit_price=$cart->shared_service_details->selling_price;
+                }
+
 
                 $cart_total=($cart->quantity*$total_unit_price);
 
@@ -272,24 +313,10 @@ class SharedServiceOrderController extends Controller
                         ->where('user_id',$current_user->id)
                                 ->get();
 
-        //checking stock available for all spare parts
-        if (count($shared_service_carts)){
-
-           foreach ($shared_service_carts as $shared_service_cart) {
-               if($shared_service_cart->quantity>$shared_service_cart->shared_service_details->quantity_available){
-                    return redirect()->route('admin.shared_service_orders.cart')->with('error','Can not place the order due to unavailability of stock for some shared services in your cart');
-               }
-           }
-        }
-
-        $sub_total=self::cart_total_without_tax($shared_service_carts);  
-
+        $sub_total=self::cart_total_without_tax($shared_service_carts); 
         $tax_percentage=$site_setting['tax'];
-
         $tax_amount=(($tax_percentage/100)*$sub_total);
-
         $total=$sub_total+$tax_amount;
-
 
         $order=SharedServiceOrder::create([
             'user_id'=>$current_user->id,
@@ -307,28 +334,45 @@ class SharedServiceOrderController extends Controller
         foreach ($shared_service_carts as $shared_service_cart) {
 
             $shared_service=$shared_service_cart->shared_service_details;
-            $total_days=$shared_service->number_of_days+ $shared_service_cart->no_of_extra_days;
 
-            $total_unit_price=$shared_service->price+($shared_service_cart->no_of_extra_days*$shared_service->extra_price_per_day);
+            if($shared_service_cart->buy_or_rent=='rent'){
+                $total_days=$shared_service->number_of_days+ $shared_service_cart->no_of_extra_days;
+
+                $total_unit_price=$shared_service->price+($shared_service_cart->no_of_extra_days*$shared_service->extra_price_per_day);
+
+                $number_of_days=$shared_service->number_of_days;
+
+                $rent_price=$shared_service->price;
+                $no_of_extra_days=$shared_service_cart->no_of_extra_days;
+                $extra_price_per_day=$shared_service->extra_price_per_day;
+
+                $buy_price=null;
+
+            }else{
+                $total_days=null;
+                $total_unit_price=$shared_service->selling_price;
+                $number_of_days=null;
+                $rent_price=null;
+                $no_of_extra_days=null;
+                $extra_price_per_day=null;
+
+                $buy_price=$shared_service->selling_price;
+            }
 
             $order_items_array[]=[
                 'order_id'=>$order->id,
                 'shared_service_id'=>$shared_service_cart->shared_service_id,
-                'no_of_days'=>$shared_service->number_of_days,
+                'buy_or_rent'=>$shared_service_cart->buy_or_rent,
+                'no_of_days'=>$number_of_days,
                 'quantity'=>$shared_service_cart->quantity,
-                'price'=>$shared_service->price,
-                'no_of_extra_days'=>$shared_service_cart->no_of_extra_days,
-                'extra_days_price'=>$shared_service->extra_price_per_day,
+                'price'=>$rent_price,
+                'buy_price'=>$buy_price,
+                'no_of_extra_days'=>$no_of_extra_days,
+                'extra_days_price'=>$extra_price_per_day,
                 'total_days'=>$total_days,
                 'total_unit_price'=>$total_unit_price,
                 'total_price'=>($total_unit_price*$shared_service_cart->quantity)
             ];
-
-            $quantity_available=($shared_service_cart->shared_service_details->quantity_available - $shared_service_cart->quantity);
-            //update quantity available for the spare part
-            SharedService::find($shared_service_cart->shared_service_id)->update([
-                'quantity_available'=>($quantity_available>0)?$quantity_available:'0'
-            ]);
 
         }
 
@@ -370,7 +414,12 @@ class SharedServiceOrderController extends Controller
         $sub_total_price_array=[];
         if(count($shared_service_carts)){
             foreach ($shared_service_carts as $cart) {
-                $total_unit_price=$cart->shared_service_details->price+($cart->no_of_extra_days*$cart->shared_service_details->extra_price_per_day);
+                if($cart->buy_or_rent=='rent'){
+                    $total_unit_price=$cart->shared_service_details->price+($cart->no_of_extra_days*$cart->shared_service_details->extra_price_per_day);
+                }else{
+                    $total_unit_price=$cart->shared_service_details->selling_price;
+                }
+
 
                 $cart_total=($cart->quantity*$total_unit_price);
 
