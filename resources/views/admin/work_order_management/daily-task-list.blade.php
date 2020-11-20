@@ -94,15 +94,12 @@
                                           <td >{{Carbon\Carbon::createFromFormat('Y-m-d', $work_order_list->start_date)->format('d-m-Y')}}</td>
                                         </tr>
 
-                                        <tr>
-                                          <td>End Date</td>
-                                          <td >{{Carbon\Carbon::createFromFormat('Y-m-d', $work_order_list->end_date)->format('d-m-Y')}}</td>
-                                        </tr>
+                                        
                                         
                                         <!-- <tr>
                                           <td>Status</td>
                                           <td>
-                                            <button role="button" class="btn btn-{{($task_list_data->status=='A')?'success':'danger'}}">{{($task_list_data->status=='A')?'Active':'Inactive'}}</button>
+                                            <button role="button" class="btn btn-{{($work_order_list->status=='A')?'success':'danger'}}">{{($work_order_list->status=='A')?'Active':'Inactive'}}</button>
                                           </td>
                                         </tr> -->
                                        
