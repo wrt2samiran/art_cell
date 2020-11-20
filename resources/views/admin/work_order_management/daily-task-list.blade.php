@@ -14,7 +14,7 @@
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                   <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item"><a href="{{route('admin.task_management.list')}}">Task Management</a></li>
+                  <li class="breadcrumb-item"><a href="{{route('admin.work-order-management.list')}}">Task Management</a></li>
                   <li class="breadcrumb-item active">Labour Task List</li>
                 </ol>
               </div>
@@ -59,50 +59,47 @@
                                         <?php //dd($service_allocation_data);?>
                                         <tr>
                                           <td >Task Title</td>
-                                          <td >{{$task_list_data->task_title}}</td>
+                                          <td >{{$work_order_list->task_title}}</td>
                                         </tr>
                                         <tr>
                                           <td >Property Name</td>
-                                          <td >{{$task_list_data->property->property_name}}</td>
+                                          <td >{{$work_order_list->property->property_name}}</td>
                                         </tr>
                                         <tr>
                                           <td >Service</td>
-                                          <td >{{$task_list_data->service->service_name}}</td>
+                                          <td >{{$work_order_list->service->service_name}}</td>
                                         </tr>
                                         <tr>
                                           <td>Country</td>
-                                          <td >{{$task_list_data->country->name}}</td>
+                                          <td >{{$work_order_list->property->country->name}}</td>
                                         </tr>
                                         <tr>
                                           <td>State</td>
-                                          <td >{{$task_list_data->state->name}}</td>
+                                          <td >{{$work_order_list->property->state->name}}</td>
                                         </tr>
                                         <tr>
                                           <td>City</td>
-                                          <td >{{$task_list_data->city->name}}</td>
+                                          <td >{{$work_order_list->property->city->name}}</td>
                                         </tr>
                                         <tr>
                                           <td>Task Details</td>
-                                          <td >{!! $task_list_data->task_desc!!}</td>
+                                          <td >{!! $work_order_list->task_desc!!}</td>
                                         </tr>
                                         <tr>
                                           <td >Service Provider</td>
-                                          <td >{{$task_list_data->userDetails->name}}</td>
+                                          <td >{{$work_order_list->userDetails->name}}</td>
                                         </tr>
                                         <tr>
                                           <td>Start Date</td> 
-                                          <td >{{Carbon\Carbon::createFromFormat('Y-m-d', $task_list_data->start_date)->format('d-m-Y')}}</td>
+                                          <td >{{Carbon\Carbon::createFromFormat('Y-m-d', $work_order_list->start_date)->format('d-m-Y')}}</td>
                                         </tr>
 
-                                        <tr>
-                                          <td>End Date</td>
-                                          <td >{{Carbon\Carbon::createFromFormat('Y-m-d', $task_list_data->end_date)->format('d-m-Y')}}</td>
-                                        </tr>
+                                        
                                         
                                         <!-- <tr>
                                           <td>Status</td>
                                           <td>
-                                            <button role="button" class="btn btn-{{($task_list_data->status=='A')?'success':'danger'}}">{{($task_list_data->status=='A')?'Active':'Inactive'}}</button>
+                                            <button role="button" class="btn btn-{{($work_order_list->status=='A')?'success':'danger'}}">{{($work_order_list->status=='A')?'Active':'Inactive'}}</button>
                                           </td>
                                         </tr> -->
                                        
@@ -113,7 +110,7 @@
                                 <div class="card-header">
                                     <div class="d-flex justify-content-between" >
                                       <div>
-                                        <a class="btn btn-success" style="text-align: right;" href="{{route('admin.task_management.labourTaskCreate', $task_list_data->id)}}">
+                                        <a class="btn btn-success" style="text-align: right;" href="{{route('admin.work-order-management.labourTaskCreate', $work_order_list->id)}}">
                                          Assign Labour Task
                                         </a>
                                       </div>
@@ -151,7 +148,7 @@
                                           <div class="row justify-content-center">
                                             <div class="col-md-10 col-sm-12">
                                               
-                                              <form  method="post" id="admin_labour_task_feedback_form" action="{{route('admin.task_management.taskFeedback')}}" method="post" enctype="multipart/form-data">
+                                              <form  method="post" id="admin_labour_task_feedback_form" action="{{route('admin.work-order-management.taskFeedback')}}" method="post" enctype="multipart/form-data">
                                                 @csrf
                                                       <div>  
                                                         <input type="hidden" name="task_details_id" id="task_details_id" />
@@ -206,7 +203,7 @@
         $('.alert-dismissable').fadeOut('fast');
     }, 5000); 
 </script>
-<script type="text/javascript" src="{{asset('js/admin/task_management/daily-task-list.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/admin/work_order_management/daily-task-list.js')}}"></script>
 @endpush
 
 

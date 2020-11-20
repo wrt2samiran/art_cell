@@ -31,7 +31,7 @@ return array (
   'order_shared_service' => 'اطلب الخدمة المشتركة',
   'state_management' => 'إدارة الدولة',
   'task_assign_labour' => 'Task Assign Labour',
-  'task_management' => 'ادارة المهام',
+  'work-order-management' => 'إدارة أوامر العمل',
   'translation_management' => 'إدارة الترجمة',
   'user_management' => 'إدارةالمستخدم',
   'email_templete' => 'إدارة قالب البريد الإلكتروني',

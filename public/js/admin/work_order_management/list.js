@@ -1,21 +1,22 @@
 //initializing galleries datatable
-    var task_management_table=$('#task_management_table').DataTable({
+    var work_order_management_table=$('#work_order_management_table').DataTable({
         "responsive": true,
         "autoWidth": false,
         processing: true,
         serverSide: true,
-        ajax: baseUrl+'/admin/task_management',
+        ajax: baseUrl+'/admin/work-order-management',
         columns: [
             { data: 'id', name: 'id' },
+            { data: 'contract.code', name: 'contract.code'},
             { data: 'task_title', name: 'task_title'},
             { data: 'property.property_name', name: 'property.property_name' },
             { data: 'service.service_name', name: 'service.service_name' },
-            { data: 'country.name', name: 'country.name' },
-            { data: 'state.name', name: 'state.name' },
-            { data: 'city.name', name: 'city.name' },
+            { data: 'property.country.name', name: 'property.country.name' },
+            { data: 'property.state.name', name: 'property.state.name' },
+            { data: 'property.city.name', name: 'property.city.name' },
 
             { data: 'start_date', name: 'start_date' },
-            { data: 'end_date', name: 'end_date' },
+            
 
             { data: 'status', name: 'ststus' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
@@ -63,7 +64,7 @@
         }
      });
 
-     task_management_table.ajax.reload(null, false);
+     work_order_management_table.ajax.reload(null, false);
 
 
     } 
@@ -103,7 +104,7 @@
         }
      });
 
-     task_management_table.ajax.reload(null, false);
+     work_order_management_table.ajax.reload(null, false);
     // window.location.href=url;
     } 
   });

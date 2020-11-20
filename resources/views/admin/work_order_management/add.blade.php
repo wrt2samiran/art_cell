@@ -9,12 +9,12 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Task Management</h1>
+            <h1>Work Order Management</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.task_management.list')}}">Task</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.work-order-management.list')}}">Task</a></li>
               <li class="breadcrumb-item active">Create</li>
             </ol>
           </div>
@@ -28,7 +28,7 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Create Task</h3>
+                <h3 class="card-title">Create Work Order</h3>
               </div>
               <div class="card-body">
                   @if(Session::has('success'))
@@ -47,7 +47,7 @@
                   
                   <div class="row justify-content-center">
                     <div class="col-md-10 col-sm-12">
-                      <form  method="post" id="admin_task_add_form" action="{{route('admin.task_management.taskCreate')}}" method="post" enctype="multipart/form-data">
+                      <form  method="post" id="admin_task_add_form" action="{{route('admin.work-order-management.workOrderCreate')}}" method="post" enctype="multipart/form-data">
                         @csrf
                               <div>  
                                 </div>
@@ -79,7 +79,7 @@
 
                                 <div class="form-group required">
                                   <label for="service_id">Service <span class="error">*</span></label>
-                                  <select class="form-control parent_role_select2"  style="width: 100%;" name="service_id" id="service_id" onchange="onServiceSelect(this.value)">
+                                  <select class="form-control parent_role_select2 service_id"  style="width: 100%;" name="service_id" id="service_id" onchange="onServiceSelect(this.value)">
                                      <option>Select Service</option>
                                                                  
                                     </select>
@@ -166,7 +166,7 @@
 
      $.ajax({
        
-        url: "{{route('admin.task_management.getContractData')}}",
+        url: "{{route('admin.work-order-management.getContractData')}}",
         type:'get',
         dataType: "json",
         data:{contract_id:contract_id,_token:"{{ csrf_token() }}"}
@@ -255,7 +255,7 @@
 
      $.ajax({
        
-        url: "{{route('admin.task_management.getContractServiceStatus')}}",
+        url: "{{route('admin.work-order-management.getContractServiceStatus')}}",
         type:'get',
         dataType: "json",
         data:{service_id:service_id,contract_id:contract_id,_token:"{{ csrf_token() }}"}
@@ -270,13 +270,15 @@
               if(response.service_status=='Out of period' || response.service_status=='Not Available'){
                   swal({
                   title: response.service_status,
-                  text: "This service is "+response.service_status+ " to add for a new task! Please contact with Admin.",
+                  text: "This service is "+response.service_status+ " to add for a new work order! Please contact with Admin.",
                   icon: "warning",
                   dangerMode: true,
                   showCancelButton: false,
                   })
                 
-                    $('#service_id').val('');
+                   $('.service_id').val('');
+                   //$(this).prop('selected', false);
+                    //$("#service_id").val([]);
                     $('.disable-button').prop("disabled", true); // Submit button is now disabled.
                   
               }
@@ -290,7 +292,7 @@
 
 </script>
 
-<script type="text/javascript" src="{{asset('js/admin/task_management/create.js')}}">
+<script type="text/javascript" src="{{asset('js/admin/work_order_management/create.js')}}">
 
   
 </script>
