@@ -15,9 +15,10 @@
 #    11.order_list                                        #
 #    12.order_details                                     #
 #    13.update_order_status                               #
+#    14.download_invoice                                  #
 # Created Date   : 02-11-2020                             #
-# Modified Date  : 03-11-2020                             #
-# Purpose        : Shared Service Order Management        #
+# Modified Date  : 19-11-2020                             #
+# Purpose        : Spare Part Order Management            #
 /*********************************************************/
 namespace App\Http\Controllers\admin;
 
@@ -30,6 +31,7 @@ use Helper;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
 use App\Events\Order\SparePart\OrderPlaced;
+use PDF;
 class SparePartOrderController extends Controller
 {
     //defining the view path
@@ -420,6 +422,25 @@ class SparePartOrderController extends Controller
         return redirect()->back()->with('success','Order status successfully updated.');
     }
 
-    
+    /************************************************************************/
+    # Function to download invoice                                           #
+    # Function name    : download_invoice                                 #
+    # Created Date     : 19-11-2020                                          #
+    # Modified date    : 19-11-2020                                          #
+    # Purpose          : To download invoice                                 #
+    # Param            : order_id, Request $request                          #
+
+    public function download_invoice($order_id,Request $request){
+
+        $spare_part_order=SparePartOrder::with('ordered_spare_parts','user')->find($order_id);
+        $this->data['order']=$spare_part_order;
+        $pdf = PDF::loadView($this->view_path.'.pdf.invoice', $this->data);
+        
+        $file_name='Invoice-for-spare-part-order-no-'.$spare_part_order->id.'.pdf';
+        
+        ob_end_clean(); //without ob_end_clean I got error before loade PDF after download. Got this solution from github
+        return $pdf->download($file_name);
+        //return redirect()->back()->with('success','Order status successfully updated.');
+    }    
 
 }

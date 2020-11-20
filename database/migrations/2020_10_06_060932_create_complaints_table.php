@@ -18,16 +18,9 @@ class CreateComplaintsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('created_by')->index();
             $table->unsignedBigInteger('contract_id')->index()->nullable();
-            $table->unsignedBigInteger('work_order_id')->index()->nullable();
             $table->unsignedBigInteger('task_id')->index()->nullable();
             $table->text('details');
-
             $table->unsignedBigInteger('complaint_status_id')->index()->nullable();
-            $table->string('status',30)->nullable();
-            $table->text('note_from_admin_end')->nullable();
-            $table->text('note_service_provider')->nullable();
-            $table->text('note_property_owner_end')->nullable();
-
             $table->unsignedBigInteger('last_updated_by')->nullable();
             $table->timestamps();
 

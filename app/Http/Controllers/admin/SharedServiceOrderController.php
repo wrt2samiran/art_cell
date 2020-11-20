@@ -15,8 +15,9 @@
 #    11.order_list                                        #
 #    12.order_details                                     #
 #    13.update_order_status                               #
+#    14.download_invoice                                  #
 # Created Date   : 03-11-2020                             #
-# Modified Date  : 04-11-2020                             #
+# Modified Date  : 19-11-2020                             #
 # Purpose        : Shared Service Order Management        #
 /*********************************************************/
 namespace App\Http\Controllers\admin;
@@ -30,6 +31,7 @@ use Helper;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
 use App\Events\Order\SharedService\OrderPlaced;
+use PDF;
 class SharedServiceOrderController extends Controller
 {
     //defining the view path
@@ -508,8 +510,8 @@ class SharedServiceOrderController extends Controller
     # Param            : order_id                                            #
     public function order_details($order_id){
         $this->data['page_title']='Shared Service Order Details';
-        $spare_part_order=SharedServiceOrder::with('ordered_shared_services','user')->find($order_id);
-        $this->data['order']=$spare_part_order;
+        $shared_service_order=SharedServiceOrder::with('ordered_shared_services','user')->find($order_id);
+        $this->data['order']=$shared_service_order;
         return view($this->view_path.'.manage.order_details',$this->data);
     }
 
@@ -522,14 +524,33 @@ class SharedServiceOrderController extends Controller
     # Param            : order_id, Request $request                          #
 
     public function update_order_status($order_id,Request $request){
-        $spare_part_order=SharedServiceOrder::findOrFail($order_id);
-        $spare_part_order->update([
+        $shared_service_order=SharedServiceOrder::findOrFail($order_id);
+        $shared_service_order->update([
             'curent_status'=>$request->status,
             'updated_by'=>auth()->guard('admin')->id()
         ]);
         return redirect()->back()->with('success','Order status successfully updated.');
     }
 
-    
+    /************************************************************************/
+    # Function to download invoice                                           #
+    # Function name    : download_invoice                                 #
+    # Created Date     : 19-11-2020                                          #
+    # Modified date    : 19-11-2020                                          #
+    # Purpose          : To download invoice                                 #
+    # Param            : order_id, Request $request                          #
+
+    public function download_invoice($order_id,Request $request){
+
+        $shared_service_order=SharedServiceOrder::with('ordered_shared_services','user')->find($order_id);
+        $this->data['order']=$shared_service_order;
+        $pdf = PDF::loadView($this->view_path.'.pdf.invoice', $this->data);
+        
+        $file_name='Invoice-for-order-no-'.$shared_service_order->id.'.pdf';
+        
+        ob_end_clean(); //without ob_end_clean I got error before loade PDF after download. Got this solution from github
+        return $pdf->download($file_name);
+        //return redirect()->back()->with('success','Order status successfully updated.');
+    } 
 
 }

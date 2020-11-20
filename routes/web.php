@@ -311,6 +311,8 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::get('/my-orders', 'SparePartOrderController@my_orders')->name('my_orders');
 
                 Route::get('/my-orders/{order_id}/ajax', 'SparePartOrderController@ajax_my_order_details')->name('ajax_my_order_details');
+                
+                Route::get('{order_id}/download-invoice', 'SparePartOrderController@download_invoice')->name('download_invoice');
 
                 /** manage spare part orders **/
                 Route::get('/manage/orders','SparePartOrderController@order_list')->name('order_list');
@@ -343,6 +345,8 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::get('/my-orders', 'SharedServiceOrderController@my_orders')->name('my_orders');
 
                 Route::get('/my-orders/{order_id}/ajax', 'SharedServiceOrderController@ajax_my_order_details')->name('ajax_my_order_details');
+
+                Route::get('{order_id}/download-invoice', 'SharedServiceOrderController@download_invoice')->name('download_invoice');
 
                 /** manage spare part orders **/
                 Route::get('/manage/orders','SharedServiceOrderController@order_list')->name('order_list');
