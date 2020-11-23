@@ -119,30 +119,7 @@
                       <h3 class="box-title">Latest Task</h3>
                       <div class="pull-right">
                           <form name="tasks" id="tasks" method="GET" action="{{ route('admin.dashboard') }}">
-                                <div class="col-md-4 card-body">
-                                  <label for="title">City</label>
-                                          <select name="city_id" id="city_id" class="form-control">
-                                              <option value="">-Select-</option>
-                                          @if(count($cityData)>0)
-                                          @foreach ($cityData as $val)
-                                              <option value="{{$val->city_id}}" @if(isset($_GET['city_id']) && ($_GET['city_id'] == $val->city_id)) {{'selected'}} @endif>{{$val->city->name}}</option>
-                                          @endforeach
-                                          @endif
-                                      
-                                          </select>
-                                  </div>
-                                  <div class="col-md-4 card-body">
-                                    <label for="title">State</label>
-                                            <select name="state_id" id="state_id" class="form-control">
-                                                <option value="">-Select-</option>
-                                                @if(count($stateData)>0)
-                                                @foreach ($stateData as $val)
-                                                    <option value="{{$val->state_id}}" @if(isset($_GET['state_id']) && ($_GET['state_id'] == $val->state_id)) {{'selected'}} @endif>{{$val->state->name}}</option>
-                                                @endforeach
-                                                @endif
-                                        
-                                            </select>
-                                    </div>
+                                
                                     <div class="col-md-4 card-body">
                                       <label for="title">Property Name</label>
                                               <select name="property_id" id="property_id" class="form-control">
@@ -175,9 +152,6 @@
                                               <th>Task Title</th>
                                               <th>Property Name</th>
                                               <th>Service</th>
-                                              <th>Country</th>
-                                              <th>State</th>
-                                              <th>City</th>
                                               <th>Service Start Date</th>
                                               <th>Service End Date</th>
                                            
@@ -190,9 +164,7 @@
                                               <td>{{$row->task_title}}</td>
                                               <td>{{$row->property->property_name}}</td>
                                               <td>{{$row['service']['service_name']}}</td>
-                                              <td>{{@$row->country->name}}</td>
-                                              <td>{{@$row->state->name}}</td>
-                                              <td>{{@$row->city->name}}</td>
+                                              
                                               <td>{{$row->start_date}}</td>
                                               <td>{{$row->end_date}}</td>
                                           </tr>

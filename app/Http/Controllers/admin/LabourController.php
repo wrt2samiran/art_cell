@@ -1,6 +1,6 @@
 <?php
 /*********************************************************/
-# Class name     : UserController                         #
+# Class name     : LabourController                         #
 # Methods  :                                              #
 #    1. list ,                                            #
 #    2. create,                                           #
@@ -161,6 +161,9 @@ class LabourController extends Controller
             'email'=>strtolower($request->email),
             'password'=>$request->password,
             'phone'=>$request->phone,
+            'weekly_off'=>$request->weekly_off,
+            'start_time'=>$request->start_time,
+            'end_time'=>$request->end_time,
             'role_id'=>5,
             'status'=>'A',
             'created_by'=>auth()->guard('admin')->id(),
@@ -235,6 +238,9 @@ class LabourController extends Controller
             'name'=>$request->first_name.' '.$request->last_name,
             'email'=>strtolower($request->email),
             'phone'=>$request->phone,
+            'weekly_off'=>$request->weekly_off,
+            'start_time'=>$request->start_time,
+            'end_time'=>$request->end_time,
             'updated_by'=>auth()->guard('admin')->id()
         ];
 

@@ -49,6 +49,18 @@
                           <td >Phone/Contact Number</td>
                           <td >{{$user->phone}}</td>
                         </tr>
+                        <tr>
+                          <td >Working Day</td>
+                          <td >{{$user->weekly_off}}</td>
+                        </tr>
+                        <tr>
+                          <td >Start time</td>
+                          <td >{{$user->start_time}}</td>
+                        </tr>
+                        <tr>
+                          <td >End time</td>
+                          <td >{{$user->end_time}}</td>
+                        </tr>
                         
                         <tr>
                           <td>Status</td>
