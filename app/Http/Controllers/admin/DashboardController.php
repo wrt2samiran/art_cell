@@ -78,7 +78,7 @@ class DashboardController extends Controller
         }
         
 
-        return view('admin.dashboard.index', $this->data)->with(['tasks' => $tasks,'cityData' => $cityData,'stateData'=>$stateData,'popertyData'=>$popertyData]);
+        return view('admin.dashboard.index', $this->data)->with(['tasks' => $tasks,'popertyData'=>$popertyData]);
     }
 
     /*****************************************************/

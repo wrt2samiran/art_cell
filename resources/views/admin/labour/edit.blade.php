@@ -88,6 +88,29 @@
                             <span class="text-danger">{{$errors->first('phone')}}</span>
                             @endif
                           </div>
+
+                          <div class="form-group">
+                            <label for="weekly_off">Select Working Day</label>
+                             <select class="form-control " id="weekly_off" name="weekly_off" style="width: 100%;">
+                               <option value="">Select Working Day</option>
+                               <option {{old('weekly_off',$user->weekly_off)=="monday"? 'selected':''}} value="monday">Monday</option>
+                               <option {{old('weekly_off',$user->weekly_off)=="tuesday"? 'selected':''}} value="tuesday">Tuesday</option>
+                               <option {{old('weekly_off',$user->weekly_off)=="wednesday"? 'selected':''}} value="wednesday">Wednesday</option>
+                               <option {{old('weekly_off',$user->weekly_off)=="thursday"? 'selected':''}} value="thursday">Thursday</option>
+                               <option {{old('weekly_off',$user->weekly_off)=="friday"? 'selected':''}} value="friday">Friday</option>
+                               <option {{old('weekly_off',$user->weekly_off)=="saturday"? 'selected':''}} value="saturday">Saturday</option>
+                               <option {{old('weekly_off',$user->weekly_off)=="sunday"? 'selected':''}} value="sunday">Sunday</option>
+                             </select>
+                         </div>
+                         
+                          <div class="form-group">
+                            <label for="start_time">Select a Start time:</label>
+                            <input class="form-control" type="time" id="start_time" name="start_time" value="{{old('start_time')?old('start_time'):$user->start_time}}">
+                          </div>
+                          <div class="form-group">
+                            <label for="end_time">Select a End time:</label>
+                            <input class="form-control" type="time" id="end_time" name="end_time" value="{{old('end_time')?old('end_time'):$user->end_time}}">
+                          </div>
                           
                         </div>
                         <!--  this the url for remote validattion rule for user email -->
