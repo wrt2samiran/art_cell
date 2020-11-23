@@ -356,8 +356,13 @@
                     </a>
                 </li>            
                 
-
-
+                <li class="nav-item ">
+                    <a href="{{route('admin.complaints.list')}}"
+                    class="nav-link {{(request()->is('admin/complaints/*','admin/complaints'))?'active':''}}">
+                        <i class="nav-icon far fa-question-circle"></i>
+                        <p>{{__('nav_link_text.complaints')}}</p>
+                    </a>
+                </li>   
                 @if(auth()->guard('admin')->user()->hasAllPermission(['work-order-list']))
                 <li class="nav-item ">
                     <a href="{{route('admin.work-order-management.list')}}"

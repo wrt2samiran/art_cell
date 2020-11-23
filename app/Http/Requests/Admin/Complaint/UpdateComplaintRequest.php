@@ -13,7 +13,7 @@ class UpdateComplaintRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,20 @@ class UpdateComplaintRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'contract_id'=>'',
+            'details'=>'required|max:1000',
+            'file.*' => [
+                'mimetypes:application/pdf,image/jpeg,image/jpg,image/png,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword',
+                'max:1024',
+            ],
+
+        ];
+    }
+    public function messages(){
+        return [
+            'contract_id.required' => 'Select contract',
+            'description.required' => 'Description is required',
+            'description.max'=>'Description should not be more then 1000 characters',
         ];
     }
 }

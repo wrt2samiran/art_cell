@@ -448,6 +448,23 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
   
             });
 
+            /*Routes for complaint management */
+            Route::group(['prefix'=>'complaints','middleware'=>[],'as'=>'complaints.'],function(){
+                Route::get('/', 'ComplaintController@list')->name('list');
+                Route::get('/create', 'ComplaintController@create')->name('create');
+                Route::post('/store', 'ComplaintController@store')->name('store');
+                Route::get('/{id}', 'ComplaintController@show')->name('show');
+                Route::get('/{id}/edit', 'ComplaintController@edit')->name('edit');
+                Route::put('/{id}', 'ComplaintController@update')->name('update');
+                Route::delete('/{id}/delete', 'ComplaintController@delete')->name('delete');
+
+                Route::post('/{complaint_id}/add-note', 'ComplaintController@add_note')->name('add_note');
+                Route::put('/{complaint_id}/update-note/{note_id}', 'ComplaintController@update_note')->name('update_note');
+                Route::delete('/{complaint_id}/delete-note/{note_id}', 'ComplaintController@delete_note')->name('delete_note');
+
+                Route::put('/{complaint_id}/update-status', 'ComplaintController@update_status')->name('update_status');
+            });
+            /************************************/
             
         });
        

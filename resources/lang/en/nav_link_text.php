@@ -37,5 +37,5 @@ return array (
   'email_templete' => 'Email Template Management',
   'calendar'  => 'Calendar',
   'labour_management' => 'Labour Management',
-
+  'complaints'=>'Complaints'
 );
