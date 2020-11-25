@@ -26,7 +26,7 @@ class UnitController extends Controller
     
 
     public function list(Request $request){
-        $this->data['page_title']='Email Template List';
+        $this->data['page_title']='Unit List';
         if($request->ajax()){
 
             $sqlUnitMaster=UnitMaster::orderBy('id','ASC')->orderBy('id','DESC');
