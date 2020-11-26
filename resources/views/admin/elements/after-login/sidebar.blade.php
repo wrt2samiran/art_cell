@@ -390,6 +390,16 @@
                         </li>
                 </li>
                 @endif
+
+                <li class="nav-item has-treeview {{(request()->is('admin/unit/*','admin/unit'))?'menu-open':''}}">
+                    
+                    <li class="nav-item">
+                            <a href="{{ route('admin.unit.list') }}" class="nav-link {{(request()->is('admin/unit/*','admin/unit'))?'active':''}}">
+                                <i class="nav-icon fas fa-envelope-open-text"></i>
+                                <p>{{__('nav_link_text.unit_management')}}</p>
+                            </a>
+                        </li>
+                </li>
             </ul>
 
         </nav>

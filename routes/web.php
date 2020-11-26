@@ -447,6 +447,16 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::get('/{id}/change-change', 'LabourController@change_status')->name('change_status');
   
             });
+            /*Routes for unit management */
+            Route::group(['prefix'=>'unit','as'=>'unit.'],function(){
+                Route::get('/', 'UnitController@list')->name('list');
+                Route::any('/add','UnitController@add')->name('add');
+                Route::any('/{id}/edit', 'UnitController@edit')->name('edit');
+                Route::put('/{id}', 'UnitController@update')->name('update');
+                Route::delete('/{id}/delete', 'UnitController@delete')->name('delete');
+                Route::get('/{id}/change-change', 'UnitController@change_status')->name('change_status');
+  
+            });
 
             /*Routes for complaint management */
             Route::group(['prefix'=>'complaints','middleware'=>[],'as'=>'complaints.'],function(){
@@ -465,11 +475,13 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::put('/{complaint_id}/update-status', 'ComplaintController@update_status')->name('update_status');
             });
             /************************************/
+
             /*Routes for notifications management */
             Route::group(['prefix'=>'notifications','middleware'=>[],'as'=>'notifications.'],function(){
                 Route::get('/', 'NotificationController@list')->name('list');
             });
             /************************************/
+
         });
        
 });

@@ -39,4 +39,6 @@ return array (
   'labour_management' => 'إدارة العمل',
   'complaints'=>'شكاوي',
   'notifications'=>'إشعارات'
+  'unit_management' => 'إدارة الوحدة',
+
 );

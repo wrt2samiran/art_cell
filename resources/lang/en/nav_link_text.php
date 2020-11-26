@@ -39,4 +39,5 @@ return array (
   'labour_management' => 'Labour Management',
   'complaints'=>'Complaints',
   'notifications'=>'Notifications'
+  'unit_management' => 'Unit Management',
 );
