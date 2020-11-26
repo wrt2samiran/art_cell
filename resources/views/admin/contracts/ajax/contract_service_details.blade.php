@@ -62,7 +62,7 @@
 
 	                			@elseif($contract_service->recurrence_details->interval_type=='weekly')
 								<div>Recurre every {{$contract_service->recurrence_details->reccure_every}} week(s)</div>
-								<div>($contract_service->recurrence_details->weekly_days)</div>
+								<div>({{$contract_service->recurrence_details->weekly_days}})</div>
 	                			@else
 								<div>Recurre every {{$contract_service->recurrence_details->reccure_every}} day(s)</div>
 	                			@endif

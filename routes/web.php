@@ -190,6 +190,8 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
 
                 Route::post('/{contract_id}/services/store', 'ContractController@store_service')->name('services.store');
 
+                Route::put('/{contract_id}/services/{contract_service_id}/update', 'ContractController@update_service')->name('services.update');
+
                 Route::get('/{contract_id}/payment-info', 'ContractController@payment_info')->name('payment_info');
 
                 Route::post('/{contract_id}/store-payment-info', 'ContractController@store_payment_info')->name('store_payment_info');

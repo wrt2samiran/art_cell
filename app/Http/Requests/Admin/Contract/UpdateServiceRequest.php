@@ -3,8 +3,8 @@
 namespace App\Http\Requests\Admin\Contract;
 
 use Illuminate\Foundation\Http\FormRequest;
-
-class StoreServiceRequest extends FormRequest
+use App\Models\ContractService;
+class UpdateServiceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,10 +23,16 @@ class StoreServiceRequest extends FormRequest
      */
     public function rules()
     {
+        
+        $contract_service_id=request()->route('contract_service_id');
+        $contract_service=ContractService::findOrFail($contract_service_id);
+
         $rules_array=[
-            'service'=>'required',
-            'service_type'=>'required'
+            'service'=>'required'
         ];
+        if($contract_service->service_type!='Maintenance'){
+            $rules_array['service_type']='required';
+        }
         if(!request()->service_type=='Free'){
             $rules_array['service_price']='required|numeric';
         }

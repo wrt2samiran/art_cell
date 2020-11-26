@@ -111,7 +111,7 @@
 
                                     @elseif($service->recurrence_details->interval_type=='weekly')
                                     <div>Recurre every {{$service->recurrence_details->reccure_every}} week(s)</div>
-                                    <div>($service->recurrence_details->weekly_days)</div>
+                                    <div>({{$service->recurrence_details->weekly_days}})</div>
                                     @else
                                     <div>Recurre every {{$service->recurrence_details->reccure_every}} day(s)</div>
                                     @endif
