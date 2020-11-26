@@ -38,7 +38,7 @@ return array (
   'calendar' => 'التقويم',
   'labour_management' => 'إدارة العمل',
   'complaints'=>'شكاوي',
-  'notifications'=>'إشعارات'
+  'notifications'=>'إشعارات',
   'unit_management' => 'إدارة الوحدة',
 
 );

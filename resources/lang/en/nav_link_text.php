@@ -38,6 +38,6 @@ return array (
   'calendar'  => 'Calendar',
   'labour_management' => 'Labour Management',
   'complaints'=>'Complaints',
-  'notifications'=>'Notifications'
+  'notifications'=>'Notifications',
   'unit_management' => 'Unit Management',
 );
