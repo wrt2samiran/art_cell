@@ -59,6 +59,100 @@ $("#add_service_form").validate({
         service_price:{
             required: true, 
             number:true
+        },
+        start_time:{
+            required: true, 
+        },
+        end_time:{
+            required: true,
+            endTimeShouldBeGreatherThanStartTime:true
+        },
+        reccure_every:{
+            required: true,
+            number:true,
+            min:1
+        },
+        start_date:{
+            required: true,
+        },
+        'weekly_days[]':{
+          required: true,
+        },
+        day_number_monthly:{
+            required: true,
+            number:true,
+            min:1,
+            max:31
+        },
+        day_number_yearly:{
+            required: true,
+            number:true,
+            min:1,
+            max:31
+        },
+        day_number_m:{
+          required:function(element){
+            var interval_type=$('input[name="interval_type"]:checked').val();
+            if(interval_type=='monthly'){
+              var on_or_on_the_m=$('input[name="on_or_on_the_m"]:checked').val();
+
+              if(on_or_on_the_m=='on'){
+                return true
+              }
+            }
+
+            $(element).removeClass('is-invalid'); 
+            return false;
+          },
+          min:1,
+          max:30
+        },
+        day_number_y:{
+          required:function(element){
+            var interval_type=$('input[name="interval_type"]:checked').val();
+            if(interval_type=='yearly'){
+              var on_or_on_the_y=$('input[name="on_or_on_the_y"]:checked').val();
+
+              if(on_or_on_the_y=='on'){
+                return true
+              }
+            }
+
+            $(element).removeClass('is-invalid'); 
+            return false;
+
+          },
+          min:1,
+          max:30
+        },
+        no_of_occurrences:{
+          required:function(element){
+            
+            var end_by_or_after=$('input[name="end_by_or_after"]:checked').val();
+            if(end_by_or_after=='end_after'){
+              return true
+            }else{
+              $(element).removeClass('is-invalid'); 
+              return false;
+            }
+            
+          },
+          number:true,
+          min:1
+        },
+        end_date:{
+          required:function(element){
+            //var interval_type=$('input[name="interval_type"]:checked').val();
+            var end_by_or_after=$('input[name="end_by_or_after"]:checked').val();
+            if(end_by_or_after=='end_by'){
+              return true
+            }else{
+              $(element).removeClass('is-invalid'); 
+              return false;
+            }
+          },
+          endDateShouldBeGreatherThanStartDate:true
+
         }
     },
     messages: {
@@ -68,19 +162,47 @@ $("#add_service_form").validate({
         service_type:{
             required:  "Select service type",
         },
-        service_price:{
-            required:  "Enter service price",
+        start_time:{
+            required:  "Enter start time",
         },
+        end_time:{
+            required:  "Enter end time",
+            endTimeShouldBeGreatherThanStartTime:'End time should be greater than start time'
+        },
+        start_date:{
+            required:  "Start date is required",
+        },
+        end_date:{
+          required:  "End date is required",
+          endDateShouldBeGreatherThanStartDate : "End date should be greater than start date"
+        }
     },
     errorPlacement: function (error, element) {
         error.addClass('invalid-feedback');
-        error.insertAfter(element);
+        if(element.attr('name')=='start_time'){
+          error.insertAfter($('#start_time_error_holder'));
+        }else if (element.attr('name')=='end_time') {
+          error.insertAfter($('#end_time_error_holder'));
+        }
+        else if (element.attr('name')=='weekly_days[]') {
+          error.insertAfter($('#weekly_days_error_holder'));
+        }
+        else{
+          error.insertAfter(element);
+        } 
     },
     highlight: function (element, errorClass, validClass) {
-        $(element).addClass('is-invalid');
+
+        if(element.getAttribute('name')!='weekly_days[]'){
+            $(element).addClass('is-invalid');
+        }
+        // $(element).addClass('is-invalid');
     },
     unhighlight: function (element, errorClass, validClass) {
-        $(element).removeClass('is-invalid');    
+        if(element.getAttribute('name')!='weekly_days[]'){
+            $(element).removeClass('is-invalid'); 
+        }
+           
     },
     submitHandler: function(form) {
         $.LoadingOverlay("show");
@@ -89,28 +211,61 @@ $("#add_service_form").validate({
 });
 
 
+$(document).ready(function () {
+  $('input[name="interval_type"]').click(function () {
+      $('#reccure_every_text').text($(this).data('reccure_every_text'));
+      $('#reccure_every').val('1');
+      $(this).tab('show');
+      $(this).removeClass('active');
+  });
+  
+  var contract_start_date=$('#contract_start_date').val();
+  var contract_end_date=$('#contract_end_date').val();
+
+  $('#start_date').datepicker({
+      dateFormat:'dd/mm/yy',
+      minDate: new Date(contract_start_date),
+      maxDate: new Date(contract_end_date),
+  });
+  $('#end_date').datepicker({
+      dateFormat:'dd/mm/yy',
+      minDate: new Date(contract_start_date),
+      maxDate: new Date(contract_end_date),
+  });
+
+});
+
+$('#start_time').datetimepicker({
+  format: 'LT'
+});
+$('#end_time').datetimepicker({
+  format: 'LT'
+});
+
+$('#reccure_every').on('change keyup keydown blur',function(){
+  var interval_type=$('input[name="interval_type"]:checked').val();
+  if(interval_type=='monthly'){
+     if($.isNumeric($(this).val())){
+      $('#reccure_every_month_no').html($(this).val());
+     }
+  }
+});
+
+
 $('#service_type').on('change',function(){
   var service_type=$(this).val();
   if(service_type=='Maintenance'){
+    $('#reccurence_container').show();
     $('#number_of_time_can_used_holder').hide();
     $('#number_of_time_can_used').val('');
-    $('#frequency_type_holder').show();
-    $('#frequency_number_holder').show();
-    $('#date_time_row').show();
 
   }else if(service_type=='On Demand') {
     $('#number_of_time_can_used_holder').show();
-    $('#frequency_type_holder').hide();
-    $('#frequency_number').val('');
-    $('#frequency_number_holder').hide();
-    $('#date_time_row').hide();
+    $('#reccurence_container').hide();
   }else{
-    $('#number_of_time_can_used').val('');
-    $('#frequency_number').val('');
-    $('#frequency_type_holder').hide();
-    $('#frequency_number_holder').hide();
     $('#number_of_time_can_used_holder').hide();
-    $('#date_time_row').hide();
+    $('#number_of_time_can_used').val('');
+    $('#reccurence_container').hide();
   }
 
   if(service_type=='Free'){
@@ -296,7 +451,7 @@ function delete_service(url){
  }
 
 
- function service_details(service_details_url){
+function service_details(service_details_url){
 
 
     $.LoadingOverlay("show");
@@ -323,17 +478,9 @@ function delete_service(url){
      });
 
 
- }
+}
 
 
-$('.datepicker').datepicker({
-  dateFormat:'dd/mm/yy'
-});
 
 
-$('#start_time').datetimepicker({
-  format: 'LT'
-});
-$('#end_time').datetimepicker({
-  format: 'LT'
-})
+

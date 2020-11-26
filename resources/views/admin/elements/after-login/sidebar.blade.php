@@ -362,7 +362,14 @@
                         <i class="nav-icon far fa-question-circle"></i>
                         <p>{{__('nav_link_text.complaints')}}</p>
                     </a>
-                </li>   
+                </li>
+                <li class="nav-item ">
+                    <a href="{{route('admin.notifications.list')}}"
+                    class="nav-link {{(request()->is('admin/notifications/*','admin/notifications'))?'active':''}}">
+                        <i class="nav-icon far fa-bell"></i>
+                        <p>{{__('nav_link_text.notifications')}}</p>
+                    </a>
+                </li>     
                 @if(auth()->guard('admin')->user()->hasAllPermission(['work-order-list']))
                 <li class="nav-item ">
                     <a href="{{route('admin.work-order-management.list')}}"

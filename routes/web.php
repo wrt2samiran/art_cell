@@ -465,7 +465,11 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::put('/{complaint_id}/update-status', 'ComplaintController@update_status')->name('update_status');
             });
             /************************************/
-            
+            /*Routes for notifications management */
+            Route::group(['prefix'=>'notifications','middleware'=>[],'as'=>'notifications.'],function(){
+                Route::get('/', 'NotificationController@list')->name('list');
+            });
+            /************************************/
         });
        
 });

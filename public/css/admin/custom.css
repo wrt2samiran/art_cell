@@ -154,3 +154,22 @@ button.editable-cancel{
 }
 
 /*******/
+
+/** design for form legend */
+  fieldset.scheduler-border {
+    border: 1px groove #e6ffe6 !important;
+    padding: 0 1em 1em 1em !important;
+    margin: 0 0 1em 0 !important;
+    -webkit-box-shadow:  0px 0px 0px 0px #000;
+            box-shadow:  0px 0px 0px 0px #000;
+}
+
+legend.scheduler-border {
+    width:inherit; /* Or auto */
+    padding:0 10px; /* To give a bit of padding on the left and right */
+    border-bottom:none;
+}
+legend{
+  font-size: 15px;
+}
+/*****/

@@ -37,5 +37,6 @@ return array (
   'email_templete' => 'إدارة قالب البريد الإلكتروني',
   'calendar' => 'التقويم',
   'labour_management' => 'إدارة العمل',
-  'complaints'=>'شكاوي'
+  'complaints'=>'شكاوي',
+  'notifications'=>'إشعارات'
 );
