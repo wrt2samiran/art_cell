@@ -74,11 +74,12 @@
 
 <script src="{{asset('assets/plugins/inputmask/min/jquery.inputmask.bundle.min.js')}}"></script>
 
+
 <!-- Sweet alert -->
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script src="{{asset('assets/plugins/toastr/toastr.min.js')}}"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
-
+<script src="{{asset('assets/plugins/chart.js/Chart.min.js')}}"></script>
 <script src='{{asset("js/custom-validator-method.js")}}'></script>
 @stack('custom-scripts')
 </body>

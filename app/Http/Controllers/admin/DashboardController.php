@@ -5,12 +5,11 @@ namespace App\Http\Controllers\admin;
 use App;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
-use App\Models\{User,Setting,Country,State,City,TaskLists, TaskDetails, Property, Contract, ContractService};
+use App\Models\{User,Setting, Property, Contract,Complaint,WorkOrderLists,SparePartOrder,SharedServiceOrder};
 use Yajra\Datatables\Datatables;
 use Config;
 use Carbon\Carbon;
-
+use DB;
 class DashboardController extends Controller
 {
     public $data = array();             // set global class object
@@ -75,6 +74,45 @@ class DashboardController extends Controller
         $this->data['total_service_providers']=User::whereHas('role.user_type',function($q){
             $q->where('slug','service-provider');
         })->count();
+
+        $this->data['complaints']=Complaint::whereHas('contract')
+        ->whereHas('complaint_status')
+        ->orderBy('id','desc')->take(5)->get();
+
+        $this->data['work_orders']=WorkOrderLists::whereHas('contract')
+        ->whereHas('service')
+        ->orderBy('id','desc')->take(5)->get();
+
+
+        $spare_part_orders=SparePartOrder::select(DB::raw('count(*) as total_orderrs,  DATE_FORMAT(created_at, "%m-%Y") as month_year'))->where("created_at",">", Carbon::now()->subMonths(6))->groupBy('month_year')->pluck('total_orderrs','month_year')->toArray();
+
+        $shared_service_orders=SharedServiceOrder::select(DB::raw('count(*) as total_orderrs,  DATE_FORMAT(created_at, "%m-%Y") as month_year'))->where("created_at",">", Carbon::now()->subMonths(6))->groupBy('month_year')->pluck('total_orderrs','month_year')->toArray();
+
+       
+
+        $current_monyh_year=Carbon::now()->format('m-Y');
+
+        $last_six_month_array[]=$current_monyh_year;
+
+        $six_months_spare_part_orders[]=(array_key_exists($current_monyh_year,$spare_part_orders))?$spare_part_orders[$current_monyh_year]:0;
+
+        $six_months_shared_service_orders[]=(array_key_exists($current_monyh_year,$shared_service_orders))?$shared_service_orders[$current_monyh_year]:0;
+        
+        for ($i = 1; $i < 6; $i++) {
+          
+          $month_year=date('m-Y', strtotime("-$i month"));
+          $last_six_month_array[]=$month_year;
+
+          $six_months_spare_part_orders[]=(array_key_exists($month_year,$spare_part_orders))?$spare_part_orders[$month_year]:0;
+        
+          $six_months_shared_service_orders[]=(array_key_exists($month_year,$shared_service_orders))?$shared_service_orders[$month_year]:0;
+        }
+
+        $this->data['last_six_month_array']=$last_six_month_array;
+        $this->data['six_months_spare_part_orders']=$six_months_spare_part_orders;
+
+        $this->data['six_months_shared_service_orders']=$six_months_shared_service_orders;
+
 
         return view('admin.dashboard.admin.index',$this->data);
     }
