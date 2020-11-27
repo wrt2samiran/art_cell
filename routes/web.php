@@ -38,15 +38,14 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
         Route::any('/reset-password/{encryptCode}','AuthController@resetPassword')->name('reset.password');
 
         Route::group(['middleware' => 'admin'], function () {
-            Route::get('/dashboard', 'DashboardController@dashboardView')->name('dashboard');
+
+            Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
             Route::any('/edit-settings', 'DashboardController@editSetting')->name('settings');
             Route::any('/update-settings', 'DashboardController@updateSetting')->name('updateSetting');
             //Route::any('/settings', 'DashboardController@settings')->name('settings');
             
             
             Route::get('/logout', 'AuthController@logout')->name('logout');
-            Route::get('/change-password','DashboardController@showChangePasswordForm')->name('changePassword');
-            Route::post('/change-password','DashboardController@changePassword')->name('changePassword');
 
             Route::group(['prefix'=>'profile','as' => 'profile.'],function(){
                 Route::get('/edit-profile','ProfileController@edit_profile')->name('edit_profile');
@@ -190,6 +189,8 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
 
                 Route::post('/{contract_id}/services/store', 'ContractController@store_service')->name('services.store');
 
+                Route::put('/{contract_id}/services/{contract_service_id}/update', 'ContractController@update_service')->name('services.update');
+
                 Route::get('/{contract_id}/payment-info', 'ContractController@payment_info')->name('payment_info');
 
                 Route::post('/{contract_id}/store-payment-info', 'ContractController@store_payment_info')->name('store_payment_info');
@@ -311,6 +312,8 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::get('/my-orders', 'SparePartOrderController@my_orders')->name('my_orders');
 
                 Route::get('/my-orders/{order_id}/ajax', 'SparePartOrderController@ajax_my_order_details')->name('ajax_my_order_details');
+                
+                Route::get('{order_id}/download-invoice', 'SparePartOrderController@download_invoice')->name('download_invoice');
 
                 /** manage spare part orders **/
                 Route::get('/manage/orders','SparePartOrderController@order_list')->name('order_list');
@@ -343,6 +346,8 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::get('/my-orders', 'SharedServiceOrderController@my_orders')->name('my_orders');
 
                 Route::get('/my-orders/{order_id}/ajax', 'SharedServiceOrderController@ajax_my_order_details')->name('ajax_my_order_details');
+
+                Route::get('{order_id}/download-invoice', 'SharedServiceOrderController@download_invoice')->name('download_invoice');
 
                 /** manage spare part orders **/
                 Route::get('/manage/orders','SharedServiceOrderController@order_list')->name('order_list');
@@ -453,8 +458,41 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::get('/{id}', 'LabourController@show')->name('show');
                 
             });
+            /*Routes for unit management */
+            Route::group(['prefix'=>'unit','as'=>'unit.'],function(){
+                Route::get('/', 'UnitController@list')->name('list');
+                Route::any('/add','UnitController@add')->name('add');
+                Route::any('/{id}/edit', 'UnitController@edit')->name('edit');
+                Route::put('/{id}', 'UnitController@update')->name('update');
+                Route::delete('/{id}/delete', 'UnitController@delete')->name('delete');
+                Route::get('/{id}/change-change', 'UnitController@change_status')->name('change_status');
+  
+            });
 
-            
+            /*Routes for complaint management */
+            Route::group(['prefix'=>'complaints','middleware'=>[],'as'=>'complaints.'],function(){
+                Route::get('/', 'ComplaintController@list')->name('list');
+                Route::get('/create', 'ComplaintController@create')->name('create');
+                Route::post('/store', 'ComplaintController@store')->name('store');
+                Route::get('/{id}', 'ComplaintController@show')->name('show');
+                Route::get('/{id}/edit', 'ComplaintController@edit')->name('edit');
+                Route::put('/{id}', 'ComplaintController@update')->name('update');
+                Route::delete('/{id}/delete', 'ComplaintController@delete')->name('delete');
+
+                Route::post('/{complaint_id}/add-note', 'ComplaintController@add_note')->name('add_note');
+                Route::put('/{complaint_id}/update-note/{note_id}', 'ComplaintController@update_note')->name('update_note');
+                Route::delete('/{complaint_id}/delete-note/{note_id}', 'ComplaintController@delete_note')->name('delete_note');
+
+                Route::put('/{complaint_id}/update-status', 'ComplaintController@update_status')->name('update_status');
+            });
+            /************************************/
+
+            /*Routes for notifications management */
+            Route::group(['prefix'=>'notifications','middleware'=>[],'as'=>'notifications.'],function(){
+                Route::get('/', 'NotificationController@list')->name('list');
+            });
+            /************************************/
+
         });
        
 });

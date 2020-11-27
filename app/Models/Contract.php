@@ -51,5 +51,7 @@ class Contract extends Model
         return array_sum($price_array);
     }
     
-
+    public function work_orders(){
+        return $this->hasMany(WorkOrderLists::class,'contract_id','id');
+    }
 }

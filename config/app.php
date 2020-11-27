@@ -176,6 +176,8 @@ return [
         App\Providers\RouteServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
         Barryvdh\TranslationManager\ManagerServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
 
     ],
 
@@ -230,6 +232,8 @@ return [
         'Image' => Intervention\Image\Facades\Image::class,
         'Carbon' => Illuminate\Support\Carbon::class,
         'Helper' => App\Http\Helpers\Helper::class,
+        'PDF' => Barryvdh\DomPDF\Facade::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
         
 
     ],

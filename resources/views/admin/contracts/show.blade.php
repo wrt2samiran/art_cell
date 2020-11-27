@@ -54,7 +54,7 @@
                                 <tr>
                                   <th>Service Name</th>
                                   <th>Service Type</th>
-                                  <th>How Frequently</th>
+                                  <th>Recurrence Details</th>
                                   <th>Service Price</th>
                                 </tr>
                               </thead>
@@ -62,14 +62,67 @@
                                 @foreach($contract->services as $service)
                                 <tr>
                                   <td>{{$service->service->service_name}}</td>
-                                  <td>{{$service->service_type}}</td>
                                   <td>
-                                    @if($service->frequency_type)
-                                    {{$service->frequency_type->type}}
+                                    {{$service->service_type}}
+
+                                    @if($service->service_type=='On Demand')
+                                    <br>
+                                    {{($service->number_of_time_can_used)? $service->number_of_time_can_used.' times':'' }}
                                     @endif
-                                    @if($service->number_of_time_can_used)
-                                    <span>Can use {{$service->number_of_time_can_used}} times</span>
+                                  </td>
+                                  <td>
+                                    @if($service->service_type=='Maintenance')
+                                    <div>
+                                      <span>From {{Carbon::parse($service->recurrence_details->start_date)->format('d/m/Y')}}</span> To 
+                                      <span>
+                                      @if($service->recurrence_details->end_by_or_after=='end_by')
+                                        {{Carbon::parse($service->recurrence_details->end_date)->format('d/m/Y')}}
+                                      @else
+                                        after {{$service->recurrence_details->no_of_occurrences}} occurrences
+                                      @endif
+                                      </span>
+
+                                    </div>
+                                    <div>
+                                      {{Carbon::parse($service->recurrence_details->start_time)->format('g:i A')}}-{{Carbon::parse($service->recurrence_details->end_time)->format('g:i A')}}
+                                    </div>
+
+                                    <div>
+                                      
+                                    @if($service->recurrence_details->interval_type=='yearly')
+                                    <div>Recurre every {{$service->recurrence_details->reccure_every}} year(s)</div>
+                                    <div>
+                                      @if($service->recurrence_details->on_or_on_the=='on')
+                                      On <span>{{$service->recurrence_details->day_number}} {{$service->recurrence_details->month_name}}</span>
+                                      @else
+                                      On the <span>{{$service->recurrence_details->ordinal}}, {{$service->recurrence_details->week_day_name}}, {{$service->recurrence_details->month_name}}</span>
+                                      @endif
+                                    </div>
+                                    @elseif($service->recurrence_details->interval_type=='monthly')
+                                    <div>Recurre every {{$service->recurrence_details->reccure_every}} month(s)</div>
+                                    <div>
+                                      @if($service->recurrence_details->on_or_on_the=='on')
+                                      On <span>{{$service->recurrence_details->day_number}} day 
+                                      @else
+                                      On the <span>{{$service->recurrence_details->ordinal}}, {{$service->recurrence_details->week_day_name}}</span>
+                                      @endif
+                                      Of every {{$service->recurrence_details->reccure_every}} month(s)
+                                    </div>
+
+                                    @elseif($service->recurrence_details->interval_type=='weekly')
+                                    <div>Recurre every {{$service->recurrence_details->reccure_every}} week(s)</div>
+                                    <div>({{$service->recurrence_details->weekly_days}})</div>
+                                    @else
+                                    <div>Recurre every {{$service->recurrence_details->reccure_every}} day(s)</div>
                                     @endif
+
+                                    </div>
+
+
+                                    @else
+                                    Not Available
+                                    @endif
+
                                   </td>
                                   <td>{{$service->currency}} {{$service->price}}</td>
                                 </tr>

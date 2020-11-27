@@ -18,11 +18,11 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\{ContractStatus,Contract,User,Property,Service,ContractAttachment,ContractInstallment,FrequencyType,ContractService};
+use App\Models\{ContractStatus,Contract,User,Property,Service,ContractAttachment,ContractInstallment,FrequencyType,ContractService,ContractServiceRecurrence,ContractServiceDate,WorkOrderLists};
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
-use Carbon\Carbon;
-use App\Http\Requests\Admin\Contract\{CreateContractRequest,UpdateContractRequest,StoreFileRequest,StorePaymentInfoRequest,StoreServiceRequest};
+use Carbon\{Carbon,CarbonPeriod};
+use App\Http\Requests\Admin\Contract\{CreateContractRequest,UpdateContractRequest,StoreFileRequest,StorePaymentInfoRequest,StoreServiceRequest,UpdateServiceRequest};
 use File;
 use Helper;
 class ContractController extends Controller
@@ -264,6 +264,17 @@ class ContractController extends Controller
                 return redirect()->route('admin.contracts.services',$contract_id)
                 ->with('error','Service is not belongs to his contract.');
             }
+
+            if($contract_service->service_type=='Maintenance'){
+                //check if there is work worder and work order is assigned to labour 
+                $assigned_work_order=WorkOrderLists::where('contract_service_id',$contract_service->id)->where('task_assigned','Y')->first();
+                if($assigned_work_order){
+                    return redirect()->route('admin.contracts.services',$contract_id)
+                        ->with('error','Service already assigned by the service provider. You can not edit the service now.');
+                }
+            }
+
+
         }else{
             $contract_service=null;
         }
@@ -278,15 +289,89 @@ class ContractController extends Controller
 
 
     public function store_service($contract_id,StoreServiceRequest $request){
+
         $contract=Contract::findOrFail($contract_id);
         $this->authorize('store_service',$contract);
         $current_user=auth()->guard('admin')->user();
-        if($request->frequency_type){
-            $frequency_type=FrequencyType::findOrFail($request->frequency_type);
-            $interval_days=$frequency_type->no_of_days;
-        }else{
-            $interval_days=null;
+
+
+        /* this code will be only for maintenance type service */
+        if($request->service_type=='Maintenance'){
+
+            $start_time=Carbon::parse($request->start_time)->format('G:i:s');
+            $end_time=Carbon::parse($request->end_time)->format('G:i:s');
+            $interval_type=$request->interval_type;
+            $reccure_every=$request->reccure_every; 
+           
+            $weekly_days=($interval_type=='weekly')?implode(',',$request->weekly_days) :null; 
+
+            if(in_array($interval_type,['monthly','yearly'])){
+
+                $on_or_on_the=($interval_type=='monthly')?$request->on_or_on_the_m:$request->on_or_on_the_y;
+                
+                if($interval_type=='monthly' && $on_or_on_the=='on'){
+                    $day_number=$request->day_number_m;
+                }elseif ($interval_type=='yearly' && $on_or_on_the=='on') {
+                    $day_number=$request->day_number_y;
+                }else{
+                    $day_number='1';
+                    //default to 1
+                }
+
+                if($interval_type=='monthly' && $on_or_on_the=='on_the'){
+                    $ordinal=$request->ordinal_m;
+                }elseif ($interval_type=='yearly' && $on_or_on_the=='on_the') {
+                    $ordinal=$request->ordinal_y;
+                }else{
+                    $ordinal=null;
+                }
+            
+
+                if($interval_type=='monthly' && $on_or_on_the=='on_the'){
+                    $week_day_name=($interval_type=='monthly')?$request->week_day_name_m:$request->week_day_name_y;
+                }else{
+                    $week_day_name=null;
+                }
+
+                if($interval_type=='yearly'){
+                    $month_name=($on_or_on_the=='on')?$request->month_name_y1:$request->month_name_y2;
+                }else{
+                    $month_name=null;
+                }
+
+
+            }else{
+                $on_or_on_the=null;
+                $day_number=null;
+                $ordinal=null;
+                $week_day_name=null;
+                $month_name =null; 
+            }
+
+            $start_date=Carbon::createFromFormat('d/m/Y', $request->start_date)->format('Y-m-d');
+
+            $end_by_or_after=$request->end_by_or_after;
+            if($end_by_or_after=='end_by'){
+                $end_date=Carbon::createFromFormat('d/m/Y', $request->end_date)->format('Y-m-d');
+                $no_of_occurrences=null;
+            }else{
+                $no_of_occurrences=$request->no_of_occurrences;
+                $end_date=null;
+            }
+
+            $service_dates=self::get_service_dates_array($interval_type,$reccure_every,$weekly_days,$on_or_on_the,$day_number,$ordinal,$week_day_name,$month_name,$start_date,$end_by_or_after,$no_of_occurrences, $end_date);
+
+            if(!count($service_dates)){
+                return redirect()->back()->with('error','No dates found within this recurrence pattern provided');
+            }else{
+                if(end($service_dates)>$contract->end_date){
+
+                    return redirect()->back()->with('error','Last date for your recurrence exceeds end date of the contract.');
+                }
+            }
+            
         }
+
 
         $service_data=[
         'contract_id'=>$contract->id,
@@ -294,17 +379,249 @@ class ContractController extends Controller
         'service_type'=>$request->service_type,
         'currency'=>Helper::getSiteCurrency(),
         'price'=>($request->service_type=='Free')?'0':$request->service_price,
-        'frequency_type_id'=>$request->frequency_type,
-        'frequency_number'=>$request->frequency_number,
-        'interval_days'=>$interval_days,
         'number_of_time_can_used'=>$request->number_of_time_can_used,
         'note'=>$request->note,
         'created_by'=>$current_user->id,
         'updated_by'=>$current_user->id
-       ];
+        ];
+        $contract_service=ContractService::create($service_data);
+       
+        if($request->service_type=='Maintenance'){
 
-       ContractService::create($service_data);
-       return redirect()->back()->with('success','Service added');
+            $recurrence=ContractServiceRecurrence::create([
+                'contract_service_id'=>$contract_service->id,
+                'start_time'=>$start_time,
+                'end_time'=>$end_time,
+                'interval_type'=>$interval_type,
+                'reccure_every'=>$reccure_every,
+                'weekly_days'=>$weekly_days,
+                'on_or_on_the'=>$on_or_on_the,
+                'day_number'=>$day_number,
+                'ordinal'=>$ordinal,
+                'week_day_name'=>$week_day_name,
+                'month_name'=>$month_name,
+                'start_date'=>$start_date,
+                'end_by_or_after'=>$end_by_or_after,
+                'no_of_occurrences'=>$no_of_occurrences,
+                'end_date'=>$end_date
+            ]);
+
+            $service_dates_array=array_map(function($date) use($recurrence,$contract_service){
+                return [
+                    'recurrence_id'=>$recurrence->id,
+                    'contract_service_id'=>$recurrence->contract_service_id,
+                    'service_id'=>$contract_service->service_id,
+                    'contract_id'=>$contract_service->contract_id,
+                    'date'=>$date,
+                    'start_time'=>$recurrence->start_time,
+                    'end_time'=>$recurrence->end_time
+                ];
+            },$service_dates);
+
+            ContractServiceDate::insert($service_dates_array);
+
+            $task_title=ucfirst($interval_type).' '.$contract_service->service->service_name;
+
+            WorkOrderLists::create([
+                'contract_id'=>$contract_id,
+                'contract_service_id'=>$contract_service->id,
+                'service_id'=>$contract_service->service_id,
+                'property_id'=>$contract->property_id,
+                'user_id'=>$contract->service_provider_id,
+                'task_title'=>$task_title,
+                'task_desc'=>$contract_service->note,
+                'start_date'=>$service_dates[0],
+                'created_by'=>$current_user->id
+            ]);
+
+        }
+
+        return redirect()->back()->with('success','Service added');
+    }
+
+
+    public function update_service($contract_id,$contract_service_id,UpdateServiceRequest $request){
+
+        $contract=Contract::findOrFail($contract_id);
+        $this->authorize('store_service',$contract);
+        $current_user=auth()->guard('admin')->user();
+
+        $contract_service=ContractService::findOrFail($contract_service_id);
+        if($contract_service->contract_id!=$contract_id){
+            return redirect()->route('admin.contracts.services',$contract_id)
+            ->with('error','Service is not belongs to his contract.');
+        }
+
+
+        /* this code will be only for maintenance type service */
+        if($contract_service->service_type=='Maintenance'){
+
+
+            //check if there is work worder and work order is assigned to labour 
+            $assigned_work_order=WorkOrderLists::where('contract_service_id',$contract_service->id)->where('task_assigned','Y')->first();
+            if($assigned_work_order){
+            return redirect()->route('admin.contracts.services',$contract_id)
+                ->with('error','Service already assigned by the service provider. You can not edit the service now.');
+            }
+
+            $start_time=Carbon::parse($request->start_time)->format('G:i:s');
+            $end_time=Carbon::parse($request->end_time)->format('G:i:s');
+            $interval_type=$request->interval_type;
+            $reccure_every=$request->reccure_every; 
+           
+            $weekly_days=($interval_type=='weekly')?implode(',',$request->weekly_days) :null; 
+
+            if(in_array($interval_type,['monthly','yearly'])){
+
+                $on_or_on_the=($interval_type=='monthly')?$request->on_or_on_the_m:$request->on_or_on_the_y;
+                
+                if($interval_type=='monthly' && $on_or_on_the=='on'){
+                    $day_number=$request->day_number_m;
+                }elseif ($interval_type=='yearly' && $on_or_on_the=='on') {
+                    $day_number=$request->day_number_y;
+                }else{
+                    $day_number='1';
+                    //default to 1
+                }
+
+                if($interval_type=='monthly' && $on_or_on_the=='on_the'){
+                    $ordinal=$request->ordinal_m;
+                }elseif ($interval_type=='yearly' && $on_or_on_the=='on_the') {
+                    $ordinal=$request->ordinal_y;
+                }else{
+                    $ordinal=null;
+                }
+            
+
+                if($interval_type=='monthly' && $on_or_on_the=='on_the'){
+                    $week_day_name=($interval_type=='monthly')?$request->week_day_name_m:$request->week_day_name_y;
+                }else{
+                    $week_day_name=null;
+                }
+
+                if($interval_type=='yearly'){
+                    $month_name=($on_or_on_the=='on')?$request->month_name_y1:$request->month_name_y2;
+                }else{
+                    $month_name=null;
+                }
+
+
+            }else{
+                $on_or_on_the=null;
+                $day_number=null;
+                $ordinal=null;
+                $week_day_name=null;
+                $month_name =null; 
+            }
+
+            $start_date=Carbon::createFromFormat('d/m/Y', $request->start_date)->format('Y-m-d');
+
+            $end_by_or_after=$request->end_by_or_after;
+            if($end_by_or_after=='end_by'){
+                $end_date=Carbon::createFromFormat('d/m/Y', $request->end_date)->format('Y-m-d');
+                $no_of_occurrences=null;
+            }else{
+                $no_of_occurrences=$request->no_of_occurrences;
+                $end_date=null;
+            }
+
+            $service_dates=self::get_service_dates_array($interval_type,$reccure_every,$weekly_days,$on_or_on_the,$day_number,$ordinal,$week_day_name,$month_name,$start_date,$end_by_or_after,$no_of_occurrences, $end_date);
+
+            if(!count($service_dates)){
+                return redirect()->back()->with('error','No dates found within this recurrence pattern provided');
+
+            }else{
+                if(end($service_dates)>$contract->end_date){
+
+                    return redirect()->back()->with('error','Last date for your recurrence exceeds end date of the contract.');
+                }
+            }
+            
+        }
+
+
+        $service_data=[
+        'contract_id'=>$contract->id,
+        'service_id'=>$request->service,
+        'service_type'=>($contract_service->service_type=='Maintenance')?$contract_service->service_type:$request->service_type,
+        'currency'=>Helper::getSiteCurrency(),
+        'price'=>($request->service_type=='Free')?'0':$request->service_price,
+        'number_of_time_can_used'=>$request->number_of_time_can_used,
+        'note'=>$request->note,
+        'updated_by'=>$current_user->id
+        ];
+        $contract_service->update($service_data);
+       
+        if($contract_service->service_type=='Maintenance'){
+
+            ContractServiceRecurrence::where('contract_service_id',$contract_service->id)->delete();
+            ContractServiceDate::where('contract_service_id',$contract_service->id)->delete();
+
+            $recurrence=ContractServiceRecurrence::create([
+                'contract_service_id'=>$contract_service->id,
+                'start_time'=>$start_time,
+                'end_time'=>$end_time,
+                'interval_type'=>$interval_type,
+                'reccure_every'=>$reccure_every,
+                'weekly_days'=>$weekly_days,
+                'on_or_on_the'=>$on_or_on_the,
+                'day_number'=>$day_number,
+                'ordinal'=>$ordinal,
+                'week_day_name'=>$week_day_name,
+                'month_name'=>$month_name,
+                'start_date'=>$start_date,
+                'end_by_or_after'=>$end_by_or_after,
+                'no_of_occurrences'=>$no_of_occurrences,
+                'end_date'=>$end_date
+            ]);
+
+            $service_dates_array=array_map(function($date) use($recurrence,$contract_service){
+                return [
+                    'recurrence_id'=>$recurrence->id,
+                    'contract_service_id'=>$recurrence->contract_service_id,
+                    'service_id'=>$contract_service->service_id,
+                    'contract_id'=>$contract_service->contract_id,
+                    'date'=>$date,
+                    'start_time'=>$recurrence->start_time,
+                    'end_time'=>$recurrence->end_time
+                ];
+            },$service_dates);
+
+            ContractServiceDate::insert($service_dates_array);
+
+            $work_order=WorkOrderLists::where('contract_service_id',$contract_service->id)->first();
+
+            $task_title=ucfirst($interval_type).' '.$contract_service->service->service_name;
+            if($work_order){
+                $work_order->update([
+                    'contract_id'=>$contract_id,
+                    'service_id'=>$contract_service->service_id,
+                    'property_id'=>$contract->property_id,
+                    'user_id'=>$contract->service_provider_id,
+                    'task_title'=>$task_title,
+                    'task_desc'=>$contract_service->note,
+                    'start_date'=>$service_dates[0],
+                    'updated_by'=>$current_user->id
+                ]);
+
+            }else{
+                WorkOrderLists::create([
+                    'contract_id'=>$contract_id,
+                    'contract_service_id'=>$contract_service->id,
+                    'service_id'=>$contract_service->service_id,
+                    'property_id'=>$contract->property_id,
+                    'user_id'=>$contract->service_provider_id,
+                    'task_title'=>$task_title,
+                    'task_desc'=>$contract_service->note,
+                    'start_date'=>$service_dates[0],
+                    'created_by'=>$current_user->id
+                ]);
+            }
+
+        }
+
+        return redirect()->route('admin.contracts.services',$contract_id)
+                ->with('success','Service updated.');
     }
 
     public function service_delete($contract_id,$service_id){
@@ -318,11 +635,22 @@ class ContractController extends Controller
                 return response()->json(['message'=>'There should be atleast one service for the contract.'],400);
             }
         }
-        //todo
-        //1)need to check service is belongs to that contract
-        //2)need to there is already task to this contract service
- 
+           
+        //check if there is work worder and work order is assigned to labour 
+        $assigned_work_order=WorkOrderLists::where('contract_service_id',$contract_service->id)->where('task_assigned','Y')->first();
+        if($assigned_work_order){
+            return response()->json(['message'=>'Service already assigned by the service provider. You can not edit the service now..'],400);
+        }
+      
+        
+        if($contract_service->service_type=='Maintenance'){
+            ContractServiceRecurrence::where('contract_service_id',$contract_service->id)->delete();
+            ContractServiceDate::where('contract_service_id',$contract_service->id)->delete();
+        }
+
+        WorkOrderLists::where('contract_service_id',$contract_service->id)->delete();
         $contract_service->delete();
+
         return response()->json(['message'=>'Service successfully deleted.']);
     }
 
@@ -347,7 +675,7 @@ class ContractController extends Controller
         $contract=Contract::findOrFail($contract_id);
         $contract_service=ContractService::with(['service'=>function($q){
                 $q->withTrashed();
-            }])->findOrFail($service_id);
+            },'recurrence_details'])->findOrFail($service_id);
 
         $this->data['contract']=$contract;
         $this->data['contract_service']=$contract_service;
@@ -423,13 +751,11 @@ class ContractController extends Controller
     }
 
     public function files($contract_id){
-
         $contract=Contract::findOrFail($contract_id);
         $this->authorize('store_file',$contract);
         $this->data['page_title']='Contract Files';
         $this->data['contract']=$contract;
         return view($this->view_path.'.files',$this->data);
-
     }
 
     public function store_files($contract_id,StoreFileRequest $request){
@@ -469,7 +795,6 @@ class ContractController extends Controller
 
                         $file_type=Helper::get_file_type_by_mime_type($mime_type);
 
-
                     }else{
                         $file_name=$contract_file->file_name;
                         $file_type=$contract_file->file_type;
@@ -504,7 +829,6 @@ class ContractController extends Controller
                             'title'=>$request->title[$key],
                             'created_by'=>$current_user->id
                         ]);
-
 
                     }
 
@@ -657,5 +981,225 @@ class ContractController extends Controller
         return response()->json(['message'=>'Attachement file successfully deleted']);
     }
 
+
+
+    public static function get_service_dates_array($interval_type,$reccure_every,$weekly_days,$on_or_on_the,$day_number,$ordinal,$week_day_name,$month_name,$start_date,$end_by_or_after,$no_of_occurrence, $end_date){
+        
+        if($no_of_occurrence){
+            $no_of_occurrence=(int)$no_of_occurrence;
+        }
+
+        $service_dates_array=[];
+      
+        if($interval_type=='daily'){
+
+            $day_interval=$reccure_every.' days';
+            
+            if($end_date){
+               $dates=CarbonPeriod::create($start_date,$day_interval, $end_date);
+            }else{
+               $dates=CarbonPeriod::create($start_date, $no_of_occurrence,$day_interval);
+            }
+            
+            if(count($dates)){
+                foreach ($dates as $key => $date) {
+                    $service_dates_array[] = $date->format('Y-m-d');
+                }
+            }
+
+        }elseif($interval_type=='weekly'){
+
+            if($end_date){
+
+                $last_week_last_date=Carbon::parse($end_date)->endOfWeek()->format('Y-m-d');
+                
+                $main_start_date=$start_date;
+
+                
+                while ($start_date <= $last_week_last_date) {
+
+                    $start_date_of_week=Carbon::parse($start_date)->startOfWeek()->format('Y-m-d');
+                    $end_date_of_week=Carbon::parse($start_date)->endOfWeek()->format('Y-m-d');
+
+                    $dates=CarbonPeriod::create($start_date_of_week,$end_date_of_week);
+
+                    foreach ($dates as $key => $date) {
+                        if(in_array($date->format('l'), explode(',', $weekly_days))){
+
+                            if($date->format('Y-m-d')>=$main_start_date && $date->format('Y-m-d')<=$end_date){
+                                $service_dates_array[] = $date->format('Y-m-d');
+                            }
+                            
+                        }
+                    }
+                    $start_date=Carbon::parse($start_date)->addWeek($reccure_every);
+                }
+
+
+            }else{
+
+
+                $main_start_date=$start_date;
+                $current_number=1;
+            
+                while ($current_number <= $no_of_occurrence) {
+
+                    $start_date_of_week=Carbon::parse($start_date)->startOfWeek()->format('Y-m-d');
+                    $end_date_of_week=Carbon::parse($start_date)->endOfWeek()->format('Y-m-d');
+
+                    $dates=CarbonPeriod::create($start_date_of_week,$end_date_of_week);
+
+                    foreach ($dates as $key => $date) {
+                        if(in_array($date->format('l'), explode(',', $weekly_days))){
+
+                            if($date->format('Y-m-d')>=$main_start_date){
+                                $service_dates_array[] = $date->format('Y-m-d');
+                            }
+                            
+                        }
+                    }
+                    $start_date=Carbon::parse($start_date)->addWeek($reccure_every);
+                    $current_number++;
+                }
+
+            }
+
+
+        }elseif($interval_type=='monthly'){
+
+ 
+            $main_start_date=$start_date;
+            $firstMonthFirstDay = Carbon::parse($start_date)->firstOfMonth();
+            $first_date=$firstMonthFirstDay->format('Y-m-d');
+            
+            // dd($firstDay->addMonth(2));
+            if($end_date){
+
+                $last_month_last_date=Carbon::parse($end_date)->lastOfMonth()->format('Y-m-d');
+
+                while ($first_date <= $last_month_last_date) {
+                    $month_any_year=Carbon::parse($first_date)->format('F Y');
+
+                    if($on_or_on_the=='on'){
+                        $date_string=$day_number.' '.$month_any_year;
+                        $date=Carbon::parse($date_string);
+                    }elseif($on_or_on_the=='on_the'){
+                        $date_string=$ordinal.' '.$week_day_name.' of '.$month_any_year;
+                        $date=Carbon::parse($date_string);
+                    }
+
+                    if($date->format('Y-m-d')>=$main_start_date && $date->format('Y-m-d')<=$end_date){
+                        $service_dates_array[] = $date->format('Y-m-d');
+                    }
+
+                    $first_date=Carbon::parse($first_date)->addMonth($reccure_every)->format('Y-m-d');
+                }
+
+            }else{
+
+                $current_number=1;
+                while ($current_number <= $no_of_occurrence) {
+
+                    $month_any_year=Carbon::parse($first_date)->format('F Y');
+
+                    if($on_or_on_the=='on'){
+                        $date_string=$day_number.' '.$month_any_year;
+                        $date=Carbon::parse($date_string);
+                    }elseif($on_or_on_the=='on_the'){
+                        $date_string=$ordinal.' '.$week_day_name.' of '.$month_any_year;
+                        $date=Carbon::parse($date_string);
+                    }
+
+                    if($date->format('Y-m-d')>=$main_start_date){
+                        $service_dates_array[] = $date->format('Y-m-d');
+                    }
+
+                    $first_date=Carbon::parse($first_date)->addMonth($reccure_every)->format('Y-m-d');
+                    $current_number++;
+                }
+            }
+
+
+        }elseif($interval_type=='yearly'){
+
+            $main_start_date=$start_date;
+
+            $firstYearFirstDay = Carbon::parse($start_date)->startOfYear();
+            $first_date=$firstYearFirstDay->format('Y-m-d');
+            
+            // dd($firstDay->addMonth(2));
+            if($end_date){
+
+                $last_year_last_date=Carbon::parse($end_date)->endOfYear()->format('Y-m-d');
+
+                if($firstYearFirstDay->format('Y')==Carbon::parse($end_date)->endOfYear()->format('Y')){
+
+                    $year=Carbon::parse($first_date)->format('Y');
+
+                    if($on_or_on_the=='on'){
+                        $date_string=$day_number.' '.$month_name.' '.$year;
+                        $date=Carbon::parse($date_string);
+                    }elseif($on_or_on_the=='on_the'){
+
+                        $date_string=$ordinal.' '.$week_day_name.' of '.$month_name.' '.$year;
+                        $date=Carbon::parse($date_string);
+                    }
+
+                    if($date->format('Y-m-d')>=$main_start_date && $date->format('Y-m-d')<=$end_date){
+                        $service_dates_array[] = $date->format('Y-m-d');
+                    }
+
+                }else{
+                    while ($first_date <= $last_year_last_date) {
+
+                        $year=Carbon::parse($first_date)->format('Y');
+
+                        if($on_or_on_the=='on'){
+                            $date_string=$day_number.' '.$month_name.' '.$year;
+                            $date=Carbon::parse($date_string);
+                        }elseif($on_or_on_the=='on_the'){
+
+                            $date_string=$ordinal.' '.$week_day_name.' of '.$month_name.' '.$year;
+                            $date=Carbon::parse($date_string);
+                        }
+
+                        if($date->format('Y-m-d')>=$main_start_date && $date->format('Y-m-d')<=$end_date){
+                            $service_dates_array[] = $date->format('Y-m-d');
+                        }
+
+                        $first_date=Carbon::parse($first_date)->addYear($reccure_every)->format('Y-m-d');
+                    }
+                }
+
+
+            }else{
+
+                $current_number=1;
+                while ($current_number <= $no_of_occurrence) {
+
+                    $year=Carbon::parse($first_date)->format('Y');
+
+                    if($on_or_on_the=='on'){
+                        $date_string=$day_number.' '.$month_name.' '.$year;
+                        $date=Carbon::parse($date_string);
+                    }elseif($on_or_on_the=='on_the'){
+                        
+                        $date_string=$ordinal.' '.$week_day_name.' of '.$month_name.' '.$year;
+                        $date=Carbon::parse($date_string);
+                    }
+
+                    if($date->format('Y-m-d')>=$main_start_date){
+                        $service_dates_array[] = $date->format('Y-m-d');
+                    }
+
+                    $first_date=Carbon::parse($first_date)->addYear($reccure_every)->format('Y-m-d');
+                    $current_number++;
+                }
+            }
+
+        }
+
+        return $service_dates_array;
+    }
 
 }

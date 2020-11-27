@@ -39,5 +39,9 @@ return array (
   'labour_management' => 'إدارة العمل',
   'labour_list' => 'قائمة العمل',
   'labour_leave_management' => 'إدارة إجازة العمل',
+  'complaints'=>'شكاوي',
+  'notifications'=>'إشعارات',
+  'unit_management' => 'إدارة الوحدة',
+
 
 );

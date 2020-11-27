@@ -31,6 +31,7 @@
                                 <div class="d-flex justify-content-between" >
                                     <div><span>Order Details</span></div>
                                     <div>
+                                        <a class="btn btn-primary" href="{{route('admin.shared_service_orders.download_invoice',$order->id)}}">Download Invoice</a>
                                     </div>
                                 </div>
                             </div>
@@ -216,13 +217,16 @@
                                             </select>
                                          
                         
-                                          <button type="submit" class="btn btn-primary mb-2">Update</button>
+                                          <button type="submit" class="btn btn-success mb-2">Update</button>
                                         </form>
                                     </div>
                                 </div>
                             </div>
 
 
+                            </div>
+                            <div class="card-footer">
+                                <a class="btn btn-primary" href="{{route('admin.shared_service_orders.order_list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a>
                             </div>
                         </div>
                     </div>

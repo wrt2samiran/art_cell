@@ -31,6 +31,7 @@
                                 <div class="d-flex justify-content-between" >
                                     <div><span>Order Details</span></div>
                                     <div>
+                                        <a class="btn btn-primary" href="{{route('admin.spare_part_orders.download_invoice',$order->id)}}">Download Invoice</a>
                                     </div>
                                 </div>
                             </div>

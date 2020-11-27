@@ -9,11 +9,9 @@ use \App\Contract;
 use \Illuminate\Support\Facades\Session;
 use App\Http\Helpers\NotificationHelper;
 use DB;
-
 use App\Models\Setting;
-
 use App\Models\EmailTemplate;
-
+use Carbon\Carbon;
 
 class Helper
 {
@@ -511,6 +509,10 @@ class Helper
         return $content;
 
     }
+
+
+
+
 
 
 

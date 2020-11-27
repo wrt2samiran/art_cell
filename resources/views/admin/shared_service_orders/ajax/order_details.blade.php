@@ -131,4 +131,12 @@
     		</div>
     	</div>
     </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <a class="btn btn-primary" href="{{route('admin.shared_service_orders.download_invoice',$order->id)}}">Download Invoice</a>
+        </div>
+    </div>
+
+
 </div>
