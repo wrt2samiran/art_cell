@@ -440,13 +440,23 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             Route::group(['prefix'=>'labour','as'=>'labour.'],function(){
                 Route::get('/', 'LabourController@list')->name('list');
                 Route::get('/create', 'LabourController@create')->name('create');
+                
                 Route::post('/store', 'LabourController@store')->name('store');
-                Route::get('/{id}', 'LabourController@show')->name('show');
                 Route::get('/{id}/edit', 'LabourController@edit')->name('edit');
                 Route::put('/{id}', 'LabourController@update')->name('update');
                 Route::delete('/{id}/delete', 'LabourController@delete')->name('delete');
                 Route::get('/{id}/change-change', 'LabourController@change_status')->name('change_status');
-  
+                Route::get('/leave-list', 'LabourController@leaveList')->name('leaveList');
+                Route::get('/create-leave', 'LabourController@createLeave')->name('createLeave');
+                Route::post('/store-leave', 'LabourController@storeLeave')->name('storeLeave');
+                
+                
+                
+                Route::get('/edit-leave/{id}', 'LabourController@editLeave')->name('editLeave');
+               
+                Route::get('/show-leave/{id}', 'LabourController@showLeave')->name('showLeave');
+                Route::get('/{id}', 'LabourController@show')->name('show');
+                
             });
             /*Routes for unit management */
             Route::group(['prefix'=>'unit','as'=>'unit.'],function(){

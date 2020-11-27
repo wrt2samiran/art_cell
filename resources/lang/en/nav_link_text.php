@@ -37,6 +37,8 @@ return array (
   'email_templete' => 'Email Template Management',
   'calendar'  => 'Calendar',
   'labour_management' => 'Labour Management',
+  'labour_list' => 'Labour List',
+  'labour_leave_management' => 'Labour Leave Management',
   'complaints'=>'Complaints',
   'notifications'=>'Notifications',
   'unit_management' => 'Unit Management',

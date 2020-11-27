@@ -48,6 +48,8 @@
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
     <!-- <link rel="stylesheet" href="{{asset('assets/css/styles.css')}}"> -->
     <link rel="stylesheet" type="text/css" href="{{asset('css/admin/custom.css')}}">
+    <!-- bootstrap-multiselect (used for multi-select with search option and select all option) -->
+    <link rel="stylesheet" type="text/css" href="{{asset('css/bootstrap-multiselect.css')}}">
     @php
     if(App::getLocale()=='en'){
         $lang_css_path=asset('css/admin/language_en.css');

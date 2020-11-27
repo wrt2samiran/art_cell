@@ -37,8 +37,11 @@ return array (
   'email_templete' => 'إدارة قالب البريد الإلكتروني',
   'calendar' => 'التقويم',
   'labour_management' => 'إدارة العمل',
+  'labour_list' => 'قائمة العمل',
+  'labour_leave_management' => 'إدارة إجازة العمل',
   'complaints'=>'شكاوي',
   'notifications'=>'إشعارات',
   'unit_management' => 'إدارة الوحدة',
+
 
 );

@@ -20,10 +20,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
-use App\Models\{User,Role};
+use App\Models\{User,Role,LabourLeave,LeaveDates};
 use Carbon\Carbon;
 use App\Events\User\UserCreated;
-use App\Http\Requests\Admin\labour\{CreateLabourRequest,UpdateLabourRequest};
+use App\Http\Requests\Admin\labour\{CreateLabourRequest,UpdateLabourRequest,CreateLabourLeaveRequest};
 
 class LabourController extends Controller
 {
@@ -119,6 +119,8 @@ class LabourController extends Controller
         $this->data['roles']=$roles;
         return view($this->view_path.'.list',$this->data);
     }
+
+   
 
     /************************************************************************/
     # Function to load role create view page                                 #
@@ -295,5 +297,210 @@ class LabourController extends Controller
         return response()->json(['message'=>'labour successfully '.$message.'.']);
     }
 
+
+    
+    /************************************************************************/
+    # Function for Labour Leave list         #
+    # Function name    : leaveList                                                #
+    # Created Date     : 26-11-2020                                          #
+    # Modified date    : 26-11-2020                                          #
+    # Purpose          : For Labour Leave list and returning Datatables              #
+    # ajax response                                                          #
+
+    public function leaveList(Request $request){
+        $this->data['page_title']='Labour Leave List';
+
+        $current_user=auth()->guard('admin')->user();
+
+        if($request->ajax()){
+
+            $leaveData=LabourLeave::with(['userDetails'])
+            ->whereNull('deleted_at')
+            ->whereCreatedBy($current_user->id)
+            ->where(function($q)use ($current_user){
+                //if logged in user is not super admin then fetch only those useers which are crated by logged in user
+                if($current_user->role->user_type->slug!='super-admin'){
+                    $q->whereCreatedBy($current_user->id);
+                }
+            })
+            
+            ->select('labour_leaves.*');
+            return Datatables::of($leaveData)
+            ->editColumn('created_at', function ($leaveData) {
+                return $leaveData->created_at ? with(new Carbon($leaveData->created_at))->format('d/m/Y') : '';
+            })
+            ->filterColumn('created_at', function ($query, $keyword) {
+                $query->whereRaw("DATE_FORMAT(created_at,'%d/%m/%Y') like ?", ["%$keyword%"]);
+            })
+            ->addColumn('status',function($leaveData)use ($current_user){
+
+                $disabled=(!$current_user->hasAllPermission(['user-status-change']))?'disabled':'';
+
+                if($leaveData->status=='Approved'){
+                   $message='deactivate';
+                   return '<a title="Click to deactivate the user" href="javascript:change_status('."'".route('admin.labour.change_status',$leaveData->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm '.$disabled.'" >Approved</a>';
+                    
+                }else{
+                   $message='activate';
+                   return '<a title="Click to activate the user" href="javascript:change_status('."'".route('admin.labour.change_status',$leaveData->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm '.$disabled.'">Declined</a>';
+                }
+            })
+
+            ->addColumn('action',function($leaveData) use ($current_user){
+                $delete_url=route('admin.labour.delete',$leaveData->id);
+                $details_url=route('admin.labour.showLeave',$leaveData->id);
+                $edit_url=route('admin.labour.editLeave',$leaveData->id);
+                $action_buttons='';
+                
+               //need to check permissions later
+               if(true){
+                $action_buttons=$action_buttons.'<a title="Labour Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
+            }
+            //need to check permissions later
+            if(true){
+                $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Labour" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
+            }
+            //need to check permissions later
+            if(true){
+                $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete Labour" href="javascript:delete_user('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
+            }
+
+            return $action_buttons;
+            })
+            ->rawColumns(['action','status'])
+            ->make(true);
+        }
+
+        return view($this->view_path.'.leave-list',$this->data);
+    }
+
+    /************************************************************************/
+    # Function to show/load details page for labour leave                            #
+    # Function name    : show                                                #
+    # Created Date     : 26-11-2020                                          #
+    # Modified date    : 26-11-2020                                          #
+    # Purpose          : show/load details page for labour leave                     #
+    # Param            : id                                                  #
+
+    public function showLeave($id){
+        //$user=User::findOrFail($id);
+
+        $leaveData=LabourLeave::with(['userDetails'])->whereId($id)->first();
+        $this->data['page_title']='Labour Leave Details';
+        $this->data['leaveData']=$leaveData;
+        return view($this->view_path.'.show-leave',$this->data);
+
+    }
+
+
+    
+    /************************************************************************/
+    # Function to load labour leave edit page                            #
+    # Function name    : edit                                                #
+    # Created Date     : 18-11-2020                                          #
+    # Modified date    : 18-11-2020                                          #
+    # Purpose          : to load labour leave edit page                  #
+    # Param            : id                                                  #
+    
+    public function editLeave($id){
+        $leaveData=LabourLeave::findOrFail($id);
+        //policy is defined in App\Policies\UserPolicy
+        $this->authorize('update',$leaveData);
+        $this->data['page_title']='Edit Laboure';
+        $this->data['leaveData']=$leaveData;
+        $current_user=auth()->guard('admin')->user();
+        
+        return view($this->view_path.'.leave-edit',$this->data);
+    }
+
+
+    /************************************************************************/
+    # Function to load role create view page                                 #
+    # Function name    : createLeave                                              #
+    # Created Date     : 18-11-2020                                          #
+    # Modified date    : 18-11-2020                                          #
+    # Purpose          : To load role create view page                       #
+    public function createLeave(){
+        $this->data['page_title']='Create Labour Leave';
+
+        $current_user=auth()->guard('admin')->user();
+        $this->data['labourList'] = User::whereCreatedBy($current_user->id)->get();
+        return view($this->view_path.'.create-leave',$this->data);
+    }
+
+    
+
+    /********************************************************************************/
+    # Function to store user data                                                    #
+    # Function name    : storeLeave                                                       #
+    # Created Date     : 27-11-2020                                                  #
+    # Modified date    : 27-11-2020                                                  #
+    # Purpose          : store labour leave data                                             #
+    # Param            : CreateLabourLeaveRequest $request                                  #
+
+    public function storeLeave(CreateLabourLeaveRequest $request){
+
+        //dd($request->all());
+
+        $rangeDate = (explode("-",$request->date_range));     
+                $start_date = \Carbon\Carbon::parse($rangeDate['0']);
+                $end_date = \Carbon\Carbon::parse($rangeDate['1']);
+
+                $date_from = strtotime($start_date);
+                $date_to = strtotime($end_date);
+
+                $array_all_days = array();
+                $day_passed = ($date_to - $date_from); //seconds
+                $day_passed = ($day_passed/86400); //days
+                $arr_days=  array();
+                $counter = 1;
+                $day_to_display = $date_from;
+
+                while($counter <= $day_passed){
+                    $day_to_display += 86400;
+                    //echo date("F j, Y \n", $day_to_display);
+                    $checkLeave = LeaveDates::whereLeaveDate(date('o-m-d',$day_to_display))->first();
+                    if(!$checkLeave)
+                    {
+                        $arr_days[] = date('o-m-d',$day_to_display);
+                        $counter++;
+                    }
+                    
+                    else
+                    {
+                        empty($arr_days);
+                        return redirect()->route('admin.labour.createLeave')->with('error','Already Leave adde for this user on '.$checkLeave->leave_date);
+                    }
+                }
+
+                if(count($arr_days)>0)
+                {
+
+                    
+                    $storeLeave=LabourLeave::create([
+                        'labour_id'=>$request->labour_id,
+                        'leave_start'=>date('Y-m-d',$date_from),
+                        'leave_end'=>date('Y-m-d',$date_to),
+                        'leave_reason' => $request->leave_reason,
+                        'created_by'=>auth()->guard('admin')->id(),
+                    ]);
+
+                    foreach ($arr_days as $approvedDatesValue) {
+                      
+                       $user=LeaveDates::create([
+                            'leave_id'=>$storeLeave->id,
+                            'leave_date'=>$approvedDatesValue,
+                            
+                        ]);
+                    }
+                }
+
+        
+       
+
+        return redirect()->route('admin.labour.leaveList')->with('success','Labour Leave successfully created.');
+
+
+    }
 
 }
