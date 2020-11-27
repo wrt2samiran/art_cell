@@ -18,7 +18,7 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\{ContractStatus,Contract,User,Property,Service,ContractAttachment,ContractInstallment,FrequencyType,ContractService,ContractServiceRecurrence,ContractServiceDate};
+use App\Models\{ContractStatus,Contract,User,Property,Service,ContractAttachment,ContractInstallment,FrequencyType,ContractService,ContractServiceRecurrence,ContractServiceDate,WorkOrderLists};
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
 use Carbon\{Carbon,CarbonPeriod};
@@ -264,6 +264,17 @@ class ContractController extends Controller
                 return redirect()->route('admin.contracts.services',$contract_id)
                 ->with('error','Service is not belongs to his contract.');
             }
+
+            if($contract_service->service_type=='Maintenance'){
+                //check if there is work worder and work order is assigned to labour 
+                $assigned_work_order=WorkOrderLists::where('contract_service_id',$contract_service->id)->where('task_assigned','Y')->first();
+                if($assigned_work_order){
+                    return redirect()->route('admin.contracts.services',$contract_id)
+                        ->with('error','Service already assigned by the service provider. You can not edit the service now.');
+                }
+            }
+
+
         }else{
             $contract_service=null;
         }
@@ -409,6 +420,20 @@ class ContractController extends Controller
 
             ContractServiceDate::insert($service_dates_array);
 
+            $task_title=ucfirst($interval_type).' '.$contract_service->service->service_name;
+
+            WorkOrderLists::create([
+                'contract_id'=>$contract_id,
+                'contract_service_id'=>$contract_service->id,
+                'service_id'=>$contract_service->service_id,
+                'property_id'=>$contract->property_id,
+                'user_id'=>$contract->service_provider_id,
+                'task_title'=>$task_title,
+                'task_desc'=>$contract_service->note,
+                'start_date'=>$service_dates[0],
+                'created_by'=>$current_user->id
+            ]);
+
         }
 
         return redirect()->back()->with('success','Service added');
@@ -430,6 +455,14 @@ class ContractController extends Controller
 
         /* this code will be only for maintenance type service */
         if($contract_service->service_type=='Maintenance'){
+
+
+            //check if there is work worder and work order is assigned to labour 
+            $assigned_work_order=WorkOrderLists::where('contract_service_id',$contract_service->id)->where('task_assigned','Y')->first();
+            if($assigned_work_order){
+            return redirect()->route('admin.contracts.services',$contract_id)
+                ->with('error','Service already assigned by the service provider. You can not edit the service now.');
+            }
 
             $start_time=Carbon::parse($request->start_time)->format('G:i:s');
             $end_time=Carbon::parse($request->end_time)->format('G:i:s');
@@ -556,6 +589,35 @@ class ContractController extends Controller
 
             ContractServiceDate::insert($service_dates_array);
 
+            $work_order=WorkOrderLists::where('contract_service_id',$contract_service->id)->first();
+
+            $task_title=ucfirst($interval_type).' '.$contract_service->service->service_name;
+            if($work_order){
+                $work_order->update([
+                    'contract_id'=>$contract_id,
+                    'service_id'=>$contract_service->service_id,
+                    'property_id'=>$contract->property_id,
+                    'user_id'=>$contract->service_provider_id,
+                    'task_title'=>$task_title,
+                    'task_desc'=>$contract_service->note,
+                    'start_date'=>$service_dates[0],
+                    'updated_by'=>$current_user->id
+                ]);
+
+            }else{
+                WorkOrderLists::create([
+                    'contract_id'=>$contract_id,
+                    'contract_service_id'=>$contract_service->id,
+                    'service_id'=>$contract_service->service_id,
+                    'property_id'=>$contract->property_id,
+                    'user_id'=>$contract->service_provider_id,
+                    'task_title'=>$task_title,
+                    'task_desc'=>$contract_service->note,
+                    'start_date'=>$service_dates[0],
+                    'created_by'=>$current_user->id
+                ]);
+            }
+
         }
 
         return redirect()->route('admin.contracts.services',$contract_id)
@@ -573,17 +635,22 @@ class ContractController extends Controller
                 return response()->json(['message'=>'There should be atleast one service for the contract.'],400);
             }
         }
-        //todo
-        //1)need to check service is belongs to that contract
-        //2)need to there is already task to this contract service
+           
+        //check if there is work worder and work order is assigned to labour 
+        $assigned_work_order=WorkOrderLists::where('contract_service_id',$contract_service->id)->where('task_assigned','Y')->first();
+        if($assigned_work_order){
+            return response()->json(['message'=>'Service already assigned by the service provider. You can not edit the service now..'],400);
+        }
+      
         
         if($contract_service->service_type=='Maintenance'){
             ContractServiceRecurrence::where('contract_service_id',$contract_service->id)->delete();
             ContractServiceDate::where('contract_service_id',$contract_service->id)->delete();
         }
 
-
+        WorkOrderLists::where('contract_service_id',$contract_service->id)->delete();
         $contract_service->delete();
+
         return response()->json(['message'=>'Service successfully deleted.']);
     }
 

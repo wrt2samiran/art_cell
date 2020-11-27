@@ -38,15 +38,14 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
         Route::any('/reset-password/{encryptCode}','AuthController@resetPassword')->name('reset.password');
 
         Route::group(['middleware' => 'admin'], function () {
-            Route::get('/dashboard', 'DashboardController@dashboardView')->name('dashboard');
+
+            Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
             Route::any('/edit-settings', 'DashboardController@editSetting')->name('settings');
             Route::any('/update-settings', 'DashboardController@updateSetting')->name('updateSetting');
             //Route::any('/settings', 'DashboardController@settings')->name('settings');
             
             
             Route::get('/logout', 'AuthController@logout')->name('logout');
-            Route::get('/change-password','DashboardController@showChangePasswordForm')->name('changePassword');
-            Route::post('/change-password','DashboardController@changePassword')->name('changePassword');
 
             Route::group(['prefix'=>'profile','as' => 'profile.'],function(){
                 Route::get('/edit-profile','ProfileController@edit_profile')->name('edit_profile');

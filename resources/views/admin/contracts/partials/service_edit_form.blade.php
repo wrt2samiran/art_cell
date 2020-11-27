@@ -400,7 +400,7 @@
     </div>
     <div class="form-group">
       <label for="note">Note</label>
-      <textarea name="note" id="note" class="form-control"></textarea>
+      <textarea name="note" id="note" class="form-control">{!! $contract_service->note !!}</textarea>
       @if($errors->has('note'))
       <span class="text-danger">{{$errors->first('note')}}</span>
       @endif
