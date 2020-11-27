@@ -77,6 +77,13 @@
                             @endif
                           </div>
                           <div class="form-group required">
+                            <label for="subject">Subject <span class="error">*</span></label>
+                            <input type="text" class="form-control" value="{{old('subject')?old('subject'):$complaint->subject}}" name="subject" id="subject"  placeholder="Subject">
+                            @if($errors->has('subject'))
+                            <span class="text-danger">{{$errors->first('subject')}}</span>
+                            @endif
+                          </div>
+                          <div class="form-group required">
                             <label for="details">Details <span class="error">*</span></label>
                             <textarea class="form-control" name="details" id="details"  placeholder="Details">{!!old('details')?old('details'):$complaint->details!!}</textarea>
                             @if($errors->has('details'))

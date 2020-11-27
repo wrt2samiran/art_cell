@@ -143,6 +143,7 @@ class ComplaintController extends Controller
             'created_by'=>$current_user->id,
             'contract_id'=>$request->contract_id,
             'work_order_list_id'=>$request->work_order_id,
+            'subject'=>$request->subject,
             'details'=>$request->details,
             'file'=>$file_name,
             'complaint_status_id'=>$default_status->id,
@@ -359,6 +360,7 @@ class ComplaintController extends Controller
 
         $complaint->update([
             'work_order_list_id'=>$request->work_order_id,
+            'subject'=>$request->subject,
             'details'=>$request->details,
             'file'=>$file_name,
         ]);

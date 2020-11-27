@@ -62,6 +62,10 @@
                             </td>
                           </tr>
                           <tr>
+                            <td>Subject</td>
+                            <td >{{$complaint->subject}}</td>
+                          </tr>
+                          <tr>
                             <td>Complaint Details</td>
                             <td >{{$complaint->details}}</td>
                           </tr>

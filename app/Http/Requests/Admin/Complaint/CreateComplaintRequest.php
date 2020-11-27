@@ -25,8 +25,9 @@ class CreateComplaintRequest extends FormRequest
     {
         return [
             'contract_id'=>'required',
+            'subject'=>'required|max:100',
             'details'=>'required|max:1000',
-            'file.*' => [
+            'file' => [
                 'mimetypes:application/pdf,image/jpeg,image/jpg,image/png,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword',
                 'max:1024',
             ],
@@ -36,6 +37,8 @@ class CreateComplaintRequest extends FormRequest
     public function messages(){
         return [
             'contract_id.required' => 'Select contract',
+            'subject.required' => 'Subject is required',
+            'subject.max'=>'Subject should not be more then 100 characters',
             'description.required' => 'Description is required',
             'description.max'=>'Description should not be more then 1000 characters',
         ];

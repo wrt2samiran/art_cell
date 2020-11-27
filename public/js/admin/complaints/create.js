@@ -7,6 +7,11 @@ $("#complaint_create_form").validate({
         // work_order_id:{
         //     required: true
         // },
+
+        subject:{
+            required: true,
+            maxlength: 100,  
+        },
         details:{
             required: true,
             maxlength: 1000,  
@@ -20,6 +25,10 @@ $("#complaint_create_form").validate({
         // work_order_id:{
         //     required:  "Select work order",
         // },
+        subject: {
+            required:  "Subject is required",
+            maxlength: "Subject should not be more then 100 characters",
+        },
         details: {
             required:  "Details is required",
             maxlength: "Details should not be more then 1000 characters",
