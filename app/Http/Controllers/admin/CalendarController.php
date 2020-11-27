@@ -96,23 +96,13 @@ class CalendarController extends Controller
             {
                 $validationCondition = array(
                     'task_title'    => 'required|min:2|max:255',
-                    'service_id'    => 'required',
-                    'property_id'   => 'required',
-                    'country_id'    => 'required',
-                    'state_id'      => 'required',
-                    'city_id'       => 'required',
-                    'labour_id'     => 'required',
+                   
                 );
                 $validationMessages = array(
                     'task_title.required'   => 'Please enter Task title',
                     'task_title.min'        => 'Task title should be should be at least 2 characters',
                     'task_title.max'        => 'Task title should not be more than 255 characters',
-                    'service_id.required'   => 'Please select service',
-                    'property_id.required'  => 'Please select property',
-                    'country_id.required'   => 'Please select country',
-                    'state_id.required'     => 'Please select state',
-                    'city_id.required'      => 'Please select city',
-                    'labour_id.required'    => 'Please select user',
+                    
                 );
 
                 $Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);

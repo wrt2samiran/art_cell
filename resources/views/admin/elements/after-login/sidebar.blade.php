@@ -367,7 +367,7 @@
                     </a>
                 </li>            
                 @endif
-                @if ($admin->role->user_type->slug =='super-admin' || $admin->role->user_type->slug =='service-provider')
+                <!-- @if ($admin->role->user_type->slug =='super-admin' || $admin->role->user_type->slug =='service-provider')
                 <li class="nav-item has-treeview {{(request()->is('admin/labour/*','admin/labour'))?'menu-open':''}}">
                     
                     <li class="nav-item">
@@ -376,6 +376,43 @@
                                 <p>{{__('nav_link_text.labour_management')}}</p>
                             </a>
                         </li>
+                </li>
+                @endif -->
+
+                @if(auth()->guard('admin')->user()->hasModulePermission('labour-management'))
+                <li class="nav-item has-treeview {{(request()->is('admin/labour/*','admin/labour'))?'menu-open':''}}">
+                    <a href="#"
+                       class="nav-link {{(request()->is('admin/labour/*','admin/labour'))?'active':''}}">
+                        <i class="nav-icon fas fa-bars"></i>
+                        <p>
+                            {{__('nav_link_text.labour_management')}}
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    
+                    <ul class="nav nav-treeview">
+                        @if(auth()->guard('admin')->user()->hasAllPermission(['manage-labour']))
+                        <li class="nav-item">
+                            <a href="{{ route('admin.labour.list') }}"
+                               class="nav-link {{(request()->is('admin/labour','admin/labour'))?'active':''}}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>{{__('nav_link_text.labour_list')}}</p>
+                            </a>
+                        </li>
+                        @endif
+                        @if(auth()->guard('admin')->user()->hasAllPermission(['leave-list']))
+                        <li class="nav-item">
+                            <a href="{{ route('admin.labour.leaveList') }}" class="nav-link {{(request()->is('admin/labour/leave-list','admin/labour/leave-list', 'admin/labour/show-leave/*','admin/labour/show-leave'))?'active':''}}"
+                               >
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>{{__('nav_link_text.labour_leave_management')}}</p>
+                            </a>
+                        </li>
+                        @endif
+                        
+                    </ul>
+                   
+                    
                 </li>
                 @endif
             </ul>

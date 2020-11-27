@@ -35,33 +35,7 @@
                       {{ Session::get('error') }}
                   </div>
               @endif
-              <!-- <form  method="get" id="task_list" action="{{route('admin.task_management.calendar')}}" method="post" enctype="multipart/form-data">
-                    <div class="row">
-                      <div class="call-lg-3">
-                          <input type="hidden" name="search" value="search">
-                          <select name="user_labour_id" id="user_labour_id" class=" form-control select2-selection__rendered">
-                            <option  value="">Select Labour</option>
-                            @foreach($labour_list as $labour_data)
-                               <option value="{{$labour_data->id}}" @if($request->user_labour_id==$labour_data->id) selected @endif >{{@$labour_data->name}}</option>
-                            @endforeach  
-                          </select>
-                      </div>
-                      <div class="call-lg-3">
-                          <select name="task_status" id="task_status" class="form-control select2-selection__rendered">
-                             <option  value="">Select Status</option>
-                          
-                             <option value="3" @if($request->task_status==0) selected @endif>Pending </option>
-                             <option value="1" @if($request->task_status==1) selected @endif>Overdue</option>
-                             <option value="2" @if($request->task_status==2) selected @endif>Completed</option>
-                          </select>
-                      </div>
-                      <div class="call-lg-3">
-                        <input type="submit" class="form-control" name="submit" value="Submit">
-                      </div>
-
-                    </div>
-
-              </form> -->
+              
                 
                 <section class="content">
                   <div class="container-fluid">

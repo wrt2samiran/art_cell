@@ -5,7 +5,7 @@
         "autoWidth": false,
         processing: true,
         serverSide: true,
-        ajax: $('#details_task').val(),
+        ajax: $('#daily_task_management_table').val(),
 
 
         columns: [
@@ -28,6 +28,92 @@
 
     });
 
+
+
+    $("#admin_labour_task_add_form").validate({
+        rules: {
+
+            
+           work_order_id: {
+                required: true,
+            },
+            task_title: {
+                required: true,
+                minlength: 3,
+                maxlength: 50,
+            },
+            
+            service_id: {
+                required: true,
+            },
+            property_id: {
+                required: true,
+            },
+            country_id: {
+                required: true,
+            },
+            state_id: {
+                required: true,
+            },           
+            city_id: {
+                required: true,
+            },
+            labour_id: {
+                required: true,
+            },
+            date_range: {
+                required: true,
+            },
+
+
+        },
+        messages: {
+            work_order_id: {
+                required:  "Please select service",
+            },
+            task_title: {
+                required:  "Job title is required",
+                minlength: "Job title should have 3 characters",
+                maxlength: "Job title should not be more then 50 characters"
+            },
+            service_id: {
+                required:  "Please select service",
+            },
+            property_id: {
+                required:  "Please select property",
+            },
+            country_id: {
+                required:  "Please select country",
+            },
+            state_id: {
+                required:  "Please select state",
+            },
+            city_id: {
+                required:  "Please select city",
+            },
+            labour_id: {
+                required:  "Please select user",
+            },
+            date_range: {
+                required:  "Please select date range",
+            },
+
+        },
+
+        errorPlacement: function (error, element) {
+          error.addClass('invalid-feedback');
+          error.insertAfter(element);
+        },
+        highlight: function (element, errorClass, validClass) {
+          $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+          $(element).removeClass('is-invalid');
+        },
+        submitHandler: function(form) {
+            form.submit();
+        }
+    });
 
     
     var labour_task_management_table=$('#labour_task_management_table').DataTable({

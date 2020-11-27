@@ -9,12 +9,12 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Work Order Management</h1>
+                <h1>Labour Leave Management</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                   <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item active">Work Order</li>
+                  <li class="breadcrumb-item active">Users</li>
                 </ol>
               </div>
             </div>
@@ -26,18 +26,16 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header">
-                                <div class="d-flex justify-content-between" >
-                                    <div><span>Work Order List</span></div>
-                                    @if(auth()->guard('admin')->user()->hasAllPermission(['work-order-create']))
-                                      <div>
-                                        <a class="btn btn-success" href="{{route('admin.work-order-management.workOrderCreate')}}">
-                                         Work Order List
-                                        </a>
-                                      </div>
-                                    @endif
-                                </div>
-                            </div>
+				            <div class="card-header">
+				                <div class="d-flex justify-content-between" >
+				                    <div><span>Labour Leave List</span></div>
+					                <div>
+						                <a class="btn btn-success" href="{{route('admin.labour.createLeave')}}">
+						                 Create Labour Leave
+						                </a>
+					                </div>
+				                </div>
+				            </div>
 
                             <!-- /.card-header -->
                             <div class="card-body">
@@ -54,26 +52,22 @@
                                     </div>
                                 @endif
                                 
-                                <table class="table table-bordered" id="work_order_management_table">
+                                <hr class="mt-3 mb-3"/>
+                                <table class="table table-bordered" id="labour_table">
                                     <thead>
                                         <tr>
                                             <th>Id</th>
-                                            <th>Contract Id</th>
-                                            <th>Title</th>
-                                            <th>Property Name</th>
-                                            <th>Service</th>
-                                            <th>Country</th>
-                                            <th>State</th>
-                                            <th>City</th>
-                                            <th>Service Start Date</th>
-                                            
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Leave Start</th>
+                                            <th>Leave End</th>
                                             <th>Status</th>
-                                            
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                 </table>
-                                <input type="hidden" id="work_order_data_url" value="{{route('admin.work-order-management.list')}}">
+                                <!-- calling this url from datatable data which is inside public\js\admin\users\list.js-->
+                                <input type="hidden" id="labour_leave_data_url" value="{{route('admin.labour.leaveList')}}">
                             </div>
                         </div>
                     </div>
@@ -86,7 +80,7 @@
 @endsection
 
 @push('custom-scripts')
-<script type="text/javascript" src="{{asset('js/admin/work_order_management/list.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/admin/labour/leave-list.js')}}"></script>
 @endpush
 
 

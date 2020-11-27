@@ -439,7 +439,7 @@ class WorkOrderManagementController extends Controller
     public function list(Request $request){
 
 
-        $this->data['page_title']='Task Management List';
+        $this->data['page_title']='Work Order Management List';
         $logedInUser = \Auth::guard('admin')->user()->id;
         $logedInUserRole = \Auth::guard('admin')->user()->role_id;
         if($logedInUserRole !=5)
@@ -507,7 +507,7 @@ class WorkOrderManagementController extends Controller
                 } 
 
                
-                if($logedInUser==$workOrder->created_by and $workOrder->task_assigned=='N'){
+                if( \Auth::guard('admin')->user()->hasAllPermission(['work-order-edit'])){   
 
                     $edit_url=route('admin.work-order-management.edit',$workOrder->id);
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Work Order" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
@@ -823,6 +823,7 @@ class WorkOrderManagementController extends Controller
         $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'property.country', 'property.state', 'property.city'])->whereId($id)->first();
         $this->data['page_title']='Work Order Details';
         $this->data['work_order_list']=$workOrder;
+
         return view($this->view_path.'.show',$this->data);
     }
     
@@ -1054,8 +1055,7 @@ class WorkOrderManagementController extends Controller
                 $action_buttons='';
                 
                 if($logedInUser == $task_detail_list->user_id)
-                { echo 'First';
-                    exit;
+                { 
                     if($task_detail_list->user_feedback==''){
                         if($task_detail_list->user_id==$logedInUser){
                             
@@ -1081,8 +1081,6 @@ class WorkOrderManagementController extends Controller
                 }
                 else
                 {
-                    echo 'Second';
-                    exit;
                     if($logedInUser==$task_detail_list->user_id){
                          $add_url=route('admin.work-order-management.labourTaskList',$task_detail_list->id);
 
@@ -1112,22 +1110,19 @@ class WorkOrderManagementController extends Controller
             ->rawColumns(['action','status'])
             ->make(true);
         }
-         //echo 'Third'. $logedInUserRole;
-        //exit;
-
+        
         //$this->data['task_list_data']=TaskLists::with('property')->with('service')->with('country')->with('state')->with('city')->with('userDetails')->findOrFail($id);
-        $this->data['work_order_list']=WorkOrderLists::with(['contract','property','service_provider','service', 'property.country', 'property.state', 'property.city'])->whereId($id)->first();
+        $this->data['work_order_list']=WorkOrderLists::with(['contract','property','service_provider','service', 'property.country', 'property.state', 'property.city'])->whereId($id)->whereIsDeleted('N')->first();
+        $this->data['labour_list']= User::whereCreatedBy($logedInUser)->orderBy('name', 'Desc')->get();
+        
         $this->data['request'] = $request;
+        $this->data['work_order_id'] = $id;
        if($logedInUserRole !=5)
        {
-        // echo 'Upper';
-        // exit;
             return view($this->view_path.'.daily-task-list',$this->data);
        }
        else
        {
-        echo 'Here';
-        exit;
             return view($this->view_path.'.labour-task-list',$this->data);
        }
         
@@ -1148,7 +1143,9 @@ class WorkOrderManagementController extends Controller
         $this->data['page_title']='Add Labour Task';
         $logedInUser = \Auth::guard('admin')->user()->id;
 
-        $this->data['sqltaskData']=TaskLists::with('property')->with('service')->with('country')->with('state')->with('city')->whereId($id)->whereIsDeleted('N')->first();
+        //$this->data['sqltaskData']=TaskLists::with('property')->with('service')->with('country')->with('state')->with('city')->whereId($id)->whereIsDeleted('N')->first();
+
+        $this->data['sqltaskData']=TaskLists::with(['contract','property','service_provider','service', 'property.country', 'property.state', 'property.city'])->whereId($id)->whereIsDeleted('N')->first();
 
         $this->data['labour_list']= User::whereRoleId('5')->whereCreatedBy($logedInUser)->orderBy('name', 'Desc')->get();
         $labour_list= User::whereStatus('A')->whereRoleId('5')->whereCreatedBy($logedInUser)->get();
@@ -1194,7 +1191,7 @@ class WorkOrderManagementController extends Controller
             $Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);
             if ($Validator->fails()) {
 
-                return redirect()->route('admin.work-order-management.labourTaskCreate', $request->task_id)->withErrors($Validator)->withInput();
+                return redirect()->route('admin.work-order-management.labourTaskList', $request->work_order_id)->withErrors($Validator)->withInput();
                 
             } else {
                 

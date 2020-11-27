@@ -14,7 +14,7 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.task_management.labourTaskList', $sqltaskData->id)}}">Labour Task List</a></li>
+              
               <li class="breadcrumb-item active">Assign Labour Task</li>
             </ol>
           </div>
@@ -46,7 +46,7 @@
                   @endif
                   <div class="row justify-content-center">
                     <div class="col-md-10 col-sm-12">
-                      <form  method="post" id="admin_labour_assign_form" action="{{route('admin.task_management.taskAssign')}}" method="post" enctype="multipart/form-data">
+                      <form  method="post" id="admin_labour_assign_form" action="{{route('admin.work-order-management.taskAssign')}}" method="post" enctype="multipart/form-data">
                         @csrf
                         <?php //dd($sqltaskData);?>
                               <div>  
@@ -55,7 +55,7 @@
                                   <label for="service_id">Task Title <span class="error">*</span></label>
                                   <select class="form-control parent_role_select2"  style="width: 100%;" name="task_id" id="task_id" 
                                     >
-                                           <option value="{{$sqltaskData->id}}" {{(old('task_id')== $sqltaskData->id)? 'selected':''}}>{{@$sqltaskData->task_title}}</option>
+                                           <option value="{{@$sqltaskData->id}}" {{(old('task_id')== @$sqltaskData->id)? 'selected':''}}>{{@$sqltaskData->task_title}}</option>
                                      
                                     </select>
                                   @if($errors->has('task_id'))
@@ -66,7 +66,7 @@
                                 <div class="form-group required">
                                   <label for="property_id">Service <span class="error">*</span></label>
                                   <select class="form-control parent_role_select2" style="width: 100%;" name="service_id" id="service_id" >
-                                           <option value="{{$sqltaskData->service_id}}" {{(old('service_id')== $sqltaskData->service_id)? 'selected':''}}>{{@$sqltaskData->service->service_name}}</option>
+                                           <option value="{{@$sqltaskData->service_id}}" {{(old('service_id')== @$sqltaskData->service_id)? 'selected':''}}>{{@$sqltaskData->service->service_name}}</option>
                                     </select>
                                   @if($errors->has('property_id'))
                                   <span class="text-danger">{{$errors->first('property_id')}}</span>
@@ -79,7 +79,7 @@
                                     >
                                      <option value="">Select Labour</option>
                                      @forelse($labour_list as $labour_data)
-                                           <option value="{{$labour_data->id}}" {{(old('contract_id')== $labour_data->id)? 'selected':''}}>{{@$labour_data->name}}</option>
+                                           <option value="{{@$labour_data->id}}" {{(old('contract_id')== @$labour_data->id)? 'selected':''}}>{{@$labour_data->name}}</option>
                                       @empty
                                       <option value="">No Labour Found</option>
                                       @endforelse     
@@ -132,7 +132,7 @@
 
      $.ajax({
        
-        url: "{{route('admin.task_management.getContractData')}}",
+        url: "{{route('admin.work-order-management.getContractData')}}",
         type:'get',
         dataType: "json",
         data:{contract_id:contract_id,_token:"{{ csrf_token() }}"}
@@ -194,17 +194,17 @@
 
     $( document ).ready(function() {
         $('#date_range').daterangepicker({
-                 minDate: new Date('<?=$sqltaskData->start_date?>'),
-                 maxDate: new Date('<?=$sqltaskData->end_date?>'),
-                 startDate: new Date('<?=$sqltaskData->start_date?>'),
-                 endDate: new Date('<?=$sqltaskData->end_date?>'),
+                 minDate: new Date('<?=@$sqltaskData->start_date?>'),
+                 maxDate: new Date('<?=@$sqltaskData->end_date?>'),
+                 startDate: new Date('<?=@$sqltaskData->start_date?>'),
+                 endDate: new Date('<?=@$sqltaskData->end_date?>'),
               })
     });
 
     
 </script>
 
-<script type="text/javascript" src="{{asset('js/admin/task_management/create.js')}}">
+<script type="text/javascript" src="{{asset('js/admin/work-order-management/create.js')}}">
 
   
 </script>
