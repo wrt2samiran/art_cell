@@ -54,17 +54,14 @@ $("#add_service_form").validate({
             required: true, 
             number:true
         },
-        start_time:{
-            required: true, 
-        },
-        end_time:{
-            required: true,
-            endTimeShouldBeGreatherThanStartTime:true
-        },
         reccure_every:{
             required: true,
             number:true,
             min:1
+        },
+        number_of_times:{
+          required: true,
+          number:true
         },
         start_date:{
             required: true,
@@ -156,13 +153,6 @@ $("#add_service_form").validate({
         service_type:{
             required:  "Select service type",
         },
-        start_time:{
-            required:  "Enter start time",
-        },
-        end_time:{
-            required:  "Enter end time",
-            endTimeShouldBeGreatherThanStartTime:'End time should be greater than start time'
-        },
         start_date:{
             required:  "Start date is required",
         },
@@ -173,12 +163,7 @@ $("#add_service_form").validate({
     },
     errorPlacement: function (error, element) {
         error.addClass('invalid-feedback');
-        if(element.attr('name')=='start_time'){
-          error.insertAfter($('#start_time_error_holder'));
-        }else if (element.attr('name')=='end_time') {
-          error.insertAfter($('#end_time_error_holder'));
-        }
-        else if (element.attr('name')=='weekly_days[]') {
+        if (element.attr('name')=='weekly_days[]') {
           error.insertAfter($('#weekly_days_error_holder'));
         }
         else{
@@ -220,17 +205,14 @@ $("#update_service_form").validate({
             required: true, 
             number:true
         },
-        start_time:{
-            required: true, 
-        },
-        end_time:{
-            required: true,
-            endTimeShouldBeGreatherThanStartTime:true
-        },
         reccure_every:{
             required: true,
             number:true,
             min:1
+        },
+        number_of_times:{
+          required: true,
+          number:true
         },
         start_date:{
             required: true,
@@ -322,13 +304,6 @@ $("#update_service_form").validate({
         service_type:{
             required:  "Select service type",
         },
-        start_time:{
-            required:  "Enter start time",
-        },
-        end_time:{
-            required:  "Enter end time",
-            endTimeShouldBeGreatherThanStartTime:'End time should be greater than start time'
-        },
         start_date:{
             required:  "Start date is required",
         },
@@ -339,12 +314,7 @@ $("#update_service_form").validate({
     },
     errorPlacement: function (error, element) {
         error.addClass('invalid-feedback');
-        if(element.attr('name')=='start_time'){
-          error.insertAfter($('#start_time_error_holder'));
-        }else if (element.attr('name')=='end_time') {
-          error.insertAfter($('#end_time_error_holder'));
-        }
-        else if (element.attr('name')=='weekly_days[]') {
+        if (element.attr('name')=='weekly_days[]') {
           error.insertAfter($('#weekly_days_error_holder'));
         }
         else{
@@ -416,6 +386,14 @@ $('#reccure_every').on('change keyup keydown blur',function(){
   }
 });
 
+$('#consider_as_on_demand').on('change',function(){
+  if(this.checked) {
+    $('#number_of_time_can_used_holder').show();
+  }else{
+    $('#number_of_time_can_used_holder').hide();
+  }
+});
+
 
 $('#service_type').on('change',function(){
   var service_type=$(this).val();
@@ -424,13 +402,19 @@ $('#service_type').on('change',function(){
     $('#number_of_time_can_used_holder').hide();
     $('#number_of_time_can_used').val('');
 
+    $('#consider_as_on_demand_holder').show();
+
+
   }else if(service_type=='On Demand') {
     $('#number_of_time_can_used_holder').show();
     $('#reccurence_container').hide();
+
+    $('#consider_as_on_demand_holder').hide();
   }else{
     $('#number_of_time_can_used_holder').hide();
     $('#number_of_time_can_used').val('');
     $('#reccurence_container').hide();
+    $('#consider_as_on_demand_holder').hide();
   }
 
   if(service_type=='Free'){

@@ -54,7 +54,11 @@ class PropertyController extends Controller
             ->where(function($q)use ($current_user){
                 //if logged in user is not super admin then fetch only those properties which are crated by logged in user
                 if($current_user->role->user_type->slug!='super-admin'){
-                    $q->where('property_owner',$current_user->id);
+                    if($current_user->created_by_admin){
+                        $q->where('property_owner',$current_user->id);
+                    }else{
+                        $q->where('property_manager',$current_user->id);
+                    }
                 }
             })
             ->when($request->city_id,function($query) use($request){
@@ -130,8 +134,13 @@ class PropertyController extends Controller
         $current_user=auth()->guard('admin')->user();
 
         //property manager can add when property owner logged in and he can add a user created by himself as a property manager
+        //property manager is also user type=property-owner and not created by admin
         $this->data['property_managers']=User::whereHas('role')
         ->whereHas('role.creator')
+        ->whereHas('role.user_type',function($q){
+            $q->where('slug','property-owner');
+        })
+        ->where('created_by_admin',false)
         ->where('created_by',$current_user->id)
         ->whereStatus('A')->get();
 
@@ -140,6 +149,7 @@ class PropertyController extends Controller
         ->whereHas('role.user_type',function($q){
             $q->where('slug','property-owner');
         })
+        ->where('created_by_admin',true)
         ->whereStatus('A')->get();
 
         $this->data['property_types']=PropertyType::whereIsActive(true)->get();
@@ -264,8 +274,13 @@ class PropertyController extends Controller
         $this->data['cities']=City::whereHas('state')->whereHas('country')->whereIsActive(true)->get();
 
         //property manager can add when property owner logged in and he can add a user created by himself as a property manager
+        //property manager is also user type=property-owner and not created by admin
         $this->data['property_managers']=User::whereHas('role')
         ->whereHas('role.creator')
+        ->whereHas('role.user_type',function($q){
+            $q->where('slug','property-owner');
+        })
+        ->where('created_by_admin',false)
         ->where('created_by',$current_user->id)
         ->whereStatus('A')->get();
 
@@ -274,6 +289,7 @@ class PropertyController extends Controller
         ->whereHas('role.user_type',function($q){
             $q->where('slug','property-owner');
         })
+        ->where('created_by_admin',true)
         ->whereStatus('A')->get();
         
         $this->data['property_types']=PropertyType::whereIsActive(true)->get();
@@ -305,6 +321,12 @@ class PropertyController extends Controller
         }else{
             $property_owner=$request->property_owner;
         }
+
+        if($current_user->role->user_type->slug == 'property-owner' && $current_user->created_by_admin){
+            $property_manager=$request->property_manager;
+        }else{
+            $property_manager=$property->property_manager;
+        }
         
     	$property->update([
             'property_name'=>$request->property_name,
@@ -320,7 +342,7 @@ class PropertyController extends Controller
             'contact_number'=>$request->contact_number,
             'contact_email'=>$request->contact_email,
             'property_owner'=>$property_owner,
-            'property_manager'=>$request->property_manager,
+            'property_manager'=>$property_manager,
             'electricity_account_number'=>$request->electricity_account_number,
             'water_account_number'=>$request->water_account_number,
             'updated_by'=>auth()->guard('admin')->id()

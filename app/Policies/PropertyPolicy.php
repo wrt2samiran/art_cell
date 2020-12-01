@@ -33,7 +33,7 @@ class PropertyPolicy
         if($user->role->user_type->slug == 'super-admin'){
             return Response::allow(); 
         }else{
-            if($property->property_owner!=$user->id){
+            if($property->property_owner!=$user->id && $property->property_manager!=$user->id){
                 return  Response::deny('You are not authorize to edit this property. '.'<a href="'.route('admin.dashboard').'" class="btn btn-success">Back to Dashboard</a>');
             }else{
                 return Response::allow();
@@ -64,7 +64,7 @@ class PropertyPolicy
         if($user->role->user_type->slug == 'super-admin'){
             return Response::allow(); 
         }else{
-            if($property->property_owner!=$user->id){
+            if($property->property_owner!=$user->id && $property->property_manager!=$user->id){
                 return  Response::deny('You are not authorize to edit this property. '.'<a href="'.route('admin.dashboard').'" class="btn btn-success">Back to Dashboard</a>');
             }else{
                 return Response::allow();

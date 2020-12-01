@@ -37,10 +37,15 @@ class UpdateServiceRequest extends FormRequest
             $rules_array['service_price']='required|numeric';
         }
         if(request()->service_type=='Maintenance'){
-            $rules_array['start_time']='required';
-            $rules_array['end_time']='required';
+
             $rules_array['interval_type']='required';
             $rules_array['reccure_every']='required';
+
+                        
+            if(request()->interval_type=='daily'){
+                $rules_array['number_of_times']='required';
+            }
+
 
             $rules_array['start_date']='required';
 
