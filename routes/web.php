@@ -413,6 +413,13 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::get('/labour-task-list/{id}', 'WorkOrderManagementController@labourTaskList')->name('labourTaskList'); 
                 Route::get('/labour-task-create/{id}', 'WorkOrderManagementController@labourTaskCreate')->name('labourTaskCreate');
                 Route::post('/assign-labour-task', 'WorkOrderManagementController@taskAssign')->name('taskAssign');
+                Route::post('/assign-labour-maintanence-task', 'WorkOrderManagementController@taskMaintanenceAssign')->name('taskMaintanenceAssign');
+                Route::post('/get-data', 'WorkOrderManagementController@checkAvailablity')->name('checkAvailablity');  
+                Route::get('/task_labour_list/{id}', 'WorkOrderManagementController@taskLabourList')->name('taskLabourList');
+                Route::post('/get-dates', 'WorkOrderManagementController@checkDateAvailablity')->name('checkDateAvailablity'); 
+                Route::post('/assign-labour-other-maintanence-task', 'WorkOrderManagementController@taskOtherMaintanenceAssign')->name('taskOtherMaintanenceAssign');  
+                
+                
 
                 Route::any('/{id}/delete', 'WorkOrderManagementController@delete')->name('delete');
                 Route::post('/task-feedback', 'WorkOrderManagementController@taskFeedback')->name('taskFeedback'); 

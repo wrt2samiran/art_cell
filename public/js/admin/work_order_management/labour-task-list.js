@@ -171,7 +171,7 @@ $("#admin_maintanence_labour_task_add_form").validate({
         work_order_id: {
             required: true,
         },
-        task_title_maintanence_daily: {
+        task_title: {
             required: true,
             minlength: 3,
             maxlength: 50,
@@ -192,7 +192,7 @@ $("#admin_maintanence_labour_task_add_form").validate({
         work_order_id: {
             required:  "Please select Work Order first",
         },
-        task_title_maintanence_daily: {
+        task_title: {
             required:  "Task title is required",
             minlength: "Task title should have 3 characters",
             maxlength: "Task title should not be more then 50 characters"
@@ -228,73 +228,7 @@ $("#admin_maintanence_labour_task_add_form").validate({
     unhighlight: function(element, errorClass, validClass) {
         $(element).parents(".col-sm-5").addClass("has-success").removeClass("has-error");
     }
-});  
-
- 
-$("#admin_other_maintanence_labour_task_add_form").validate({
-    ignore: [],
-    rules: {
-        work_order_id: {
-            required: true,
-        },
-        task_title_maintanence_other: {
-            required: true,
-            minlength: 3,
-            maxlength: 50,
-        },
-  
-        service_id: {
-            required: true,
-        },
-        maintanence_other_user_id: {
-            required: true,
-        },
-        work_date_other: {
-            required: true,
-        },
-        
-    },
-    messages: {
-        work_order_id: {
-            required:  "Please select Work Order first",
-        },
-        task_title_maintanence_other: {
-            required:  "Task title is required",
-            minlength: "Task title should have 3 characters",
-            maxlength: "Task title should not be more then 50 characters"
-        },
-        service_id: {
-            required:  "Please select service",
-        },
-        maintanence_other_user_id: {
-            required:  "Please select Labour",
-        },
-        work_date_other: {
-            required:  "Please select Atleast one Work Date",
-        },
-        
-    },
-    //errorElement: "em",
-    errorPlacement: function(error, element) {
-        // Add the `help-block` class to the error element
-        error.addClass('invalid-feedback');
-    //       error.insertAfter(element);
-
-        if (element.prop("type") === "checkbox") {
-            error.insertAfter(element.parent("label"));
-        } else if (element.hasClass('multiselect')) {
-            error.insertAfter(element.next('.btn-group'))
-        } else {
-      error.insertAfter(element);
-    }
-    },
-    highlight: function(element, errorClass, validClass) {
-        $(element).parents(".col-sm-5").addClass("has-error").removeClass("has-success");
-    },
-    unhighlight: function(element, errorClass, validClass) {
-        $(element).parents(".col-sm-5").addClass("has-success").removeClass("has-error");
-    }
-}); 
+});    
 
 
     var labour_task_management_table=$('#labour_task_management_table').DataTable({
