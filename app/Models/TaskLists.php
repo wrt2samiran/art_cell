@@ -34,4 +34,8 @@ class TaskLists extends Model
     public function contract() {
         return $this->belongsTo('\App\Models\Contract', 'contract_id', 'id');
     }
+
+    public function work_order() {
+        return $this->belongsTo('\App\Models\WorkOrderLists', 'work_order_id', 'id');
+    }
 }

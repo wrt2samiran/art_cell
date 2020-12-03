@@ -38,4 +38,13 @@ class WorkOrderLists extends Model
     public function service_provider(){
         return $this->belongsTo(User::class,'user_id','id');
     }
+    
+    public function contract_service_dates(){
+        return $this->hasMany(ContractServiceDate::class, 'contract_service_id', 'contract_service_id');
+    }
+
+    
+    public function contract_service_recurrence(){
+        return $this->belongsTo(ContractServiceRecurrence::class,'contract_service_id','contract_service_id');
+    }
 }

@@ -32,7 +32,7 @@
                                     @if(auth()->guard('admin')->user()->hasAllPermission(['work-order-create']))
                                       <div>
                                         <a class="btn btn-success" href="{{route('admin.work-order-management.workOrderCreate')}}">
-                                         Work Order List
+                                         Create Work Order
                                         </a>
                                       </div>
                                     @endif
@@ -60,6 +60,7 @@
                                             <th>Id</th>
                                             <th>Contract Id</th>
                                             <th>Title</th>
+                                            <th>Type</th>
                                             <th>Property Name</th>
                                             <th>Service</th>
                                             <th>Country</th>

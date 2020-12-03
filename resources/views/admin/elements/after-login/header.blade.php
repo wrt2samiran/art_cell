@@ -12,6 +12,9 @@
     <link rel="stylesheet" href="{{asset('assets/plugins/fontawesome-free/css/all.min.css')}}">
     <!-- Ionicons -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- *****************for multiselect with search option, select all and scrollbar *************-->
+    <link rel="stylesheet" type="text/css" href="{{asset('assets/css/jquery.multiselect.css')}}">
+    <!-- *****************for multiselect with search option, select all and scrollbar End*************-->
     <!-- fullCalendar -->
       <link rel="stylesheet" href="{{asset('assets/plugins/fullcalendar/main.min.css')}}">
       <link rel="stylesheet" href="{{asset('assets/plugins/fullcalendar-daygrid/main.min.css')}}">
@@ -44,12 +47,12 @@
     <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
     <!------>
 
+
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
     <!-- <link rel="stylesheet" href="{{asset('assets/css/styles.css')}}"> -->
     <link rel="stylesheet" type="text/css" href="{{asset('css/admin/custom.css')}}">
-    <!-- bootstrap-multiselect (used for multi-select with search option and select all option) -->
-    <link rel="stylesheet" type="text/css" href="{{asset('css/bootstrap-multiselect.css')}}">
+
     @php
     if(App::getLocale()=='en'){
         $lang_css_path=asset('css/admin/language_en.css');
