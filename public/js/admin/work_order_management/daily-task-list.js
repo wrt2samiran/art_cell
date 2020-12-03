@@ -12,6 +12,7 @@
             { data: 'id', name: 'id' },          
             { data: 'task_title', name: 'task_title' },
             { data: 'created_at', name: 'created_at' },
+            { data: 'task_complete_percent', name: 'task_complete_percent' },
             { data: 'status', name: 'ststus' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],

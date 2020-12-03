@@ -120,6 +120,7 @@
                         <th>Id</th>
                         <th>Task Title</th>
                         <th>Created At</th>
+                        <th>Completed (%)</th>
                         <th>Status</th>
                         <th>Action</th>
                     </tr>
@@ -293,36 +294,39 @@
                                       @endif
                                     </div>
                                    
-                                   @if(@$slot_data)
-                                    <div class="form-group required">
-                                      <label for="slot_list_id">Slot List <span class="error">*</span></label>
-                                        <select class="form-control" multiple="multiple" searchable="Search for..."  name="slot_list[]" id="slot_list"  onchange="checkMaintanenceDaily()">
-                                          @php $arraySlot = array('1'=> 'First Slot', '2'=> 'Second Slot', '3'=> 'Third Slot', '4'=> 'Fourth Slot', '5'=> 'Fifth Slot', '6'=>'Sixth Slot', '7'=> 'Seventh Slot', '8'=> 'Eight Slot', '9'=>'Nineth Slot', '10'=>'Tenth Slot'); @endphp
-                                          @forelse($slot_data as $slotValue)
-                                               <option value="{{@$slotValue->id}}" >@if(array_key_exists($slotValue->id, $arraySlot)){{$arraySlot[$slotValue->id]}}@endif</option>
-                                          @empty
-                                          <option value="">No Labour Found</option>
-                                          @endforelse 
-                                                                   
-                                        </select>
-                                      @if($errors->has('maintanence_user_id'))
-                                      <span class="text-danger">{{$errors->first('maintanence_user_id')}}</span>
-                                      @endif
-                                    </div>
-
-                                    @endif
-
+                                   
                                      @if(@$work_order_list->contract_services->service_type=='Maintenance'  and @$work_order_list->contract_service_recurrence->interval_type == 'daily') 
 
-                                     <?php //dd($available_dates);?>
+                                     <?php //dd($slot_data);?>
+                                     @php $arraySlot = array('1'=> 'First Slot', '2'=> 'Second Slot', '3'=> 'Third Slot', '4'=> 'Fourth Slot', '5'=> 'Fifth Slot', '6'=>'Sixth Slot', '7'=> 'Seventh Slot', '8'=> 'Eight Slot', '9'=>'Nineth Slot', '10'=>'Tenth Slot'); @endphp
                                       <div class="form-group required">
                                       <label for="property_id">Work <span class="error">*</span></label>
                                       <select class="form-control work_date" multiple="multiple" style="width: 100%;" name="work_date[]" id="work_date"  onchange="checkMaintanenceDaily()">
+                                        @if(!empty($available_dates))
                                            @forelse(@$available_dates as $valueDate)
-                                             <option value="{{@$valueDate->contract_service_dates->date}}" >{{@$valueDate->contract_service_dates->date}} </option>
+                                            <ul style="importent">
+                                              <li>
+                                               <option value="{{@$valueDate->contract_service_dates->date}}" >{{@$valueDate->contract_service_dates->date}}  </option>
+                                                 <ul>
+                                                  
+                                                  @forelse($slot_data as $slotValue)
+                                                    @if(@$valueDate->contract_service_dates->id == $slotValue->contract_service_date_id)
+                                                      <li>
+                                                       <!-- <option value="{{@$slotValue->id}}" >@if(array_key_exists($slotValue->daily_slot, $arraySlot)){{$arraySlot[$slotValue->daily_slot]}}@endif</option> -->
+                                                       <option value="{{@$slotValue->id}}" >@if(array_key_exists($slotValue->daily_slot, $arraySlot)){{$arraySlot[$slotValue->daily_slot]}}@endif</option>
+                                                      </li> 
+                                                    @endif  
+                                                  @empty
+                                                  <option value="">No Labour Found</option>
+                                                  @endforelse 
+                                                   
+                                                 </ul>   
+                                              </li> 
+                                            </ul> 
                                              @empty
                                              <option value="">No Date Found</option>
-                                           @endforelse     
+                                           @endforelse
+                                           @endif     
                                           </select>
                                         @if($errors->has('work_date'))
                                         <span class="text-danger">{{$errors->first('work_date')}}</span>
@@ -582,7 +586,7 @@
     function checkMaintanenceDaily()
     {
      // alert($('#task_title_maintanence_daily').val().length);
-      if (($('#task_title_maintanence_daily').val().length > 0) && ($('#maintanence_user_id').val().length  > 0) && ($('#slot_list').val().length  > 0) && ($('#work_date').val().length  > 0))
+      if (($('#task_title_maintanence_daily').val().length > 0) && ($('#maintanence_user_id').val().length  > 0)  && ($('#work_date').val().length  > 0))
       {
 
         

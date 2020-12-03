@@ -18,7 +18,7 @@
 
             { data: 'start_date', name: 'start_date' },
             
-
+            { data: 'work_order_complete_percent', name: 'work_order_complete_percent' },
             { data: 'status', name: 'ststus' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
