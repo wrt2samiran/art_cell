@@ -12,6 +12,7 @@ use DB;
 use App\Models\Setting;
 use App\Models\EmailTemplate;
 use Carbon\Carbon;
+use App\Models\Message;
 
 class Helper
 {
@@ -495,6 +496,18 @@ class Helper
             return '';
         }
         
+    }
+
+    /*****************************************************/
+    # Function name : get_unread_message_count            #
+    # Created Date  : 02-12-2020                          #
+    # Purpose       : Get user's unread message count     #
+    /*****************************************************/
+    public static function get_unread_message_count(){
+        $current_user=auth()->guard('admin')->user();
+        return Message::where('message_to',$current_user->id)
+        ->where('is_read',false)
+        ->count();
     }
 
     public static function emailTemplateMail($slug,array $variable_value){

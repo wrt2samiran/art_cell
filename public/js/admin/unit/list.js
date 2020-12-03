@@ -10,7 +10,7 @@ var units_table=$('#units_table').DataTable({
     columns: [
         { data: 'id', name: 'id' },
         { data: 'unit_name', name: 'unit_name'},
-        { data: 'status', name: 'status',orderable: false },
+        { data: 'is_active', name: 'is_active',orderable: false,searchable: false },
         { data: 'created_at', name: 'created_at' },
         {data: 'action', name: 'action', orderable: false, searchable: false}
     ],

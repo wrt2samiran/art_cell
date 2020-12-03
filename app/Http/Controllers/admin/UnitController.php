@@ -29,7 +29,7 @@ class UnitController extends Controller
         $this->data['page_title']='Unit List';
         if($request->ajax()){
 
-            $sqlUnitMaster=UnitMaster::orderBy('id','ASC')->orderBy('id','DESC');
+            $sqlUnitMaster=UnitMaster::select('unit_masters.*');
             return Datatables::of($sqlUnitMaster)
             ->editColumn('created_at', function ($sqlUnitMaster) {
                 return $sqlUnitMaster->created_at ? with(new Carbon($sqlUnitMaster->created_at))->format('m/d/Y') : '';
@@ -39,9 +39,9 @@ class UnitController extends Controller
                 $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
             })
             
-            ->addColumn('status',function($sqlUnitMaster){
+            ->addColumn('is_active',function($sqlUnitMaster){
 
-                if($sqlUnitMaster->status=='A'){
+                if($sqlUnitMaster->is_active){
                    $message='deactivate';
                    return '<a title="Click to deactivate the unit" href="javascript:change_status('."'".route('admin.unit.change_status',$sqlUnitMaster->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm" >Active</a>';
                     
@@ -71,7 +71,7 @@ class UnitController extends Controller
                 
                 
             })
-            ->rawColumns(['action','status'])
+            ->rawColumns(['action','is_active'])
             ->make(true);
 
         }
@@ -185,11 +185,11 @@ class UnitController extends Controller
     public function change_status($id = null)
     {
         $unit=UnitMaster::findOrFail($id);
-        $change_status_to=($unit->status=='A')?'I':'A';
-        $message=($unit->status=='A')?'deactivated':'activated';
+        $change_status_to=($unit->is_active)?false:true;
+        $message=($unit->is_active)?'deactivated':'activated';
          //updating unit status
         $unit->update([
-            'status'=>$change_status_to
+            'is_active'=>$change_status_to
         ]);
         //returning json success response
         return response()->json(['message'=>'Unit successfully '.$message.'.']);

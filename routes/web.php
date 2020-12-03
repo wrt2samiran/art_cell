@@ -364,14 +364,6 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
 
 
 
-            Route::group(['prefix' => 'message', 'as' => 'message.'], function () {
-                Route::get('/', 'MessageController@list')->name('list')->middleware('check_permissions:message-list');
-                Route::any('/add','MessageController@messageAdd')->name('add')->middleware('check_permissions:message-add');
-                Route::get('/get-user', 'MessageController@getUser')->name('get-user');
-                Route::any('/edit/{encryptCode}', 'MessageController@edit')->name('edit')->middleware('check_permissions:message-edit');
-                Route::get('/{id}/change-change', 'MessageController@change_status')->name('change_status')->middleware('check_permissions:message-change-status');
-                Route::get('/{id}', 'MessageController@show')->name('show')->middleware('check_permissions:message-show');
-            });
 
 
             Route::group(['prefix' => 'email', 'as' => 'email.'], function () {
@@ -490,6 +482,16 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             /*Routes for notifications management */
             Route::group(['prefix'=>'notifications','middleware'=>[],'as'=>'notifications.'],function(){
                 Route::get('/', 'NotificationController@list')->name('list');
+            });
+            /************************************/
+
+            /*Routes for message management */
+            Route::group(['prefix'=>'messages','middleware'=>[],'as'=>'messages.'],function(){
+                Route::get('/', 'MessageController@list')->name('list');
+                Route::get('/compose', 'MessageController@compose')->name('compose');
+                Route::post('/store', 'MessageController@store')->name('store');
+                Route::get('/sent', 'MessageController@sent')->name('sent');
+                Route::get('/{message_id}/details', 'MessageController@details')->name('details');
             });
             /************************************/
 
