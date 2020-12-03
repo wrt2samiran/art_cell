@@ -88,7 +88,7 @@
                             </div>
                             <div class="col-md-6 form-group">
                               <label for="no_of_inactive_units">Number Of Inactive Units<span class="error">*</span></label>
-                              <input type="number" min="1" class="form-control" value="{{old('no_of_inactive_units')?old('no_of_inactive_units'):$property->no_of_inactive_units}}" name="no_of_inactive_units" id="no_of_inactive_units"  placeholder="Number Of Units">
+                              <input type="number" min="0" class="form-control" value="{{old('no_of_inactive_units')?old('no_of_inactive_units'):$property->no_of_inactive_units}}" name="no_of_inactive_units" id="no_of_inactive_units"  placeholder="Number Of Units">
                               @if($errors->has('no_of_inactive_units'))
                               <span class="text-danger">{{$errors->first('no_of_inactive_units')}}</span>
                               @endif

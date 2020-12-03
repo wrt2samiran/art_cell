@@ -723,6 +723,7 @@ class ContractController extends Controller
         ]);
 
         if($request->in_installment){
+            
 
             if(count($request->amount)){
                 foreach ($request->amount as $key=> $amount) {
@@ -757,6 +758,8 @@ class ContractController extends Controller
                 }
             }
 
+        }else{
+            ContractInstallment::where('contract_id',$contract->id)->delete();
         }
         return redirect()->route('admin.contracts.files',$contract->id)->with('success','Payment info updated.');
 
@@ -793,7 +796,7 @@ class ContractController extends Controller
 
                         $file=$request->file('contract_files')[$key];
                         //remove previous file if exists
-                        $file_path=public_path().'/uploads/contract_attachments/'.$file->file_name;
+                        $file_path=public_path().'/uploads/contract_attachments/'.$contract_file->file_name;
                         if(File::exists($file_path)){
                             File::delete($file_path);
                         }

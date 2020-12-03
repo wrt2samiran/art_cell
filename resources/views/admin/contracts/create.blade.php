@@ -94,14 +94,14 @@
 
                           <div class="form-group required">
                             <label for="start_date">Start Date <span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('start_date')?old('start_date'):''}}" name="start_date" id="start_date" autocomplete="off"  placeholder="Start Date">
+                            <input type="text" class="form-control" value="{{old('start_date')?old('start_date'):''}}" readonly="readonly" name="start_date" id="start_date" autocomplete="off"  placeholder="Start Date">
                             @if($errors->has('start_date'))
                             <span class="text-danger">{{$errors->first('start_date')}}</span>
                             @endif
                           </div>
                           <div class="form-group required">
                             <label for="end_date">End Date <span class="error">*</span></label>
-                            <input type="text" autocomplete="off"  class="form-control" value="{{old('end_date')?old('end_date'):''}}" name="end_date" id="end_date"  placeholder="End Date">
+                            <input type="text" autocomplete="off" readonly="readonly"  class="form-control" value="{{old('end_date')?old('end_date'):''}}" name="end_date" id="end_date"  placeholder="End Date">
                             @if($errors->has('end_date'))
                             <span class="text-danger">{{$errors->first('end_date')}}</span>
                             @endif

@@ -107,6 +107,7 @@ $('#add_installment_button').click(function(){
   let random_string = String(Math.random(10)).substring(2,14); 
 
 var row=`<div class="row" id="row`+random_string+`">
+        <input type="hidden" name="installment_id[]" value="">
         <div class="col-sm-5">
               <div class="form-group required">
                 <label for="amount_`+random_string+`">Amount<span class="error">*</span></label>
@@ -119,7 +120,7 @@ var row=`<div class="row" id="row`+random_string+`">
               <div class="form-group required">
                 <label for="due_date_`+random_string+`">Due Date<span class="error">*</span></label>
 
-                <input type="text" autocomplete="off" value="" name="due_date[]" class="form-control due_date_input_list datepicker"  id="due_date_`+random_string+`"  placeholder="Due Date">
+                <input type="text" autocomplete="off" value="" readonly="readonly" name="due_date[]" class="form-control due_date_input_list datepicker"  id="due_date_`+random_string+`"  placeholder="Due Date">
               </div>
         </div>
         <div class="col-sm-2">
