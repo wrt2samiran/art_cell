@@ -173,3 +173,10 @@ legend{
   font-size: 15px;
 }
 /*****/
+
+/* mailbox customization css */
+.mailbox-messages tr.message-unread{
+    background: #ffffcc!important;
+}
+
+/************/

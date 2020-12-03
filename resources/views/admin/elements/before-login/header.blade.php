@@ -38,3 +38,4 @@
     <link rel="stylesheet" href="{{asset('assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css')}}">
   
 </head>
+<body class="hold-transition login-page">

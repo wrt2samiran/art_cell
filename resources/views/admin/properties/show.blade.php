@@ -42,6 +42,30 @@
                           <td >{{$property->property_name}}</td>
                         </tr>
                         <tr>
+                          <td>Property Owner</td>
+                          <td>
+                            @if($property_owner=$property->owner_details()->withTrashed()->first())
+                              @if($property_owner->deleted_at)
+                                <span class="text-danger"><del>{{$property_owner->name}} </del>(user deleted)</span>
+                              @else
+                                <span>{{$property_owner->name}} ({{$property_owner->email}})</span>
+                              @endif
+                            @else
+                            N/A
+                            @endif
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Property Manager</td>
+                          <td>
+                            @if($property->manager_details)
+                            <span>{{$property->manager_details->name}} ({{$property->manager_details->email}})</span>
+                            @else
+                            N/A
+                            @endif
+                          </td>
+                        </tr>
+                        <tr>
                           <td>Number Of Active Units</td>
                           <td >{{$property->no_of_active_units}}</td>
                         </tr>
@@ -72,25 +96,11 @@
                         </tr>
                         <tr>
                           <td >Contact Number</td>
-                          <td >{{$property->contact_number}}</td>
+                          <td >{{$property->contact_number?$property->contact_number:'N/A'}}</td>
                         </tr>
                         <tr>
                           <td >Contact Email</td>
-                          <td >{{$property->contact_email}}</td>
-                        </tr>
-                        <tr>
-                          <td>Property Owner</td>
-                          <td>
-                            @if($property_owner=$property->owner_details()->withTrashed()->first())
-                              @if($property_owner->deleted_at)
-                                <span class="text-danger"><del>{{$property_owner->name}} </del>(user deleted)</span>
-                              @else
-                                <a target="_blank" href="{{route('admin.users.show',$property_owner->id)}}">{{$property_owner->name}}</a>
-                              @endif
-                            @else
-                            N/A
-                            @endif
-                          </td>
+                          <td >{{$property->contact_email?$property->contact_email:'N/A'}}</td>
                         </tr>
 
                         <tr>

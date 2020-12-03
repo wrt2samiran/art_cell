@@ -146,7 +146,7 @@
                               </select>
                           </div>
                           @endif
-                          @if ($current_user->role->user_type->slug == 'property-owner')
+                          @if ($current_user->role->user_type->slug == 'property-owner' && $current_user->created_by_admin)
                           <div class="form-group required">
                             <label for="property_manager">Property Manager</label>
                              <select class="form-control " name="property_manager" id="property_manager" style="width: 100%;">
@@ -157,8 +157,8 @@
                                <option value="">No Property Manager Found</option>
                                @endforelse                                
                              </select>
-                         </div>
-                         @endif
+                          </div>
+                          @endif
 
 
                           <div class="form-group">

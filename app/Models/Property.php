@@ -13,6 +13,10 @@ class Property extends Model
     	return $this->belongsTo(User::class,'property_owner','id');
     }
 
+    public function manager_details(){
+        return $this->belongsTo(User::class,'property_manager','id');
+    }
+
     public function city(){
     	return $this->belongsTo(City::class);
     }

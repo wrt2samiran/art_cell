@@ -19,6 +19,6 @@ class UnitMaster extends Model
      * @var array
      */
     protected $fillable = [
-        'first_name','created_by','updated_by','status','deleted_by'
+        'first_name','created_by','updated_by','is_active','deleted_by'
     ];
 }

@@ -10,7 +10,7 @@ return array (
   'dashboard' => 'Dashboard',
   'home' => 'Home',
   'master_modules' => 'Master Modules',
-  'message_management' => 'Message Management',
+  'messages' => 'Messages',
   'properties' => 'Properties',
   'property_management' => 'Property Management',
   'property_managers' => 'Property Managers',

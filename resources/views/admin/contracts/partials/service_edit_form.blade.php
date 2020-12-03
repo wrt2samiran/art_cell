@@ -35,43 +35,6 @@
     $recurrence=$contract_service->recurrence_details;
     @endphp
     <div id="reccurence_container" >
-     <fieldset class="scheduler-border">
-      <legend class="scheduler-border">Maintenance Time:</legend>
-        <div class="row">
-        <div class="col-md-6">
-          <div class="form-group">
-            <label>Start Time <span class="error">*</span></label>
-
-            <div class="input-group date"  data-target-input="nearest">
-              <input type="text"  name="start_time" id="start_time" class="form-control datetimepicker-input" data-target="#start_time"/>
-              <div class="input-group-append" data-target="#start_time" data-toggle="datetimepicker">
-                  <div class="input-group-text"><i class="far fa-clock"></i></div>
-              </div>
-              </div>
-              <div id="start_time_error_holder"></div>
-              @if($errors->has('start_time'))
-              <div><span class="text-danger">{{$errors->first('start_time')}}</span></div>
-              @endif
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="form-group">
-            <label>End Time <span class="error">*</span></label>
-
-            <div class="input-group date"  data-target-input="nearest">
-              <input type="text"   name="end_time" id="end_time" class="form-control datetimepicker-input" data-target="#end_time"/>
-              <div class="input-group-append" data-target="#end_time" data-toggle="datetimepicker">
-                  <div class="input-group-text"><i class="far fa-clock"></i></div>
-              </div>
-              </div>
-              <div id="end_time_error_holder"></div>
-              @if($errors->has('end_time'))
-              <div><span class="text-danger">{{$errors->first('end_time')}}</span></div>
-              @endif
-          </div>
-        </div>
-        </div>
-     </fieldset>
 
      <fieldset class="scheduler-border">
       <legend class="scheduler-border">Reccurence Pattern:</legend>
@@ -129,7 +92,19 @@
         </div>
 
         <div class="tab-content">
-            <div id="scheduleDaily" class="tab-pane {{($recurrence->interval_type=='daily')?'active':''}}"></div>
+            <div id="scheduleDaily" class="tab-pane {{($recurrence->interval_type=='daily')?'active':''}}">
+              <div class="row mb-1">
+                <div class="col-3">
+                  <input type="number" value="{{($recurrence->interval_type=='daily' && $recurrence->number_of_times)?$recurrence->number_of_times:'1'}}" class="form-control" value="1" min="1" step="1" name="number_of_times" id="number_of_times">
+                  @if($errors->has('number_of_times'))
+                  <div><span class="text-danger">{{$errors->first('number_of_times')}}</span></div>
+                  @endif
+                </div>
+                <div class="col-2">
+                  Number of times
+                </div>
+              </div>
+            </div>
             <div id="scheduleWeekly" class="tab-pane pt-2 {{($recurrence->interval_type=='weekly')?'active':''}}">
               @php
               if($recurrence->interval_type=='weekly' && $recurrence->weekly_days){
@@ -354,7 +329,7 @@
               
             </div>
             <div class="col-4">
-              <input type="number" class="form-control" value="{{($recurrence->end_by_or_after=='end_after')?$recurrence->no_of_occurrences:'1'}}"  step="1" autocomplete="off" name="no_of_occurrences" id="no_of_occurrences"  placeholder="No of occurrences">  
+              <input type="number" class="form-control" value="{{($recurrence->end_by_or_after=='end_after')?$recurrence->no_of_occurrences:'1'}}"  step="1" autocomplete="off" min="1" name="no_of_occurrences" id="no_of_occurrences"  placeholder="No of occurrences">  
 
               @if($errors->has('no_of_occurrences'))
               <div><span class="text-danger">{{$errors->first('no_of_occurrences')}}</span></div>

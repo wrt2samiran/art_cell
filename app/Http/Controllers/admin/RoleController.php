@@ -144,7 +144,11 @@ class RoleController extends Controller
         })->with(['functionalities'=>function($q)use($current_user){
                 //if logged in user is not super admin then fetch the permission related to logged in users role
                 if($current_user->role->user_type->slug!='super-admin'){
-                    $q->whereIn('slug',$current_user->permisions_slug_array());
+
+                    $permissions_array=$current_user->permisions_slug_array();
+
+                    $q->whereIn('slug',$permissions_array)
+                    ->where('slug','!=','property-create'); //if non admin is creating  group he can not give property creation permission to any group under him
                 } 
                 
         }])->orderBy('created_at','ASC')->get();
@@ -256,7 +260,9 @@ class RoleController extends Controller
                 
         })->with(['functionalities'=>function($q)use($role){
             if($role->creator->role->user_type->slug!='super-admin'){
-               $q->whereIn('slug',$role->creator->permisions_slug_array());  
+                
+               $q->whereIn('slug',$role->creator->permisions_slug_array())
+                    ->where('slug','!=','property-create'); //if non admin is creating  group he can not give property creation permission to any group under him
             }
                
         }])->orderBy('created_at','ASC')->get();

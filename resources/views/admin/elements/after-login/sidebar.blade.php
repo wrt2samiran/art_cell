@@ -68,19 +68,9 @@
                     
                 </li>
                 @if(auth()->guard('admin')->user()->hasModulePermission('master-modules'))
-                <li class="nav-item has-treeview @if(Route::currentRouteName()=='admin.country.list' || Route::currentRouteName()=='admin.country.country.add' || Route::currentRouteName()=='admin.country.edit' || Route::currentRouteName()=='admin.country.show' ||
-                Route::currentRouteName()=='admin.state.list' || Route::currentRouteName()=='admin.state.country.add' || Route::currentRouteName()=='admin.state.show' ||
-                Route::currentRouteName()=='admin.state.edit' || Route::currentRouteName()=='admin.cities.list' || Route::currentRouteName()=='admin.cities.add' || Route::currentRouteName()=='admin.cities.edit' || Route::currentRouteName()=='admin.cities.show' || Route::currentRouteName()=='admin.property_types.list'||
-                        Route::currentRouteName()=='admin.property_types.create'||
-                        Route::currentRouteName()=='admin.property_types.edit'||
-                        Route::currentRouteName()=='admin.property_types.show'||
-                        Route::currentRouteName()=='admin.services.list'||
-                        Route::currentRouteName()=='admin.services.create'||
-                        Route::currentRouteName()=='admin.services.edit'||
-                        Route::currentRouteName()=='admin.services.show'
-                ){{'menu-open'}}@endif">
+                <li class="nav-item has-treeview {{(request()->is('admin/country/*','admin/country', 'admin/state/*','admin/state', 'admin/cities/*','admin/cities', 'admin/property-types/*','admin/property-types', 'admin/services/*','admin/services','admin/unit','admin/unit/*'))?'menu-open':''}}">
                     <a href="#"
-                       class="nav-link {{(request()->is('admin/country/*','admin/country', 'admin/state/*','admin/state', 'admin/cities/*','admin/cities', 'admin/property-types/*','admin/property-types', 'admin/services/*','admin/services'))?'active':''}}">
+                       class="nav-link {{(request()->is('admin/country/*','admin/country', 'admin/state/*','admin/state', 'admin/cities/*','admin/cities', 'admin/property-types/*','admin/property-types', 'admin/services/*','admin/services','admin/unit','admin/unit/*'))?'active':''}}">
                         <i class="nav-icon fas fa-bars"></i>
                         <p>
                             {{__('nav_link_text.master_modules')}}
@@ -134,8 +124,15 @@
                             </a>
                         </li>
                         @endif
+
+                        <li class="nav-item">
+                            <a href="{{ route('admin.unit.list') }}"
+                               class="nav-link {{(request()->is('admin/unit/*','admin/unit'))?'active':''}}">
+                                <i class="nav-icon fas fa-envelope-open-text"></i>
+                                <p>{{__('nav_link_text.unit_management')}}</p>
+                            </a>
+                        </li>        
                     </ul>
-                   
                     
                 </li>
                 @endif
@@ -150,17 +147,8 @@
                     </a>
                 </li>
                 @endif
-                @if(auth()->guard('admin')->user()->hasAllPermission(['message-list']))
-                <li class="nav-item has-treeview {{(request()->is('admin/message/*','admin/message'))?'menu-open':''}}">
-                    
-                    <li class="nav-item">
-                            <a href="{{ route('admin.message.list') }}" class="nav-link {{(request()->is('admin/message/*','admin/message'))?'active':''}}">
-                                <i class="nav-icon fas fa-envelope-open-text"></i>
-                                <p>{{__('nav_link_text.message_management')}}</p>
-                            </a>
-                        </li>
-                </li>
-                @endif
+                
+                
                 @if(auth()->guard('admin')->user()->hasAllPermission(['group-list']))
                 <li class="nav-item">
                     <a href="{{route('admin.roles.list')}}" class="nav-link {{(request()->is('admin/user-groups/*','admin/user-groups'))?'active':''}}">
@@ -364,6 +352,15 @@
                     </a>
                 </li>
                 <li class="nav-item ">
+                    <a href="{{route('admin.messages.list')}}"
+                    class="nav-link {{(request()->is('admin/messages/*','admin/messages'))?'active':''}}">
+                        <i class="nav-icon fas fa-envelope-open-text"></i>
+                        <p>
+                             {{__('nav_link_text.messages')}}
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item ">
                     <a href="{{route('admin.notifications.list')}}"
                     class="nav-link {{(request()->is('admin/notifications/*','admin/notifications'))?'active':''}}">
                         <i class="nav-icon far fa-bell"></i>
@@ -428,15 +425,7 @@
                 </li>
                 @endif
 
-                <li class="nav-item has-treeview {{(request()->is('admin/unit/*','admin/unit'))?'menu-open':''}}">
-                    
-                    <li class="nav-item">
-                            <a href="{{ route('admin.unit.list') }}" class="nav-link {{(request()->is('admin/unit/*','admin/unit'))?'active':''}}">
-                                <i class="nav-icon fas fa-envelope-open-text"></i>
-                                <p>{{__('nav_link_text.unit_management')}}</p>
-                            </a>
-                        </li>
-                </li>
+
             </ul>
 
         </nav>

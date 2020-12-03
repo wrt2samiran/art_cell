@@ -99,13 +99,4 @@
 @push('custom-scripts')
 <script type="text/javascript" src="{{asset('js/admin/contracts/services.js')}}"></script>
 
-<script type="text/javascript">
-  $(document).ready(function () {
-      @if($contract_service && $contract_service->service_type=='Maintenance')
-        $('#start_time').val("{{Carbon::parse($contract_service->recurrence_details->start_time)->format('g:i A')}}");
-
-        $('#end_time').val("{{Carbon::parse($contract_service->recurrence_details->end_time)->format('g:i A')}}");
-      @endif
-  });
-</script>
 @endpush

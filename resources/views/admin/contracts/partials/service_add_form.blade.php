@@ -30,43 +30,7 @@
     </div>
 
     <div id="reccurence_container" style="display: none;">
-     <fieldset class="scheduler-border">
-      <legend class="scheduler-border">Maintenance Time:</legend>
-        <div class="row">
-        <div class="col-md-6">
-          <div class="form-group">
-            <label>Start Time <span class="error">*</span></label>
 
-            <div class="input-group date"  data-target-input="nearest">
-              <input type="text" name="start_time" id="start_time" class="form-control datetimepicker-input" data-target="#start_time"/>
-              <div class="input-group-append" data-target="#start_time" data-toggle="datetimepicker">
-                  <div class="input-group-text"><i class="far fa-clock"></i></div>
-              </div>
-              </div>
-              <div id="start_time_error_holder"></div>
-              @if($errors->has('start_time'))
-              <div><span class="text-danger">{{$errors->first('start_time')}}</span></div>
-              @endif
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="form-group">
-            <label>End Time <span class="error">*</span></label>
-
-            <div class="input-group date"  data-target-input="nearest">
-              <input type="text" name="end_time" id="end_time" class="form-control datetimepicker-input" data-target="#end_time"/>
-              <div class="input-group-append" data-target="#end_time" data-toggle="datetimepicker">
-                  <div class="input-group-text"><i class="far fa-clock"></i></div>
-              </div>
-              </div>
-              <div id="end_time_error_holder"></div>
-              @if($errors->has('end_time'))
-              <div><span class="text-danger">{{$errors->first('end_time')}}</span></div>
-              @endif
-          </div>
-        </div>
-        </div>
-     </fieldset>
 
      <fieldset class="scheduler-border">
       <legend class="scheduler-border">Reccurence Pattern:</legend>
@@ -113,7 +77,19 @@
         </div>
 
         <div class="tab-content">
-            <div id="scheduleDaily" class="tab-pane active"></div>
+            <div id="scheduleDaily" class="tab-pane active">
+            <div class="row mb-1">
+              <div class="col-3">
+                <input type="number" class="form-control" value="1" min="1" step="1" name="number_of_times" id="number_of_times">
+                @if($errors->has('number_of_times'))
+                <div><span class="text-danger">{{$errors->first('number_of_times')}}</span></div>
+                @endif
+              </div>
+              <div class="col-2">
+                Number of times
+              </div>
+            </div>
+            </div>
             <div id="scheduleWeekly" class="tab-pane pt-2">
               <div class="form-check form-check-inline">
                 <input class="form-check-input" type="checkbox" name="weekly_days[]" id="inlineCheckboxSunday" value="Sunday">
@@ -292,7 +268,6 @@
                 </div>
               </div>
 
-
             </div>
         </div>
       </div>
@@ -309,7 +284,7 @@
               Start Date :
             </div>
             <div class="col">
-              <input type="text" class="form-control" value="{{old('start_date')?old('start_date'):''}}" autocomplete="off" name="start_date" id="start_date"  placeholder="Start Date">
+              <input type="text" class="form-control" value="{{old('start_date')?old('start_date'):Carbon::parse($contract->start_date)->format('d/m/Y')}}" autocomplete="off" name="start_date" id="start_date"  placeholder="Start Date">
               @if($errors->has('start_date'))
               <div><span class="text-danger">{{$errors->first('start_date')}}</span></div>
               @endif
@@ -317,21 +292,8 @@
           </div>
         </div>
         <div class="col-md-6">
-          <div class="row">
-            <div class="col-3">
-              <input type="radio" name="end_by_or_after" id="end_after" value="end_after">End After :
-            </div>
-            <div class="col-4">
-              <input type="number" class="form-control" value="{{old('no_of_occurrences')?old('no_of_occurrences'):'1'}}"  step="1" autocomplete="off" name="no_of_occurrences" id="no_of_occurrences"  placeholder="No of occurrences">  
 
-              @if($errors->has('no_of_occurrences'))
-              <div><span class="text-danger">{{$errors->first('no_of_occurrences')}}</span></div>
-              @endif 
-            </div>
-            <div class="col">Occurences</div>
-
-          </div>
-          <div class="row mt-1">
+          <div class="row ">
             <div class="col-3">
               <input type="radio" checked name="end_by_or_after" id="end_by" value="end_by">End By :
             </div>
@@ -342,19 +304,25 @@
               @endif 
             </div>
           </div>
+          <div class="row mt-1">
+            <div class="col-3">
+              <input type="radio" name="end_by_or_after" id="end_after" value="end_after">End After :
+            </div>
+            <div class="col-4">
+              <input type="number" class="form-control" value="{{old('no_of_occurrences')?old('no_of_occurrences'):'1'}}"  step="1" min="1" autocomplete="off" name="no_of_occurrences" id="no_of_occurrences"  placeholder="No of occurrences">  
+
+              @if($errors->has('no_of_occurrences'))
+              <div><span class="text-danger">{{$errors->first('no_of_occurrences')}}</span></div>
+              @endif 
+            </div>
+            <div class="col">Occurences</div>
+
+          </div>
 
         </div>
         </div>
      </fieldset>
-    </div>
 
-    <div class="form-group required" id="number_of_time_can_used_holder" style="display: none;">
-      <label for="number_of_time_can_used">Number of times can use</label>
-      <input type="text" aria-describedby="numberOfTimesHelp" class="form-control" value="{{old('number_of_time_can_used')?old('number_of_time_can_used'):''}}" name="number_of_time_can_used" id="number_of_time_can_used"  placeholder="Number of times">
-      <small id="numberOfTimesHelp" class="form-text text-muted">You can set the limitation of usage. Leave blank if no limitation.</small>
-      @if($errors->has('number_of_time_can_used'))
-      <span class="text-danger">{{$errors->first('number_of_time_can_used')}}</span>
-      @endif
     </div>
 
     <div class="form-group required">
@@ -362,6 +330,19 @@
       <input type="text" class="form-control" value="{{old('service_price')?old('service_price'):''}}" name="service_price" id="service_price"  placeholder="Service Price">
       @if($errors->has('service_price'))
       <span class="text-danger">{{$errors->first('service_price')}}</span>
+      @endif
+    </div>
+
+    <div class="form-group" id="consider_as_on_demand_holder" style="display: none;">
+      <label for="consider_as_on_demand" class="">Do you want to consider it as On-Demand Service ?</label><br>
+      <input type="checkbox" id="consider_as_on_demand" name="consider_as_on_demand" value="1">
+    </div> 
+    <div class="form-group required" id="number_of_time_can_used_holder" style="display: none;">
+      <label for="number_of_time_can_used">Number of times can use</label>
+      <input type="text" aria-describedby="numberOfTimesHelp" class="form-control" value="{{old('number_of_time_can_used')?old('number_of_time_can_used'):''}}" name="number_of_time_can_used" id="number_of_time_can_used"  placeholder="Number of times">
+      <small id="numberOfTimesHelp" class="form-text text-muted">You can set the limitation of usage. Leave blank if no limitation.</small>
+      @if($errors->has('number_of_time_can_used'))
+      <span class="text-danger">{{$errors->first('number_of_time_can_used')}}</span>
       @endif
     </div>
     <div class="form-group">

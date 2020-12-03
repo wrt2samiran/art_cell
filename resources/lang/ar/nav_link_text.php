@@ -10,7 +10,7 @@ return array (
   'dashboard' => 'وحة القيادة',
   'home' => 'الصفحة الرئيسية',
   'master_modules' => 'وحدات رئيسية',
-  'message_management' => 'إدارة الرسائل',
+  'messages' => 'الرسائل',
   'properties' => 'الخصائص',
   'property_management' => 'إدارة الممتلكات',
   'property_managers' => 'مدراء العقارات',

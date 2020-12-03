@@ -137,6 +137,7 @@ class UserController extends Controller
         $current_user=auth()->guard('admin')->user();
 
         $roles=Role::whereHas('user_type')
+        ->whereHas('creator')
         ->whereStatus('A')
         ->where(function($q)use ($current_user){
             //if logged in user is not super admin then fetch only roles  which are crated by logged in user
@@ -158,7 +159,7 @@ class UserController extends Controller
     # Param            : CreateUserRequest $request                                  #
 
     public function store(CreateUserRequest $request){
-
+        $current_user=auth()->guard('admin')->user();
         $user=User::create([
             'first_name'=>$request->first_name,
             'last_name'=>$request->last_name,
@@ -168,16 +169,13 @@ class UserController extends Controller
             'phone'=>$request->phone,
             'role_id'=>$request->role_id,
             'status'=>'A',
-            'created_form'=>'B',
-            'created_by'=>auth()->guard('admin')->id(),
-            'updated_by'=>auth()->guard('admin')->id()
+            'created_by_admin'=>($current_user->role->user_type->slug=='super-admin')?true:false,
+            'created_by'=>$current_user->id,
+            'updated_by'=>$current_user->id
         ]);
         $user->load('role');
         event(new UserCreated($user,$request->password));
-
         return redirect()->route('admin.users.list')->with('success','User successfully created.');
-
-
     }
 
     /************************************************************************/
@@ -211,6 +209,7 @@ class UserController extends Controller
         $this->data['user']=$user;
         $current_user=auth()->guard('admin')->user();
         $roles=Role::whereHas('user_type')
+        ->whereHas('creator')
         ->whereStatus('A')
         ->where(function($q)use ($current_user){
             //if logged in user is not super admin then fetch only roles  which are crated by logged in user

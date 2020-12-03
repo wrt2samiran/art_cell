@@ -298,12 +298,11 @@ class ContractController extends Controller
         /* this code will be only for maintenance type service */
         if($request->service_type=='Maintenance'){
 
-            $start_time=Carbon::parse($request->start_time)->format('G:i:s');
-            $end_time=Carbon::parse($request->end_time)->format('G:i:s');
             $interval_type=$request->interval_type;
             $reccure_every=$request->reccure_every; 
            
             $weekly_days=($interval_type=='weekly')?implode(',',$request->weekly_days) :null; 
+            $number_of_times=($interval_type=='daily')?$request->number_of_times :null; 
 
             if(in_array($interval_type,['monthly','yearly'])){
 
@@ -381,6 +380,7 @@ class ContractController extends Controller
         'price'=>($request->service_type=='Free')?'0':$request->service_price,
         'number_of_time_can_used'=>$request->number_of_time_can_used,
         'note'=>$request->note,
+        'consider_as_on_demand'=>($request->service_type=='Maintenance' && $request->consider_as_on_demand)?true:false,
         'created_by'=>$current_user->id,
         'updated_by'=>$current_user->id
         ];
@@ -390,9 +390,8 @@ class ContractController extends Controller
 
             $recurrence=ContractServiceRecurrence::create([
                 'contract_service_id'=>$contract_service->id,
-                'start_time'=>$start_time,
-                'end_time'=>$end_time,
                 'interval_type'=>$interval_type,
+                'number_of_times'=>$number_of_times,
                 'reccure_every'=>$reccure_every,
                 'weekly_days'=>$weekly_days,
                 'on_or_on_the'=>$on_or_on_the,
@@ -406,15 +405,14 @@ class ContractController extends Controller
                 'end_date'=>$end_date
             ]);
 
-            $service_dates_array=array_map(function($date) use($recurrence,$contract_service){
+            $service_dates_array=array_map(function($date) use($recurrence,$contract_service,$number_of_times){
                 return [
                     'recurrence_id'=>$recurrence->id,
                     'contract_service_id'=>$recurrence->contract_service_id,
                     'service_id'=>$contract_service->service_id,
                     'contract_id'=>$contract_service->contract_id,
                     'date'=>$date,
-                    'start_time'=>$recurrence->start_time,
-                    'end_time'=>$recurrence->end_time
+                    'number_of_times'=>$number_of_times
                 ];
             },$service_dates);
 
@@ -433,6 +431,23 @@ class ContractController extends Controller
                 'start_date'=>$service_dates[0],
                 'created_by'=>$current_user->id
             ]);
+
+            if($request->consider_as_on_demand){
+                //when a maintenance service will create as well as an on demand service then we will create an on demand servcie 
+                $on_demand_service_data=[
+                'contract_id'=>$contract->id,
+                'service_id'=>$request->service,
+                'service_type'=>'On Demand',
+                'currency'=>Helper::getSiteCurrency(),
+                'price'=>$request->service_price,
+                'number_of_time_can_used'=>$request->number_of_time_can_used,
+                'note'=>$request->note,
+                'created_along_contract_service_id'=>$contract_service->id,
+                'created_by'=>$current_user->id,
+                'updated_by'=>$current_user->id
+                ];
+                ContractService::create($on_demand_service_data);
+            }
 
         }
 
@@ -463,13 +478,11 @@ class ContractController extends Controller
             return redirect()->route('admin.contracts.services',$contract_id)
                 ->with('error','Service already assigned by the service provider. You can not edit the service now.');
             }
-
-            $start_time=Carbon::parse($request->start_time)->format('G:i:s');
-            $end_time=Carbon::parse($request->end_time)->format('G:i:s');
             $interval_type=$request->interval_type;
             $reccure_every=$request->reccure_every; 
            
-            $weekly_days=($interval_type=='weekly')?implode(',',$request->weekly_days) :null; 
+            $weekly_days=($interval_type=='weekly')?implode(',',$request->weekly_days) :null;
+            $number_of_times=($interval_type=='daily')?$request->number_of_times :null;  
 
             if(in_array($interval_type,['monthly','yearly'])){
 
@@ -559,9 +572,8 @@ class ContractController extends Controller
 
             $recurrence=ContractServiceRecurrence::create([
                 'contract_service_id'=>$contract_service->id,
-                'start_time'=>$start_time,
-                'end_time'=>$end_time,
                 'interval_type'=>$interval_type,
+                'number_of_times'=>$number_of_times,
                 'reccure_every'=>$reccure_every,
                 'weekly_days'=>$weekly_days,
                 'on_or_on_the'=>$on_or_on_the,
@@ -575,15 +587,15 @@ class ContractController extends Controller
                 'end_date'=>$end_date
             ]);
 
-            $service_dates_array=array_map(function($date) use($recurrence,$contract_service){
+            $service_dates_array=array_map(function($date) use($recurrence,$contract_service,$number_of_times){
                 return [
                     'recurrence_id'=>$recurrence->id,
                     'contract_service_id'=>$recurrence->contract_service_id,
                     'service_id'=>$contract_service->service_id,
                     'contract_id'=>$contract_service->contract_id,
                     'date'=>$date,
-                    'start_time'=>$recurrence->start_time,
-                    'end_time'=>$recurrence->end_time
+                    'number_of_times'=>$number_of_times,
+
                 ];
             },$service_dates);
 
