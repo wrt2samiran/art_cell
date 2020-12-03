@@ -56,18 +56,44 @@
                         </tr>
                         <tr>
                           <td>Contract Duration</td>
-                          <td>{{$quotation->contract_duration}} days</td>
+                          <td>{{$quotation->contract_duration}}</td>
                         </tr>
                         <tr>
                           <td>Details</td>
                           <td>{{$quotation->details}}</td>
                         </tr>
-
+                        <tr>
+                          <td>Property Types</td>
+                          <td>{{$quotation->property_types->map(function($property_type) {
+                                  return $property_type->type_name;
+                              })->implode(',<br>')}}
+                          </td>
+                        </tr>
                         <tr>
                           <td>Required Services</td>
-                          <td>@foreach ($quotation->serviceRelatedQuotetion as $item)
-                             {{$item['service']['service_name']}}<br>
-                          @endforeach
+                          <td>
+
+                            @if(count($quotation->services))
+                              <table class="table">
+                                <thead>
+                                  <tr>
+                                    <th>Service</th>
+                                    <th>Work Details (in short)</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  @foreach($quotation->services as $service)
+                                  <tr>
+                                    <td>{{$service->service->service_name}}</td>
+                                    <td>{{$service->work_details}}</td>
+                                  </tr>
+                                  @endforeach
+                                </tbody>
+                              </table>
+                            @else
+                            <span>No services</span>
+                            @endif
+
                           </td>
                         </tr>
                         <tr>

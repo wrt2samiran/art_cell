@@ -22,13 +22,10 @@ class Quotation extends Model
     }
 
     public function services(){
-        return $this->belongsToMany(Service::class,'service_quotation', 'quotation_id', 'service_id');
+        return $this->hasMany(QuotationService::class,'quotation_id');
     }
     public function property_types(){
         return $this->belongsToMany(PropertyType::class);
     }
 
-    public function serviceRelatedQuotetion(){
-        return $this->hasMany('App\Models\QuotationService','quotation_id');
-    }
 }
