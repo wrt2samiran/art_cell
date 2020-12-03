@@ -54,7 +54,7 @@ class DashboardController extends Controller
             case "service-provider":
                 return $this->service_provider_dashboard($request,$current_user);
             break;
-            case "labourr":
+            case "labour":
                 return $this->labour_dashboard($request,$current_user);
             break;
             default:
@@ -126,7 +126,7 @@ class DashboardController extends Controller
         return view('admin.dashboard.labour.index',$this->data);
     }
     public function default_dashboard($request,$current_user){
-        return view('admin.dashboard.default.index',$this->data);
+        return view('admin.dashboard.default',$this->data);
     }
 
 

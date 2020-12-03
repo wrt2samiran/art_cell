@@ -58,6 +58,18 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body p-0">
+              @if(Session::has('success'))
+                  <div class="alert alert-success alert-dismissable __web-inspector-hide-shortcut__">
+                      <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                      {{ Session::get('success') }}
+                  </div>
+              @endif
+              @if(Session::has('error'))
+                  <div class="alert alert-danger alert-dismissable">
+                      <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                      {{ Session::get('error') }}
+                  </div>
+              @endif
               <div class="mailbox-controls">
                
 <!--                 <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="far fa-square"></i>
