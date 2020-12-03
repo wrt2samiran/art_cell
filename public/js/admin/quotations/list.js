@@ -15,7 +15,9 @@
             { data: 'id', name: 'id' },
             { data: 'first_name', name: 'first_name'},
             { data: 'email', name: 'email'},
-            { data: 'details', name: 'details',orderable: false },
+            { data: 'services', name: 'services',orderable: false,searchable: false },
+            { data: 'property_types', name: 'property_types',orderable: false,searchable: false },
+            { data: 'contract_duration', name: 'contract_duration',orderable: false },
             { data: 'created_at', name: 'created_at' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],

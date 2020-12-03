@@ -32,10 +32,13 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
         Route::get('/test', 'AuthController@test');
         Route::get('/', 'AuthController@index');
         Route::any('/login', 'AuthController@index')->name('login');
-        Route::post('/quotetion', 'AuthController@quotetion')->name('quotetion');
+       
         Route::post('/authentication','AuthController@verifyCredentials')->name('authentication');
         Route::any('/forgot-password', 'AuthController@forgotPassword')->name('forgot.password');
         Route::any('/reset-password/{encryptCode}','AuthController@resetPassword')->name('reset.password');
+
+
+        Route::post('/quotation/submit', 'QuotationController@submit_quotation')->name('submit_quotation');
 
         Route::group(['middleware' => 'admin'], function () {
 
