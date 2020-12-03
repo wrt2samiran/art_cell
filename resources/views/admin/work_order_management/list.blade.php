@@ -67,7 +67,7 @@
                                             <th>State</th>
                                             <th>City</th>
                                             <th>Service Start Date</th>
-                                            
+                                            <th>Completed (%)</th>
                                             <th>Status</th>
                                             
                                             <th>Action</th>

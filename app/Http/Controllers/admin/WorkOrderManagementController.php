@@ -525,14 +525,14 @@ class WorkOrderManagementController extends Controller
                 } 
 
                
-                if( \Auth::guard('admin')->user()->hasAllPermission(['work-order-edit'])){   
+                // if( \Auth::guard('admin')->user()->hasAllPermission(['work-order-edit'])){   
 
-                    $edit_url=route('admin.work-order-management.edit',$workOrder->id);
-                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Work Order" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
+                //     $edit_url=route('admin.work-order-management.edit',$workOrder->id);
+                //     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Work Order" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
 
-                    $delete_url=route('admin.work-order-management.delete',$workOrder->id);
-                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete contract" href="javascript:delete_task('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
-                }
+                //     $delete_url=route('admin.work-order-management.delete',$workOrder->id);
+                //     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete contract" href="javascript:delete_task('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
+                // }
 
                 if($action_buttons==''){
                     $action_buttons=$action_buttons.'<span class="text-muted">No access</span>';
@@ -860,6 +860,10 @@ class WorkOrderManagementController extends Controller
         //dd($request->all());
         $logedInUser = \Auth::guard('admin')->user()->id;
         $sqlTaskData = TaskDetails::findOrFail($request->task_details_id);
+        $totalTask   = TaskDetails::whereTaskId($sqlTaskData->task_id)->get();
+        $sqlTask     = TaskLists::findOrFail($sqlTaskData->task_id);
+        $sqlWorkOrder = WorkOrderLists::findOrFail($sqlTask->work_order_id);
+        $workOrderTaskList = TaskLists::whereWorkOrderId($sqlTask->work_order_id)->get();
         $this->data['page_title']     = 'Add Task Feedback';
     
         try
@@ -882,11 +886,22 @@ class WorkOrderManagementController extends Controller
                 } else {
                     
                     $sqlTaskData->user_feedback  = $request->user_feedback;
+                    $sqlTaskData->status         = '2';
                     $sqlTaskData->updated_at     = date('Y-m-d H:i:s');
                     $sqlTaskData->updated_by     = $logedInUser;
                     $save                        = $sqlTaskData->save(); 
 
-                   
+                    
+                    $sqlTask->task_complete_percent = ($sqlTask->task_complete_percent+(100/count($totalTask)));
+                    $updatePercent = $sqlTask->save();
+
+                    $sqlTaskWorkPercent     = TaskLists::whereWorkOrderId($sqlTask->work_order_id)->whereId($sqlTaskData->task_id)->first();
+                    if($sqlTaskWorkPercent->task_complete_percent==100)
+                    {
+                        $sqlWorkOrder->work_order_complete_percent = ($sqlWorkOrder->work_order_complete_percent+(100/count($workOrderTaskList)));
+                    }
+                    
+
                     $request->session()->flash('alert-success', 'Task Feedback has been added successfully');
                     return redirect()->route('admin.work-order-management.labourTaskList',$sqlTaskData->task_id);
                     
@@ -1032,12 +1047,12 @@ class WorkOrderManagementController extends Controller
         $logedInUserRole = \Auth::guard('admin')->user()->role_id;
 
         if($request->ajax()){
-            // if($logedInUserRole!=5){
-            //     $task_detail_list=TaskDetails::with('task')->with('service')->with('userDetails')->where('task_id', $id)->orderBy('id','Desc');
-            // }
-            // else{
-            $task_list=TaskLists::with('service')->where('work_order_id', $id)->where('created_by', $logedInUser)->orderBy('id','Desc');
-            // }
+             if($logedInUserRole==5){
+                 $task_list=TaskDetails::with('task')->with('service')->with('userDetails')->where('user_id', $id)->orderBy('id','Desc');
+             }
+             else{
+                $task_list=TaskLists::with('service')->where('work_order_id', $id)->where('created_by', $logedInUser)->orderBy('id','Desc');
+             }
             return Datatables::of($task_list)
             ->editColumn('created_at', function ($task_list) {
                 return $task_list->created_at ? with(new Carbon($task_list->created_at))->format('m/d/Y') : '';
@@ -1139,39 +1154,42 @@ class WorkOrderManagementController extends Controller
         //$this->data['task_list_data']=TaskLists::with('property')->with('service')->with('country')->with('state')->with('city')->with('userDetails')->findOrFail($id);
         $workOrderList=WorkOrderLists::with(['contract', 'contract_services', 'contract_service_dates', 'contract_service_recurrence',  'property','service_provider','service', 'property.country', 'property.state', 'property.city'])->whereId($id)->whereIsDeleted('N')->first();
         //dd($workOrderList->contract_service_dates);
-        if($workOrderList->contract_service_recurrence->interval_type == 'daily')
+        if($logedInUserRole!=5)
         {
-            
-            $checkSlot = WorkOrderSlot::whereWorkOrderId($id)->first();
-                if(!$checkSlot)
-                { 
-                    if($workOrderList->contract_service_recurrence->number_of_times!='' || $workOrderList->contract_service_recurrence->number_of_times>0){
-                        foreach ($workOrderList->contract_service_dates as $key => $valueServiceDate) {
-                            for($x=1; $x<$workOrderList->contract_service_recurrence->number_of_times; $x++)
-                            {
-                                $work_order_slot[]=[
-                        
-                                 'work_order_id'            => $id,
-                                 'contract_service_date_id' => $valueServiceDate->id,
-                                 'daily_slot'               => $x,
-                                 'created_by'               => auth()->guard('admin')->id(),
-                             ];
-                            }
+            if($workOrderList->contract_service_recurrence->interval_type == 'daily')
+            {
+                
+                $checkSlot = WorkOrderSlot::whereWorkOrderId($id)->first();
+                    if(!$checkSlot)
+                    { 
+                        if($workOrderList->contract_service_recurrence->number_of_times!='' || $workOrderList->contract_service_recurrence->number_of_times>0){
+                            foreach ($workOrderList->contract_service_dates as $key => $valueServiceDate) {
+                                for($x=1; $x<$workOrderList->contract_service_recurrence->number_of_times; $x++)
+                                {
+                                    $work_order_slot[]=[
                             
-                        }
-                        $storeSlote = WorkOrderSlot::insert($work_order_slot);     
-                    }               
-                }
+                                     'work_order_id'            => $id,
+                                     'contract_service_date_id' => $valueServiceDate->id,
+                                     'daily_slot'               => $x,
+                                     'created_by'               => auth()->guard('admin')->id(),
+                                 ];
+                                }
+                                
+                            }
+                            $storeSlote = WorkOrderSlot::insert($work_order_slot);     
+                        }               
+                    }
 
-                else
-                {
-                    $checkSlot = WorkOrderSlot::with('contract_service_dates')->whereWorkOrderId($id)->whereBookedStatus('N')->groupBy('daily_slot')->get();
-                    $this->data['slot_data'] = $checkSlot;
+                    else
+                    {
+                        $checkSlot = WorkOrderSlot::with('contract_service_dates')->whereWorkOrderId($id)->whereBookedStatus('N')->get();
+                        $this->data['slot_data'] = $checkSlot;
 
-                    $checkDate = WorkOrderSlot::with('contract_service_dates')->whereWorkOrderId($id)->whereBookedStatus('N')->groupBy('contract_service_date_id')->get();
-                    $this->data['available_dates'] = $checkDate;
-                 
-                }
+                        $checkDate = WorkOrderSlot::with('contract_service_dates')->whereWorkOrderId($id)->whereBookedStatus('N')->groupBy('contract_service_date_id')->get();
+                        $this->data['available_dates'] = $checkDate;
+                     
+                    }
+            }
         }
         
         $this->data['work_order_list'] = $workOrderList;
@@ -1481,6 +1499,8 @@ class WorkOrderManagementController extends Controller
 
 
        // dd($request->all());
+        
+
         $this->data['page_title']     = 'Assign Task';
         
 
@@ -1527,11 +1547,22 @@ class WorkOrderManagementController extends Controller
                 ]);
 
                 
+                $slot_list = array();
+                $filtered_work_date = array();
+                foreach ($request->work_date as $key => $value) {
+                    if (is_numeric($value)) {
+                        $slot_list[] = $value;
+                    }
+                    else
+                    {
+                        $filtered_work_date[] =  $value;
+                    }
+                }
              
             
                 foreach ($request->maintanence_user_id as $maintainUser) {
                     
-                    foreach ($request->work_date as $workDateValue) {
+                    foreach ($filtered_work_date as $workDateValue) {
                     
                         $addTaskDetails = TaskDetails::create([
                             'service_id'            => $sqlWorkorder->service_id,
@@ -1545,12 +1576,12 @@ class WorkOrderManagementController extends Controller
 
                 }
           
-                foreach ($request->slot_list as $keySlot => $valueSlot) {
+                foreach ($slot_list as $keySlot => $valueSlot) {
                     foreach ($request->work_date as $workDateValue) {
                         
                         $sqlWorkOrderList = WorkOrderLists::whereId($request->work_order_id)->first();
                         $sqlServiceDate = ContractServiceDate::whereContractServiceId($sqlWorkOrderList->contract_service_id)->where('date', $workDateValue)->first();
-                        $sqlSlot = WorkOrderSlot::whereWorkOrderId($request->work_order_id)->whereContractServiceDateId($sqlServiceDate->id)->wheredailySlot($valueSlot)->whereBookedStatus('N')->update([
+                        $sqlSlot = WorkOrderSlot::whereWorkOrderId($request->work_order_id)->whereContractServiceDateId($sqlServiceDate['id'])->wheredailySlot($valueSlot)->whereBookedStatus('N')->update([
                              'booked_status'=>'Y'
                         ]);
                     }

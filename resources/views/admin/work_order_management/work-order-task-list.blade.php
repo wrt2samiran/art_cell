@@ -27,16 +27,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header">
-                                <div class="d-flex justify-content-between" >
-                                    <div><span>Work Order List</span></div>
-                                  <div>
-                                    <a class="btn btn-success" href="{{route('admin.work-order-management.taskCreate')}}">
-                                     Add Work Order
-                                    </a>
-                                  </div>
-                                </div>
-                            </div>
+                            
 
                             <!-- /.card-header -->
                             <div class="card-body">
