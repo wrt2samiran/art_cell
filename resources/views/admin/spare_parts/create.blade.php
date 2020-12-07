@@ -14,7 +14,7 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.shared-service.list')}}">Spare Parts</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.spare_parts.list')}}">Spare Parts</a></li>
               <li class="breadcrumb-item active">Create</li>
             </ol>
           </div>
@@ -46,7 +46,7 @@
                   @endif
                   <div class="row justify-content-center">
                     <div class="col-md-10 col-sm-12">
-                      <form  method="post" id="admin_spare_parts_add_form" action="{{route('admin.spare-parts.add')}}" method="post" enctype="multipart/form-data">
+                      <form  method="post" id="admin_spare_parts_add_form" action="{{route('admin.spare_parts.store')}}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div>
                           <div class="form-group required">
@@ -96,16 +96,16 @@
 
 
                           <div class="form-group required">
-                            <label for="image">Image<span class="error">*</span></label>
-                            <input type="file" class="form-control" name="image" id="image">
-                            @if($errors->has('image'))
-                            <span class="text-danger">{{$errors->first('image')}}</span>
+                            <label for="images">Images <span class="text-muted">(upload max. 3 images of type jpeg/png/gif)</span></label>
+                            <input type="file" class="form-control" name="images[]" id="images" multiple="true" accept="image/jpg,image/jpeg,image/gif">
+                            @if($errors->has('images'))
+                            <span class="text-danger">{{$errors->first('images')}}</span>
                             @endif
                           </div>
 
                         </div>
                         <div>
-                           <a href="{{route('admin.spare-parts.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
+                           <a href="{{route('admin.spare_parts.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
                            <button type="submit" class="btn btn-success">Submit</button> 
                         </div>
                       </form>

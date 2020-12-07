@@ -56,6 +56,27 @@ class SharedServiceOrderController extends Controller
             ->whereIsActive(true)
             ->orderBy('id','Desc');
             return Datatables::of($shared_services)
+            ->addColumn('image',function($shared_service){
+                if(count($shared_service->images)){
+                    $image_container='<div>';
+                    foreach ($shared_service->images as $key => $image) {
+                        $display=($key=='0')?'block':'none';
+
+                        $image_container.='<a style="display:'.$display.'" href="'.asset('/uploads/shared_service_images/'.$image->image_name).'" 
+                         data-fancybox="images-preview-'.$shared_service->id.'" 
+                         data-width="1000" data-height="700"
+                         >
+                        <img style="height:60px;width:80px" src="'.asset('/uploads/shared_service_images/thumb/'.$image->image_name).'" />
+                        </a>';
+                    }
+                    $image_container.='</div>';
+                    return $image_container;
+                }else{
+                    return '<div>
+                    <img style="height:60px;width:80px" src="'.asset('/uploads/shared_service_images/no_image.png').'"/>
+                    </div>';
+                }
+            })
             ->editColumn('price', function ($sharedService) {
                 if($sharedService->is_sharing){
                     return "<div><span>".$sharedService->currency.number_format($sharedService->price, 2, '.', '')."</span> for ".$sharedService->number_of_days." days</div><div>+ ".$sharedService->currency.number_format($sharedService->extra_price_per_day, 2, '.', '')."/day</div>";
@@ -111,7 +132,7 @@ class SharedServiceOrderController extends Controller
             	</form>';   
 
             })
-            ->rawColumns(['action','price','selling_price'])
+            ->rawColumns(['action','price','selling_price','image'])
             ->make(true);
         }
         return view($this->view_path.'.create_order',$this->data);

@@ -70,6 +70,21 @@
                                                         <td>
                               
                                                         <div class="media">
+                                                            @if(count($cart->shared_service_details->images))
+                                                                @foreach ($cart->shared_service_details->images as $key => $image)
+                                                                <a style="display:{{($key=='0')?'block':'none'}}" href="{{asset('/uploads/shared_service_images/'.$image->image_name)}}" 
+                                                                 data-fancybox="images-preview-{{$cart->shared_service_details->id}}" 
+                                                                 data-width="1000" data-height="700"
+                                                                 >
+                                                                <img class="mr-3" style="height:60px;width:80px" src="{{asset('/uploads/shared_service_images/thumb/'.$image->image_name)}}" />
+                                                                </a>
+
+                                                                @endforeach
+                                                            @else
+
+                                                            <img class="mr-3" alt="{{$cart->shared_service_details->name}}" style="height:600px;width:80px" src="{{asset('/uploads/shared_service_images/no_image.png')}}"/>
+                                                            @endif
+
                                                             <div class="media-body">
                                                                 @if($cart->buy_or_rent=='buy')
                                                                 <div>Buying</div>

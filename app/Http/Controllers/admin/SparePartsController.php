@@ -5,16 +5,15 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\Models\UnitMaster;
-use App\Models\SparePart;
-use Helper, AdminHelper, Image, Auth, Hash, Redirect, Validator, View, Config;
+use App\Models\{SparePart,UnitMaster,SparePartImage};
+use Helper, Image,File;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
-
+use App\Http\Requests\Admin\SparePart\{CreateSparePartRequest,UpdateSparePartRequest};
 class SparePartsController extends Controller
 {
 
-    private $view_path='admin.spare-parts';
+    private $view_path='admin.spare_parts';
 
     /*****************************************************/
     # SparePartsController
@@ -27,7 +26,7 @@ class SparePartsController extends Controller
     
 
     public function list(Request $request){
-        $this->data['page_title']='Spare Parts List';
+        $this->data['page_title']='Spare Parts';
         if($request->ajax()){
 
             $spareParts=SparePart::with('unitmaster')->orderBy('id','Desc');
@@ -41,17 +40,17 @@ class SparePartsController extends Controller
             ->addColumn('is_active',function($spareParts){
                 if($spareParts->is_active=='1'){
                    $message='deactivate';
-                   return '<a title="Click to deactivate the Spare Parts" href="javascript:change_status('."'".route('admin.spare-parts.change_status',$spareParts->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm">Active</a>';
+                   return '<a title="Click to deactivate the Spare Parts" href="javascript:change_status('."'".route('admin.spare_parts.change_status',$spareParts->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm">Active</a>';
                     
                 }else{
                    $message='activate';
-                   return '<a title="Click to activate the Spare Parts" href="javascript:change_status('."'".route('admin.spare-parts.change_status',$spareParts->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm">Inactive</a>';
+                   return '<a title="Click to activate the Spare Parts" href="javascript:change_status('."'".route('admin.spare_parts.change_status',$spareParts->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm">Inactive</a>';
                 }
             })
             ->addColumn('action',function($spareParts){
-                $delete_url=route('admin.spare-parts.delete',$spareParts->id);
-                $details_url=route('admin.spare-parts.show',$spareParts->id);
-                $edit_url=route('admin.spare-parts.edit',$spareParts->id);
+                $delete_url=route('admin.spare_parts.delete',$spareParts->id);
+                $details_url=route('admin.spare_parts.show',$spareParts->id);
+                $edit_url=route('admin.spare_parts.edit',$spareParts->id);
 
                 return '<a title="View Spare Parts Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>&nbsp;&nbsp;<a title="Edit Spare Parts" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>&nbsp;&nbsp;<a title="Delete Spare Parts" href="javascript:delete_shared_service('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
                 
@@ -64,251 +63,219 @@ class SparePartsController extends Controller
         return view($this->view_path.'.list',$this->data);
     }
 
-   /*****************************************************/
-    # SparePartsController
-    # Function name : sparePartsAdd
-    # Author        :
-    # Created Date  : 08-10-2020
-    # Purpose       : Add new Spare Parts
-    # Params        : Request $request
-    /*****************************************************/
-    public function sparePartsAdd(Request $request) {
 
-        $this->data['page_title']     = 'Add Spare Part';
-        //$data['panel_title']    = 'Add Spare Part';
-        $logedin_user=auth()->guard('admin')->user();
-        $unit_list = UnitMaster::where('is_active','1')->orderBy('unit_name', 'Asc')->get();
+    /************************************************************************/
+    # Function to load spare part create view page                           #
+    # Function name    : create                                              #
+    # Created Date     : 07-10-2020                                          #
+    # Modified date    : 07-12-2020                                          #
+    # Purpose          : To load spare part create view page                 #
+    public function create() {
+        $this->data['page_title']     = 'Create Spare Part';
+        $unit_list = UnitMaster::where('is_active',true)->orderBy('unit_name', 'Asc')->get();
         $this->data['unit_list'] = $unit_list;
-    
-        try
-        {
-        	if ($request->isMethod('POST'))
-        	{
-				$validationCondition = array(
-                    'name'          => 'required|min:2|max:255|unique:'.(new SparePart)->getTable().',name',
-                    'manufacturer'    => 'required|min:2|max:255',
-                    'unit_master_id'  => 'required',
-                    'price'     => 'required',
-                    'image'             => 'mimes:jpeg,jpg,png,gif|required|max:10000', //10000kb
-				);
-				$validationMessages = array(
-					'name.required'                => 'Please enter name',
-					'name.min'                     => 'Name should be should be at least 2 characters',
-                    'name.max'                     => 'Name should not be more than 255 characters',
-                    'manufacturer.required'        => 'Please enter Manufacturer name',
-                    'manufacturer.min'             => 'Manufacturer name should be at least 2 characters',
-                    'manufacturer.max'             => 'Manufacturer name should not be more than 255 characters',
-                    'unit_master_id.required'      => 'Unit is required',
-                    'price.required'               => 'Price is required',
-                    'image.mimes'                  => 'Image Upload only jpeg,jpg,png,gif',
-                    'image.required'               => 'Image field is required',
-                    'image.max'                    => 'Image max uploaded size 10000kb',               
-				);
-
-				$Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);
-				if ($Validator->fails()) {
-					return redirect()->route('admin.spare-parts.add')->withErrors($Validator)->withInput();
-				} else {
-                    $image = $request->file('image');
-                    if ($image != '') {
-                        $originalFileName =  $image->getClientOriginalName();
-                        $extension = pathinfo($originalFileName, PATHINFO_EXTENSION);
-                        $filename = 'sparepart_'.strtotime(date('Y-m-d H:i:s')).'.'.$extension;
-                        
-                        $imageResize = \Image::make($image->getRealPath());
-                        $imageResize->save(public_path('uploads/sparepart/' . $filename));
-                        $imageResize->save(public_path('uploads/sparepart/'.$filename));
-                    }
-                    
-                    $new = new SparePart;
-                    $new->name = trim($request->name, ' ');
-                    $new->manufacturer  = $request->manufacturer;
-                    $new->image         = $filename;
-                    $new->description  = $request->description;
-                    $new->unit_master_id  = $request->unit_master_id;
-                    $new->price  = $request->price;
-
-                    $new->currency  = Helper::getSiteCurrency();
-                    $new->created_at = Carbon::now();
-                    $new->created_by = $logedin_user->id;
-                    $new->updated_by = $logedin_user->id;
-                    $save = $new->save();
-                
-					if ($save) {						
-                        return redirect()->route('admin.spare-parts.list')->with('success','Spare Parts successfully created.');
-					} else {
-						$request->session()->flash('alert-danger', 'An error occurred while adding the state');
-						return redirect()->back();
-					}
-				}
-            }
-            return view($this->view_path.'.add',$this->data);
-		} catch (Exception $e) {
-			return redirect()->route('admin.spare-parts.list')->with('error', $e->getMessage());
-		}
+        return view($this->view_path.'.create',$this->data);
     }
 
-    /*****************************************************/
-    # SparePartsController
-    # Function name : edit
-    # Author        :
-    # Created Date  : 08-10-2020
-    # Purpose       : Edit Spare Parts
-    # Params        : Request $request
-    /*****************************************************/
-    public function edit(Request $request, $id = null) {
-        $this->data['page_title']     = 'Edit Spare Part';
-        //$data['panel_title']    = 'Edit Spare Part';
-        $logedin_user=auth()->guard('admin')->user();
-        $unit_list = UnitMaster::where('is_active','1')->orderBy('unit_name', 'Asc')->get();
-        $this->data['unit_list'] = $unit_list;
+    /********************************************************************************/
+    # Function to store shared service data                                          #
+    # Function name    : store                                                       #
+    # Created Date     : 14-10-2020                                                  #
+    # Modified date    : 14-10-2020                                                  #
+    # Purpose          : store shared service data                                   #
+    # Param            : CreateSharedServiceRequest $request                         #
+    public function store(CreateSparePartRequest $request){
+        $current_user=auth()->guard('admin')->user(); 
+        $spare_part=SparePart::create([
+            'name' => trim($request->name, ' '),
+            'manufacturer'  => $request->manufacturer,
+            'description'  => $request->description,
+            'unit_master_id'  => $request->unit_master_id,
+            'price'  => $request->price,
+            'currency'  => Helper::getSiteCurrency(),
+            'created_by' => $current_user->id,
+            'updated_by' => $current_user->id
+        ]);
 
-        try
-        {           
-           
-            $details = SparePart::find($id);
-            $data['id'] = $id;
+        if($request->hasFile('images')){
 
-            if ($request->isMethod('POST')) {
-            //    dd($details->image);
-                if ($id == null) {
-                    return redirect()->route('admin.spare-parts.list');
-                }
-               
-                $validationCondition = array(
-                    'name'          => 'required|min:2|max:255|unique:'.(new SparePart)->getTable().',name,'.$id.'',
-                    'manufacturer'    => 'required|min:2|max:255',
-                    'unit_master_id'  => 'required',
-                    'price'     => 'required',
-                );
-                $validationMessages = array(
-                    'name.required'                => 'Please enter name',
-                    'name.min'                     => 'Name should be should be at least 2 characters',
-                    'name.max'                     => 'Name should not be more than 255 characters',
-                    'manufacturer.required'        => 'Please enter Manufacturer name',
-                    'manufacturer.min'             => 'Manufacturer name should be at least 2 characters',
-                    'manufacturer.max'             => 'Manufacturer name should not be more than 255 characters',
-                    'unit_master_id.required'      => 'Unit is required',
-                    'price.required'               => 'Price is required',             
-                );
+            $image_data=[];
 
-                
-                $Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);
-                if ($Validator->fails()) {
-                    
-                    return redirect()->back()->withErrors($Validator)->withInput();
-                } else {
-                    $image = $request->file('image');
-                    if ($image != '') {                        
-                        $originalFileName   = $image->getClientOriginalName();
-                        $extension          = pathinfo($originalFileName, PATHINFO_EXTENSION);
-                        $filename           = 'sparepart_'.strtotime(date('Y-m-d H:i:s')).'.'.$extension;                        
-                        $imageResize        = \Image::make($image->getRealPath());
-                        $imageResize->save(public_path('uploads/sparepart/' . $filename));
-                        $imageResize->save(public_path('uploads/sparepart/' . $filename));
+            foreach ($request->file('images')  as $key=>$image) {
 
-                        $largeImage = public_path().'/uploads/sparepart/'.$details->image;
-                        @unlink($largeImage);
-                       
+                $image_name = time().$key.'.'.$image->getClientOriginalExtension();
 
-                        $details->image  = $filename;
-                    }
-                    
-                    $details->name = trim($request->name, ' ');
-                    $details->manufacturer  = $request->manufacturer;
-                    $details->description  = $request->description;
-                    $details->unit_master_id  = $request->unit_master_id;
-                    $details->price  = $request->price;
-                    $details->currency  = Helper::getSiteCurrency();
-                    $details->updated_at = Carbon::now();
-                    $details->updated_by = $logedin_user->id;
-                    $save = $details->save();                        
-                    if ($save) {
-                        return redirect()->route('admin.spare-parts.list')->with('success','Spare Parts successfully updated.');
-                    } else {
-                        $request->session()->flash('alert-danger', 'An error occurred while updating the state');
-                        return redirect()->back();
-                    }
-                }
+                $thumb_path = public_path('/uploads/spare_part_images/thumb');
+
+                $img = Image::make($image->getRealPath());
+                //resizing and saving resized image
+                $img->resize(config("image_upload.thumb_size.width"), config("image_upload.thumb_size.height"), function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save($thumb_path.'/'.$image_name);
+
+                $destinationPath = public_path('/uploads/spare_part_images');
+                //uploading original image
+                $image->move($destinationPath, $image_name);
+
+                $image_data[]=[
+                    'spare_part_id'=>$spare_part->id,
+                    'image_name'=>$image_name
+                ];
+
             }
-            
-            
-            return view($this->view_path.'.edit',$this->data)->with(['details' => $details]);
 
-        } catch (Exception $e) {
-            return redirect()->route('admin.spare-parts.list')->with('error', $e->getMessage());
+            SparePartImage::insert($image_data);
         }
+        return redirect()->route('admin.spare_parts.list')->with('success','Spare part successfully created.');
+
+    }
+
+
+    /************************************************************************/
+    # Function to load spare part edit page                                  #
+    # Function name    : edit                                                #
+    # Created Date     : 07-10-2020                                          #
+    # Modified date    : 07-12-2020                                          #
+    # Purpose          : to load spare part edit page                        #
+    # Param            : id                                                  #
+    public function edit($id){
+        $this->data['page_title']     = 'Edit Spare Part';
+        $this->data['spare_part']=SparePart::findOrFail($id);
+        $unit_list = UnitMaster::where('is_active',true)->orderBy('unit_name', 'Asc')->get();
+        $this->data['unit_list'] = $unit_list;
+        return view($this->view_path.'.edit',$this->data);
+    }
+
+    /************************************************************************************/
+    # Function to update property data                                                   #
+    # Function name    : update                                                          #
+    # Created Date     : 12-10-2020                                                      #
+    # Modified date    : 12-10-2020                                                      #
+    # Purpose          : to update property data                                         #
+    # Param            : UpdateSparePartRequest $request,id                              #
+    public function update(UpdateSparePartRequest $request,$id){
+        
+        $spare_part=SparePart::findOrFail($id);
+        $current_user=auth()->guard('admin')->user(); 
+        $spare_part->update([
+            'name' => trim($request->name, ' '),
+            'manufacturer'  => $request->manufacturer,
+            'description'  => $request->description,
+            'unit_master_id'  => $request->unit_master_id,
+            'price'  => $request->price,
+            'currency'  => Helper::getSiteCurrency(),
+            'updated_by' => $current_user->id
+        ]);
+
+        if($request->hasFile('images')){
+
+            if(count($spare_part->images)){
+                //deleting old images
+                foreach ($spare_part->images as $image) {
+                    //storing old path of the image in variable
+                    $old_path=public_path().'/uploads/spare_part_images/'.$image->image_name;
+                    //storing old thumb path of the image in variable
+                    $thumb_path=public_path().'/uploads/spare_part_images/thumb/'.$image->image_name;
+
+                    //if file exists then deleting the file from folder
+                    if(File::exists($old_path)){
+                    File::delete($old_path);
+                    }
+                    //if thumb file exists then deleting the file from folder
+                    if(File::exists($thumb_path)){
+                    File::delete($thumb_path);
+                    }
+
+                }
+            }
+            SparePartImage::where('spare_part_id',$spare_part->id)->delete();
+
+            $image_data=[];
+            foreach ($request->file('images')  as $key=>$image) {
+
+                $image_name = time().$key.'.'.$image->getClientOriginalExtension();
+
+                $thumb_path = public_path('/uploads/spare_part_images/thumb');
+
+                $img = Image::make($image->getRealPath());
+                //resizing and saving resized image
+                $img->resize(config("image_upload.thumb_size.width"), config("image_upload.thumb_size.height"), function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save($thumb_path.'/'.$image_name);
+
+                $destinationPath = public_path('/uploads/spare_part_images');
+                //uploading original image
+                $image->move($destinationPath, $image_name);
+
+                $image_data[]=[
+                    'spare_part_id'=>$spare_part->id,
+                    'image_name'=>$image_name
+                ];
+            }
+
+            SparePartImage::insert($image_data);
+        }
+
+        return redirect()->route('admin.spare_parts.list')->with('success','Spare part successfully updated.');
+
     }
 
     /*****************************************************/
-    # SparePartsController
     # Function name : change_status
-    # Author        :
     # Created Date  : 08-10-2020
     # Purpose       : Change Spare Parts status
-    # Params        : Request $request
+    # Params        : Request $request,id
     /*****************************************************/
-    public function change_status(Request $request, $id = null)
+    public function change_status(Request $request, $id)
     {
-        try
-        {
-            if ($id == null) {
-                return redirect()->route('admin.spare-parts.list');
-            }
-            $details = SparePart::where('id', $id)->first();
-            if ($details != null) {
-                if ($details->is_active == 1) {
-                    
-                    $details->is_active = '0';
-                    $details->save();
-                        
-                    $request->session()->flash('alert-success', 'Status updated successfully');                 
-                     } else if ($details->status == 0) {
-                    $details->is_active = '1';
-                    $details->save();
-                    $request->session()->flash('alert-success', 'Status updated successfully');
-                   
-                } else {
-                    $request->session()->flash('alert-danger', 'Something went wrong');
-                    
-                }
-                return redirect()->back();
-            } else {
-                return redirect()->route('admin.spare-parts.list')->with('error', 'Invalid Sapre Parts');
-            }
-        } catch (Exception $e) {
-            return redirect()->route('admin.spare-parts.list')->with('error', $e->getMessage());
-        }
+        $spare_part=SparePart::findOrFail($id);
+        $change_status_to=($spare_part->is_active)?false:true;
+        $message=($spare_part->is_active)?'deactivated':'activated';
+
+         //updating gallery status
+        $spare_part->update([
+            'is_active'=>$change_status_to
+        ]);
+        //returning json success response
+        return response()->json(['message'=>'Spare part successfully '.$message.'.']);
     }
 
     /*****************************************************/
-    # SparePartsController
     # Function name : delete
     # Author        :
     # Created Date  : 08-10-2020
     # Purpose       : Delete Spare Parts
-    # Params        : Request $request
+    # Params        : Request $request,id
     /*****************************************************/
-    public function delete(Request $request, $id = null)
+    public function delete(Request $request, $id)
     {
-        try
-        {
-            if ($id == null) {
-                return redirect()->route('admin.spare-parts.list');
-            }
+        $spare_part=SparePart::findOrFail($id);
+        if(count($spare_part->images)){
+            //deleting old images
+            foreach ($spare_part->images as $image) {
+                //storing old path of the image in variable
+                $old_path=public_path().'/uploads/spare_part_images/'.$image->image_name;
+                //storing old thumb path of the image in variable
+                $thumb_path=public_path().'/uploads/spare_part_images/thumb/'.$image->image_name;
 
-            $details = SparePart::where('id', $id)->first();
-            if ($details != null) {
-                    $delete = $details->delete();
-                    return response()->json(['message'=>'Spare Parts successfully deleted.']);
-            } else {
-                return response()->json(['message'=>'Something went wrong! Please try again letter.']);
-                
+                //if file exists then deleting the file from folder
+                if(File::exists($old_path)){
+                File::delete($old_path);
+                }
+                //if thumb file exists then deleting the file from folder
+                if(File::exists($thumb_path)){
+                File::delete($thumb_path);
+                }
+
             }
-        
-        } catch (Exception $e) {
-            return redirect()->route('admin.spare-parts.list')->with('error', $e->getMessage());
         }
+        SparePartImage::where('spare_part_id',$spare_part->id)->delete();
+        
+        $spare_part->update([
+            'deleted_by'=>auth()->guard('admin')->id()
+        ]);
+        $spare_part->delete();
+        return response()->json(['message'=>'Spare part successfully deleted.']);
     }
     
     /*****************************************************/

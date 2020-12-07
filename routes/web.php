@@ -278,22 +278,29 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::post('/get-states', 'CitiesController@getStates')->name('getStates');                
             });
 
-            Route::group(['prefix' => 'shared-service', 'as' => 'shared-service.'], function () {
+            Route::group(['prefix' => 'shared-services', 'as' => 'shared_services.'], function () {
+
                 Route::get('/', 'SharedServiceController@list')->name('list')->middleware('check_permissions:shared-service-list');
-                Route::any('/add','SharedServiceController@sharedServiceAdd')->name('add')->middleware('check_permissions:shared-service-add');
-                Route::any('/edit/{encryptCode}', 'SharedServiceController@edit')->name('edit')->middleware('check_permissions:shared-service-edit');
-                Route::get('/{id}/change-change', 'SharedServiceController@change_status')->name('change_status')->middleware('check_permissions:shared-service-change-status');
+                Route::get('/create', 'SharedServiceController@create')->name('create')->middleware('check_permissions:shared-service-create');
+                Route::post('/store', 'SharedServiceController@store')->name('store')->middleware('check_permissions:shared-service-create');
+                Route::get('/{id}', 'SharedServiceController@show')->name('show')->middleware('check_permissions:shared-service-details');
+                Route::get('/{id}/edit', 'SharedServiceController@edit')->name('edit')->middleware('check_permissions:shared-service-edit');
+                Route::put('/{id}', 'SharedServiceController@update')->name('update')->middleware('check_permissions:shared-service-edit');
                 Route::delete('/{id}/delete', 'SharedServiceController@delete')->name('delete')->middleware('check_permissions:shared-service-delete');
-                Route::get('/{id}', 'SharedServiceController@show')->name('show')->middleware('check_permissions:shared-service-show');
+                Route::get('/{id}/change-change', 'SharedServiceController@change_status')->name('change_status')->middleware('check_permissions:shared-service-status-change');
+
             });
 
-            Route::group(['prefix' => 'spare-parts', 'as' => 'spare-parts.'], function () {
+            Route::group(['prefix' => 'spare-parts', 'as' => 'spare_parts.'], function () {
+
                 Route::get('/', 'SparePartsController@list')->name('list')->middleware('check_permissions:spare-parts-list');
-                Route::any('/add','SparePartsController@sparePartsAdd')->name('add')->middleware('check_permissions:spare-parts-add');
-                Route::any('/edit/{encryptCode}', 'SparePartsController@edit')->name('edit')->middleware('check_permissions:spare-parts-edit');
-                Route::get('/{id}/change-change', 'SparePartsController@change_status')->name('change_status')->middleware('check_permissions:spare-parts-change-status');
+                Route::get('/create', 'SparePartsController@create')->name('create')->middleware('check_permissions:spare-parts-create');
+                Route::post('/store', 'SparePartsController@store')->name('store')->middleware('check_permissions:spare-parts-create');
+                Route::get('/{id}', 'SparePartsController@show')->name('show')->middleware('check_permissions:spare-parts-details');
+                Route::get('/{id}/edit', 'SparePartsController@edit')->name('edit')->middleware('check_permissions:spare-parts-edit');
+                Route::put('/{id}', 'SparePartsController@update')->name('update')->middleware('check_permissions:spare-parts-edit');
                 Route::delete('/{id}/delete', 'SparePartsController@delete')->name('delete')->middleware('check_permissions:spare-parts-delete');
-                Route::get('/{id}', 'SparePartsController@show')->name('show')->middleware('check_permissions:spare-parts-show');
+                Route::get('/{id}/change-change', 'SparePartsController@change_status')->name('change_status')->middleware('check_permissions:spare-parts-status-change');
             });
 
 

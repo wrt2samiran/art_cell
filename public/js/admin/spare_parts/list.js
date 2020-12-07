@@ -4,7 +4,7 @@
         "autoWidth": false,
         processing: true,
         serverSide: true,
-        ajax: baseUrl+'/admin/spare-parts',
+        ajax: $('#spare_parts_data_url').val(),
         columns: [
             { data: 'id', name: 'id' },
             { data: 'name', name: 'name'},
@@ -44,6 +44,7 @@
         data:{ "_token": $('meta[name="csrf-token"]').attr('content')},
         success: function (data) {
           $.LoadingOverlay("hide");
+          spare_parts_table.ajax.reload(null, false);
           toastr.success('Spare Part successfully deleted.', 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
@@ -58,7 +59,7 @@
         }
      });
 
-     spare_parts_table.ajax.reload(null, false);
+     
 
 
     } 
@@ -84,6 +85,7 @@
         data:{},
         success: function (data) {
           $.LoadingOverlay("hide");
+          spare_parts_table.ajax.reload(null, false);
           toastr.success('Status successfully updated.', 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
@@ -98,7 +100,7 @@
         }
      });
 
-     spare_parts_table.ajax.reload(null, false);
+     
     // window.location.href=url;
     } 
   });

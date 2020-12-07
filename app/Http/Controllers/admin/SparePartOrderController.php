@@ -52,10 +52,26 @@ class SparePartOrderController extends Controller
 
             $spareParts=SparePart::with('unitmaster')->orderBy('id','Desc');
             return Datatables::of($spareParts)
-            ->editColumn('image',function($spare_part){
-                return '<div>
-                <img style="height:80px;width:100px" src="'.$spare_part->image_url.'"/>
-                </div>';
+            ->addColumn('image',function($spare_part){
+                if(count($spare_part->images)){
+                    $image_container='<div>';
+                    foreach ($spare_part->images as $key => $image) {
+                        $display=($key=='0')?'block':'none';
+
+                        $image_container.='<a style="display:'.$display.'" href="'.asset('/uploads/spare_part_images/'.$image->image_name).'" 
+                         data-fancybox="images-preview-'.$spare_part->id.'" 
+                         data-width="1000" data-height="700"
+                         >
+                        <img style="height:60px;width:80px" src="'.asset('/uploads/spare_part_images/thumb/'.$image->image_name).'" />
+                        </a>';
+                    }
+                    $image_container.='</div>';
+                    return $image_container;
+                }else{
+                    return '<div>
+                    <img style="height:60px;width:80px" src="'.asset('/uploads/spare_part_images/no_image.png').'"/>
+                    </div>';
+                }
             })
             ->addColumn('action',function($spare_part){
             	$action_url=route('admin.spare_part_orders.add_to_cart',$spare_part->id);

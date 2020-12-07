@@ -9,6 +9,7 @@
         columns: [
 
             { data: 'id', name: 'id' },
+            { data: 'image', name: 'image'},
             { data: 'name', name: 'name'},
             { data: 'selling_price', name: 'selling_price' },
             { data: "price", name:'price' },
