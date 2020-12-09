@@ -54,7 +54,7 @@
                           <input type="hidden" name="search" id="search" value="Search">
                           
                           <div class="col-md-4 form-group" id="status-filter-container">
-                            <select class="form-control status-filter"  name="work_order_id" id="work_order_id" onchange="grtTaskLIst(this.value)">
+                            <select class="form-control status-filter"  name="work_order_id" id="work_order_id" onchange="getTaskLIst(this.value)">
                                     @forelse($work_order_list as $work_order_data)
                                        <option value="{{$work_order_data->id}}" @if($work_order_data->id==@$request->work_order_id) selected @endif >{{$work_order_data->task_title}}</option>
                                     @empty
@@ -84,7 +84,6 @@
                           </div>
                         </div>
                         <div class="row">
-                          @if(@$slug=='service-provider')
                           <div class="col-md-6 form-group" id="status-filter-container">
                               <select class="form-control status-filter"  name="labour_id" id="labour_id">
                                  <option value="">Filter by Labour</option>
@@ -95,7 +94,6 @@
                                  @endforelse
                              </select>
                           </div>
-                          @endif
                           <!-- <div class="col-md-6 form-group" id="status-filter-container">
                               <select class="form-control service-type-filter"  name="contract_service" id="contract_service">
                                  <option value="">Filter by Service</option>
@@ -298,7 +296,7 @@ $list = json_encode($filtered);
           end            : '<?=$task_data->task_date?>',
           backgroundColor: '<?=$color?>', //red
           borderColor    : '<?=$color?>', //red
-          url            : '<?=$task_data->id?>',
+          id             : '<?=$task_data->id?>',
           allDay         : false,
           
           description: 'Task Title : <?=$task_data->task->task_title?><br>Property Name : <?=$task_data->task->property->property_name?><br>Service : <?=$task_data->task->service->service_name?><br>Service Type : <?=$task_data->task->contract_services->service_type?><br>Country : <?=$task_data->task->property->country->name?><br>State : <?=$task_data->task->property->state->name?><br>City : <?=$task_data->task->property->city->name?><br>Task Date : <?=$task_data->task_date?>'
@@ -325,7 +323,7 @@ $list = json_encode($filtered);
 
    
     if (confirm("This will change the date which was actually entered while creqated. Are you still want to make this change?")) {
-      onTaskChange(info.event.url,  info.event.start,  info.event.end );
+      onTaskChange(info.event.id,  info.event.start,  info.event.end );
     }
     else
     {
@@ -389,12 +387,12 @@ $list = json_encode($filtered);
 
 
 
-$(document).on('click', 'td.fc-today,td.fc-future', function() {
-  <?php if(\Auth::guard('admin')->user()->role_id==4){ ?>
-      $('#addTaskModal').modal('show');
-  <?php } ?>
+// $(document).on('click', 'td.fc-today,td.fc-future', function() {
+//   <?php if(\Auth::guard('admin')->user()->role_id==4){ ?>
+//       $('#addTaskModal').modal('show');
+//   <?php } ?>
 
- });
+//  });
 
 // function onServiceChange(service_id){
   
@@ -449,7 +447,7 @@ $(document).on('click', 'td.fc-today,td.fc-future', function() {
 
 function onTaskChange(task_details_id, start_date, end_date){
 
-
+  //alert(task_details_id);
   let modified_start_date = JSON.stringify(start_date);
   modified_start_date = modified_start_date.slice(1,11);
 
@@ -484,10 +482,10 @@ function onTaskChange(task_details_id, start_date, end_date){
 //Date range picker
 
 
-function grtTaskLIst(work_order_id){
+function getTaskLIst(work_order_id){
  $.ajax({
    
-    url: "{{route('admin.calendar.grtTaskLIst')}}",
+    url: "{{route('admin.calendar.getTaskLIst')}}",
     type:'post',
     dataType: "json",
     data:{work_order_id:work_order_id,_token:"{{ csrf_token() }}"}

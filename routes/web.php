@@ -433,8 +433,11 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::get('/{id}', 'TaskManagementController@show')->name('show');
                 Route::post('/update-task', 'CalendarController@updateTask')->name('updateTask');  
                 Route::post('/get-data', 'CalendarController@getData')->name('getData'); 
-                Route::post('/get-states', 'CalendarController@grtTaskLIst')->name('grtTaskLIst'); 
+                Route::post('/get-task-list', 'CalendarController@getTaskLIst')->name('getTaskLIst'); 
                 Route::post('/update-task-details', 'CalendarController@updateTaskDetails')->name('updateTaskDetails');
+                Route::post('/get-contract-list', 'CalendarController@getContractLIst')->name('getContractLIst');
+                Route::post('/get-work-order-list', 'CalendarController@getWorkOrderLIst')->name('getWorkOrderLIst');
+                
                           
                 
             });

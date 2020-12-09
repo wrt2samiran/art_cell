@@ -30,8 +30,9 @@ class CalendarController extends Controller
         $logedInUserRole = \Auth::guard('admin')->user();
         $workOrder = array();
         $taskDetailsList = array();
+       
 
-        if($logedInUserRole ->role->user_type->slug=='property-owner' || $logedInUserRole ->role->user_type->slug=='property-manager')
+        if($logedInUserRole->role->user_type->slug=='property-owner' || $logedInUserRole->role->user_type->slug=='property-manager')
         {
             $sqlContract=Contract::where(function($q) use ($logedInUser){
           
@@ -48,70 +49,70 @@ class CalendarController extends Controller
             })->orderBy('id', 'Desc')->get();
 
             $this->data['sqlContract'] = $sqlContract;
-       // }
+     
        
 
-        $sqlService=ServiceAllocationManagement::with('service')->with('contract')->whereStatus('A')->where('work_status', '<>','2')->whereServiceProviderId($logedInUser)->get();
+            $sqlService=ServiceAllocationManagement::with('service')->with('contract')->whereStatus('A')->where('work_status', '<>','2')->whereServiceProviderId($logedInUser)->get();
 
-        $labour_list= User::whereStatus('A')->whereRoleId('5')->whereCreatedBy($logedInUser)->get();
-        $this->data['service_list'] = $sqlService;
-        $this->data['labour_list']  = $labour_list;
+            $labour_list= User::whereStatus('A')->whereRoleId('5')->whereCreatedBy($logedInUser)->get();
+            $this->data['service_list'] = $sqlService;
+            $this->data['labour_list']  = $labour_list;
 
-        if ($request->has('search')) {
-           
-            $workOrder = WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'contract_service_dates', 'property.country', 'property.state', 'property.city'])->where(function ($q) use ($request) {
-                
-                if ($request->contract_id!='') {
-                   
-                    $q->where(function ($que) use ($request) {
-                        $que->whereContractId( $request->contract_id);
-                       
-                     });                   
-
-                }
-
-                if ($request->work_order_id!='') {
-                   
-                    $q->where(function ($que) use ($request) {
-                        $que->whereId( $request->work_order_id);
-                       
-                     });                   
-
-                }
-                
-
-                if ($request->contract_status!='') {
+            if ($request->has('search')) {
+               
+                $workOrder = WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'contract_service_dates', 'property.country', 'property.state', 'property.city'])->where(function ($q) use ($request) {
                     
-                     if($request->contract_status ==3)
-                        {
-                            $contract_status = '0';
-                        }
-                     else
-                        {
-                            $contract_status = $request->contract_status;
-                        }   
-
-                    $q->where(function ($que) use ($contract_status) {
-                        $que->where('status', $contract_status);
+                    if ($request->contract_id!='') {
                        
-                     });                   
+                        $q->where(function ($que) use ($request) {
+                            $que->whereContractId( $request->contract_id);
+                           
+                         });                   
 
-                } 
+                    }
 
-                if ($request->contract_service!='') {
+                    if ($request->work_order_id!='') {
+                       
+                        $q->where(function ($que) use ($request) {
+                            $que->whereId( $request->work_order_id);
+                           
+                         });                   
+
+                    }
                     
-                    $q->where(function ($que) use ($request) {
-                        $que->where('service_id', $request->contract_service);
-                       
-                     });                   
 
-                }    
+                    if ($request->contract_status!='') {
+                        
+                         if($request->contract_status ==3)
+                            {
+                                $contract_status = '0';
+                            }
+                         else
+                            {
+                                $contract_status = $request->contract_status;
+                            }   
 
-            })->get();
+                        $q->where(function ($que) use ($contract_status) {
+                            $que->where('status', $contract_status);
+                           
+                         });                   
 
-        } else {
-            
-           
+                    } 
+
+                    if ($request->contract_service!='') {
+                        
+                        $q->where(function ($que) use ($request) {
+                            $que->where('service_id', $request->contract_service);
+                           
+                         });                   
+
+                    }    
+
+                })->get();
+
+            } 
+            else 
+            {          
                // $sqlTask=TaskLists::with('property')->with('service')->with('country')->with('state')->with('city')->with('contract_services')->whereCreatedBy($logedInUser)->orWhere('user_id',$logedInUser)->orderBy('id','Desc')->get();
                 if($logedInUserRole ->role->user_type->slug=='property-owner' || $logedInUserRole ->role->user_type->slug=='property-manager')
                 {
@@ -123,26 +124,26 @@ class CalendarController extends Controller
                    // $this->data['work_order_all']  = $workOrderAll;
                 }
                 
-        }
-
-        if(count($workOrder)==0)
-            {
-                $this->data['error'] = 'No data found!';
             }
 
-        $this->data['serviceList'] = Service::whereIsActive(1)->get();
+            if(count($workOrder)==0)
+                {
+                    $this->data['error'] = 'No data found!';
+                }
 
-        //dd($sqlCalendar);
-        $this->data['work_order_list']  = $workOrder;
-        
-        $this->data['slug'] = $logedInUserRole ->role->user_type->slug;
-        $this->data['request'] = $request;
+            $this->data['serviceList'] = Service::whereIsActive(1)->get();
+
+            //dd($sqlCalendar);
+            $this->data['work_order_list']  = $workOrder;
+            
+            $this->data['slug'] = $logedInUserRole ->role->user_type->slug;
+            $this->data['request'] = $request;
 
         
-                return view($this->view_path.'.calendar',$this->data);
+            return view($this->view_path.'.calendar',$this->data);
         }
 
-        else if($logedInUserRole ->role->user_type->slug=='service-provider')
+        else if($logedInUserRole->role->user_type->slug=='service-provider')
         {
             $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->where('user_id',$logedInUser)->orderBy('id','Desc')->get();
 
@@ -155,7 +156,8 @@ class CalendarController extends Controller
             //$this->data['service_list'] = $sqlService;
             $this->data['labour_list']  = $labour_list;
 
-            if ($request->has('search')) {
+            if ($request->has('search')) 
+            {
                
                 //$taskList = TaskLists::with(['contract', 'task_details', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->where(function ($q) use ($request) {
 
@@ -235,7 +237,8 @@ class CalendarController extends Controller
                 }
 
             } 
-            else {
+            else 
+            {
                     
                     $taskList = TaskLists::with(['contract', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->whereWorkOrderId($workOrder[0]->id)->orderBy('id', 'Desc')->get();
                     
@@ -248,25 +251,131 @@ class CalendarController extends Controller
                         $this->data['error'] = 'No data found!';
                     }
                    
+            }      
+
+            $this->data['serviceList'] = Service::whereIsActive(1)->get();
+
+            //dd($taskDetailsList);
+            $this->data['task_list']  = $taskList;
+            $this->data['task_details_list']  = $taskDetailsList;
+            $this->data['slug'] = $logedInUserRole ->role->user_type->slug;
+            $this->data['request'] = $request;
+            return view($this->view_path.'.calendar-service-provider',$this->data);
+        }  
+
+        else if($logedInUserRole->role->user_type->slug=='super-admin' || $logedInUserRole->role->user_type->slug=='sub-admin') 
+        {
+            $this->data['sqlProperty'] = Property::whereIsActive(1)->whereNull('deleted_at')->orderBy('id', 'Desc')->get();   
+            
+            if($this->data['sqlProperty'])
+            {
+                $this->data['sqlContract'] = Contract::wherePropertyId($this->data['sqlProperty'][0]->id)->whereIsActive(1)->whereNull('deleted_at')->orderBy('id', 'Desc')->get();
+                //$request->property_id =$this->data['sqlProperty'][0]->id;
             }
 
-       
 
-        $this->data['serviceList'] = Service::whereIsActive(1)->get();
+            $sqlService=ServiceAllocationManagement::with('service')->with('contract')->whereStatus('A')->where('work_status', '<>','2')->whereServiceProviderId($logedInUser)->get();
 
-        //dd($taskDetailsList);
-        $this->data['task_list']  = $taskList;
-        $this->data['task_details_list']  = $taskDetailsList;
-        $this->data['slug'] = $logedInUserRole ->role->user_type->slug;
-        $this->data['request'] = $request;
-        return view($this->view_path.'.calendar-service-provider',$this->data);
-        }    
+            $labour_list= User::whereStatus('A')->whereRoleId('5')->whereCreatedBy($logedInUser)->get();
+            $this->data['service_list'] = $sqlService;
+            $this->data['labour_list']  = $labour_list;
+
+            if ($request->has('search')) {
+
+                $this->data['sqlContract'] = Contract::wherePropertyId($request->property_id)->whereIsActive(1)->whereNull('deleted_at')->orderBy('id', 'Desc')->get();
+
+                $workOrder = WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'contract_service_dates', 'property.country', 'property.state', 'property.city'])->where(function ($q) use ($request) {
+                    
+                    if ($request->property_id!='') {
+                       
+                        $q->where(function ($que) use ($request) {
+                            $que->wherePropertyId( $request->property_id);
+                           
+                         });                   
+
+                    }
+
+                    if ($request->contract_id!='') {
+                       
+                        $q->where(function ($que) use ($request) {
+                            $que->whereContractId( $request->contract_id);
+                           
+                         });                   
+
+                    }
+
+                    if ($request->work_order_id!='') {
+                       
+                        $q->where(function ($que) use ($request) {
+                            $que->whereId( $request->work_order_id);
+                           
+                         });                   
+
+                    }
+                    
+
+                    if ($request->contract_status!='') {
+                        
+                         if($request->contract_status ==3)
+                            {
+                                $contract_status = '0';
+                            }
+                         else
+                            {
+                                $contract_status = $request->contract_status;
+                            }   
+
+                        $q->where(function ($que) use ($contract_status) {
+                            $que->where('status', $contract_status);
+                           
+                         });                   
+
+                    } 
+
+                    if ($request->contract_service!='') {
+                        
+                        $q->where(function ($que) use ($request) {
+                            $que->where('service_id', $request->contract_service);
+                           
+                         });                   
+
+                    }    
+
+                })->get();
+
+            } 
+            else 
+            {          
+               if($this->data['sqlContract'])
+               {
+                    $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'contract_service_dates', 'property.country', 'property.state', 'property.city'])->whereContractId(@$this->data['sqlContract'][0]->id)->get();
+               }
+                
+                    
+            }
+
+            if(count($workOrder)==0)
+                {
+                    $this->data['error'] = 'No data found!';
+                }
+
+            $this->data['serviceList'] = Service::whereIsActive(1)->get();
+
+            //dd($sqlCalendar);
+            $this->data['work_order_list']  = $workOrder;
+            
+            $this->data['slug'] = $logedInUserRole ->role->user_type->slug;
+            $this->data['request'] = $request;
+
+        
+            return view($this->view_path.'.calendar-admin',$this->data);
+        }
     }
 
 
     /*****************************************************/
     # CalendarController
-    # Function name : grtTaskLIst
+    # Function name : getTaskLIst
     # Author        :
     # Created Date  : 08-12-2020
     # Purpose       : Get Work Order wise Task List
@@ -274,7 +383,7 @@ class CalendarController extends Controller
     /*****************************************************/
 
 
-    public function grtTaskLIst(Request $request)
+    public function getTaskLIst(Request $request)
     {
          $validator = Validator::make($request->all(), [ 
             'work_order_id' => 'required',
@@ -286,6 +395,57 @@ class CalendarController extends Controller
 
         $allTasks = TaskLists::whereIsDeleted('N')->where('work_order_id', $request->work_order_id)->get();
         return response()->json(['status'=>true, 'allTasks'=>$allTasks,],200);
+    }
+
+
+    /*****************************************************/
+    # CalendarController
+    # Function name : getContractLIst
+    # Author        :
+    # Created Date  : 09-12-2020
+    # Purpose       : Get Property wise Contract List
+    # Params        : Request $request
+    /*****************************************************/
+
+
+    public function getContractLIst(Request $request)
+    {
+         $validator = Validator::make($request->all(), [ 
+            'property_id' => 'required',
+            ]);
+
+           if ($validator->fails()) { 
+              return response()->json(['success' =>false,'message'=>$validator->errors()->first()], 200);
+            }
+
+        $allContracts = Contract::whereNull('deleted_at')->where('property_id', $request->property_id)->get();
+        return response()->json(['status'=>true, 'allContracts'=>$allContracts,],200);
+    }
+
+
+    
+    /*****************************************************/
+    # CalendarController
+    # Function name : getWorkOrderLIst
+    # Author        :
+    # Created Date  : 09-12-2020
+    # Purpose       : Get Contract wise Work Order List
+    # Params        : Request $request
+    /*****************************************************/
+
+
+    public function getWorkOrderLIst(Request $request)
+    {
+         $validator = Validator::make($request->all(), [ 
+            'contract_id' => 'required',
+            ]);
+
+           if ($validator->fails()) { 
+              return response()->json(['success' =>false,'message'=>$validator->errors()->first()], 200);
+            }
+
+        $allWorkOrders = WorkOrderLists::whereNull('deleted_at')->where('contract_id', $request->contract_id)->get();
+        return response()->json(['status'=>true, 'allWorkOrders'=>$allWorkOrders,],200);
     }
 
 
@@ -568,7 +728,7 @@ class CalendarController extends Controller
               return response()->json(['success' =>false,'message'=>$validator->errors()->first()], 200);
             }
 
-            $checkTaskdetails = TaskDetails::whereId($request->task_details_id)->where('status','<>',2)->first();
+            $checkTaskdetails = TaskDetails::whereId($request->task_details_id)->where('status','<>','2')->first();
             if($checkTaskdetails)
                {
                     $checkTaskdetails->update([
