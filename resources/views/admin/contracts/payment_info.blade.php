@@ -96,7 +96,7 @@
                                   <div class="col-sm-5">
                                         <div class="form-group required">
                                           <label for="contract_price">Due Date<span class="error">*</span></label>
-                                          <input autocomplete="off" type="text" name="due_date[]" class="form-control due_date_input_list datepicker" value="{{Carbon\Carbon::createFromFormat('Y-m-d', $installment->due_date)->format('d/m/Y')}}" id="due_date_{{$key}}"  placeholder="Due Date">
+                                          <input autocomplete="off" readonly="readonly" type="text" name="due_date[]" class="form-control due_date_input_list datepicker" value="{{Carbon\Carbon::createFromFormat('Y-m-d', $installment->due_date)->format('d/m/Y')}}" id="due_date_{{$key}}"  placeholder="Due Date">
 
                                           @if($errors->has('due_date.'.$key))
                                               <span class="text-danger">{{$errors->first('due_date.'.$key)}}</span>
@@ -125,9 +125,9 @@
                             @endphp
                             
                             @for($i=1;$i<=$number_of_installment;$i++)
-                            <input type="hidden" name="installment_id[]" value="">
+                            
                             <div class="row" id="row{{$i}}">
-
+                            <input type="hidden" name="installment_id[]" value="">
                               <div class="col-sm-5">
                                     <div class="form-group required">
                                       <label for="amount_{{$i}}">Amount<span class="error">*</span></label>
@@ -143,7 +143,7 @@
                                     <div class="form-group required">
                                       <label for="contract_price">Due Date<span class="error">*</span></label>
 
-                                      <input autocomplete="off" type="text" name="due_date[]" class="form-control due_date_input_list datepicker" value="{{old('due_date.'.($i-1))}}" id="due_date_{{$i}}"  placeholder="Amount">
+                                      <input autocomplete="off" type="text" name="due_date[]" class="form-control due_date_input_list datepicker" readonly="readonly" value="{{old('due_date.'.($i-1))}}" id="due_date_{{$i}}"  placeholder="Amount">
 
                                       @if($errors->has('due_date.'.($i-1)))
                                           <span class="text-danger">{{$errors->first('due_date.'.($i-1))}}</span>

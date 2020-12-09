@@ -28,7 +28,8 @@ $("#admin_contract_create_form").validate({
         },
         end_date:{
             required: true,
-            maxlength: 10, 
+            maxlength: 10,
+            endDateShouldBeGreatherThanStartDate:true 
         },
     },
     messages: {
@@ -52,6 +53,7 @@ $("#admin_contract_create_form").validate({
         },
         end_date:{
             required:  "Enter end date in dd/mm/yyy format",
+            endDateShouldBeGreatherThanStartDate : "End date should be greater than start date"
         },
 
     },

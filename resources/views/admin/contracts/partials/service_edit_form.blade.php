@@ -314,7 +314,7 @@
               Start Date :
             </div>
             <div class="col">
-              <input type="text" class="form-control" value="{{old('start_date')?old('start_date'):Carbon::parse($recurrence->start_date)->format('d/m/Y')}}" autocomplete="off" name="start_date" id="start_date"  placeholder="Start Date">
+              <input type="text" class="form-control" value="{{old('start_date')?old('start_date'):Carbon::parse($recurrence->start_date)->format('d/m/Y')}}" autocomplete="off" name="start_date" readonly="readonly" id="start_date"  placeholder="Start Date">
               @if($errors->has('start_date'))
               <div><span class="text-danger">{{$errors->first('start_date')}}</span></div>
               @endif
@@ -343,7 +343,7 @@
               <input type="radio" {{($recurrence->end_by_or_after=='end_by')?'checked':''}} name="end_by_or_after" id="end_by" value="end_by">End By :
             </div>
             <div class="col">
-              <input type="text" class="form-control" value="{{($recurrence->end_by_or_after=='end_by')?Carbon::parse($recurrence->end_time)->format('d/m/Y'):''}}" autocomplete="off" name="end_date" id="end_date"  placeholder="End Date">  
+              <input type="text" class="form-control" value="{{($recurrence->end_by_or_after=='end_by')?Carbon::parse($recurrence->end_time)->format('d/m/Y'):''}}" autocomplete="off" readonly="readonly" name="end_date" id="end_date"  placeholder="End Date">  
               @if($errors->has('end_date'))
               <div><span class="text-danger">{{$errors->first('end_date')}}</span></div>
               @endif 

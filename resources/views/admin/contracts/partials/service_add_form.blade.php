@@ -284,7 +284,7 @@
               Start Date :
             </div>
             <div class="col">
-              <input type="text" class="form-control" value="{{old('start_date')?old('start_date'):Carbon::parse($contract->start_date)->format('d/m/Y')}}" autocomplete="off" name="start_date" id="start_date"  placeholder="Start Date">
+              <input type="text" class="form-control" value="{{old('start_date')?old('start_date'):Carbon::parse($contract->start_date)->format('d/m/Y')}}" autocomplete="off" readonly="readonly" name="start_date" id="start_date"  placeholder="Start Date">
               @if($errors->has('start_date'))
               <div><span class="text-danger">{{$errors->first('start_date')}}</span></div>
               @endif
@@ -298,7 +298,7 @@
               <input type="radio" checked name="end_by_or_after" id="end_by" value="end_by">End By :
             </div>
             <div class="col">
-              <input type="text" class="form-control" value="{{old('end_date')?old('end_date'):''}}" autocomplete="off" name="end_date" id="end_date"  placeholder="End Date">  
+              <input type="text" class="form-control" readonly="readonly" value="{{old('end_date')?old('end_date'):''}}" autocomplete="off" name="end_date" id="end_date"  placeholder="End Date">  
               @if($errors->has('end_date'))
               <div><span class="text-danger">{{$errors->first('end_date')}}</span></div>
               @endif 
