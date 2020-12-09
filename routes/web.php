@@ -428,11 +428,14 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             });
 
             Route::group(['prefix' => 'calendar', 'as' => 'calendar.'], function () {
-                Route::get('/calendar-data', 'CalendarController@calendardata')->name('calendardata')->middleware('check_permissions:calendar-data');  
+                Route::any('/calendar-data', 'CalendarController@calendardata')->name('calendardata')->middleware('check_permissions:calendar-data');  
                 Route::any('/calendar-data-add','CalendarController@calendardataAdd')->name('calendardataAdd');
                 Route::get('/{id}', 'TaskManagementController@show')->name('show');
                 Route::post('/update-task', 'CalendarController@updateTask')->name('updateTask');  
-                Route::post('/get-data', 'CalendarController@getData')->name('getData');       
+                Route::post('/get-data', 'CalendarController@getData')->name('getData'); 
+                Route::post('/get-states', 'CalendarController@grtTaskLIst')->name('grtTaskLIst'); 
+                Route::post('/update-task-details', 'CalendarController@updateTaskDetails')->name('updateTaskDetails');
+                          
                 
             });
 

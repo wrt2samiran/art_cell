@@ -9,7 +9,7 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Task Calendar</h1>
+                <h1>Calendar Management</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
@@ -22,20 +22,99 @@
         </section>
         <!-- Main content -->
         <section class="content">
-            <div class="container-fluid">
+          <div>
               @if(Session::has('success-message'))
                   <div class="alert alert-success alert-dismissable">
                       <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
                       {{ Session::get('success-message') }}
+                      {{ Session::forget('success-message') }}
                   </div>
               @endif
               @if(Session::has('error'))
                   <div class="alert alert-danger alert-dismissable">
                       <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
                       {{ Session::get('error') }}
+                      {{ Session::forget('error') }}
                   </div>
               @endif
-              
+              @if(@$error)
+                  <div class="alert alert-danger alert-dismissable">
+                      <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                      {{ @$error}}
+                  </div>
+              @endif
+            </div>
+            <div class="container-fluid">             
+                <div class="filter-area ">
+                  <?php //dd($work_order_list);?>
+                    <div class="row">
+                      <form  method="post" id="filter_calendar" action="{{route('admin.calendar.calendardata')}}" method="post" enctype="multipart/form-data">
+                        @csrf
+                        <div class="row">
+                          <input type="hidden" name="search" id="search" value="Search">
+                          <div class="col-md-4 form-group" id="status-filter-container">
+                            @if(@$slug=='property-owner' || @$slug=='property-manager')
+                              <select class="form-control status-filter"  name="contract_id" id="contract_id" >
+                                  
+                                  @forelse($sqlContract as $contractData)
+                                     <option value="{{$contractData->id}}" @if($contractData->id==@$request->contract_id) selected @endif >{{$contractData->title}} ({{$contractData->code}})</option>
+                                  @empty
+                                  <option value="">No Contract Found</option>
+                                  @endforelse
+                             </select>
+                             @endif
+                          </div>
+                          <div class="col-md-4 form-group" id="status-filter-container">
+                            <select class="form-control status-filter"  name="work_order_id" id="work_order_id">
+                                    <option value="">Filter by Work Order</option>
+                                    @forelse($work_order_list as $work_order_data)
+                                       <option value="{{$work_order_data->id}}" @if($work_order_data->id==@$request->work_order_id) selected @endif >{{$work_order_data->task_title}}</option>
+                                    @empty
+                                    <option value="">No Work Order Found</option>
+                                    @endforelse
+                             </select>
+                          </div>   
+
+                          <div class="col-md-4 form-group" id="status-filter-container">
+                              <select class="form-control status-filter"  name="contract_status" id="contract_status">
+                                  <option value="">Filter by Status</option>
+                                     <option value="2" @if($request->contract_status==2) selected @endif>Completed</option>
+                                     <option value="3" @if($request->contract_status==3) selected @endif>Pending </option>
+                                     <option value="1" @if($request->contract_status==1) selected @endif>Overdue</option>
+                             </select>
+                          </div>
+                        </div>
+                        <div class="row">
+                          @if(@$slug=='service-provider')
+                          <div class="col-md-6 form-group" id="status-filter-container">
+                              <select class="form-control status-filter"  name="contract_id" id="contract_id">
+                                 <option value="">Filter by Labour</option>
+                                 <option value="2" @if($request->contract_status==2) selected @endif>Completed</option>
+                                 <option value="0" @if($request->contract_status==0) selected @endif>Pending </option>
+                                 <option value="1" @if($request->contract_status==1) selected @endif>Overdue</option>
+                             </select>
+                          </div>
+                          @endif
+                          <div class="col-md-6 form-group" id="status-filter-container">
+                              <select class="form-control service-type-filter"  name="contract_service" id="contract_service">
+                                 <option value="">Filter by Service</option>
+                                 @forelse($serviceList as $serviceData)
+                                     <option value="{{$serviceData->id}}" @if($serviceData->id==@$request->contract_service) selected @endif >{{$serviceData->service_name}}</option>
+                                  @empty
+                                  <option value="">No Service Found</option>
+                                  @endforelse
+                             </select>
+                          </div>
+                          
+                        </div>
+                        <div class="row">
+                          <div class="col-md-4" id="status-filter-container">
+                             <button type="submit" class="btn btn-success disable-button">Search</button> 
+                          </div>
+                        </div>  
+                      </form>
+                    </div>
+                </div>
                 
                 <section class="content">
                   <div class="container-fluid">
@@ -225,10 +304,11 @@
                 </div>
                 </div>
 
-<?php $list = json_encode($tasks_list);
+<?php //dd($work_order_list);?>
+<?php $list = json_encode($work_order_list);
 
 $filtered = array();
-foreach($tasks_list as $value) {
+foreach($work_order_list as $value) {
     $filtered[] = $value;
 }
 $list = json_encode($filtered);
@@ -327,39 +407,74 @@ $list = json_encode($filtered);
       //Random default events
       events    : [
        
-       <?php foreach($tasks_list as $task_data){ 
+       <?php foreach($work_order_list as $work_order_data){ 
+               if(count($work_order_data->contract_service_dates)>0){
 
-            $user = $task_data->userDetails->name;
-            if($task_data->status==1)
-            {
-              $color = '#dc3545';
-            }
-            else if($task_data->status==0)
-            {
-              $color = '#ffc107';
-            }
-            else
-            {
-              $color = '#28a745';
-            }
+                    foreach ($work_order_data->contract_service_dates as $maintainWorkOrder) {
+                     
 
-        ?>
+                    $user = $work_order_data->userDetails->name;
+                    if($work_order_data->status==1)
+                    {
+                      $color = '#dc3545';
+                    }
+                    else if($work_order_data->status==0)
+                    {
+                      $color = '#ffc107';
+                    }
+                    else
+                    {
+                      $color = '#28a745';
+                    }
 
-        {
-          title          : '<?=$task_data->task_title?>(<?=$user?>)',
-          start          : '<?=$task_data->start_date?>',
-          end            : '<?=$task_data->end_date?>',
-          backgroundColor: '<?=$color?>', //red
-          borderColor    : '<?=$color?>', //red
-          url            : '<?=$task_data->id?>',
-          allDay         : false,
-          
-          description: 'Task Title : <?=$task_data->task_title?><br>Property Name : <?=$task_data->property->property_name?><br>Service : <?=$task_data->service->service_name?><br>Service Type : <?=$task_data->contract_services->service_type?><br>Country : <?=$task_data->country->name?><br>State : <?=$task_data->state->name?><br>City : <?=$task_data->city->name?><br>Task Start Date : <?=$task_data->start_date?><br>Task End Date : <?=$task_data->end_date?>'
-        },
+                ?>
 
-        <?php } ?>
+                {
+                  title          : '<?=$work_order_data->task_title?>(<?=$user?>)',
+                  start          : '<?=$maintainWorkOrder->date?>',
+                  end            : '<?=$maintainWorkOrder->date?>',
+                  backgroundColor: '<?=$color?>', //red
+                  borderColor    : '<?=$color?>', //red
+                  url            : '<?=$work_order_data->id?>',
+                  id             : '<?=$maintainWorkOrder->id?>',
+                  allDay         : false,
+                  
+                  description: 'Task Title : <?=$work_order_data->task_title?><br>Property Name : <?=$work_order_data->property->property_name?><br>Service : <?=$work_order_data->service->service_name?><br>Service Type : <?=$work_order_data->contract_services->service_type?><br>Country : <?=$work_order_data->property->country->name?><br>State : <?=$work_order_data->property->state->name?><br>City : <?=$work_order_data->property->city->name?><br>Task Date : <?=$maintainWorkOrder->date?>'
+                },
+        <?php } } else{ 
+
+                  $user = $work_order_data->userDetails->name;
+                    if($work_order_data->status==1)
+                    {
+                      $color = '#dc3545';
+                    }
+                    else if($work_order_data->status==0)
+                    {
+                      $color = '#ffc107';
+                    }
+                    else
+                    {
+                      $color = '#28a745';
+                    }
+        ?>  
+                    {
+                      title          : '<?=$work_order_data->task_title?>(<?=$user?>)',
+                      start          : '<?=$work_order_data->start_date?>',
+                      end            : '<?=$work_order_data->end_date?>',
+                      backgroundColor: '<?=$color?>', //red
+                      borderColor    : '<?=$color?>', //red
+                      url            : '<?=$work_order_data->id?>',
+                      id             : '',
+                      allDay         : false,
+                      
+                      description: 'Task Title : <?=$work_order_data->task_title?><br>Property Name : <?=$work_order_data->property->property_name?><br>Service : <?=$work_order_data->service->service_name?><br>Service Type : <?=$work_order_data->contract_services->service_type?><br>Country : <?=$work_order_data->property->country->name?><br>State : <?=$work_order_data->property->state->name?><br>City : <?=$work_order_data->property->city->name?><br>Task Start Date : <?=$work_order_data->start_date?>'
+                    },
+
+
+        <?php }  }?>
       ],
-
+      timeFormat: 'H(:mm)', // uppercase H for 24-hour clock、
+      displayEventTime: false,
       eventRender: function(info) {
         var tooltip = new Tooltip(info.el, {
           title: info.event.extendedProps.description,
@@ -376,8 +491,8 @@ $list = json_encode($filtered);
     
 
    
-    if (confirm("Are you sure about this change?")) {
-      onTaskChange(info.event.url,  info.event.start,  info.event.end );
+    if (confirm("This will change the date which was actually entered while creqated. Are you still want to make this change?")) {
+      onTaskChange(info.event.url,  info.event.start,  info.event.end, info.event.id );
     }
     else
     {
@@ -499,9 +614,9 @@ function onServiceChange(service_id){
    
 
 
-function onTaskChange(task_id, start_date, end_date){
+function onTaskChange(work_order_id, start_date, end_date, contract_service_date_id){
 
-
+//alert(contract_service_date_id);
   let modified_start_date = JSON.stringify(start_date);
   modified_start_date = modified_start_date.slice(1,11);
 
@@ -513,7 +628,7 @@ function onTaskChange(task_id, start_date, end_date){
         url: "{{route('admin.calendar.updateTask')}}",
         type:'post',
         dataType: "json",
-        data:{task_id:task_id,modified_start_date:modified_start_date,modified_end_date:modified_end_date,_token:"{{ csrf_token() }}"}
+        data:{work_order_id:work_order_id,modified_start_date:modified_start_date,modified_end_date:modified_end_date,contract_service_date_id:contract_service_date_id,_token:"{{ csrf_token() }}"}
         }).done(function(response) {
            
            console.log(response.status);
