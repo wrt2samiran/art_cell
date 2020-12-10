@@ -9,7 +9,19 @@
             { data: 'id', name: 'id' },
             { data: 'contract.code', name: 'contract.code'},
             { data: 'task_title', name: 'task_title'},
-            { data: 'contract_services.service_type', name: 'contract_services.service_type'},
+            { data: 'contract_services', 
+              render:function (data) {
+                  if(data.service_type=='On Demand'){
+                    return data.service_type+' (Used :'+data.number_of_times_already_used+' Out of : '+data.number_of_time_can_used+')';
+                  }
+                  else
+                  {
+                     return data.service_type
+                  }
+              }
+            },
+
+
             { data: 'property.property_name', name: 'property.property_name' },
             { data: 'service.service_name', name: 'service.service_name' },
             { data: 'property.country.name', name: 'property.country.name' },

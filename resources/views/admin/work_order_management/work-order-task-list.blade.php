@@ -9,12 +9,12 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Work Order Management</h1>
+                <h1>Task Management</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                   <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item active">Work Order</li>
+                  <li class="breadcrumb-item active">Task Management</li>
                 </ol>
               </div>
             </div>
@@ -47,14 +47,10 @@
                                     <thead>
                                         <tr>
                                             <th>Id</th>
-                                            <!-- <th>Property Name</th> -->
                                             <th>Service</th>
-                                            <!-- <th>Country</th>
-                                            <th>State</th>
-                                            <th>City</th> -->
                                             <th>Task Date</th>
+                                            <th>Slot</th>
                                             <th>Status</th>
-                                            
                                             <th>Action</th>
                                         </tr>
                                     </thead>

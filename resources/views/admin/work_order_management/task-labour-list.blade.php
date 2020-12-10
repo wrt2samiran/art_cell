@@ -76,6 +76,7 @@
                         <th>Id</th>
                         <th>Labour Title</th>
                         <th>Task Date</th>
+                        <th>Task Slot</th>
                         <th>Labour Feedback</th>
                         <th>Status</th>
                         <th>Action</th>

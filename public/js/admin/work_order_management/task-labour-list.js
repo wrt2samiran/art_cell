@@ -12,6 +12,43 @@
             { data: 'id', name: 'id' },          
             { data: 'user_details.name', name: 'user_details.name' },
             { data: 'task_date', name: 'task_date' },
+            
+            {
+               data: 'work_order_slot.daily_slot', 
+              render: function(data){
+                  if(data == '1') {
+                      return 'First Slot';
+                  }
+                  else if(data == '2'){
+                      return 'Second Slot';
+                  }
+                  else if(data == '3'){
+                      return 'Third Slot';
+                  }
+                  else if(data == '4'){
+                      return 'Fourth Slot';
+                  }
+                  else if(data == '5'){
+                      return 'Fifth Slot';
+                  }
+                  else if(data == '6'){
+                      return 'Sixth Slot';
+                  }
+                  else if(data == '7'){
+                      return 'Seventh Slot';
+                  }
+                  else if(data == '8'){
+                      return 'Eighth Slot';
+                  }
+                  else if(data == '9'){
+                      return 'Nineth Slot';
+                  }
+                  else if(data == '10'){
+                      return 'Tenth Slot';
+                  }
+                  return 'No Slot';
+              name: 'work_order_slot.daily_slot'
+            }},
             { data: 'user_feedback', name: 'user_feedback' },
             { data: 'status', name: 'ststus' },
             {data: 'action', name: 'action', orderable: false, searchable: false}

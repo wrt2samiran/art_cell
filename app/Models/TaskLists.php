@@ -48,4 +48,8 @@ class TaskLists extends Model
     public function work_order() {
         return $this->belongsTo('\App\Models\WorkOrderLists', 'work_order_id', 'id');
     }
+
+    public function task_details() {
+        return $this->hasMany(TaskDetails::class, 'task_id', 'id');
+    }
 }

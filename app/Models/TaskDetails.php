@@ -19,4 +19,12 @@ class TaskDetails extends Model
     public function service() {
 		return $this->belongsTo('\App\Models\Service', 'service_id', 'id');
 	}
+
+	public function work_order_slot() {
+		return $this->belongsTo('App\Models\WorkOrderSlot', 'work_order_slot_id', 'id');
+	}
+    public function contract_service()
+    {
+        return $this->belongsTo(ContractService::class);
+    }
 }

@@ -306,14 +306,44 @@ $("#admin_other_maintanence_labour_task_add_form").validate({
         ajax: baseUrl+'/admin/work-order-management',
         columns: [
             { data: 'id', name: 'id' },
-            // { data: 'task.property.property_name', name: 'task.property.property_name' },
             { data: 'service.service_name', name: 'service.service_name' },
-            // { data: 'country.name', name: 'country.name' },
-            // { data: 'state.name', name: 'state.name' },
-            // { data: 'city.name', name: 'city.name' },
-
             { data: 'task_date', name: 'task_date' },
-
+            {
+               data: 'work_order_slot.daily_slot', 
+              render: function(data){
+                  if(data == '1') {
+                      return 'First Slot';
+                  }
+                  else if(data == '2'){
+                      return 'Second Slot';
+                  }
+                  else if(data == '3'){
+                      return 'Third Slot';
+                  }
+                  else if(data == '4'){
+                      return 'Fourth Slot';
+                  }
+                  else if(data == '5'){
+                      return 'Fifth Slot';
+                  }
+                  else if(data == '6'){
+                      return 'Sixth Slot';
+                  }
+                  else if(data == '7'){
+                      return 'Seventh Slot';
+                  }
+                  else if(data == '8'){
+                      return 'Eighth Slot';
+                  }
+                  else if(data == '9'){
+                      return 'Nineth Slot';
+                  }
+                  else if(data == '10'){
+                      return 'Tenth Slot';
+                  }
+                  return 'No Slot';
+              name: 'work_order_slot.daily_slot'
+            }},
             { data: 'status', name: 'ststus' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
