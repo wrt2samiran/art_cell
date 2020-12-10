@@ -25,6 +25,7 @@ use Carbon\{Carbon,CarbonPeriod};
 use App\Http\Requests\Admin\Contract\{CreateContractRequest,UpdateContractRequest,StoreFileRequest,StorePaymentInfoRequest,StoreServiceRequest,UpdateServiceRequest};
 use File;
 use Helper;
+use App\Events\Contract\ContractCreated;
 class ContractController extends Controller
 {
     //defining the view path
@@ -713,29 +714,41 @@ class ContractController extends Controller
         $this->authorize('store_payment_info',$contract);
         $current_user=auth()->guard('admin')->user();
 
+
         $contract->update([
          'contract_price'=>$request->contract_price,
          'contract_price_currency'=>Helper::getSiteCurrency(),
          'is_paid'=>false,
          'in_installment'=>($request->in_installment)?true:false,
+         'absolute_or_percentage'=>$request->absolute_or_percentage,
          'notify_installment_before_days'=>$request->notify_installment_before_days,
          'updated_by'=>$current_user->id
         ]);
 
         if($request->in_installment){
             
-
             if(count($request->amount)){
                 foreach ($request->amount as $key=> $amount) {
 
                     $due_date=Carbon::createFromFormat('d/m/Y', $request->due_date[$key])->format('Y-m-d');
                     $pre_notification_date=Carbon::parse($due_date)->subDays($request->notify_installment_before_days);
 
+                    $absolute_or_percentage=$request->absolute_or_percentage;
+
+                    if($absolute_or_percentage=='percentage'){
+                        $percentage=$amount;
+                        $amount=($percentage/100)* $request->contract_price;
+                    }else{
+                        $percentage=null;
+                        $amount=$amount;
+                    }
+
                     if($request->installment_id[$key]!=''){
                         $installment=ContractInstallment::find($request->installment_id[$key]);
                         if($installment){
                             $installment->update([
                                 'contract_id'=>$contract->id,
+                                'percentage'=>$percentage,
                                 'price'=>$amount,
                                 'currency'=>'SAR',
                                 'due_date'=>$due_date,
@@ -747,6 +760,7 @@ class ContractController extends Controller
                     }else{
                         ContractInstallment::create([
                             'contract_id'=>$contract->id,
+                            'percentage'=>$percentage,
                             'price'=>$amount,
                             'currency'=>'SAR',
                             'due_date'=>$due_date,
@@ -861,6 +875,9 @@ class ContractController extends Controller
             $contract->update([
                 'creation_complete'=>true
             ]);
+
+            event(new ContractCreated($contract));
+
             return redirect()->route('admin.contracts.list')->with('success','Contract successfully created.');
         }
         

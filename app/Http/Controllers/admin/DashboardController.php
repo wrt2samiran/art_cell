@@ -5,7 +5,7 @@ namespace App\Http\Controllers\admin;
 use App;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\{User,Setting, Property, Contract,Complaint,WorkOrderLists,SparePartOrder,SharedServiceOrder};
+use App\Models\{User,Setting, Property, Contract,Complaint,WorkOrderLists,SparePartOrder,SharedServiceOrder,TaskLists};
 use Yajra\Datatables\Datatables;
 use Config;
 use Carbon\Carbon;
@@ -41,7 +41,7 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $this->data['page_title'] = 'Dashboard';
-        $current_user=auth()->guard('admin')->user();
+        $this->data['current_user']=$current_user=auth()->guard('admin')->user();
         $user_type=$current_user->role->user_type->slug;
         
         switch ($user_type) {
@@ -113,10 +113,70 @@ class DashboardController extends Controller
 
         $this->data['six_months_shared_service_orders']=$six_months_shared_service_orders;
 
+        $this->data['tasks']=TaskLists::where('start_date','>=',date('Y-m-d'))
+        ->whereHas('contract')
+        ->whereHas('property')
+        ->orderBy('start_date','asc')->take(10)->get();
 
         return view('admin.dashboard.admin.index',$this->data);
     }
     public function customer_dashboard($request,$current_user){
+
+        $this->data['total_contracts']=Contract::where('creation_complete',true)
+        ->whereHas('property',function($query)use($current_user){
+            if($current_user->created_by_admin){
+                $query->where('property_owner',$current_user->id);
+            }else{
+                $query->where('property_manager',$current_user->id);
+            }
+        })
+        ->count();
+
+        $this->data['total_properties']=Property::where(function($query)use($current_user){
+            if($current_user->created_by_admin){
+                $query->where('property_owner',$current_user->id);
+            }else{
+                $query->where('property_manager',$current_user->id);
+            }
+        })
+        ->count();
+
+        $this->data['total_users']=User::whereHas('role')->where('created_by',$current_user->id)->count();
+
+        $this->data['complaints']=Complaint::whereHas('contract')
+        ->with('complaint_status')
+        ->whereHas('complaint_status')
+        ->whereHas('contract.property',function($query) use($current_user){
+            if($current_user->created_by_admin){
+                $query->where('property_owner',$current_user->id);
+            }else{
+                $query->where('property_manager',$current_user->id);
+            }
+        })
+        ->orderBy('id','desc')->take(5)->get();
+
+        $this->data['work_orders']=WorkOrderLists::whereHas('contract')
+        ->whereHas('service')
+        ->whereHas('contract.property',function($query) use($current_user){
+            if($current_user->created_by_admin){
+                $query->where('property_owner',$current_user->id);
+            }else{
+                $query->where('property_manager',$current_user->id);
+            }
+        })
+        ->orderBy('id','desc')->take(5)->get();
+
+        $this->data['tasks']=TaskLists::where('start_date','>=',date('Y-m-d'))
+        ->whereHas('contract')
+        ->whereHas('property',function($query) use($current_user){
+            if($current_user->created_by_admin){
+                $query->where('property_owner',$current_user->id);
+            }else{
+                $query->where('property_manager',$current_user->id);
+            }
+        })
+        ->orderBy('id','asc')->take(10)->get();
+
         return view('admin.dashboard.customer.index',$this->data);
     }
     public function service_provider_dashboard($request,$current_user){

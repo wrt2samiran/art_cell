@@ -9,16 +9,28 @@ $('.edit_note_button').on('click',function(){
 	var note_data=$(this).data('note_data');
 	var file_url=$(this).data('file_url');
 
-	$('#note_edit').val(note_data.note);
+    $("#property_owner_visibility").prop('checked', false);
+    $("#labour_visibility").prop('checked', false);
 
-	if(note_data.file!=''){
+
+	$('#note_edit').val(note_data.note);
+    console.log(note_data);
+	if(note_data.file){
 		var file_help_text=`<small class="form-text text-muted">
 	    Leave blank if you do not want to replace the file (<a target="_blank" href="`+file_url+`">view/download uploaded file</a>)
 	    </small>`;
 		$('#file_help_text').html(file_help_text)
 	}
 
+    var visible_to=note_data.visible_to;
 
+    if (visible_to.includes("property owner & manager")) {
+        $("#property_owner_visibility").prop('checked', true);
+    }
+
+    if (visible_to.includes("labour")) {
+        $("#labour_visibility").prop('checked', true);
+    }
 
 
 

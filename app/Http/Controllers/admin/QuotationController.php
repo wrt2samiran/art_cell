@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
-use App\Models\{Quotation,Service,PropertyType,QuotationService,State};
+use App\Models\{Quotation,QuotationStatus,Service,PropertyType,QuotationService,State};
 use App\Http\Requests\Admin\SubmitQuotationRequest;
 class QuotationController extends Controller
 {
@@ -19,7 +19,7 @@ class QuotationController extends Controller
 
         if($request->ajax()){
 
-            $quotations=Quotation::with(['services','property_types','city','state'])
+            $quotations=Quotation::with(['services','property_types','city','state','status'])
             ->when($request->service,function($query) use($request){
             	$query->whereHas('services',function($sub_query)use ($request){
             		$sub_query->where('service_id',$request->service);
@@ -89,11 +89,14 @@ class QuotationController extends Controller
         
         $this->data['page_title']='Quotation Details';
         $this->data['quotation']=$quotation;
+        $this->data['statuses']=QuotationStatus::where('is_active',true)->get();
         return view($this->view_path.'.show',$this->data);
     }
     public function delete($id){
         $quotation=Quotation::findOrFail($id);
-
+        $quotation->update([
+            'deleted_by'=>auth()->guard('admin')->id()
+        ]);
         $quotation->delete();
         return response()->json(['message'=>'Quotation successfully deleted.']);
     }
@@ -107,8 +110,12 @@ class QuotationController extends Controller
     public function submit_quotation(SubmitQuotationRequest $request){
 
         $state=State::findOrFail($request->state_id);
-
+        $status=QuotationStatus::where('is_default',true)->first();
+        if(!$status){
+            return redirect()->back()->with('quotation_error','No default status found for quotation');
+        }
         $quotation=Quotation::create([
+            'quotation_status_id'=>$status->id,
             'first_name'=>trim($request->first_name, ' '),
             'last_name'=>trim($request->last_name, ' '),
             'email'=>strtolower(trim($request->email, ' ')),
@@ -122,12 +129,11 @@ class QuotationController extends Controller
             
         ]);
 
-
         $property_types=[$request->property_type_id];
 
         $quotation->property_types()->sync($property_types);
         
-        if(count($request->service_id)){
+        if($request->service_id && count($request->service_id)){
             $quotation_service_data_array=[];
 
             foreach ($request->service_id as $key => $service_id) {
@@ -155,5 +161,22 @@ class QuotationController extends Controller
         return redirect()->back()->with('quotation_success','Quotation successfully submitted');
 
 
+    }
+
+    /************************************************************************/
+    # Function to update quotation status                                    #
+    # Function name    : update_status                                       #
+    # Created Date     : 07-12-2020                                          #
+    # Modified date    : 07-12-2020                                          #
+    # Purpose          : To update quotation status                          #
+    # Param            : quotation_id, Request $request                      #
+
+    public function update_status($quotation_id,Request $request){
+        $quotation=Quotation::findOrFail($quotation_id);
+        $quotation->update([
+            'quotation_status_id'=>$request->status,
+            'updated_by'=>auth()->guard('admin')->id()
+        ]);
+        return redirect()->back()->with('success','Quotation status successfully updated.');
     }
 }

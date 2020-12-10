@@ -3,71 +3,17 @@ namespace App\Http\Helpers;
 
 use Auth;
 
-use \App\Cms;
-use \App\SiteSetting;
-use \App\Contract;
-use \Illuminate\Support\Facades\Session;
-use App\Http\Helpers\NotificationHelper;
 use DB;
 use App\Models\Setting;
 use App\Models\EmailTemplate;
 use Carbon\Carbon;
-use App\Models\Message;
+use App\Models\{Message,Notification};
 
 class Helper
 {
-    public const NO_IMAGE_USER = 'user_img.jpg'; // Thumb no image user
-
-    public const NO_IMAGE_THUMB = 'no_image_thumb.jpg'; // Thumb no image
-
-    public const NO_IMAGE = 'no-image.png'; // No image
-
-    public const WEBSITE_DEFAULT_LANGUAGE = 'en';
-
-    public const WEBITE_LANGUAGES = ['en','ar']; // Admin language array
-
-    public const UPLOADED_PROFILE_IMAGE_FILE_TYPES = ['jpeg', 'jpg', 'png', 'svg']; //Uploaded image file types
-
-    public const UPLOADED_DOC_FILE_TYPES = ['dwg','doc', 'docx', 'xls', 'xlsx', 'pdf', 'txt', 'ods', 'odp', 'odt','jpeg', 'jpg', 'png', 'svg']; //Uploaded document file types
-    public const MAX_UPLOAD_SIZE = 10120; // profile image upload max size (10mb)
     
 
-    /*****************************************************/
-    # Helper
-    # Function name : getAppName
-    # Author        :
-    # Created Date  : 23-07-2020
-    # Purpose       : Generate random otp
-    # Params        :
-    /*****************************************************/
-    public static function getAppName()
-    {
-        //$getAppName = env('APP_NAME');
-        $siteSettings = self::getSiteSettings();
-        $appName = $siteSettings->website_title;
-        return $appName;
-    }
-    
-    /*****************************************************/
-    # Helper
-    # Function name : getAppNameFirstLetters
-    # Author        :
-    # Created Date  : 23-07-2020
-    # Purpose       : Generate random otp
-    # Params        :
-    /*****************************************************/
-    public static function getAppNameFirstLetters()
-    {
-        //$getAppName = env('APP_NAME');
-        $siteSettings = self::getSiteSettings();
-        $getAppName = $siteSettings->website_title;
-        $explodedAppNamewords = explode(' ', $getAppName);
-        $appLetters = '';
-        foreach ($explodedAppNamewords as $letter) {
-            $appLetters .= $letter[0];
-        }
-        return $appLetters;
-    }
+
 
     /*****************************************************/
     # Helper
@@ -152,35 +98,6 @@ class Helper
         return $baseUrl;
     }
 
-    /*****************************************************/
-    # Helper
-    # Function name : getRolePermissionPages
-    # Author        :
-    # Created Date  : 23-07-2020
-    # Purpose       : Generate random otp
-    # Params        :
-    /*****************************************************/
-    public static function getRolePermissionPages()
-    {
-        $routePermissionArray = [];
-        if (Auth::guard('admin')->user()->id != '') {
-            if (Auth::guard('admin')->user()->user_type != 0) {
-                //$userRolePermission = Auth::guard('admin')->user()->allRolePermissionForUser;
-                $userRolePermission =['site-settings'];
-               // dd($userRolePermission);
-
-                if (count($userRolePermission) > 0) {
-                    foreach ($userRolePermission as $permission) {
-                        if (@$permission->page != null) {
-                            $routePermissionArray[] = $permission->page->routeName;
-                        }
-                    }
-                }
-            }
-        }
-        return $routePermissionArray;
-       
-    }
 
     /*****************************************************/
     # Helper
@@ -382,56 +299,6 @@ class Helper
 
     }
 
-
-    public static function checkModulePermission($slug = '')
-    {
-
-   
-        $roleId = Auth::guard('admin')->user()->role_id;
-        if ($roleId != 1) {
-            $moduleObj = Module::select('id', 'slug')->where('slug', $slug)->where('status', 'A')->first();
-
-            if (!empty($moduleObj)) {
-                $moduleId = $moduleObj->id;
-                $permissionCount = RolePermission::where(['module_id' => $moduleId, 'role_id' => $roleId, 'status' => 'A', 'is_deleted' => 'N'])->count();
-                if ($permissionCount > 0) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        } else {
-            return true;
-        }
-}
-
-
-
-   public static function checkFunctionPermission($slug = '')
-    {
-        $roleId = \Auth::guard('admin')->user()->role_id;
-        if ($roleId != 1) {
-            $functionObj = \App\Models\ModuleFunctionality::select('id', 'slug')->where('slug', $slug)->where('status','A')->first();
-            if (!empty($functionObj)) {
-                $functionId = $functionObj->id;
-                $permissionCount = \App\Models\RolePermission::where(['module_functionality_id' => $functionId, 'role_id' => $roleId, 'status' => 'A', 'is_deleted' => 'N'])->count();
-
-                if ($permissionCount > 0) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        } else {
-            return true;
-        }
-
-    }
-
     /*****************************************************/
     # Function name : ordinal                             #
     # Created Date  : 24-09-2020                          #
@@ -523,7 +390,15 @@ class Helper
 
     }
 
+    public static function notifications_count(){
+        $current_user=auth()->guard('admin')->user();
+        return Notification::where('user_id',$current_user->id)->where('is_read',false)->count();
+    }
 
+    public static function latest_three_notifications(){
+        $current_user=auth()->guard('admin')->user();
+        return Notification::where('user_id',$current_user->id)->take(3)->orderBy('id','desc')->get();
+    }
 
 
 

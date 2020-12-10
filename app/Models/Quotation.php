@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 class Quotation extends Model
 {
+    use SoftDeletes;
     protected $guarded=[];
     public function user_full_name(){
         return $this->first_name.' '.$this->last_name;
@@ -20,7 +21,9 @@ class Quotation extends Model
     public function state(){
         return $this->belongsTo(State::class);
     }
-
+    public function status(){
+        return $this->belongsTo(QuotationStatus::class,'quotation_status_id');
+    }
     public function services(){
         return $this->hasMany(QuotationService::class,'quotation_id');
     }

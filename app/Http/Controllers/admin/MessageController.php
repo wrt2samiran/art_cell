@@ -4,7 +4,8 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\{User,Message,Contract,Property};
+use App\Models\{User,Message,Contract,Property,Notification};
+use Carbon\Carbon;
 class MessageController extends Controller
 {
     //defining the view path
@@ -174,12 +175,38 @@ class MessageController extends Controller
         ]);
 
         $current_user=auth()->guard('admin')->user();
-        Message::create([
+        $message=Message::create([
         	'message_from'=>$current_user->id,
         	'message_to'=>$request->message_to,
         	'subject'=>$request->subject,
         	'message'=>$request->message
         ]);
+
+        $user_type=$current_user->role->user_type;
+
+        if($user_type->slug=='property-owner'){
+            if($current_user->created_by_admin){
+                $user_type_name=$user_type->name;
+            }else{
+                $user_type_name='Property Manager';
+            }
+        }else{
+            $user_type_name=$user_type->name;
+        }
+
+        $notification_message='New message from '.$current_user->name.'('.$user_type_name.')';
+        $redirect_path=route('admin.messages.details',['message_id'=>$message->id],false);
+        
+        Notification::create([
+            'notificable_id'=>$message->id,
+            'notificable_type'=>'App\Models\Message',
+            'user_id'=>$request->message_to,
+            'message'=>$notification_message,
+            'redirect_path'=>$redirect_path,
+            'created_at'=>Carbon::now(),
+            'updated_at'=>Carbon::now()
+        ]);
+
 
         return redirect()->route('admin.messages.list')->with('success','Message successfully sent.');
 

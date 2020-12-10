@@ -40,6 +40,9 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
 
         Route::post('/quotation/submit', 'QuotationController@submit_quotation')->name('submit_quotation');
 
+        Route::put('/quotation/{quotation_id}/update_status', 'QuotationController@update_status')->name('quotations.update_status');
+        
+
         Route::group(['middleware' => 'admin'], function () {
 
             Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
@@ -307,7 +310,7 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             Route::group(['prefix' => 'spare-part-orders', 'as' => 'spare_part_orders.'], function () {
                 Route::get('/create-order','SparePartOrderController@create_order')->name('create_order');
 
-                Route::get('/{shared_service_id}/add-to-cart', 'SparePartOrderController@add_to_cart')->name('add_to_cart');
+                Route::get('/{spare_part_id}/add-to-cart', 'SparePartOrderController@add_to_cart')->name('add_to_cart');
 
                 Route::get('/cart','SparePartOrderController@cart')->name('cart');
 
@@ -499,6 +502,7 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             /*Routes for notifications management */
             Route::group(['prefix'=>'notifications','middleware'=>[],'as'=>'notifications.'],function(){
                 Route::get('/', 'NotificationController@list')->name('list');
+                Route::get('/{notification_id}', 'NotificationController@details')->name('details');
             });
             /************************************/
 

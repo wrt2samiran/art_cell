@@ -102,6 +102,65 @@
             </div>
             <!-- /.col -->
         </div>
+                <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-header border-0">
+                  <div class="d-flex justify-content-between">
+                    <div>
+                      <h3 class="card-title">
+                        
+                        Upcomming Task Lists
+                      </h3>
+                    </div>
+                    <div>
+                     <!--  <a href="{{route('admin.complaints.list')}}">View All</a> -->
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body p-0">
+                  <div class="table-responsive">
+                      <table class="table m-0">
+                      <thead>
+                          <tr>
+                              <th>Contract Code</th>
+                              <th>Work Order ID</th>
+                              <th>Service Provider</th>
+                              <th>Property</th>
+                              <th>Task Title</th>
+                              <th>Task Date</th>
+                              <th>Status</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          @forelse($tasks as $task)
+                          <tr>
+                             <td>{{$task->contract->code}}</td> 
+                             <td>{{$task->work_order_id}}</td> 
+                             <td>{{$task->contract->service_provider->name}}</td>
+                             <td>{{$task->property->property_name}}</td>
+                             <td>{{$task->task_title}}</td>
+                             <td>{{Carbon::parse($task->start_date)->format('d/m/Y')}}</td>
+                             <td>
+                              {{$task->get_status_name()}}
+                             </td>
+                          </tr>
+                          @empty
+                          <tr>
+                             <td colspan="7">No upcomming tasks</td> 
+                          </tr>
+                          @endforelse
+                      </tbody>
+                  </table>
+                  </div>
+
+                </div>
+                <!-- /.card-body -->
+              </div>
+            </div>
+   
+            <!-- /.col -->
+        </div>
         <div class="row">
             <div class="col-md-6">
               <div class="card">
@@ -206,7 +265,7 @@
       </div><!-- /.container-fluid -->
     </section>
 
-  </div>
+
   <!-- /.content-wrapper -->
 
 @endsection

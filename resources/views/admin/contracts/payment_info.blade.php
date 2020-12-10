@@ -64,7 +64,6 @@
                             <input class="custom-control-input" type="checkbox" id="in_installment" name="in_installment" value="true" {{($contract->in_installment)?'checked':''}}>
                             <label for="in_installment" class="custom-control-label">Payment In Installment ?</label>
                           </div>
-
                           <div  id="installment_input_container" class="mt-2" style="display: {{($contract->in_installment)?'block':'none'}};">  
                             <div class="row">
                               <div class="col-sm-12">
@@ -76,6 +75,31 @@
                                   @endif
                                 </div>
                               </div>
+
+                              <div class="col-sm-12">
+                                <div class="form-group required">
+                                    <div class="form-check-inline">
+                                      <label class="form-check-label">
+                                        <input type="radio" checked class="form-check-input absolute_or_percentage" value="absolute" name="absolute_or_percentage"
+
+                                        @if(!$contract->absolute_or_percentage)
+                                        checked
+                                        @elseif($contract->absolute_or_percentage && $contract->absolute_or_percentage=='absolute')
+                                        checked
+                                        @endif
+
+                                        >Absolute Amount
+                                      </label>
+                                    </div>
+                                    <div class="form-check-inline">
+                                      <label class="form-check-label">
+                                        <input type="radio" value="percentage" class="form-check-input absolute_or_percentage" name="absolute_or_percentage"
+                                        {{($contract->absolute_or_percentage && $contract->absolute_or_percentage=='percentage')?'checked':''}}
+                                        >Percentage
+                                      </label>
+                                    </div>
+                                </div>
+                              </div>
                             </div>
            
                           @if(count($contract->contract_installments))
@@ -84,9 +108,14 @@
                               <div class="row" id="row{{$key}}">
                                   <div class="col-sm-5">
                                         <div class="form-group required">
-                                          <label for="amount_{{$key}}">Amount<span class="error">*</span></label>
 
-                                          <input type="number" min="1" name="amount[]" class="form-control amount_input_list" value="{{$installment->price}}" id="amount_{{$key}}"  placeholder="Amount">
+                                          <label class="absolute_or_percentage_label" for="amount_{{$key}}">{{($installment->percentage)?'Percentage':'Amount'}}<span class="error">*</span></label>
+
+                                          <input type="number" min="1" name="amount[]" class="form-control amount_input_list" value="{{($installment->percentage)?$installment->percentage:$installment->price}}" data-id="{{$key}}" id="amount_{{$key}}"  placeholder="{{($installment->percentage)?'Percentage':'Amount'}}"
+
+                                          >
+
+                                          <span id="amount_text_{{$key}}" class="amount_text">{{($installment->percentage)?'Amount='.$installment->price:''}}</span>
 
                                           @if($errors->has('amount.'.$key))
                                               <span class="text-danger">{{$errors->first('amount.'.$key)}}</span>
@@ -119,53 +148,7 @@
                                   </div>
                                 </div>
                             @endforeach
-                          @else
-                            @php
-                             $number_of_installment=(session('number_of_installment')) ? session('number_of_installment'):1;
-                            @endphp
-                            
-                            @for($i=1;$i<=$number_of_installment;$i++)
-                            
-                            <div class="row" id="row{{$i}}">
-                            <input type="hidden" name="installment_id[]" value="">
-                              <div class="col-sm-5">
-                                    <div class="form-group required">
-                                      <label for="amount_{{$i}}">Amount<span class="error">*</span></label>
 
-                                      <input type="number" min="1" name="amount[]" class="form-control amount_input_list" value="{{old('amount.'.($i-1))}}" id="amount_{{$i}}"  placeholder="Amount">
-
-                                      @if($errors->has('amount.'.($i-1)))
-                                          <span class="text-danger">{{$errors->first('amount.'.($i-1))}}</span>
-                                      @endif
-                                    </div>
-                              </div>
-                              <div class="col-sm-5">
-                                    <div class="form-group required">
-                                      <label for="contract_price">Due Date<span class="error">*</span></label>
-
-                                      <input autocomplete="off" type="text" name="due_date[]" class="form-control due_date_input_list datepicker" readonly="readonly" value="{{old('due_date.'.($i-1))}}" id="due_date_{{$i}}"  placeholder="Amount">
-
-                                      @if($errors->has('due_date.'.($i-1)))
-                                          <span class="text-danger">{{$errors->first('due_date.'.($i-1))}}</span>
-                                      @endif
-                                    </div>
-                              </div>
-                              <div class="col-sm-2">
-                                    <div class="form-group ">
-                                      <label for="">&nbsp;</label>
-                                       @if($i=='1')
-                                        <div class="installment_input_add" >
-                                          <button type="button"  id="add_installment_button" class="btn btn-success btn-add-speaker">+</button>
-                                        </div> 
-                                       @else
-                                        <div class="installment_input_add" >
-                                          <button type="button"  name="remove" id="{{$i}}" class="btn btn-danger btn_installment_remove">X</button>
-                                        </div> 
-                                       @endif
-                                    </div>
-                              </div>
-                            </div>
-                            @endfor
                           @endif
 
                           </div> 

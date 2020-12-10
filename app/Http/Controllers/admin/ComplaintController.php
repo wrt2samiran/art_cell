@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 use Carbon\Carbon;
-use App\Models\{Complaint,Contract,ComplaintStatus,WorkOrderLists,ComplaintNote,ComplaintStatusUpdate};
+use App\Models\{Complaint,Contract,ComplaintStatus,WorkOrderLists,ComplaintNote,ComplaintStatusUpdate,TaskDetails};
 use App\Http\Requests\Admin\Complaint\{CreateComplaintRequest,UpdateComplaintRequest};
 use Illuminate\Support\Str;
 use File;
+use App\Events\Complaint\{ComplaintCreated,NoteAdded,StatusUpdated};
+
 class ComplaintController extends Controller
 {
     //defining the view path
@@ -28,16 +30,38 @@ class ComplaintController extends Controller
     public function list(Request $request){
         $this->data['page_title']='Complaints List';
         $current_user=auth()->guard('admin')->user();
-        if($request->ajax()){
+        $user_type=$current_user->role->user_type->slug;
 
+        if($user_type=='labour'){
+            $labours_contract_id_array=TaskDetails::with('task')
+            ->where('user_id',$current_user->id)
+            ->get()->pluck('task.contract_id')->toArray();
+        }else{
+            $labours_contract_id_array=[];
+        }
+
+
+        if($request->ajax()){
             $complaints=Complaint::with(['contract','work_order','complaint_status'])
-            ->whereHas('contract')
-            ->where(function($query)use($current_user){
-                if($current_user->role->slug!='super-admin'){
-                    $query->whereHas('contract.property',function($sub_query)use($current_user) {
-                        $sub_query->where('property_owner',$current_user->id)
-                        ->orWhere('property_manager',$current_user->id);
+            ->whereHas('contract',function($query)use($current_user,$user_type,$labours_contract_id_array){
+
+                if($user_type=='property-owner'){
+
+                    $query->whereHas('property',function($sub_query)use($current_user,$user_type,$labours_contract_id_array){
+
+                        if($current_user->created_by_admin){
+                            $sub_query->where('property_owner',$current_user->id);
+                        }else{
+                            $sub_query->where('property_manager',$current_user->id);
+                        }  
+
                     });
+   
+                }elseif($user_type=='service-provider') {
+                    $query->where('service_provider_id',$current_user->id);
+                }elseif($user_type=='labour'){
+                    $labours_contract_id_array=array_unique($labours_contract_id_array);
+                    $query->whereIn('id',$labours_contract_id_array);
                 }
             })
             ->when($request->contract_id,function($query) use($request){
@@ -81,11 +105,28 @@ class ComplaintController extends Controller
             ->make(true);
         }
 
-        $this->data['contracts']=Contract::whereHas('property',function($query)use($current_user){
-            // if($current_user->role->slug!='super-admin'){
-            //     $query->where('property_owner',$current_user->id)
-            //     ->orWhere('property_manager',$current_user->id);
-            // }
+
+        $this->data['contracts']=Contract::where(function($query)use($current_user,$user_type,$labours_contract_id_array){
+
+            if($user_type=='property-owner'){
+
+                $query->whereHas('property',function($sub_query)use($current_user,$user_type,$labours_contract_id_array){
+                    
+                    if($current_user->created_by_admin){
+                        $sub_query->where('property_owner',$current_user->id);
+                    }else{
+                        $sub_query->where('property_manager',$current_user->id);
+                    }  
+
+                });
+
+            }elseif($user_type=='service-provider') {
+                $query->where('service_provider_id',$current_user->id);
+            }elseif($user_type=='labour'){
+                $labours_contract_id_array=array_unique($labours_contract_id_array);
+                $query->whereIn('id',$labours_contract_id_array);
+            }
+
         })
         ->orderBy('id','DESC')->get();
 
@@ -101,10 +142,37 @@ class ComplaintController extends Controller
     public function create(){
         $this->data['page_title']='Create Complaint';
         $current_user=auth()->guard('admin')->user();
+        $user_type=$current_user->role->user_type->slug;
 
-        $this->data['contracts']=Contract::whereHas('property',function($query)use($current_user){
-            $query->where('property_owner',$current_user->id)
-            ->orWhere('property_manager',$current_user->id);
+        if($user_type=='labour'){
+            $labours_contract_id_array=TaskDetails::with('task')
+            ->where('user_id',$current_user->id)
+            ->get()->pluck('task.contract_id')->toArray();
+        }else{
+            $labours_contract_id_array=[];
+        }
+
+        $this->data['contracts']=Contract::where(function($query)use($current_user,$user_type,$labours_contract_id_array){
+
+            if($user_type=='property-owner'){
+
+                $query->whereHas('property',function($sub_query)use($current_user,$user_type,$labours_contract_id_array){
+                    
+                    if($current_user->created_by_admin){
+                        $sub_query->where('property_owner',$current_user->id);
+                    }else{
+                        $sub_query->where('property_manager',$current_user->id);
+                    }  
+
+                });
+
+            }elseif($user_type=='service-provider') {
+                $query->where('service_provider_id',$current_user->id);
+            }elseif($user_type=='labour'){
+                $labours_contract_id_array=array_unique($labours_contract_id_array);
+                $query->whereIn('id',$labours_contract_id_array);
+            }
+
         })
         ->with(['work_orders'])
         ->orderBy('id','DESC')->get();
@@ -139,7 +207,7 @@ class ComplaintController extends Controller
         }else{
             $file_name =null;
         }
-        Complaint::create([
+        $complaint=Complaint::create([
             'created_by'=>$current_user->id,
             'contract_id'=>$request->contract_id,
             'work_order_list_id'=>$request->work_order_id,
@@ -148,6 +216,9 @@ class ComplaintController extends Controller
             'file'=>$file_name,
             'complaint_status_id'=>$default_status->id,
         ]);
+
+        event(new ComplaintCreated($complaint));
+
         return redirect()->route('admin.complaints.list')->with('success','Complaint successfully posted.');
     }
 
@@ -160,11 +231,23 @@ class ComplaintController extends Controller
     # Param            : $complaint_id                                               #
     public function show($complaint_id){
         $current_user=auth()->guard('admin')->user();
+        $user_type=$current_user->role->user_type->slug;
         $this->data['page_title']='Complaint Details';
         $this->data['complaint']=$complaint=Complaint::findOrFail($complaint_id);
-        $this->data['notes']=ComplaintNote::where('complaint_id',$complaint_id)->orderBy('id','desc')->paginate(5);
 
-        $this->data['complaint_status_updates']=ComplaintStatusUpdate::where('complaint_id',$complaint_id)->orderBy('id','DESC')->get();
+        $this->data['notes']=ComplaintNote::where(function($query)use($current_user,$user_type){
+
+            if($user_type=='service-provider'){
+                $query->whereRaw("FIND_IN_SET('service provider',visible_to)");
+            }elseif ($user_type=='property-owner') {
+               $query->whereRaw("FIND_IN_SET('property owner & manager',Visible_to)");
+            }elseif ($user_type=='labour') {
+                $query->whereRaw("FIND_IN_SET('labour',visible_to)");
+            }
+
+        })->where('complaint_id',$complaint_id)->orderBy('id','desc')->paginate(5);
+
+        $this->data['complaint_status_updates']=ComplaintStatusUpdate::where('complaint_id',$complaint_id)->whereHas('user')->orderBy('id','DESC')->get();
 
         $this->data['complaint_statusses']=ComplaintStatus::get();
 
@@ -185,6 +268,8 @@ class ComplaintController extends Controller
         ]);
 
         $current_user=auth()->guard('admin')->user();
+        $user_type=$current_user->role->user_type->slug;
+
         $complaint=Complaint::findOrFail($complaint_id);
 
         if($request->hasFile('file')){
@@ -199,13 +284,41 @@ class ComplaintController extends Controller
         }else{
             $file_name =null;
         }
+        
+        if(in_array($user_type,['super-admin','service-provider'])){
+            $visible_to_array=($request->visible_to)?$request->visible_to:[];
 
-        ComplaintNote::create([
+           
+            if(count($visible_to_array)){
+                if($user_type=='super-admin'){
+                    $visible_to='help desk,'.implode(',', $visible_to_array);
+                }else{
+                    $visible_to='help desk,service provider,'.implode(',', $visible_to_array);
+                }
+
+            }else{
+                if($user_type=='super-admin'){
+                    $visible_to='help desk';
+                }else{
+                    $visible_to='help desk,service provider';
+                }
+
+            }
+
+        }else{
+            $visible_to='help desk,service provider,property owner & manager,labour';
+        }
+
+
+        $complaint_note=ComplaintNote::create([
             'complaint_id'=>$complaint_id,
+            'visible_to'=>$visible_to,
             'user_id'=>$current_user->id,
             'note'=>$request->note,
             'file'=>$file_name
         ]);
+
+        event(new NoteAdded($complaint,$complaint_note));
 
         return redirect()->back()->with('success','Note successfully added.');
 
@@ -225,6 +338,7 @@ class ComplaintController extends Controller
         $current_user=auth()->guard('admin')->user();
         $complaint=Complaint::findOrFail($complaint_id);
         $complaint_note=ComplaintNote::findOrFail($note_id);
+        $user_type=$current_user->role->user_type->slug;
 
         if($request->hasFile('file')){
 
@@ -247,9 +361,36 @@ class ComplaintController extends Controller
             $file_name =$complaint_note->file;
         }
 
+
+        if(in_array($user_type,['super-admin','service-provider'])){
+            $visible_to_array=($request->visible_to)?$request->visible_to:[];
+
+           
+            if(count($visible_to_array)){
+                if($user_type=='super-admin'){
+                    $visible_to='help desk,'.implode(',', $visible_to_array);
+                }else{
+                    $visible_to='help desk,service provider,'.implode(',', $visible_to_array);
+                }
+
+            }else{
+                if($user_type=='super-admin'){
+                    $visible_to='help desk';
+                }else{
+                    $visible_to='help desk,service provider';
+                }
+
+            }
+
+        }else{
+            $visible_to='help desk,service provider,property owner & manager,labour';
+        }
+
+
         $complaint_note->update([
             'note'=>$request->note,
-            'file'=>$file_name
+            'file'=>$file_name,
+            'visible_to'=>$visible_to,
         ]);
 
         return redirect()->back()->with('success','Note successfully added.');
@@ -295,14 +436,26 @@ class ComplaintController extends Controller
     # Param            : complaint_id                                                #
     public function update_status($complaint_id,Request $request){
         $current_user=auth()->guard('admin')->user();
-        $complaint=Complaint::findOrFail($complaint_id);
+        $complaint=Complaint::with('complaint_status')->findOrFail($complaint_id);
         
         $complaint_status=ComplaintStatus::findOrFail($request->status);
         if($complaint->complaint_status_id!=$complaint_status->id){
            $complaint->update([
             'complaint_status_id'=>$complaint_status->id
            ]);
+
+            ComplaintStatusUpdate::create([
+                'complaint_id'=>$complaint_id,
+                'status_from'=>$complaint->complaint_status->status_name,
+                'status_to'=>$complaint_status->status_name,
+                'updated_by'=>$current_user->id
+            ]);
+
+
+            event(new StatusUpdated($complaint,$complaint_status->status_name));
+
         }
+
         return redirect()->back()->with('success','Status successfully updated.');
 
     }

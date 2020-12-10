@@ -26,7 +26,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\UnitMaster;
-use App\Models\{SparePart,SparePartCart,City,SparePartOrder,SparePartDeliveryAddress,OrderedSparePartDetail};
+use App\Models\{SparePart,SparePartCart,City,SparePartOrder,SparePartDeliveryAddress,OrderedSparePartDetail,Notification};
 use Helper;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
@@ -435,6 +435,21 @@ class SparePartOrderController extends Controller
             'curent_status'=>$request->status,
             'updated_by'=>auth()->guard('admin')->id()
         ]);
+
+        $notification_message=env('APP_NAME','SITE').' admin updated your order status';
+        $redirect_path=route('admin.spare_part_orders.my_orders',['order_id'=>$spare_part_order->id],false);
+        
+        Notification::create([
+            'notificable_id'=>$spare_part_order->id,
+            'notificable_type'=>'App\Models\SparePartOrder',
+            'user_id'=>$spare_part_order->user_id,
+            'message'=>$notification_message,
+            'redirect_path'=>$redirect_path,
+            'created_at'=>Carbon::now(),
+            'updated_at'=>Carbon::now()
+        ]);
+
+
         return redirect()->back()->with('success','Order status successfully updated.');
     }
 
