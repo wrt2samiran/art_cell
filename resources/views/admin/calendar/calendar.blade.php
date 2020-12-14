@@ -93,13 +93,12 @@
                                   @endforelse
                              </select>
                           </div>
-                          
-                        </div>
-                        <div class="row">
-                          <div class="col-md-4" id="status-filter-container">
+                          <div class="col-md-6" id="status-filter-container">
                              <button type="submit" class="btn btn-success disable-button">Search</button> 
                           </div>
-                        </div>  
+                          
+                        </div>
+                         
                       </form>
                     </div>
                 </div>

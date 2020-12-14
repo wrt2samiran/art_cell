@@ -79,14 +79,14 @@
                                     >
                                      <option value="">Select Labour</option>
                                      @forelse($labour_list as $labour_data)
-                                           <option value="{{@$labour_data->id}}" {{(old('contract_id')== @$labour_data->id)? 'selected':''}}>{{@$labour_data->name}}</option>
+                                           <option value="{{@$labour_data->id}}" {{(old('user_id')== @$labour_data->id)? 'selected':''}}>{{@$labour_data->name}}</option>
                                       @empty
                                       <option value="">No Labour Found</option>
                                       @endforelse     
                                                                
                                     </select>
-                                  @if($errors->has('contract_id'))
-                                  <span class="text-danger">{{$errors->first('contract_id')}}</span>
+                                  @if($errors->has('user_id'))
+                                  <span class="text-danger">{{$errors->first('user_id')}}</span>
                                   @endif
                                 </div>
                                 

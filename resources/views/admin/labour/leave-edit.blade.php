@@ -14,7 +14,7 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.labour.list')}}">Labour</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.labour.leaveList')}}">Labour Leave</a></li>
               <li class="breadcrumb-item active">Edit</li>
             </ol>
           </div>
@@ -28,7 +28,7 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Edit labour</h3>
+                <h3 class="card-title">Edit Labour Leave</h3>
               </div>
               <div class="card-body">
 
@@ -47,54 +47,45 @@
                   @endif
                   <div class="row justify-content-center">
                     <div class="col-md-10 col-sm-12">
-                      <form  method="post" id="labour_edit_form" action="{{route('admin.labour.update',$user->id)}}" method="post">
+                      <form  method="post" id="labour_edit_form" action="{{route('admin.labour.updateLeave',$leaveData->id)}}" method="post">
                         @csrf
                         @method('PUT')
                         <div>
                           <div class="form-group required">
-                            <label for="first_name">First Name <span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('first_name')?old('first_name'):$user->first_name}}" name="first_name" id="first_name"  placeholder="First Name">
-                            @if($errors->has('first_name'))
-                            <span class="text-danger">{{$errors->first('first_name')}}</span>
+                            <label for="first_name">Labour Name <span class="error">*</span></label>
+                            <select class="form-control parent_role_select2" style="width: 100%;" name="labour_id" id="labour_id" >
+                                <option value="">Select Labour</option>
+                                @foreach($labourList as $labourData)
+                                   <option value="{{@$labourData->id}}" {{(@$leaveData->labour_id== @$labourData->id)? 'selected':''}}>{{@$labourData->name}}</option>
+                                @endforeach   
+                            </select>
+                            @if($errors->has('labour_id'))
+                            <span class="text-danger">{{$errors->first('labour_id')}}</span>
                             @endif
                           </div>
-                          <div class="form-group required">
-                            <label for="last_name">Last Name <span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('last_name')?old('last_name'):$user->last_name}}" name="last_name" id="last_name"  placeholder="Last Name">
-                            @if($errors->has('last_name'))
-                            <span class="text-danger">{{$errors->first('last_name')}}</span>
-                            @endif
+                          <div class="form-group">
+                            <label>Date range <span class="error">*</span></label>
+
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                  <i class="far fa-calendar-alt"></i>
+                                </span>
+                              </div>
+                              <input type="text" class="form-control float-right" id="date_range" name="date_range">
+                            </div>
+                            <!-- /.input group -->
                           </div>
-                          <div class="form-group required">
-                            <label for="email">Email <span class="error">*</span></label>
-                            <input type="email" class="form-control" value="{{old('email')?old('email'):$user->email}}" name="email" id="email"  placeholder="Last Name">
-                            @if($errors->has('email'))
-                            <span class="text-danger">{{$errors->first('email')}}</span>
-                            @endif
+
+                          <div class="form-group">
+                            <label for="service_id">Reason</label>
+                            <textarea class="form-control float-right" name="leave_reason" id="task_description">{{@$leaveData->leave_reason}}</textarea>
                           </div>
-                          <div class="form-group required">
-                            <label for="password">Password</label>
-                            <input type="password" aria-describedby="passwordHelp" class="form-control" value="{{old('password')?old('password'):''}}" name="password" id="password"  placeholder="Password">
-                            
-                            <small id="passwordHelp" class="form-text text-muted">Leave blank if you do not want to update password.</small>
-                            @if($errors->has('password'))
-                            <span class="text-danger">{{$errors->first('password')}}</span>
-                            @endif
-                          </div>
-                          <div class="form-group required">
-                            <label for="phone">Phone/Contact Number <span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('phone')?old('phone'):$user->phone}}" name="phone" id="phone"  placeholder="Phone/Contact Number">
-                            @if($errors->has('phone'))
-                            <span class="text-danger">{{$errors->first('phone')}}</span>
-                            @endif
-                          </div>
-                          
-                        </div>
                         <!--  this the url for remote validattion rule for user email -->
-                        <input type="hidden" id="ajax_check_user_email_unique" value="{{route('ajax.check_user_email_unique',$user->id)}}">
-                        <div>
-                           <a href="{{route('admin.labour.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
-                           <button type="submit" class="btn btn-success">Submit</button> 
+                          <div class="form-group">
+                             <a href="{{route('admin.labour.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
+                             <button type="submit" class="btn btn-success">Submit</button> 
+                          </div>
                         </div>
                       </form>
                     </div>
@@ -108,5 +99,16 @@
 @endsection
 
 @push('custom-scripts')
+<script type="text/javascript">
+  $( document ).ready(function() {
+    $('#date_range').daterangepicker({
+
+         startDate: new Date('<?=$leaveData->leave_start?>'),
+         endDate: new Date('<?=$leaveData->leave_end?>'),
+         dateFormat: 'dd/mm/yy',
+             
+          })
+    });
+</script>
 <script type="text/javascript" src="{{asset('js/admin/labour/edit.js')}}"></script>
 @endpush

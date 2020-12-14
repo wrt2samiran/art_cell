@@ -437,8 +437,7 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::post('/update-task-details', 'CalendarController@updateTaskDetails')->name('updateTaskDetails');
                 Route::post('/get-contract-list', 'CalendarController@getContractLIst')->name('getContractLIst');
                 Route::post('/get-work-order-list', 'CalendarController@getWorkOrderLIst')->name('getWorkOrderLIst');
-                
-                          
+        
                 
             });
 
@@ -454,16 +453,20 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::put('/{id}', 'LabourController@update')->name('update');
                 Route::delete('/{id}/delete', 'LabourController@delete')->name('delete');
                 Route::get('/{id}/change-change', 'LabourController@change_status')->name('change_status');
+                Route::get('/get-state-list', 'LabourController@getStateList')->name('getStateList');
+                Route::get('/get-city-list', 'LabourController@getCityList')->name('getCityList');
                 Route::get('/leave-list', 'LabourController@leaveList')->name('leaveList');
                 Route::get('/create-leave', 'LabourController@createLeave')->name('createLeave');
                 Route::post('/store-leave', 'LabourController@storeLeave')->name('storeLeave');
                 
-                
+                Route::get('/{id}/change-leave-status', 'LabourController@change_leave_status')->name('change_leave_status');
                 
                 Route::get('/edit-leave/{id}', 'LabourController@editLeave')->name('editLeave');
+                Route::put('/{id}', 'LabourController@updateLeave')->name('updateLeave');
                
                 Route::get('/show-leave/{id}', 'LabourController@showLeave')->name('showLeave');
                 Route::get('/{id}', 'LabourController@show')->name('show');
+                Route::delete('/{id}/delete-leave', 'LabourController@deleteLeave')->name('deleteLeave');
                 
             });
             /*Routes for unit management */
@@ -508,6 +511,23 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::post('/store', 'MessageController@store')->name('store');
                 Route::get('/sent', 'MessageController@sent')->name('sent');
                 Route::get('/{message_id}/details', 'MessageController@details')->name('details');
+            });
+            /************************************/
+
+
+            /*Routes for Skill management */
+            Route::group(['prefix'=>'skills','middleware'=>['check_permissions:manage-skills'],'as'=>'skills.'],function(){
+                Route::get('/', 'SkillController@list')->name('list');
+                Route::get('/create', 'SkillController@create')->name('create');
+                Route::post('/store', 'SkillController@store')->name('store');
+                Route::get('/{id}', 'SkillController@show')->name('show');
+                Route::get('/{id}/edit', 'SkillController@edit')->name('edit');
+                Route::put('/{id}', 'SkillController@update')->name('update');
+                Route::delete('/{id}/delete', 'SkillController@delete')->name('delete');
+                Route::get('/{id}/change-change', 'SkillController@change_status')->name('change_status');
+                Route::post('/ajax/ajax_check_service_name_unique/{service_id?}', 'ServiceController@ajax_check_service_name_unique')
+                ->name('ajax_check_service_name_unique');
+
             });
             /************************************/
 

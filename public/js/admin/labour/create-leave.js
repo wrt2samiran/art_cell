@@ -33,3 +33,30 @@ $("#labour_leave_create_form").validate({
 
 
 
+
+  function onCountryChange(country_id){
+     $.ajax({
+       
+        url: "{{route('admin.cities.getStates')}}",
+        type:'post',
+        dataType: "json",
+        data:{country_id:country_id,_token:"{{ csrf_token() }}"}
+        }).done(function(response) {
+           
+           console.log(response.status);
+            if(response.status){
+             console.log(response.allState);
+             var stringified = JSON.stringify(response.allStates);
+            var statedata = JSON.parse(stringified);
+             var state_list = '<option value=""> Select State</option>';
+             $.each(statedata,function(index, state_id){
+                    state_list += '<option value="'+state_id.id+'">'+ state_id.name +'</option>';
+             });
+                $("#state_id").html(state_list);
+            }
+        });
+    }
+
+
+
+

@@ -66,7 +66,7 @@
                           </div>
                           <div class="form-group required">
                             <label for="email">Email <span class="error">*</span></label>
-                            <input type="email" class="form-control" value="{{old('email')?old('email'):''}}" name="email" id="email"  placeholder="Last Name">
+                            <input type="email" class="form-control" value="{{old('email')?old('email'):''}}" name="email" id="email"  placeholder="Last Name" autocomplete="off">
                             @if($errors->has('email'))
                             <span class="text-danger">{{$errors->first('email')}}</span>
                             @endif
@@ -86,8 +86,63 @@
                             @endif
                           </div>
 
+                          <div class="tab-pane active" id="english" role="tabpanel">
+                            <div class="form-group required">
+                              <label for="country_id">Country <span class="error">*</span></label>
+                                <select class="form-control parent_role_select2" onchange='onCountryChange(this.value)' style="width: 100%;" name="country_id" id="country_id">
+                                    <option value="">Select a Country</option>
+                                    @forelse($country_list as $country_data)
+                                       <option value="{{$country_data->id}}" {{(old('country_id')== $country_data->id)? 'selected':''}}>{{$country_data->name}}</option>
+                                    @empty
+                                   <option value="">No Country Found</option>
+                                    @endforelse
+                
+                                </select>
+                                @if($errors->has('country_id'))
+                                <span class="text-danger">{{$errors->first('country_id')}}</span>
+                                @endif
+                            </div>
+
+                            <div class="form-group required">
+                                <label for="country_id">State <span class="error">*</span></label>
+                                 <select name="state_id" id="state_id" class="form-control" onchange='onStateChange(this.value)'>
+                                    <option value=""> Select State</option>
+                                 </select>
+                              @if($errors->has('state_id'))
+                              <span class="text-danger">{{$errors->first('state_id')}}</span>
+                              @endif
+                            </div>
+
+                            <div class="form-group required">
+                                <label for="country_id">City <span class="error">*</span></label>
+                                 <select name="city_id" id="city_id" class="form-control">
+                                    <option value=""> Select City</option>
+                                 </select>
+                                @if($errors->has('city_id'))
+                                <span class="text-danger">{{$errors->first('city_id')}}</span>
+                                @endif
+                            </div>
+                          </div>
+
+                          <div class="form-group required">
+                            <label for="service_id">Skills </label>
+                            <select class="form-control" multiple="multiple" searchable="Search for..."  name="skills[]" id="skills">  
+                               
+                               @forelse(@$skill_list as $skill_data)
+                                     <option value="{{@$skill_data->id}}" {{(old('skills')== @$skill_data->id)? 'selected':''}}>{{@$skill_data->skill_title}}</option>
+                                @empty
+                                <option value="">No Skill Found</option>
+                                @endforelse     
+                                                         
+                              </select>
+                            @if($errors->has('skills'))
+                            <span class="text-danger">{{$errors->first('skills')}}</span>
+                            @endif
+                          </div>
+
+
                           <div class="form-group">
-                            <label for="weekly_off">Select Working Day</label>
+                            <label for="weekly_off">Select Weekly Off Day</label>
                              <select class="form-control " id="weekly_off" name="weekly_off" style="width: 100%;">
                                <option value="">Select Working Day</option>
                                <option value="monday">Monday</option>
@@ -100,14 +155,14 @@
                              </select>
                          </div>
                          
-                          <div class="form-group">
-                            <label for="start_time">Select a Start time:</label>
+                          <!-- <div class="form-group">
+                            <label for="start_time">Select Start time:</label>
                             <input class="form-control" type="time" id="start_time" name="start_time">
                           </div>
                           <div class="form-group">
-                            <label for="end_time">Select a End time:</label>
+                            <label for="end_time">Select End time:</label>
                             <input class="form-control" type="time" id="end_time" name="end_time">
-                          </div>
+                          </div> -->
                         
                         </div>
                         <!--  this the url for remote validattion rule for user email -->
@@ -128,6 +183,61 @@
 @endsection
 
 @push('custom-scripts')
+<script type="text/javascript">
+    function onCountryChange(country_id){
+     $.ajax({
+       
+        url: "{{route('admin.labour.getStateList')}}",
+        type:'get',
+        dataType: "json",
+        data:{country_id:country_id,_token:"{{ csrf_token() }}"}
+        }).done(function(response) {
+           
+           console.log(response.status);
+            if(response.status){
+             console.log(response.allStates);
+             var stringified = JSON.stringify(response.allStates);
+            var statedata = JSON.parse(stringified);
+             var state_list = '<option value=""> Select State</option>';
+             $.each(statedata,function(index, state_id){
+                    state_list += '<option value="'+state_id.id+'">'+ state_id.name +'</option>';
+             });
+                $("#state_id").html(state_list);
+            }
+        });
+    }
+
+    
+    function onStateChange(state_id){
+     $.ajax({
+       
+        url: "{{route('admin.labour.getCityList')}}",
+        type:'get',
+        dataType: "json",
+        data:{state_id:state_id,_token:"{{ csrf_token() }}"}
+        }).done(function(response) {
+           
+           console.log(response.status);
+            if(response.status){
+             console.log(response.allCity);
+             var stringified = JSON.stringify(response.allCity);
+            var citydata = JSON.parse(stringified);
+             var city_list = '<option value=""> Select City</option>';
+             $.each(citydata,function(index, city_id){
+                    city_list += '<option value="'+city_id.id+'">'+ city_id.name +'</option>';
+             });
+                $("#city_id").html(city_list);
+            }
+        });
+    }
+
+    $('#skills').multiselect({
+    columns: 1,
+    placeholder: 'Select Labour',
+    search: true,
+    selectAll: true
+    });
+</script>
 <script type="text/javascript" src="{{asset('js/admin/labour/create.js')}}"></script>
 
 @endpush

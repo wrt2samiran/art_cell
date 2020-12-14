@@ -42,4 +42,5 @@ return array (
   'complaints'=>'Complaints',
   'notifications'=>'Notifications',
   'unit_management' => 'Unit Management',
+  'skills' => 'Skills',
 );

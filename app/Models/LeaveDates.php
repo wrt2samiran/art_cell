@@ -8,8 +8,8 @@ class LeaveDates extends Model
 {
     protected $guarded=[];
     
- 	// public function userDetails() {
-  //       return $this->belongsTo('\App\Models\User',  'labour_id','id');
-  //   }
+ 	public function labour_leaves() {
+        return $this->belongsTo(LabourLeave::class,  'leave_id','id');
+    }
     
 }

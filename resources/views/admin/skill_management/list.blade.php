@@ -9,12 +9,12 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>User Management</h1>
+                <h1>Skill Management</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                   <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item active">Users</li>
+                  <li class="breadcrumb-item active">Skill</li>
                 </ol>
               </div>
             </div>
@@ -28,10 +28,10 @@
                         <div class="card">
 				            <div class="card-header">
 				                <div class="d-flex justify-content-between" >
-				                    <div><span>Labour List</span></div>
+				                    <div><span>Skill List</span></div>
 					                <div>
-						                <a class="btn btn-success" href="{{route('admin.labour.create')}}">
-						                 Create User
+						                <a class="btn btn-success" href="{{route('admin.skills.create')}}">
+						                 Add Skill
 						                </a>
 					                </div>
 				                </div>
@@ -51,23 +51,18 @@
                                         {{ Session::get('error') }}
                                     </div>
                                 @endif
-                                
-                                <hr class="mt-3 mb-3"/>
-                                <table class="table table-bordered" id="labour_table">
+                                <table class="table table-bordered" id="skill_management_table">
                                     <thead>
                                         <tr>
                                             <th>Id</th>
-                                            <th>Name</th>
-                                            <th>Email</th>
-                                            <th>Group</th>
+                                            <th>Skill Title</th>
+                                            <th>Role</th>
                                             <th>Status</th>
-                                            <th>Created At</th>
+                                            
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                 </table>
-                                <!-- calling this url from datatable data which is inside public\js\admin\users\list.js-->
-                                <input type="hidden" id="labour_data_url" value="{{route('admin.labour.list')}}">
                             </div>
                         </div>
                     </div>
@@ -80,7 +75,7 @@
 @endsection
 
 @push('custom-scripts')
-<script type="text/javascript" src="{{asset('js/admin/labour/list.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/admin/skill_management/list.js')}}"></script>
 @endpush
 
 
