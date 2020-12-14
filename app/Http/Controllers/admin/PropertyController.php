@@ -22,12 +22,14 @@ use Illuminate\Http\Request;
 use App\Models\Property;
 use Carbon;
 use Yajra\Datatables\Datatables;
-use App\Models\{Country,State,City,User,PropertyType,PropertyAttachment};
+use App\Models\{Country,State,City,User,PropertyType,PropertyAttachment,Notification};
 use App\Http\Requests\Admin\Property\{CreatePropertyRequest,UpdatePropertyRequest};
 use Illuminate\Support\Str;
-use File;
-use Auth;
-use Helper;
+use File,Auth,Helper;
+
+use App\Events\Property\PropertyCreated;
+use App\Mail\Admin\Property\PropertyCreationMailToOwner;
+use Mail;
 class PropertyController extends Controller
 {
 
@@ -234,6 +236,21 @@ class PropertyController extends Controller
 
             }
         }
+
+
+
+        $data=[
+            'user'=>$property->owner_details,
+            'property'=>$property,
+            'from_name'=>env('MAIL_FROM_NAME','SMMS'),
+            'from_email'=>env('MAIL_FROM_ADDRESS'),
+            'subject'=>'New Property Created'
+        ];
+        Mail::to($property->owner_details->email)->send(new PropertyCreationMailToOwner($data)); 
+
+
+        event(new PropertyCreated($property));
+
     	return redirect()->route('admin.properties.list')->with('success','Property successfully created');
 
     }
@@ -326,6 +343,14 @@ class PropertyController extends Controller
             $property_manager=$request->property_manager;
         }else{
             $property_manager=$property->property_manager;
+        }
+
+
+        if($request->property_manager && $property->property_manager!=$request->property_manager){
+
+            $property_manager_updated=true;
+        }else{
+            $property_manager_updated=false;
         }
         
     	$property->update([
@@ -423,6 +448,43 @@ class PropertyController extends Controller
 
             }
         }
+
+
+        if($property_manager_updated){
+            $notification_data=[];
+            //if property owner added a manager to the property then send notification to the manager
+            if($property->property_manager){
+
+                $property_manager_user=User::find($property->property_manager);
+                if($property_manager_user && $property_manager_user->hasAnyPermission(['property-details','users-property-details'])){
+
+                        $notification_message=$property->owner_details->name.' added you as a property manager.';
+
+                        if($property_manager_user->hasAllPermission(['property-details'])){
+                            $redirect_path=route('admin.properties.show',['id'=>$property->id],false);
+                        }else{
+                            $redirect_path=route('admin.user_properties.show',['id'=>$property->id],false);
+                        }
+                        
+                        $notification_data[]=[
+                            'notificable_id'=>$property->id,
+                            'notificable_type'=>'App\Models\Property',
+                            'user_id'=>$property->property_manager,
+                            'message'=>$notification_message,
+                            'redirect_path'=>$redirect_path,
+                            'created_at'=>Carbon::now(),
+                            'updated_at'=>Carbon::now()
+                        ];
+
+                }
+
+            }
+
+            if(count($notification_data)){
+            Notification::insert($notification_data);
+            }
+        }
+
         
         return redirect()->route('admin.properties.list')->with('success','Property successfully updated.');
 

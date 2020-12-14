@@ -14,7 +14,7 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.spare-parts.list')}}">Spare Parts</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.spare_parts.list')}}">Spare Parts</a></li>
               <li class="breadcrumb-item active">Details</li>
             </ol>
           </div>
@@ -49,18 +49,7 @@
                           <td>Description</td>
                           <td>{!!$spareParts->description!!}</td>
                         </tr>
-                        <tr>
-                          <td>Image</td>
-                          <td> @php
-                            $imgPath = \URL:: asset('images').'/admin/'.Helper::NO_IMAGE;
-                            if ($spareParts->image != null) {
-                                if(file_exists(public_path('/uploads/sparepart/'.'/'.$spareParts->image))) {
-                                $imgPath = \URL::asset('uploads/sparepart/').'/'.$spareParts->image;
-                                }
-                            }
-                            @endphp
-                            <img src="{{ $imgPath }}" alt="" height="50px"></td>
-                        </tr>
+
                         
                         <tr>
                           <td>Price</td>
@@ -72,11 +61,35 @@
                             <button role="button" class="btn btn-{{($spareParts->is_active=='1')?'success':'danger'}}">{{($spareParts->is_active=='1')?'Active':'Inactive'}}</button>
                           </td>
                         </tr>
+                        <tr>
+                          <td>Images</td>
+                          <td>
+                              <div class="card card-body">
+                                     <div class="row">
+                                      @if(count($spareParts->images))
+                                      @foreach($spareParts->images as $image)
+                                          <div class="col-md-3" id="menu_image_{{$image->id}}">
+                                            <div>
+                                                <img width="100%" src="{{asset('uploads/spare_part_images/thumb/'.$image->image_name)}}">
+                                            </div>
+                                          </div>
+                                      @endforeach
+         
+                                      @else
+                                       <div class="col-md-12">
+                                         <p>No images</p>
+                                       </div>
+                                      @endif
+                                       
+                                    </div>
+                              </div>
+                          </td>
+                        </tr>
                        
                       </tbody>
                       <tfoot>
                         <tr>
-                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.spare-parts.list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
+                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.spare_parts.list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
                         </tr>
                       </tfoot>
                   </table>

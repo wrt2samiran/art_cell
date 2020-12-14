@@ -152,6 +152,7 @@
                                                     <tr>
                                                         <td >
                                                         <div class="media">
+                                                            <img style="height: 40px;width: 50px" class="mr-3" src="{{$cart->shared_service_details->image_thumb_url}}" alt="{{$cart->shared_service_details->name}}">
                                                             <div class="media-body">
                                                                 @if($cart->buy_or_rent=='buy')
                                                                 <div>Buying</div>

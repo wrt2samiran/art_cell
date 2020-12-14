@@ -37,9 +37,7 @@ $("#admin_property_create_form").validate({
         property_owner:{
             required: true
         },
-        property_manager:{
-            required: true
-        },
+
  
     },
     messages: {

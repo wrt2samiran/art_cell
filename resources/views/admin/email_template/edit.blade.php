@@ -101,7 +101,9 @@
 <!-- *********Used for CK Editor ***************-->
 <script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
 <script>
+CKEDITOR.config.enterMode = CKEDITOR.ENTER_DIV;
 CKEDITOR.replace( 'content' );
+
 </script>
 <!-- *********Used for CK Editor ***************-->
 <script type="text/javascript" src="{{asset('js/admin/email_template/edit.js')}}"></script>

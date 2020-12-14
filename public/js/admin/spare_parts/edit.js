@@ -56,3 +56,62 @@
         }
 
     });
+
+
+
+$('#images').on('change',function(){
+    
+    var files = document.getElementById("images").files;
+
+    if(files.length>3){
+        reset($('#images'));
+        swal('You can upload maximum 3 images');
+    }else{
+        var file_size_error=false;
+        var file_type_error=false;
+        for (var i = 0; i < files.length; i++)
+        {
+            var file_size_in_kb=(files[i].size/1024);
+            var file_type= files[i].type;
+
+            if(file_size_in_kb>2048){
+               file_size_error=true; 
+            }
+
+            var allowed_file_types=[
+            'application/jpeg',
+            'application/jpg',
+            'application/png',
+            'application/gif',
+            ];
+
+            if(!allowed_file_types.includes(file_type)){
+                file_type_error=true;
+            }
+
+        }
+
+        if(file_size_error==true || file_type_error==true){
+            reset($('#images'));
+
+            var error_message='';
+
+            if(file_size_error==true && file_type_error==true){
+                error_message="Please upload only JPG/JPEG/PNG/GIF files of max size 1mb";
+            }else if(file_size_error==true && file_type_error==false){
+                error_message="File size should not be more than 2 mb";
+            }else{
+                error_message="Please upload only JPG/JPEG/PNG/GIF files";
+            }
+
+            swal(error_message);
+
+        }
+    }
+});
+
+/*-- reset the image file input --*/
+window.reset = function (e) {
+    e.wrap('<form>').closest('form').get(0).reset();
+    e.unwrap();
+}

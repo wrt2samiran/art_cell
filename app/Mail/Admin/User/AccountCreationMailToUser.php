@@ -26,7 +26,7 @@ class AccountCreationMailToUser extends Mailable
             '##USERNAME##'=>"{$data['user']['first_name']}",
             '##EMAIL##'=>"{$data['user']['email']}",
             '##PASSWORD##'=>"{$data['user_password']}",
-            '##SITELINK##'=>"https://www.demoyourprojects.com/cmms/public/admin",
+            '##SITELINK##'=>route('admin.login'),
         ]; 
         $this->mail_content=\Helper::emailTemplateMail($slug,$variable_value);
     }

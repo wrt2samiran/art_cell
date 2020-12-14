@@ -26,7 +26,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\UnitMaster;
-use App\Models\{SparePart,SparePartCart,City,SparePartOrder,SparePartDeliveryAddress,OrderedSparePartDetail};
+use App\Models\{SparePart,SparePartCart,City,SparePartOrder,SparePartDeliveryAddress,OrderedSparePartDetail,Notification,Status};
 use Helper;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
@@ -52,10 +52,26 @@ class SparePartOrderController extends Controller
 
             $spareParts=SparePart::with('unitmaster')->orderBy('id','Desc');
             return Datatables::of($spareParts)
-            ->editColumn('image',function($spare_part){
-                return '<div>
-                <img style="height:80px;width:100px" src="'.$spare_part->image_url.'"/>
-                </div>';
+            ->addColumn('image',function($spare_part){
+                if(count($spare_part->images)){
+                    $image_container='<div>';
+                    foreach ($spare_part->images as $key => $image) {
+                        $display=($key=='0')?'block':'none';
+
+                        $image_container.='<a style="display:'.$display.'" href="'.asset('/uploads/spare_part_images/'.$image->image_name).'" 
+                         data-fancybox="images-preview-'.$spare_part->id.'" 
+                         data-width="1000" data-height="700"
+                         >
+                        <img style="height:60px;width:80px" src="'.asset('/uploads/spare_part_images/thumb/'.$image->image_name).'" />
+                        </a>';
+                    }
+                    $image_container.='</div>';
+                    return $image_container;
+                }else{
+                    return '<div>
+                    <img style="height:60px;width:80px" src="'.asset('/uploads/spare_part_images/no_image.png').'"/>
+                    </div>';
+                }
             })
             ->addColumn('action',function($spare_part){
             	$action_url=route('admin.spare_part_orders.add_to_cart',$spare_part->id);
@@ -243,6 +259,14 @@ class SparePartOrderController extends Controller
                         ->where('user_id',$current_user->id)
                                 ->get();
 
+        $default_status=Status::where('status_for','order')
+        ->where('is_default_status',true)
+        ->first();
+
+        if(!$default_status){
+            return redirect()->back()->with('error','No default status found for order');
+        }                     
+
         $sub_total=self::cart_total_without_tax($spare_part_carts);  
 
         $tax_percentage=$site_setting['tax'];
@@ -259,7 +283,7 @@ class SparePartOrderController extends Controller
             'tax_amount'=>$tax_amount,
             'delivery_charge'=>'0',
             'is_paid'=>true,
-            'curent_status'=>'Placed',
+            'status_id'=>$default_status->id,
             'updated_by'=>$current_user->id,
         ]);
 
@@ -337,6 +361,8 @@ class SparePartOrderController extends Controller
 
             $spare_parts_ordered=SparePartOrder::where('user_id',$current_user->id)
                         ->withCount('ordered_spare_parts')
+                        ->with('status')
+                        ->whereHas('status')
                         ->orderBy('id','Desc');
             return Datatables::of($spare_parts_ordered)
             ->addColumn('action',function($order){
@@ -379,6 +405,8 @@ class SparePartOrderController extends Controller
 
             $spare_parts_ordered=SparePartOrder::withCount('ordered_spare_parts')
                         ->with('user')
+                        ->with('status')
+                        ->whereHas('status')
                         ->orderBy('id','Desc');
             return Datatables::of($spare_parts_ordered)
             ->addColumn('action',function($order){
@@ -402,6 +430,7 @@ class SparePartOrderController extends Controller
         $this->data['page_title']='Spare Part Order Details';
         $spare_part_order=SparePartOrder::with('ordered_spare_parts','user')->find($order_id);
         $this->data['order']=$spare_part_order;
+        $this->data['statuses']=Status::where('status_for','order')->whereIsActive(true)->get();
         return view($this->view_path.'.manage.order_details',$this->data);
     }
 
@@ -416,9 +445,24 @@ class SparePartOrderController extends Controller
     public function update_order_status($order_id,Request $request){
         $spare_part_order=SparePartOrder::findOrFail($order_id);
         $spare_part_order->update([
-            'curent_status'=>$request->status,
+            'status_id'=>$request->status,
             'updated_by'=>auth()->guard('admin')->id()
         ]);
+
+        $notification_message=env('APP_NAME','SITE').' admin updated your order status';
+        $redirect_path=route('admin.spare_part_orders.my_orders',['order_id'=>$spare_part_order->id],false);
+        
+        Notification::create([
+            'notificable_id'=>$spare_part_order->id,
+            'notificable_type'=>'App\Models\SparePartOrder',
+            'user_id'=>$spare_part_order->user_id,
+            'message'=>$notification_message,
+            'redirect_path'=>$redirect_path,
+            'created_at'=>Carbon::now(),
+            'updated_at'=>Carbon::now()
+        ]);
+
+
         return redirect()->back()->with('success','Order status successfully updated.');
     }
 

@@ -41,6 +41,7 @@ $(document).ready(function(){
           }else{
 
             if($("#in_installment").prop('checked') == true){
+
               var total_amount=parseFloat(0);
 
               $('.amount_input_list').each(function(i, obj) {
@@ -48,11 +49,24 @@ $(document).ready(function(){
                   total_amount=total_amount+amount
               });
 
-              if(contract_price!=total_amount){
-                  toastr.error('Sum of total installment price should be equal to your contract price.', 'Error', {timeOut: 5000});
+              var absolute_or_percentage=$('input[name="absolute_or_percentage"]:checked').val();
+
+              if(absolute_or_percentage=='percentage'){
+
+                if(parseFloat(total_amount)!=parseFloat(100)){
+                  toastr.error('Sum of total percentage should be equal to 100.', 'Error', {timeOut: 5000});
+                }else{
+                    $.LoadingOverlay("show");
+                    form.submit(); 
+                }
+
               }else{
-                  $.LoadingOverlay("show");
-                  form.submit();
+                if(contract_price!=total_amount){
+                    toastr.error('Sum of total installment price should be equal to your contract price.', 'Error', {timeOut: 5000});
+                }else{
+                    $.LoadingOverlay("show");
+                    form.submit();
+                }
               }
 
                
@@ -69,15 +83,24 @@ $(document).ready(function(){
 
   $('.amount_input_list').each(function(i, obj) {
 
+    var absolute_or_percentage=$('input[name="absolute_or_percentage"]:checked').val();
+
     $(this).rules("add", {
-       required: true,
-       maxlength: 100,
-       number:true,
-       messages: {
-         required: "Enter price amount",
-         maxlength: "Maximum 100 characters allowed",
-       }
+     required: true,
+     number:true,
+     messages: {
+       required: "Enter price amount",
+       maxlength: "Maximum 100 characters allowed",
+     }
     });
+
+    if(absolute_or_percentage=='percentage'){
+      $(this).rules("add", {
+       max: 100,
+      });
+    }else{
+      $(this).rules( 'remove', 'max' );
+    }
 
   });
 
@@ -101,19 +124,103 @@ $(document).ready(function(){
 });
 
 
+$('.absolute_or_percentage').on('change',function(){
+  
+  if(this.value=='percentage'){
+    $('.absolute_or_percentage_label').html('Percentage<span class="error">*</span>');
+    $('.amount_input_list').attr('placeholder','Percentage');
+    $('.amount_input_list').val('');
+    $('.amount_text').show();
+  }else{
+    $('.absolute_or_percentage_label').html('Amount<span class="error">*</span>');
+    $('.amount_input_list').attr('placeholder','Amount');
+    $('.amount_input_list').val('');
+    $('.amount_text').hide();
+  }
+
+  $('.amount_input_list').each(function(i, obj) {
+
+    var absolute_or_percentage=$('input[name="absolute_or_percentage"]:checked').val();
+
+    $(this).rules("add", {
+     required: true,
+     number:true,
+     messages: {
+       required: "Enter price amount",
+       maxlength: "Maximum 100 characters allowed",
+     }
+    });
+
+    if(absolute_or_percentage=='percentage'){
+      $(this).rules("add", {
+       max: 100,
+      });
+    }else{
+      $(this).rules( 'remove', 'max' );
+    }
+
+  });
+
+
+  
+
+});
+
+
+
+
+$(document).on("change keyup keydown blur", ".amount_input_list", function(){
+  var absolute_or_percentage=$('input[name="absolute_or_percentage"]:checked').val();
+  var id=$(this).data('id');
+  if(absolute_or_percentage=='percentage'){
+
+      var contract_price=$('#contract_price').val();
+      if(contract_price && $.isNumeric(contract_price)){
+          if($.isNumeric(this.value)){
+
+            var id=$(this).data('id');
+
+            var amount=(parseFloat(this.value)/100)*parseFloat(contract_price);
+            
+            $('#amount_text_'+id).html('Amount='+parseFloat(amount).toFixed(2));
+          }else{
+            $('#amount_text_'+id).html('');
+          }
+      }else{
+        $('#amount_text_'+id).html('');
+      }
+  }else{
+    $('#amount_text_'+id).html('');
+  }
+ 
+});
+
+
+
+
 
 
 $('#add_installment_button').click(function(){ 
   let random_string = String(Math.random(10)).substring(2,14); 
 
+  var absolute_or_percentage=$('input[name="absolute_or_percentage"]:checked').val();
+
+  if(absolute_or_percentage=='percentage'){
+    var label="Percentage";
+    var placeholder="Percentage";
+  }else{
+    var label="Amount";
+    var placeholder="Amount";
+  }
+
 var row=`<div class="row" id="row`+random_string+`">
         <input type="hidden" name="installment_id[]" value="">
         <div class="col-sm-5">
               <div class="form-group required">
-                <label for="amount_`+random_string+`">Amount<span class="error">*</span></label>
+                <label class="absolute_or_percentage_label" for="amount_`+random_string+`">`+label+`<span class="error">*</span></label>
 
-                <input type="number" min="1" value="" name="amount[]" class="form-control amount_input_list"  id="amount_`+random_string+`"  placeholder="Amount">
-
+                <input type="number" min="1" data-id="`+random_string+`" value="" name="amount[]" class="form-control amount_input_list"  id="amount_`+random_string+`"  placeholder="`+placeholder+`">
+                <div id="amount_text_`+random_string+`" class="amount_text"></div>
               </div>
         </div>
         <div class="col-sm-5">

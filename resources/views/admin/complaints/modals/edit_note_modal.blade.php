@@ -19,6 +19,35 @@
                   <span class="text-danger">{{$errors->first('note')}}</span>
                   @endif
                 </div>
+
+                @php
+                $user_type=auth()->guard('admin')->user()->role->user_type->slug;
+                @endphp
+                @if(in_array($user_type,['super-admin','service-provider']))
+                <div class="form-group">
+                  <label for="note">Note will be visible to </label><br>
+                  <div class="form-check-inline">
+                    <label class="form-check-label">
+                      <input type="checkbox" name="visible_to[]" checked  disabled class="form-check-input" value="help desk">Help Desk
+                    </label>
+                  </div>
+                  <div class="form-check-inline">
+                    <label class="form-check-label">
+                      <input name="visible_to[]" type="checkbox" class="form-check-input" checked {{($user_type=="service-provider")?"disabled":""}} value="service provider">Service Provider
+                    </label>
+                  </div>
+                  <div class="form-check-inline">
+                    <label class="form-check-label">
+                      <input name="visible_to[]" id="property_owner_visibility" type="checkbox" class="form-check-input" value="property owner & manager">Property Owner & Manager
+                    </label>
+                  </div>
+                  <div class="form-check-inline">
+                    <label class="form-check-label">
+                      <input name="visible_to[]" id="labour_visibility" type="checkbox" class="form-check-input" value="labour">Labour
+                    </label>
+                  </div>
+                </div>
+                @endif
                 <div class="form-group required">
                   <label for="file">Attach File</label>
                   <input type="file" class="form-control note_file" id="file_edit" name="file">

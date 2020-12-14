@@ -151,7 +151,7 @@
                                                     <tr>
                                                         <td >
                                                             <div class="media">
-                                                                <img style="height: 40px;width: 50px" class="mr-3" src="{{$cart->spare_part_details->image_url}}" alt="{{$cart->spare_part_details->name}}">
+                                                                <img style="height: 40px;width: 50px" class="mr-3" src="{{$cart->spare_part_details->image_thumb_url}}" alt="{{$cart->spare_part_details->name}}">
                                                                 <div class="media-body">
                                                                     
                                                                    

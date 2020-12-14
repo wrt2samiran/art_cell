@@ -194,8 +194,11 @@
                                           <label for="email" class="mr-sm-2">Status:</label>
                                       
                                             <select class="form-control mb-2 mr-sm-2" name="status" id="status">
-                                                <option {{($order->curent_status=='Placed')?'selected':''}} value="Placed">Placed</option>
-                                                <option {{($order->curent_status=='Delivered')?'selected':''}} value="Delivered">Delivered</option> 
+                                              @forelse($statuses as $status)
+                                              <option {{($status->id==$order->status_id)?'selected':''}} value="{{$status->id}}">{{$status->status_name}}</option>
+                                              @empty
+                                              <option value="">No status found</option>
+                                              @endforelse
                                             </select>
                                          
                         

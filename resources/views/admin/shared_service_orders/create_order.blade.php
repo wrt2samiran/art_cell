@@ -26,9 +26,6 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-<!-- 				            <div class="card-header">
-
-				            </div> -->
 
                             <!-- /.card-header -->
                             <div class="card-body">
@@ -49,6 +46,7 @@
                                     <thead>
                                         <tr>
                                             <th>Id</th>
+                                            <th>Image</th>
                                             <th>Service Name</th>
                                             <th>Selling Price</th>
                                             <th>Sharing Price</th>

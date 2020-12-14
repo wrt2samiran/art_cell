@@ -26,7 +26,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\UnitMaster;
-use App\Models\{SharedService,SharedServiceCart,City,SharedServiceOrder,SharedServiceDeliveryAddress,OrderedSharedServiceDetail};
+use App\Models\{SharedService,SharedServiceCart,City,SharedServiceOrder,SharedServiceDeliveryAddress,OrderedSharedServiceDetail,Notification,Status};
 use Helper;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
@@ -56,6 +56,27 @@ class SharedServiceOrderController extends Controller
             ->whereIsActive(true)
             ->orderBy('id','Desc');
             return Datatables::of($shared_services)
+            ->addColumn('image',function($shared_service){
+                if(count($shared_service->images)){
+                    $image_container='<div>';
+                    foreach ($shared_service->images as $key => $image) {
+                        $display=($key=='0')?'block':'none';
+
+                        $image_container.='<a style="display:'.$display.'" href="'.asset('/uploads/shared_service_images/'.$image->image_name).'" 
+                         data-fancybox="images-preview-'.$shared_service->id.'" 
+                         data-width="1000" data-height="700"
+                         >
+                        <img style="height:60px;width:80px" src="'.asset('/uploads/shared_service_images/thumb/'.$image->image_name).'" />
+                        </a>';
+                    }
+                    $image_container.='</div>';
+                    return $image_container;
+                }else{
+                    return '<div>
+                    <img style="height:60px;width:80px" src="'.asset('/uploads/shared_service_images/no_image.png').'"/>
+                    </div>';
+                }
+            })
             ->editColumn('price', function ($sharedService) {
                 if($sharedService->is_sharing){
                     return "<div><span>".$sharedService->currency.number_format($sharedService->price, 2, '.', '')."</span> for ".$sharedService->number_of_days." days</div><div>+ ".$sharedService->currency.number_format($sharedService->extra_price_per_day, 2, '.', '')."/day</div>";
@@ -111,7 +132,7 @@ class SharedServiceOrderController extends Controller
             	</form>';   
 
             })
-            ->rawColumns(['action','price','selling_price'])
+            ->rawColumns(['action','price','selling_price','image'])
             ->make(true);
         }
         return view($this->view_path.'.create_order',$this->data);
@@ -315,6 +336,15 @@ class SharedServiceOrderController extends Controller
                         ->where('user_id',$current_user->id)
                                 ->get();
 
+        $default_status=Status::where('status_for','order')
+        ->where('is_default_status',true)
+        ->first();
+
+        if(!$default_status){
+            return redirect()->back()->with('error','No default status found for order');
+        } 
+
+
         $sub_total=self::cart_total_without_tax($shared_service_carts); 
         $tax_percentage=$site_setting['tax'];
         $tax_amount=(($tax_percentage/100)*$sub_total);
@@ -328,7 +358,7 @@ class SharedServiceOrderController extends Controller
             'tax_amount'=>$tax_amount,
             'delivery_charge'=>'0',
             'is_paid'=>true,
-            'curent_status'=>'Placed',
+            'status_id'=>$default_status->id,
             'updated_by'=>$current_user->id,
         ]);
 
@@ -446,6 +476,8 @@ class SharedServiceOrderController extends Controller
 
             $shared_service_ordered=SharedServiceOrder::where('user_id',$current_user->id)
                         ->withCount('ordered_shared_services')
+                        ->with('status')
+                        ->whereHas('status')
                         ->orderBy('id','Desc');
             return Datatables::of($shared_service_ordered)
             ->addColumn('action',function($order){
@@ -489,6 +521,8 @@ class SharedServiceOrderController extends Controller
 
             $shared_services_ordered=SharedServiceOrder::withCount('ordered_shared_services')
                         ->with('user')
+                        ->with('status')
+                        ->whereHas('status')
                         ->orderBy('id','Desc');
                         
             return Datatables::of($shared_services_ordered)
@@ -512,6 +546,7 @@ class SharedServiceOrderController extends Controller
         $this->data['page_title']='Shared Service Order Details';
         $shared_service_order=SharedServiceOrder::with('ordered_shared_services','user')->find($order_id);
         $this->data['order']=$shared_service_order;
+        $this->data['statuses']=Status::where('status_for','order')->whereIsActive(true)->get();
         return view($this->view_path.'.manage.order_details',$this->data);
     }
 
@@ -526,9 +561,23 @@ class SharedServiceOrderController extends Controller
     public function update_order_status($order_id,Request $request){
         $shared_service_order=SharedServiceOrder::findOrFail($order_id);
         $shared_service_order->update([
-            'curent_status'=>$request->status,
+            'status_id'=>$request->status,
             'updated_by'=>auth()->guard('admin')->id()
         ]);
+
+        $notification_message=env('APP_NAME','SITE').' admin updated your order status';
+        $redirect_path=route('admin.shared_service_orders.my_orders',['order_id'=>$shared_service_order->id],false);
+        
+        Notification::create([
+            'notificable_id'=>$shared_service_order->id,
+            'notificable_type'=>'App\Models\SharedServiceOrder',
+            'user_id'=>$shared_service_order->user_id,
+            'message'=>$notification_message,
+            'redirect_path'=>$redirect_path,
+            'created_at'=>Carbon::now(),
+            'updated_at'=>Carbon::now()
+        ]);
+
         return redirect()->back()->with('success','Order status successfully updated.');
     }
 

@@ -124,13 +124,14 @@
                             </a>
                         </li>
                         @endif
-
+                        @if(auth()->guard('admin')->user()->hasAllPermission(['manage-units']))
                         <li class="nav-item">
                             <a href="{{ route('admin.unit.list') }}"
                                class="nav-link {{(request()->is('admin/unit/*','admin/unit'))?'active':''}}">
                                 <i class="nav-icon fas fa-envelope-open-text"></i>
                                 <p>{{__('nav_link_text.unit_management')}}</p>
                             </a>
+
                         </li> 
 
                         @if(auth()->guard('admin')->user()->hasAllPermission(['manage-skills']))
@@ -142,6 +143,10 @@
                             </a>
                         </li>
                         @endif       
+
+                        </li>   
+                        @endif     
+
                     </ul>
                     
                 </li>
@@ -182,10 +187,10 @@
                 @endif
 
                 @if(auth()->guard('admin')->user()->hasAllPermission(['shared-service-list']))
-                <li class="nav-item has-treeview {{(request()->is('admin/shared-service/*','admin/shared-service'))?'menu-open':''}}">
+                <li class="nav-item has-treeview {{(request()->is('admin/shared-services/*','admin/shared-services'))?'menu-open':''}}">
                     
                     <li class="nav-item">
-                            <a href="{{ route('admin.shared-service.list') }}" class="nav-link {{(request()->is('admin/shared-service/*','admin/shared-service'))?'active':''}}">
+                            <a href="{{ route('admin.shared_services.list') }}" class="nav-link {{(request()->is('admin/shared-services/*','admin/shared-services'))?'active':''}}">
                               
                                
                                 <i class="nav-icon fas fa-hammer"></i>
@@ -195,12 +200,9 @@
                 </li>
                 @endif
                 @if(auth()->guard('admin')->user()->hasAllPermission(['spare-parts-list']))
-
-
                 <li class="nav-item has-treeview {{(request()->is('admin/spare-parts/*','admin/spare-parts'))?'menu-open':''}}">
-                    
                     <li class="nav-item">
-                        <a href="{{route('admin.spare-parts.list')}}" class="nav-link {{(request()->is('admin/spare-parts/*','admin/spare-parts'))?'active':''}}">
+                        <a href="{{route('admin.spare_parts.list')}}" class="nav-link {{(request()->is('admin/spare-parts/*','admin/spare-parts'))?'active':''}}">
                             <i class="nav-icon fas fa-screwdriver"></i>
                                 <p>{{__('nav_link_text.spare_parts_management')}}</p>
                         </a>
@@ -346,6 +348,7 @@
                 </li>
                 @endif
 
+                @if(auth()->guard('admin')->user()->hasAllPermission(['manage-email-template']))
                 <li class="nav-item ">
                     <a href="{{route('admin.email.list')}}"
                     class="nav-link {{(request()->is('admin/email/*','admin/email'))?'active':''}}">
@@ -353,7 +356,8 @@
                         <p>{{__('nav_link_text.email_templete')}}</p>
                     </a>
                 </li>            
-                
+                @endif
+
                 <li class="nav-item ">
                     <a href="{{route('admin.complaints.list')}}"
                     class="nav-link {{(request()->is('admin/complaints/*','admin/complaints'))?'active':''}}">

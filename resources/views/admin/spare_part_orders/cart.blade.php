@@ -24,7 +24,6 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-
                         <div class="card-body">
                             @include('admin.spare_part_orders.partials.navbar')
                             @if(Session::has('success'))
@@ -58,7 +57,21 @@
                                                 <tr>
                                                     <td >
                                                         <div class="media">
-                                                            <img style="height: 60px;width: 80px" class="mr-3" src="{{$cart->spare_part_details->image_url}}" alt="{{$cart->spare_part_details->name}}">
+                                                            @if(count($cart->spare_part_details->images))
+                                                                @foreach ($cart->spare_part_details->images as $key => $image)
+                                                                <a style="display:{{($key=='0')?'block':'none'}}" href="{{asset('/uploads/spare_part_images/'.$image->image_name)}}" 
+                                                                 data-fancybox="images-preview-{{$cart->spare_part_details->id}}" 
+                                                                 data-width="1000" data-height="700"
+                                                                 >
+                                                                <img class="mr-3" style="height:60px;width:80px" src="{{asset('/uploads/spare_part_images/thumb/'.$image->image_name)}}" />
+                                                                </a>
+
+                                                                @endforeach
+                                                            @else
+
+                                                            <img class="mr-3" alt="{{$cart->spare_part_details->name}}" style="height:600px;width:80px" src="{{asset('/uploads/spare_part_images/no_image.png')}}"/>
+                                                            @endif
+      
                                                             <div class="media-body">
                                                                 <h4 class="media-heading">
                                                                     <span>{{$cart->spare_part_details->name}}
@@ -153,7 +166,7 @@
                     </div>
                 </div>
             </div>
-
+        </div>
     </section>
 </div>
 @endsection

@@ -86,6 +86,7 @@
 <!-- *****************for multiselect with search option, select all and scrollbar End *************-->
 
 <script src='{{asset("js/custom-validator-method.js")}}'></script>
+<script src="{{asset('assets/plugins/fancybox/fancybox.min.js')}}"></script>
 
 @stack('custom-scripts')
 </body>

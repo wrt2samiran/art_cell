@@ -2,7 +2,30 @@
 
 
 @section('unique-content')
+<style type="text/css">
+  .table-fixed{
+  width: 100%;
+  background-color: #f3f3f3;
+  }
 
+  .table-fixed tbody{
+    max-height:247;
+    overflow-y:auto;
+    display: block;
+  }
+   .table-fixed thead{
+    width: 100%;
+    display: block;
+   }
+  .table-fixed tbody td{
+       
+  }
+  .table-fixed thead tr th {
+/*    background-color: #f39c12;
+    border-color:#e67e22;*/
+  }
+
+</style>
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -44,7 +67,7 @@
                       </div>
                   @endif
                   <div class="row">
-                    <div class="col-sm-8">
+                    <div class="col-sm-7">
                       <table class="table table-bordered table-hover record-details-table" id="property-details-table">
                         <tbody>
                           <tr>
@@ -70,6 +93,10 @@
                             <td >{{$complaint->details}}</td>
                           </tr>
                           <tr>
+                            <td>Complaint By</td>
+                            <td >{{$complaint->user_display_title()}}</td>
+                          </tr>
+                          <tr>
                             <td>Created At</td>
                             <td>{{$complaint->created_at->format('d/m/Y')}}</td>
                           </tr>
@@ -77,7 +104,7 @@
     
                     </table>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-5">
                         <div class="row">
                             <div class="col-md-12">
                                 <h5>Update Complaint Status</h5>
@@ -85,7 +112,6 @@
                                     @csrf
                                     @method("PUT")
                                   <label for="email" class="mr-sm-2">Status:</label>
-                              
                                     <select class="form-control mb-2 mr-sm-2" name="status" id="status">
                                         @if(count($complaint_statusses))
                                           @foreach($complaint_statusses as $complaint_status)
@@ -98,10 +124,35 @@
                                   <button type="submit" class="btn btn-success mb-2">Update</button>
                                 </form>
                             </div>
+                            <div class="col-md-12">
+                            <div >
+                              <table class="table table-fixed">
+                                <thead>
+                                  <tr class="row p-0 m-0">
+                                    <th class="col">Updated By</th>
+                                    <th class="col">Status</th>
+                                    <th class="col">Updated At</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  @forelse($complaint_status_updates as $update)
+                                  <tr class="row p-0 m-0">
+                                    <td class="col">{{$update->user_display_title()}}</td>
+                                    <td class="col">{{$update->status_from}}-{{$update->status_to}}</td>
+                                    <td class="col">{{$update->created_at->format('d/m/Y g:i A')}}</td>
+                                  </tr>
+                                  @empty
+                                  <tr class="row p-0 m-0">
+                                    <td class="col">No updates</td>
+                                  </tr>
+                                  @endforelse
+                                </tbody>
+                              </table>
+                            </div>
+                            </div>
                         </div>
                     </div>
                   </div>
-
 
                   <div class="row d-flex justify-content-center mt-100 mb-100">
                       <div class="col-lg-12">
@@ -117,13 +168,18 @@
                                 <div class="d-flex flex-row comment-row m-t-0">
                                     <div class="p-2"><img src="{{$note->user->profile_image_url()}}" alt="user" width="50" class="rounded-circle"></div>
                                     <div class="comment-text w-100">
-                                        <h6 class="font-medium">{{$note->user->name}} ({{$note->user->role->role_name}})</h6>
-                                         <span class="m-b-15 d-block">{{$note->note}}</span>
+                                        <h6 class="font-medium">
+                                          {{$note->user_display_title()}}
+                                        </h6>
+                                         <span class=" d-block">{{$note->note}}</span>
+                                         <span class="text-muted m-b-15 d-block"><i class="far fa-clock"></i> {{$note->created_at->format('d/m/Y g:i A')}}</span>
+                 
                                          @if($note->file)
                                          <span class="m-b-15 d-block"><a href="{{asset('uploads/complaint_files/'.$note->file)}}">View/Download file</a></span>
                                          @endif
+
                                         <div class="comment-footer">
-                                        <span class="text-muted float-right">{{$note->created_at->format('d/m/Y')}}</span>
+                                        
                                         @if($note->user_id==auth()->guard('admin')->id())
                                         
                                         @php
@@ -132,12 +188,12 @@
                                           }else{
                                             $file_url='';
                                           }
-                                       
                                         @endphp
 
                                         <button type="button" data-file_url="{{$file_url}}" data-edit_url="{{route('admin.complaints.update_note',['complaint_id'=>$complaint->id,'note_id'=>$note->id])}}" data-note_data="{{json_encode($note)}}" class="btn btn-success btn-sm edit_note_button" >Edit</button>
-                                        <button type="button" data-delete_url="{{route('admin.complaints.delete_note',['complaint_id'=>$complaint->id,'note_id'=>$note->id])}}" class="btn btn-danger btn-sm delete_note_button">Delete</button></div>
+                                        <button type="button" data-delete_url="{{route('admin.complaints.delete_note',['complaint_id'=>$complaint->id,'note_id'=>$note->id])}}" class="btn btn-danger btn-sm delete_note_button">Delete</button>
                                         @endif
+                                        </div>
                                         
                                     </div>
                                 </div> <!-- Comment Row -->

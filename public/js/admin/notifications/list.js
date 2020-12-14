@@ -16,7 +16,7 @@ var notifications_table=$('#notifications_table').DataTable({
         { data: 'created_at', name: 'created_at' },
         
     ],
-    order: [ [0, 'asc'] ],
+    order: [ [0, 'desc'] ],
     columnDefs: [
     {   "targets": [0],
         "visible": false,

@@ -4,7 +4,7 @@
         "autoWidth": false,
         processing: true,
         serverSide: true,
-        ajax: baseUrl+'/admin/shared-service',
+        ajax: $('#shared_services_data_url').val(),
         columns: [
 
             { data: 'id', name: 'id' },
@@ -20,7 +20,7 @@
             { data: 'created_at', name: 'created_at' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
-         order: [ [0, 'asc'] ],
+         order: [ [0, 'desc'] ],
         columnDefs: [
         {   "targets": [0],
             "visible": false,
@@ -48,6 +48,7 @@
         
         data:{ "_token": $('meta[name="csrf-token"]').attr('content')},
         success: function (data) {
+          shared_service_table.ajax.reload(null, false);
           $.LoadingOverlay("hide");
           toastr.success('Shared Service successfully deleted.', 'Success', {timeOut: 5000});
         },
@@ -63,7 +64,7 @@
         }
      });
 
-     shared_service_table.ajax.reload(null, false);
+     
 
 
     } 
@@ -89,6 +90,7 @@
         data:{},
         success: function (data) {
           $.LoadingOverlay("hide");
+          shared_service_table.ajax.reload(null, false);
           toastr.success('Status successfully updated.', 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
@@ -103,7 +105,7 @@
         }
      });
 
-     shared_service_table.ajax.reload(null, false);
+     
     // window.location.href=url;
     } 
   });

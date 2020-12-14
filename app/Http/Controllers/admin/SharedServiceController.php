@@ -5,16 +5,16 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\Models\SharedService;
+use App\Models\{SharedService,SharedServiceImage};
 use App\Models\ModuleFunctionality;
-use Helper, AdminHelper, Image, Auth, Hash, Redirect, Validator, View, Config;
+use Helper,Image,File;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
-
+use App\Http\Requests\Admin\SharedService\{CreateSharedServiceRequest,UpdateSharedServiceRequest};
 class SharedServiceController extends Controller
 {
 
-    private $view_path='admin.shared-service';
+    private $view_path='admin.shared_services';
 
     /*****************************************************/
     # SharedServiceController
@@ -24,13 +24,12 @@ class SharedServiceController extends Controller
     # Purpose       : Show Shared Service List
     # Params        : Request $request
     /*****************************************************/
-    
-
     public function list(Request $request){
-        $this->data['page_title']='Shared Service List';
+        $this->data['page_title']='Shared Services';
+        $current_user=auth()->guard('admin')->user();
         if($request->ajax()){
 
-            $sharedService=SharedService::orderBy('id','Desc');
+            $sharedService=SharedService::select('shared_services.*');
             return Datatables::of($sharedService)
             ->editColumn('created_at', function ($sharedService) {
                 return $sharedService->created_at ? with(new Carbon($sharedService->created_at))->format('d/m/Y') : '';
@@ -61,20 +60,22 @@ class SharedServiceController extends Controller
             ->filterColumn('created_at', function ($query, $keyword) {
                 $query->whereRaw("DATE_FORMAT(created_at,'%d/%m/%Y') like ?", ["%$keyword%"]);
             })
-            ->addColumn('is_active',function($sharedService){
+            ->addColumn('is_active',function($sharedService) use($current_user){
+
+                $disabled=(!$current_user->hasAllPermission(['shared-service-status-change']))?'disabled':'';
                 if($sharedService->is_active=='1'){
                    $message='deactivate';
-                   return '<a title="Click to deactivate the shared service" href="javascript:change_status('."'".route('admin.shared-service.change_status',$sharedService->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm">Active</a>';
+                   return '<a title="Click to deactivate the shared service" href="javascript:change_status('."'".route('admin.shared_services.change_status',$sharedService->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm '.$disabled.' ">Active</a>';
                     
                 }else{
                    $message='activate';
-                   return '<a title="Click to activate the shared service" href="javascript:change_status('."'".route('admin.shared-service.change_status',$sharedService->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm">Inactive</a>';
+                   return '<a title="Click to activate the shared service" href="javascript:change_status('."'".route('admin.shared_services.change_status',$sharedService->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm '.$disabled.' ">Inactive</a>';
                 }
             })
             ->addColumn('action',function($sharedService){
-                $delete_url=route('admin.shared-service.delete',$sharedService->id);
-                $details_url=route('admin.shared-service.show',$sharedService->id);
-                $edit_url=route('admin.shared-service.edit',$sharedService->id);
+                $delete_url=route('admin.shared_services.delete',$sharedService->id);
+                $details_url=route('admin.shared_services.show',$sharedService->id);
+                $edit_url=route('admin.shared_services.edit',$sharedService->id);
 
                 return '<a title="View Shared Service Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>&nbsp;&nbsp;<a title="Edit Shared Service" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>&nbsp;&nbsp;<a title="Delete shared service" href="javascript:delete_shared_service('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
                 
@@ -82,235 +83,234 @@ class SharedServiceController extends Controller
             ->rawColumns(['action','is_active','price','selling_price'])
             ->make(true);
         }
-
-
         return view($this->view_path.'.list',$this->data);
     }
 
-   /*****************************************************/
-    # SharedServiceController
-    # Function name : sharedServiceAdd
-    # Author        :
-    # Created Date  : 07-10-2020
-    # Purpose       : Add new Shared Service
-    # Params        : Request $request
-    /*****************************************************/
-    public function sharedServiceAdd(Request $request) {
 
-        $data['page_title']     = 'Add Shared Service';
-        $data['panel_title']    = 'Add Shared Service';
-        $logedin_user=auth()->guard('admin')->user();
-    
-        try
-        {
-        	if ($request->isMethod('POST'))
-        	{
-				$validationCondition = array(
-                    'name'          => 'required|min:2|max:255|unique:'.(new SharedService)->getTable().',name',
-				);
-                if($request->is_sharing){
-                    $validationCondition['number_of_days']='required|numeric';
-                    $validationCondition['price']='required|numeric';
-                    $validationCondition['extra_price_per_day']='required|numeric';
-                }
-                if($request->is_selling){
-                    $validationCondition['selling_price']='required|numeric';
-                }
-
-				$validationMessages = array(
-					'name.required'                => 'Please enter name',
-					'name.min'                     => 'Name should be should be at least 2 characters',
-                    'name.max'                     => 'Name should not be more than 255 characters',
-				);
-
-				$Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);
-				if ($Validator->fails()) {
-					return redirect()->route('admin.shared-service.add')->withErrors($Validator)->withInput();
-				} else {
-                    
-                    $new = new SharedService;
-                    $new->name = trim($request->name, ' ');
-                    $new->description  = $request->description;
-                    $new->is_sharing  = ($request->is_sharing)?true:false;
-                    $new->number_of_days  = $request->number_of_days;
-                    $new->price  = $request->price;
-                    $new->extra_price_per_day  = $request->extra_price_per_day;
-                    $new->is_selling  = ($request->is_selling)?true:false;
-                    $new->selling_price  = $request->selling_price;
-                    $new->currency  = Helper::getSiteCurrency();
-                    $new->created_at = Carbon::now();
-                    $new->created_by = $logedin_user->id;
-                    $new->updated_by = $logedin_user->id;
-                    $save = $new->save();
-                
-					if ($save) {						
-                        return redirect()->route('admin.shared-service.list')->with('success','Shared Service successfully created.');
-					} else {
-						$request->session()->flash('alert-danger', 'An error occurred while adding the state');
-						return redirect()->back();
-					}
-				}
-            }
-			return view('admin.shared-service.add', $data);
-		} catch (Exception $e) {
-			return redirect()->route('admin.shared-service.list')->with('error', $e->getMessage());
-		}
+    /************************************************************************/
+    # Function to load shared service create view page                       #
+    # Function name    : create                                              #
+    # Created Date     : 07-10-2020                                          #
+    # Modified date    : 07-12-2020                                          #
+    # Purpose          : To load shared service create view page             #
+    public function create() {
+        $this->data['page_title']     = 'Create Shared Service';
+        return view($this->view_path.'.create',$this->data);
     }
 
-    /*****************************************************/
-    # SharedServiceController
-    # Function name : edit
-    # Author        :
-    # Created Date  : 07-10-2020
-    # Purpose       : Edit Shared Service
-    # Params        : Request $request
-    /*****************************************************/
-    public function edit(Request $request, $id = null) {
-        $data['page_title']     = 'Edit Shared Service';
-        $data['panel_title']    = 'Edit Shared Service';
-        $logedin_user=auth()->guard('admin')->user();
 
-        try
-        {           
-            //$pageNo = Session::get('pageNo') ? Session::get('pageNo') : '';
-           // $data['pageNo'] = $pageNo;
-           
-            $details = SharedService::find($id);
-            $data['id'] = $id;
 
-            if ($request->isMethod('POST')) {
-               // dd($request->all());
-                if ($id == null) {
-                    return redirect()->route('admin.shared-service.list');
-                }
-               
-                $validationCondition = array(
-                    'name'          => 'required|min:2|max:255|unique:'.(new SharedService)->getTable().',name,'.$id.'',
-                );
-                if($request->is_sharing){
-                    $validationCondition['number_of_days']='required|numeric';
-                    $validationCondition['price']='required|numeric';
-                    $validationCondition['extra_price_per_day']='required|numeric';
-                }
-                if($request->is_selling){
-                    $validationCondition['selling_price']='required|numeric';
-                }
-                $validationMessages = array(
-                    'name.required'                => 'Please enter name',
-                    'name.min'                     => 'Name should be should be at least 2 characters',
-                    'name.max'                     => 'Name should not be more than 255 characters',
-                );
-                
-                $Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);
-                if ($Validator->fails()) {
-                    
-                    return redirect()->back()->withErrors($Validator)->withInput();
-                } else {
-                    
-                    $details->name = trim($request->name, ' ');
-                    $details->description  = $request->description;
-                    $details->is_sharing  = ($request->is_sharing)?true:false;
-                    $details->number_of_days  = $request->number_of_days;
-                    $details->price  = $request->price;
-                    $details->extra_price_per_day  = $request->extra_price_per_day;
-                    $details->is_selling  = ($request->is_selling)?true:false;
-                    $details->selling_price  = $request->selling_price;
-                    $details->currency  = Helper::getSiteCurrency();
-                    $details->updated_at = Carbon::now();
-                    $details->updated_by = $logedin_user->id;
-                    $save = $details->save();                        
-                    if ($save) {
-                        
-                        return redirect()->route('admin.shared-service.list')->with('success','Shared Service successfully updated.');
-                    } else {
-                        $request->session()->flash('alert-danger', 'An error occurred while updating the state');
-                        return redirect()->back();
-                    }
-                }
+    /********************************************************************************/
+    # Function to store shared service data                                          #
+    # Function name    : store                                                       #
+    # Created Date     : 14-10-2020                                                  #
+    # Modified date    : 14-10-2020                                                  #
+    # Purpose          : store shared service data                                   #
+    # Param            : CreateSharedServiceRequest $request                         #
+    public function store(CreateSharedServiceRequest $request){
+        $current_user=auth()->guard('admin')->user(); 
+        $shared_service=SharedService::create([
+            'name' => trim($request->name, ' '),
+            'description' => $request->description,
+            'is_sharing'  => ($request->is_sharing)?true:false,
+            'number_of_days'  => $request->number_of_days,
+            'price'  => $request->price,
+            'extra_price_per_day'  => $request->extra_price_per_day,
+            'is_selling'  => ($request->is_selling)?true:false,
+            'selling_price'  => $request->selling_price,
+            'currency'  => Helper::getSiteCurrency(),
+            'created_by' => $current_user->id,
+            'updated_by' => $current_user->id
+        ]);
+
+        if($request->hasFile('images')){
+
+            $image_data=[];
+
+            foreach ($request->file('images')  as $key=>$image) {
+
+                $image_name = time().$key.'.'.$image->getClientOriginalExtension();
+
+                $thumb_path = public_path('/uploads/shared_service_images/thumb');
+
+                $img = Image::make($image->getRealPath());
+                //resizing and saving resized image
+                $img->resize(config("image_upload.thumb_size.width"), config("image_upload.thumb_size.height"), function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save($thumb_path.'/'.$image_name);
+
+                $destinationPath = public_path('/uploads/shared_service_images');
+                //uploading original image
+                $image->move($destinationPath, $image_name);
+
+                $image_data[]=[
+                    'shared_service_id'=>$shared_service->id,
+                    'image_name'=>$image_name
+                ];
+
             }
-            
-            
-            return view('admin.shared-service.edit', $data)->with(['details' => $details]);
 
-        } catch (Exception $e) {
-            return redirect()->route('admin.shared-service.list')->with('error', $e->getMessage());
+            SharedServiceImage::insert($image_data);
         }
+        return redirect()->route('admin.shared_services.list')->with('success','Shared service successfully created.');
+
     }
 
+
+    /************************************************************************/
+    # Function to load shared service edit page                              #
+    # Function name    : edit                                                #
+    # Created Date     : 07-10-2020                                          #
+    # Modified date    : 07-12-2020                                          #
+    # Purpose          : to load shared service edit page                    #
+    # Param            : id                                                  #
+    public function edit($id){
+        $this->data['page_title']     = 'Edit Shared Service';
+        $this->data['shared_service']=SharedService::findOrFail($id);
+        return view($this->view_path.'.edit',$this->data);
+    }
+
+    /************************************************************************************/
+    # Function to update property data                                                   #
+    # Function name    : update                                                          #
+    # Created Date     : 12-10-2020                                                      #
+    # Modified date    : 12-10-2020                                                      #
+    # Purpose          : to update property data                                         #
+    # Param            : UpdateSharedServiceRequest $request,id                          #
+    public function update(UpdateSharedServiceRequest $request,$id){
+        
+        $shared_service=SharedService::findOrFail($id);
+        $current_user=auth()->guard('admin')->user(); 
+        $shared_service->update([
+            'name' => trim($request->name, ' '),
+            'description' => $request->description,
+            'is_sharing'  => ($request->is_sharing)?true:false,
+            'number_of_days'  => $request->number_of_days,
+            'price'  => $request->price,
+            'extra_price_per_day'  => $request->extra_price_per_day,
+            'is_selling'  => ($request->is_selling)?true:false,
+            'selling_price'  => $request->selling_price,
+            'currency'  => Helper::getSiteCurrency(),
+            'updated_by' => $current_user->id
+        ]);
+
+        if($request->hasFile('images')){
+
+            if(count($shared_service->images)){
+                //deleting old images
+                foreach ($shared_service->images as $image) {
+                    //storing old path of the image in variable
+                    $old_path=public_path().'/uploads/shared_service_images/'.$image->image_name;
+                    //storing old thumb path of the image in variable
+                    $thumb_path=public_path().'/uploads/shared_service_images/thumb/'.$image->image_name;
+
+                    //if file exists then deleting the file from folder
+                    if(File::exists($old_path)){
+                    File::delete($old_path);
+                    }
+                    //if thumb file exists then deleting the file from folder
+                    if(File::exists($thumb_path)){
+                    File::delete($thumb_path);
+                    }
+
+                }
+            }
+            SharedServiceImage::where('shared_service_id',$shared_service->id)->delete();
+
+            $image_data=[];
+            foreach ($request->file('images')  as $key=>$image) {
+
+                $image_name = time().$key.'.'.$image->getClientOriginalExtension();
+
+                $thumb_path = public_path('/uploads/shared_service_images/thumb');
+
+                $img = Image::make($image->getRealPath());
+                //resizing and saving resized image
+                $img->resize(config("image_upload.thumb_size.width"), config("image_upload.thumb_size.height"), function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save($thumb_path.'/'.$image_name);
+
+                $destinationPath = public_path('/uploads/shared_service_images');
+                //uploading original image
+                $image->move($destinationPath, $image_name);
+
+                $image_data[]=[
+                    'shared_service_id'=>$shared_service->id,
+                    'image_name'=>$image_name
+                ];
+            }
+
+            SharedServiceImage::insert($image_data);
+        }
+
+        return redirect()->route('admin.shared_services.list')->with('success','Shared service successfully updated.');
+
+    }
+
+
     /*****************************************************/
-    # SharedServiceController
     # Function name : change_status
     # Author        :
     # Created Date  : 07-10-2020
+    # Modified date : 07-12-2020
     # Purpose       : Change Shared Service status
     # Params        : Request $request
     /*****************************************************/
-    public function change_status(Request $request, $id = null)
+    public function change_status(Request $request, $id)
     {
-        try
-        {
-            if ($id == null) {
-                return redirect()->route('admin.shared-service.list');
-            }
-            $details = SharedService::where('id', $id)->first();
-            if ($details != null) {
-                if ($details->is_active == 1) {
-                    
-                    $details->is_active = '0';
-                    $details->save();
-                        
-                    $request->session()->flash('alert-success', 'Status updated successfully');                 
-                     } else if ($details->status == 0) {
-                    $details->is_active = '1';
-                    $details->save();
-                    $request->session()->flash('alert-success', 'Status updated successfully');
-                   
-                } else {
-                    $request->session()->flash('alert-danger', 'Something went wrong');
-                    
-                }
-                return redirect()->back();
-            } else {
-                return redirect()->route('admin.shared-service.list')->with('error', 'Invalid Shared Service');
-            }
-        } catch (Exception $e) {
-            return redirect()->route('admin.shared-service.list')->with('error', $e->getMessage());
-        }
+        $shared_service=SharedService::findOrFail($id);
+        $change_status_to=($shared_service->is_active)?false:true;
+        $message=($shared_service->is_active)?'deactivated':'activated';
+
+         //updating gallery status
+        $shared_service->update([
+            'is_active'=>$change_status_to
+        ]);
+        //returning json success response
+        return response()->json(['message'=>'Shared service successfully '.$message.'.']);
     }
 
     /*****************************************************/
-    # SharedServiceController
     # Function name : delete
     # Author        :
     # Created Date  : 07-10-2020
     # Purpose       : Delete Shared Service
     # Params        : Request $request
     /*****************************************************/
-    public function delete(Request $request, $id = null)
+    public function delete(Request $request, $id)
     {
-        try
-        {
-            if ($id == null) {
-                return redirect()->route('admin.shared-service.list');
-            }
+        $shared_service=SharedService::findOrFail($id);
 
-            $details = SharedService::where('id', $id)->first();
-            if ($details != null) {
-                    $delete = $details->delete();
-                    if ($delete) {
-                        return response()->json(['message'=>'Shared Service successfully deleted.']);
-                    } else {
-                        return response()->json(['message'=>'Something went wrong! Please try again letter.']);
-                    }
-            } 
-           
-        } catch (Exception $e) {
-            return redirect()->route('admin.shared-service.list')->with('error', $e->getMessage());
+
+        if(count($shared_service->images)){
+            //deleting old images
+            foreach ($shared_service->images as $image) {
+                //storing old path of the image in variable
+                $old_path=public_path().'/uploads/shared_service_images/'.$image->image_name;
+                //storing old thumb path of the image in variable
+                $thumb_path=public_path().'/uploads/shared_service_images/thumb/'.$image->image_name;
+
+                //if file exists then deleting the file from folder
+                if(File::exists($old_path)){
+                File::delete($old_path);
+                }
+                //if thumb file exists then deleting the file from folder
+                if(File::exists($thumb_path)){
+                File::delete($thumb_path);
+                }
+
+            }
         }
+        SharedServiceImage::where('shared_service_id',$shared_service->id)->delete();
+        
+        $shared_service->update([
+            'deleted_by'=>auth()->guard('admin')->id()
+        ]);
+        $shared_service->delete();
+        return response()->json(['message'=>'Shared service successfully deleted.']);
     }
     
     /*****************************************************/
-    # SharedServiceController
     # Function name : show
     # Author        :
     # Created Date  : 07-10-2020

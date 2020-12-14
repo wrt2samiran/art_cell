@@ -104,13 +104,31 @@
                           <td>{{$quotation->created_at->format('d/m/Y')}}</td>
                         </tr>
                       </tbody>
-                      <tfoot>
-                        <tr>
-                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.quotations.list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
-                        </tr>
-                      </tfoot>
+
                   </table>
+                  <div class="row mt-3">
+                    <div class="col-md-12">
+                        <h5>Update Quotation Status</h5>
+                        <form class="form-inline" action="{{route('admin.quotations.update_status',$quotation->id)}}" method="post">
+                            @csrf
+                            @method("PUT")
+                          <label for="status" class="mr-sm-2">Status:</label>
+                            <select class="form-control mb-2 mr-sm-2" name="status" id="status">
+                              @forelse($statuses as $status)
+                              <option {{($status->id==$quotation->status_id)?'selected':''}} value="{{$status->id}}">{{$status->status_name}}</option>
+                              @empty
+                              <option value="">No status found</option>
+                              @endforelse
+                            </select>
+                          <button type="submit" class="btn btn-success mb-2">Update</button>
+                        </form>
+                    </div>
+                  </div>
               </div>
+              <div class="card-footer">
+                <a class="btn btn-primary" href="{{route('admin.quotations.list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a>
+              </div>
+
             </div>
             <!-- /.card -->
           </div>

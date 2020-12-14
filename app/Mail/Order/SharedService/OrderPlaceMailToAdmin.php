@@ -21,9 +21,21 @@ class OrderPlaceMailToAdmin extends Mailable
     public function __construct($data)
     {
         $this->data=$data; 
+ 
 
-        $content=view('emails.admin.order.partials.shared_service_order_content_admin',$data)->render();
-        $this->mail_content=$content;
+        $delivery_address_details=view('emails.admin.order.partials.shared_service.delivery_address_details',$data)->render();
+        $order_item_details=view('emails.admin.order.partials.shared_service.order_item_details',$data)->render();
+
+
+        $slug = 'admin-shared-service-order-notification';
+        $variable_value=[
+            '##CUSTOMER_NAME##'=>$data['order']->user->name,
+            '##ORDER_ID##'=>$data['order']->id,
+            '##ORDER_DATE##'=>$data['order']->created_at->format('d/m/Y'),
+            '##DELIVERY_ADDRESS_DETAIL##'=>$delivery_address_details,
+            '##ORDER_ITEM_DETAIL##'=>$order_item_details
+        ]; 
+        $this->mail_content=\Helper::emailTemplateMail($slug,$variable_value);
     }
 
     /**

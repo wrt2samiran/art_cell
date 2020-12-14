@@ -14,7 +14,7 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.shared-service.list')}}">Shared Service</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.shared_services.list')}}">Shared Services</a></li>
               <li class="breadcrumb-item active">Details</li>
             </ol>
           </div>
@@ -69,11 +69,35 @@
                             <button role="button" class="btn btn-{{($sharedServices->is_active=='1')?'success':'danger'}}">{{($sharedServices->is_active=='1')?'Active':'Inactive'}}</button>
                           </td>
                         </tr>
+                        <tr>
+                          <td>Images</td>
+                          <td>
+                              <div class="card card-body">
+                                     <div class="row">
+                                      @if(count($sharedServices->images))
+                                      @foreach($sharedServices->images as $image)
+                                          <div class="col-md-3" id="menu_image_{{$image->id}}">
+                                            <div>
+                                                <img width="100%" src="{{asset('uploads/shared_service_images/thumb/'.$image->image_name)}}">
+                                            </div>
+                                          </div>
+                                      @endforeach
+         
+                                      @else
+                                       <div class="col-md-12">
+                                         <p>No images</p>
+                                       </div>
+                                      @endif
+                                       
+                                    </div>
+                              </div>
+                          </td>
+                        </tr>
                        
                       </tbody>
                       <tfoot>
                         <tr>
-                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.shared-service.list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
+                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.shared_services.list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
                         </tr>
                       </tfoot>
                   </table>

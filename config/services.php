@@ -32,6 +32,9 @@ return [
     'recaptcha' => [
         'key' => env('MIX_RECAPTCHA_SITE_KEY'),
         'secret' => env('MIX_RECAPTCHA_SECRET')
+    ],
+    'google_map' => [
+        'key' => env('GOOGLE_MAP_API_KEY')
     ]
 
 ];

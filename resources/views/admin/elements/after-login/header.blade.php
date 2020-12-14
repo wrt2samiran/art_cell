@@ -47,7 +47,7 @@
     <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
     <!------>
 
-
+    <link rel="stylesheet" href="{{asset('assets/plugins/fancybox/fancybox.min.css')}}">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
     <!-- <link rel="stylesheet" href="{{asset('assets/css/styles.css')}}"> -->
@@ -80,6 +80,36 @@
 
         <ul class="navbar-nav ml-auto">
             <!-- Notifications Dropdown Menu -->
+            <li class="nav-item dropdown">
+            <a class="nav-link" data-toggle="dropdown" href="#">
+              <i class="far fa-bell"></i>
+              @php
+              $notifications_count=Helper::notifications_count();
+              @endphp
+              @if($notifications_count>0)
+              <span class="badge badge-danger navbar-badge">{{$notifications_count}}</span>
+              @endif
+            </a>
+            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+              <span class="dropdown-item dropdown-header">{{$notifications_count}} Unread Notifications</span>
+              @forelse(Helper::latest_three_notifications() as $notification)
+              <div class="dropdown-divider"></div>
+              <a href="{{route('admin.notifications.details',$notification->id)}}" class="dropdown-item">
+                <div class="media">
+                  <div class="media-body">
+                    <p class="text-sm">{{Str::limit($notification->message,100)}}</p>
+                    <p class="text-sm text-muted float-right"><i class="far fa-clock mr-1"></i>{{$notification->created_at->diffForHumans()}}</p>
+                  </div>
+                </div>
+              </a>
+              @empty
+
+              @endforelse
+              <div class="dropdown-divider"></div>
+              <a href="{{route('admin.notifications.list')}}" class="dropdown-item dropdown-footer">See All Notifications</a>
+            </div>
+            </li>
+            <!-- Notifications Dropdown Menu End -->
             <li class="nav-item">
               <select class="form-control" id="language" onchange="onLanguageChange(this.value)">
                 <option value="en" {{(App::getLocale()=='en')?'selected':''}}>English</option>

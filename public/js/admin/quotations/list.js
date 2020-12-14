@@ -18,6 +18,7 @@
             { data: 'services', name: 'services',orderable: false,searchable: false },
             { data: 'property_types', name: 'property_types',orderable: false,searchable: false },
             { data: 'contract_duration', name: 'contract_duration',orderable: false },
+            { data: 'status.status_name', name: 'status.status_name' },
             { data: 'created_at', name: 'created_at' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
@@ -53,7 +54,7 @@
         success: function (data) {
           quotations_table.ajax.reload(null, false);
           $.LoadingOverlay("hide");
-          toastr.success('Service successfully deleted.', 'Success', {timeOut: 5000});
+          toastr.success('Quotation successfully deleted.', 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");

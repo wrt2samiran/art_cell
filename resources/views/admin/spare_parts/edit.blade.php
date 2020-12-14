@@ -14,7 +14,7 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.shared-service.list')}}">Spare Parts</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.spare_parts.list')}}">Spare Parts</a></li>
               <li class="breadcrumb-item active">Edit</li>
             </ol>
           </div>
@@ -46,20 +46,20 @@
                   @endif
                   <div class="row justify-content-center">
                     <div class="col-md-10 col-sm-12">
-                      <form  method="post" id="admin_shared_service_edit_form" action="{{route('admin.spare-parts.edit',$details->id)}}" method="post" enctype="multipart/form-data">
+                      <form  method="post" id="admin_shared_service_edit_form" action="{{route('admin.spare_parts.update',$spare_part->id)}}" method="post" enctype="multipart/form-data">
                         @csrf
-                        
+                        @method('PUT')
                         <div>
                           <div class="form-group required">
                             <label for="name">Spare Part Name <span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('name')?old('name'):$details->name}}" name="name" id="name"  placeholder="Please Enter Spare Part Name">
+                            <input type="text" class="form-control" value="{{old('name')?old('name'):$spare_part->name}}" name="name" id="name"  placeholder="Please Enter Spare Part Name">
                             @if($errors->has('name'))
                             <span class="text-danger">{{$errors->first('name')}}</span>
                             @endif
                           </div>
                           <div class="form-group required">
                             <label for="manufacturer">Manufacturer <span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('manufacturer')?old('manufacturer'):$details->manufacturer}}" name="manufacturer" id="manufacturer"  placeholder="Please Enter Manufacturer name">
+                            <input type="text" class="form-control" value="{{old('manufacturer')?old('manufacturer'):$spare_part->manufacturer}}" name="manufacturer" id="manufacturer"  placeholder="Please Enter Manufacturer name">
                             @if($errors->has('manufacturer'))
                             <span class="text-danger">{{$errors->first('manufacturer')}}</span>
                             @endif
@@ -69,7 +69,7 @@
                             <select class="form-control parent_role_select2" style="width: 100%;" name="unit_master_id" id="unit_master_id">
                                 <option value="">Select a Unit</option>
                                 @forelse($unit_list as $unit_data)
-                                   <option value="{{$unit_data->id}}" {{($details->unit_master_id== $unit_data->id)? 'selected':''}}>{{$unit_data->unit_name}}</option>
+                                   <option value="{{$unit_data->id}}" {{($spare_part->unit_master_id== $unit_data->id)? 'selected':''}}>{{$unit_data->unit_name}}</option>
                                 @empty
                                <option value="">No Unit Found</option>
                                 @endforelse
@@ -81,7 +81,7 @@
                           </div>
                           <div class="form-group required">
                             <label for="description">Description </label>
-                           <textarea rows="5" class="form-control"  name="description" id="description"  placeholder="Description">{{old('description')?old('description'):$details->description}}</textarea>
+                           <textarea rows="5" class="form-control"  name="description" id="description"  placeholder="Description">{{old('description')?old('description'):$spare_part->description}}</textarea>
                             @if($errors->has('description'))
                             <span class="text-danger">{{$errors->first('description')}}</span>
                             @endif
@@ -89,34 +89,61 @@
                           
                           <div class="form-group required">
                             <label for="price">Price <span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('price')?old('price'):$details->price}}" name="price" id="price"  placeholder="Please Enter Price">
+                            <input type="text" class="form-control" value="{{old('price')?old('price'):$spare_part->price}}" name="price" id="price"  placeholder="Please Enter Price">
                             @if($errors->has('price'))
                             <span class="text-danger">{{$errors->first('price')}}</span>
                             @endif
                           </div>
 
-
                           <div class="form-group">
-                            <label for="image">Image</label>
-                            <input type="file" class="form-control" name="image" id="image">
-                            <br>
+                          <p>
+                            <a class="btn  btn-outline-success btn-sm" data-toggle="collapse" href="#collapseImages" role="button" aria-expanded="false" aria-controls="collapseImages">
+                            <i class="fas fa-eye text-primary"></i> Uploaded images
+                            </a>
+
+                          </p>
+                          <div class="collapse" id="collapseImages">
+                            <div class="card card-body">
+                              <div class="row">
+                                @if(count($spare_part->images))
+                                @foreach($spare_part->images as $image)
+                                    <div class="col-md-3" id="shared_service_image_{{$image->id}}">
+                                      <div>
+                                          <img height="100%" width="100%" src="{{asset('uploads/spare_part_images/thumb/'.$image->image_name)}}">
+                                      </div>
+
+                                    </div>
+                                @endforeach
+   
+                                @else
+                                 <div class="col-md-12">
+                                   <p>No images</p>
+                                 </div>
+                                @endif
+                                 
+                              </div>
+                            </div>
+                          </div>
+                          <label for="images">Images <span class="text-muted">(upload max. 3 images of type jpeg/png/gif)</span></label>
+                          <div class="input-group">
+                              <input type="file" name="images[]" multiple="1" class="form-control" id="images" accept="image/jpg,image/jpeg,image/gif">
                               
-                                  @php
-                                  $imgPath = \URL:: asset('images').'/admin/'.Helper::NO_IMAGE;
-                                  if ($details->image != null) {
-                                      if(file_exists(public_path('/uploads/sparepart/'.'/'.$details->image))) {
-                                      $imgPath = \URL::asset('uploads/sparepart/').'/'.$details->image;
-                                      }
-                                  }
-                                  @endphp
-                                  <img src="{{ $imgPath }}" alt="" height="50px">
-                            
                           </div>
                          
+                          @if($errors->get('images.*'))
+                           @foreach($errors->get('images.*') as $err)
+                            <span class="text-danger">{{$err[0]}}</span><br>
+                            @break
+                           @endforeach
+                          @endif
+
+                          </div>
+
+                         
                         </div>
-                        <input type="hidden" name="spare_parts_id" id="spare_parts_id" value="{{$details->id}}">
+                        <input type="hidden" name="spare_parts_id" id="spare_parts_id" value="{{$spare_part->id}}">
                         <div>
-                           <a href="{{route('admin.spare-parts.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
+                           <a href="{{route('admin.spare_parts.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
                            <button type="submit" class="btn btn-success">Submit</button> 
                         </div>
                       </form>
