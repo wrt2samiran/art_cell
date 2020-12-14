@@ -107,6 +107,22 @@
                             @endif
                           </div>
 
+                          <div class="form-group required">
+                            <label for="contract_status_id">Status <span class="error">*</span></label>
+                             <select class="form-control" name="contract_status_id" id="contract_status_id">
+                              @forelse($statuses as $status)
+                              <option {{($status->id==$contract->status_id)?'selected':''}} value="{{$status->id}}">{{$status->status_name}}</option>
+                              @empty
+                              <option value="">No status found</option>
+                              @endforelse
+                            </select>
+                            @if($errors->has('contract_status_id'))
+                            <span class="text-danger">{{$errors->first('contract_status_id')}}</span>
+                            @endif
+                          </div>
+
+
+
 
                           <input type="hidden" id="property_create_url" value="{{route('admin.properties.create')}}">
 

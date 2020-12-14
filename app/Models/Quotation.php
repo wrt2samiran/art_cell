@@ -22,7 +22,7 @@ class Quotation extends Model
         return $this->belongsTo(State::class);
     }
     public function status(){
-        return $this->belongsTo(QuotationStatus::class,'quotation_status_id');
+        return $this->belongsTo(Status::class,'status_id');
     }
     public function services(){
         return $this->hasMany(QuotationService::class,'quotation_id');

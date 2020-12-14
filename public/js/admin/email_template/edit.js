@@ -3,7 +3,7 @@ $("#admin_email_edit_form").validate({
         template_name: {
             required: true,
             minlength: 3,
-            maxlength: 50,
+            maxlength: 255,
         },
         slug: {
             required: true,
@@ -11,7 +11,7 @@ $("#admin_email_edit_form").validate({
         variable_name: {
             required: true,
             minlength: 3,
-            maxlength: 50,
+            maxlength: 255,
         },
         content: {
             ckrequired: true,

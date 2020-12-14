@@ -382,7 +382,7 @@ class Helper
         $template_variables = explode(',' , $email_template->variable_name);
         $content =$email_template->content;
         foreach ($variable_value as $key=>$val){
-            $content = str_replace($key, nl2br($val), $content);
+            $content = str_replace($key, $val, $content);
         }
         
         // dd($email_template);

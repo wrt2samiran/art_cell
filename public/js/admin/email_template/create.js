@@ -3,7 +3,7 @@ $("#admin_email_add_form").validate({
         template_name: {
             required: true,
             minlength: 3,
-            maxlength: 50,
+            maxlength: 255,
         },
         slug: {
             required: true,
@@ -11,7 +11,7 @@ $("#admin_email_add_form").validate({
         variable_name: {
             required: true,
             minlength: 3,
-            maxlength: 50,
+            maxlength: 255,
         },
         content: {
             ckrequired: true,
@@ -21,9 +21,9 @@ $("#admin_email_add_form").validate({
     },
     messages: {
         template_name: {
-            required:  "Message Title is required",
-            minlength: "Message Title should have 3 characters",
-            maxlength: "Message Title should not be more then 50 characters",
+            required:  "Template name is required",
+            minlength: "Template name should have 3 characters",
+            maxlength: "Template name should not be more then 255 characters",
         },
         slug: {
             required: "Slug is required",
@@ -31,7 +31,7 @@ $("#admin_email_add_form").validate({
         variable_name: {
             required:  "Variables Name is required",
             minlength: "Variables Name should have 3 characters",
-            maxlength: "Variables Name should not be more then 50 characters",
+            maxlength: "Variables Name should not be more then 255 characters",
         },
         content: {
             ckrequired:  "Description is required",

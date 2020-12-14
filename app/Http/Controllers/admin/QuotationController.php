@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
-use App\Models\{Quotation,QuotationStatus,Service,PropertyType,QuotationService,State};
+use App\Models\{Quotation,Status,Service,PropertyType,QuotationService,State};
 use App\Http\Requests\Admin\SubmitQuotationRequest;
 class QuotationController extends Controller
 {
@@ -89,7 +89,7 @@ class QuotationController extends Controller
         
         $this->data['page_title']='Quotation Details';
         $this->data['quotation']=$quotation;
-        $this->data['statuses']=QuotationStatus::where('is_active',true)->get();
+        $this->data['statuses']=Status::where('status_for','quotation')->where('is_active',true)->get();
         return view($this->view_path.'.show',$this->data);
     }
     public function delete($id){
@@ -110,12 +110,12 @@ class QuotationController extends Controller
     public function submit_quotation(SubmitQuotationRequest $request){
 
         $state=State::findOrFail($request->state_id);
-        $status=QuotationStatus::where('is_default',true)->first();
+        $status=Status::where('status_for','quotation')->where('is_default_status',true)->first();
         if(!$status){
             return redirect()->back()->with('quotation_error','No default status found for quotation');
         }
         $quotation=Quotation::create([
-            'quotation_status_id'=>$status->id,
+            'status_id'=>$status->id,
             'first_name'=>trim($request->first_name, ' '),
             'last_name'=>trim($request->last_name, ' '),
             'email'=>strtolower(trim($request->email, ' ')),
@@ -174,7 +174,7 @@ class QuotationController extends Controller
     public function update_status($quotation_id,Request $request){
         $quotation=Quotation::findOrFail($quotation_id);
         $quotation->update([
-            'quotation_status_id'=>$request->status,
+            'status_id'=>$request->status,
             'updated_by'=>auth()->guard('admin')->id()
         ]);
         return redirect()->back()->with('success','Quotation status successfully updated.');

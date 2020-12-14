@@ -18,7 +18,7 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\{ContractStatus,Contract,User,Property,Service,ContractAttachment,ContractInstallment,FrequencyType,ContractService,ContractServiceRecurrence,ContractServiceDate,WorkOrderLists};
+use App\Models\{Status,Contract,User,Property,Service,ContractAttachment,ContractInstallment,FrequencyType,ContractService,ContractServiceRecurrence,ContractServiceDate,WorkOrderLists};
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
 use Carbon\{Carbon,CarbonPeriod};
@@ -26,6 +26,8 @@ use App\Http\Requests\Admin\Contract\{CreateContractRequest,UpdateContractReques
 use File;
 use Helper;
 use App\Events\Contract\ContractCreated;
+use App\Mail\Admin\Contract\ContratCreationMailToPropertyOwner;
+use Mail;
 class ContractController extends Controller
 {
     //defining the view path
@@ -57,7 +59,7 @@ class ContractController extends Controller
 
             ->whereHas('contract_status')
             ->when($request->contract_status_id,function($query) use($request){
-            	$query->where('contract_status_id',$request->contract_status_id);
+            	$query->where('status_id',$request->contract_status_id);
             })
             ->when($request->daterange,function($query) use($request){
                 $daterange_arr=explode('_',$request->daterange);
@@ -124,7 +126,7 @@ class ContractController extends Controller
             ->rawColumns(['action','is_active','creation_complete'])
             ->make(true);
         }
-        $this->data['ContractStatus']=ContractStatus::whereIsActive(true)->get();
+        $this->data['ContractStatus']=Status::where('status_for','contract')->whereIsActive(true)->get();
         $contracts=Contract::whereNull('deleted_at');
         $this->data['contractDuration'] = $contractDuration = isset($request->contract_duration)?$request->contract_duration:'';
         if ($contractDuration != '') {
@@ -182,7 +184,7 @@ class ContractController extends Controller
     	$start_date=Carbon::createFromFormat('d/m/Y', $request->start_date)->format('Y-m-d');
     	$end_date=Carbon::createFromFormat('d/m/Y', $request->end_date)->format('Y-m-d');
 
-        $default_contract_status=ContractStatus::where('is_default_status',true)->first();
+        $default_contract_status=Status::where('status_for','contract')->where('is_default_status',true)->first();
         if(!$default_contract_status){
             return redirect()->back()->with('error','No default status found for contract. Please add default status for contract.');
         }
@@ -195,7 +197,7 @@ class ContractController extends Controller
          'service_provider_id'=>$request->service_provider,
          'start_date'=>$start_date,
          'end_date'=>$end_date,
-         'contract_status_id'=>$default_contract_status->id,
+         'status_id'=>$default_contract_status->id,
          'created_by'=>$current_user->id,
          'updated_by'=>$current_user->id
         ]);
@@ -876,6 +878,19 @@ class ContractController extends Controller
                 'creation_complete'=>true
             ]);
 
+            if($contract->property && $contract->property->owner_details){
+            $data=[
+                'user'=>$contract->property->owner_details,
+                'contract'=>$contract,
+                'from_name'=>env('MAIL_FROM_NAME','SMMS'),
+                'from_email'=>env('MAIL_FROM_ADDRESS'),
+                'subject'=>'New Contract Created'
+            ];
+            Mail::to($contract->property->owner_details->email)->send(new ContratCreationMailToPropertyOwner($data));
+            }
+ 
+
+
             event(new ContractCreated($contract));
 
             return redirect()->route('admin.contracts.list')->with('success','Contract successfully created.');
@@ -928,7 +943,7 @@ class ContractController extends Controller
 
         $this->data['properties']=Property::whereIsActive(true)->get();
 
-        $this->data['contract_statuses']=ContractStatus::where('is_active',true)->get();
+        $this->data['statuses']=Status::where('status_for','contract')->where('is_active',true)->get();
         return view($this->view_path.'.edit',$this->data);
     }
 
@@ -956,7 +971,7 @@ class ContractController extends Controller
          'service_provider_id'=>$request->service_provider,
          'start_date'=>$start_date,
          'end_date'=>$end_date,
-         'contract_status_id'=>($request->contract_status_id)?$request->contract_status_id:$contract->contract_status_id,
+         'status_id'=>($request->contract_status_id)?$request->contract_status_id:$contract->status_id,
          'updated_by'=>$current_user->id
         ]);
 

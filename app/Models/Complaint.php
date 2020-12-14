@@ -18,9 +18,8 @@ class Complaint extends Model
     	return $this->belongsTo(WorkOrderLists::class,'work_order_list_id','id');
     }
     public function complaint_status(){
-    	return $this->belongsTo(ComplaintStatus::class);
+    	return $this->belongsTo(Status::class,'status_id');
     }
-
 
     public function user_display_title(){
         $user_type=$this->user->role->user_type->slug;

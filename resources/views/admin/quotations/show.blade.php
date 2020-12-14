@@ -115,7 +115,7 @@
                           <label for="status" class="mr-sm-2">Status:</label>
                             <select class="form-control mb-2 mr-sm-2" name="status" id="status">
                               @forelse($statuses as $status)
-                              <option {{($status->id==$quotation->quotation_status_id)?'selected':''}} value="{{$status->id}}">{{$status->status_name}}</option>
+                              <option {{($status->id==$quotation->status_id)?'selected':''}} value="{{$status->id}}">{{$status->status_name}}</option>
                               @empty
                               <option value="">No status found</option>
                               @endforelse

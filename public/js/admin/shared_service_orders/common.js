@@ -34,7 +34,7 @@
             { data: 'id', name: 'id' },
             { data: 'ordered_shared_services_count', name: 'ordered_shared_services_count'},
             { data: 'total_amount', name: 'total_amount'},
-            { data: 'curent_status', name: 'curent_status'},
+            { data: 'status.status_name', name: 'status.status_name'},
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
         order: [ [0, 'asc'] ],

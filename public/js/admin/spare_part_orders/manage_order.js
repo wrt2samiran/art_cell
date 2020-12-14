@@ -9,7 +9,7 @@ var manage_spare_parts_ordered_table=$('#manage_spare_parts_ordered_table').Data
         { data: 'user.name', name: 'user.name' },
         { data: 'ordered_spare_parts_count', name: 'ordered_spare_parts_count'},
         { data: 'total_amount', name: 'total_amount'},
-        { data: 'curent_status', name: 'curent_status'},
+        { data: 'status.status_name', name: 'status.status_name'},
         {data: 'action', name: 'action', orderable: false, searchable: false}
     ],
     order: [ [0, 'asc'] ],

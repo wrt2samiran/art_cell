@@ -26,7 +26,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\UnitMaster;
-use App\Models\{SparePart,SparePartCart,City,SparePartOrder,SparePartDeliveryAddress,OrderedSparePartDetail,Notification};
+use App\Models\{SparePart,SparePartCart,City,SparePartOrder,SparePartDeliveryAddress,OrderedSparePartDetail,Notification,Status};
 use Helper;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
@@ -259,6 +259,14 @@ class SparePartOrderController extends Controller
                         ->where('user_id',$current_user->id)
                                 ->get();
 
+        $default_status=Status::where('status_for','order')
+        ->where('is_default_status',true)
+        ->first();
+
+        if(!$default_status){
+            return redirect()->back()->with('error','No default status found for order');
+        }                     
+
         $sub_total=self::cart_total_without_tax($spare_part_carts);  
 
         $tax_percentage=$site_setting['tax'];
@@ -275,7 +283,7 @@ class SparePartOrderController extends Controller
             'tax_amount'=>$tax_amount,
             'delivery_charge'=>'0',
             'is_paid'=>true,
-            'curent_status'=>'Placed',
+            'status_id'=>$default_status->id,
             'updated_by'=>$current_user->id,
         ]);
 
@@ -353,6 +361,8 @@ class SparePartOrderController extends Controller
 
             $spare_parts_ordered=SparePartOrder::where('user_id',$current_user->id)
                         ->withCount('ordered_spare_parts')
+                        ->with('status')
+                        ->whereHas('status')
                         ->orderBy('id','Desc');
             return Datatables::of($spare_parts_ordered)
             ->addColumn('action',function($order){
@@ -395,6 +405,8 @@ class SparePartOrderController extends Controller
 
             $spare_parts_ordered=SparePartOrder::withCount('ordered_spare_parts')
                         ->with('user')
+                        ->with('status')
+                        ->whereHas('status')
                         ->orderBy('id','Desc');
             return Datatables::of($spare_parts_ordered)
             ->addColumn('action',function($order){
@@ -418,6 +430,7 @@ class SparePartOrderController extends Controller
         $this->data['page_title']='Spare Part Order Details';
         $spare_part_order=SparePartOrder::with('ordered_spare_parts','user')->find($order_id);
         $this->data['order']=$spare_part_order;
+        $this->data['statuses']=Status::where('status_for','order')->whereIsActive(true)->get();
         return view($this->view_path.'.manage.order_details',$this->data);
     }
 
@@ -432,7 +445,7 @@ class SparePartOrderController extends Controller
     public function update_order_status($order_id,Request $request){
         $spare_part_order=SparePartOrder::findOrFail($order_id);
         $spare_part_order->update([
-            'curent_status'=>$request->status,
+            'status_id'=>$request->status,
             'updated_by'=>auth()->guard('admin')->id()
         ]);
 

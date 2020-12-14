@@ -38,7 +38,7 @@ class Contract extends Model
     }
 
     public function contract_status(){
-        return $this->belongsTo(ContractStatus::class);
+        return $this->belongsTo(Status::class,'status_id');
     }
 
     public function services_price_total(){

@@ -28,6 +28,8 @@ use Illuminate\Support\Str;
 use File,Auth,Helper;
 
 use App\Events\Property\PropertyCreated;
+use App\Mail\Admin\Property\PropertyCreationMailToOwner;
+use Mail;
 class PropertyController extends Controller
 {
 
@@ -234,6 +236,18 @@ class PropertyController extends Controller
 
             }
         }
+
+
+
+        $data=[
+            'user'=>$property->owner_details,
+            'property'=>$property,
+            'from_name'=>env('MAIL_FROM_NAME','SMMS'),
+            'from_email'=>env('MAIL_FROM_ADDRESS'),
+            'subject'=>'New Property Created'
+        ];
+        Mail::to($property->owner_details->email)->send(new PropertyCreationMailToOwner($data)); 
+
 
         event(new PropertyCreated($property));
 

@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Mail\Order\SharedService;
+namespace App\Mail\Admin\Contract;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class OrderPlaceMailToAdmin extends Mailable
+class ContratCreationMailToPropertyOwner extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -20,20 +20,11 @@ class OrderPlaceMailToAdmin extends Mailable
      */
     public function __construct($data)
     {
-        $this->data=$data; 
- 
-
-        $delivery_address_details=view('emails.admin.order.partials.shared_service.delivery_address_details',$data)->render();
-        $order_item_details=view('emails.admin.order.partials.shared_service.order_item_details',$data)->render();
-
-
-        $slug = 'admin-shared-service-order-notification';
+        $this->data=$data;
+        $slug = 'contract-creation-mail-to-property-owner';
         $variable_value=[
-            '##CUSTOMER_NAME##'=>$data['order']->user->name,
-            '##ORDER_ID##'=>$data['order']->id,
-            '##ORDER_DATE##'=>$data['order']->created_at->format('d/m/Y'),
-            '##DELIVERY_ADDRESS_DETAIL##'=>$delivery_address_details,
-            '##ORDER_ITEM_DETAIL##'=>$order_item_details
+            '##USERNAME##'=>$data['user']->name,
+            '##CONTRACT_CODE##'=>$data['contract']->code,
         ]; 
         $this->mail_content=\Helper::emailTemplateMail($slug,$variable_value);
     }
@@ -48,9 +39,8 @@ class OrderPlaceMailToAdmin extends Mailable
         return $this->from($this->data['from_email'], $this->data['from_name'])
                     ->replyTo($this->data['from_email'], $this->data['from_name'])
                     ->subject($this->data['subject'])
-                    ->view('emails.admin.order.order_placed',[
+                    ->view('emails.admin.contract.creation_mail_to_property_owner',[
                         'mail_content'=>$this->mail_content
                     ]);
-
     }
 }

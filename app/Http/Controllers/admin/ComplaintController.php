@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 use Carbon\Carbon;
-use App\Models\{Complaint,Contract,ComplaintStatus,WorkOrderLists,ComplaintNote,ComplaintStatusUpdate,TaskDetails};
+use App\Models\{Complaint,Contract,Status,WorkOrderLists,ComplaintNote,ComplaintStatusUpdate,TaskDetails};
 use App\Http\Requests\Admin\Complaint\{CreateComplaintRequest,UpdateComplaintRequest};
 use Illuminate\Support\Str;
 use File;
@@ -190,7 +190,7 @@ class ComplaintController extends Controller
 
     public function store(CreateComplaintRequest $request){
         $current_user=auth()->guard('admin')->user();
-        $default_status=ComplaintStatus::where('is_default',true)->first();
+        $default_status=Status::where('status_for','complaint')->where('is_default_status',true)->first();
         if(!$default_status){
             return redirect()->back()->with('error','No default status found for complaint');
         }
@@ -214,7 +214,7 @@ class ComplaintController extends Controller
             'subject'=>$request->subject,
             'details'=>$request->details,
             'file'=>$file_name,
-            'complaint_status_id'=>$default_status->id,
+            'status_id'=>$default_status->id,
         ]);
 
         event(new ComplaintCreated($complaint));
@@ -249,7 +249,7 @@ class ComplaintController extends Controller
 
         $this->data['complaint_status_updates']=ComplaintStatusUpdate::where('complaint_id',$complaint_id)->whereHas('user')->orderBy('id','DESC')->get();
 
-        $this->data['complaint_statusses']=ComplaintStatus::get();
+        $this->data['complaint_statusses']=Status::where('status_for','complaint')->get();
 
         return view($this->view_path.'.show',$this->data);
     }
@@ -438,10 +438,11 @@ class ComplaintController extends Controller
         $current_user=auth()->guard('admin')->user();
         $complaint=Complaint::with('complaint_status')->findOrFail($complaint_id);
         
-        $complaint_status=ComplaintStatus::findOrFail($request->status);
-        if($complaint->complaint_status_id!=$complaint_status->id){
+        $complaint_status=Status::where('status_for','complaint')->where('id',$request->status)->firstOrFail();
+
+        if($complaint->status_id!=$complaint_status->id){
            $complaint->update([
-            'complaint_status_id'=>$complaint_status->id
+            'status_id'=>$complaint_status->id
            ]);
 
             ComplaintStatusUpdate::create([

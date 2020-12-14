@@ -124,14 +124,15 @@
                             </a>
                         </li>
                         @endif
-
+                        @if(auth()->guard('admin')->user()->hasAllPermission(['manage-units']))
                         <li class="nav-item">
                             <a href="{{ route('admin.unit.list') }}"
                                class="nav-link {{(request()->is('admin/unit/*','admin/unit'))?'active':''}}">
                                 <i class="nav-icon fas fa-envelope-open-text"></i>
                                 <p>{{__('nav_link_text.unit_management')}}</p>
                             </a>
-                        </li>        
+                        </li>   
+                        @endif     
                     </ul>
                     
                 </li>
@@ -333,6 +334,7 @@
                 </li>
                 @endif
 
+                @if(auth()->guard('admin')->user()->hasAllPermission(['manage-email-template']))
                 <li class="nav-item ">
                     <a href="{{route('admin.email.list')}}"
                     class="nav-link {{(request()->is('admin/email/*','admin/email'))?'active':''}}">
@@ -340,7 +342,8 @@
                         <p>{{__('nav_link_text.email_templete')}}</p>
                     </a>
                 </li>            
-                
+                @endif
+
                 <li class="nav-item ">
                     <a href="{{route('admin.complaints.list')}}"
                     class="nav-link {{(request()->is('admin/complaints/*','admin/complaints'))?'active':''}}">

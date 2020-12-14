@@ -14,6 +14,9 @@ class SparePartOrder extends Model
     public function user(){
     	return $this->belongsTo(User::class);
     }
+    public function status(){
+        return $this->belongsTo(Status::class,'status_id');
+    }
     public function delivery_address(){
     	return $this->hasOne(SparePartDeliveryAddress::class,'order_id');
     }

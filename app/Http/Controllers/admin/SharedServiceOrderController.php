@@ -26,7 +26,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\UnitMaster;
-use App\Models\{SharedService,SharedServiceCart,City,SharedServiceOrder,SharedServiceDeliveryAddress,OrderedSharedServiceDetail,Notification};
+use App\Models\{SharedService,SharedServiceCart,City,SharedServiceOrder,SharedServiceDeliveryAddress,OrderedSharedServiceDetail,Notification,Status};
 use Helper;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
@@ -336,6 +336,15 @@ class SharedServiceOrderController extends Controller
                         ->where('user_id',$current_user->id)
                                 ->get();
 
+        $default_status=Status::where('status_for','order')
+        ->where('is_default_status',true)
+        ->first();
+
+        if(!$default_status){
+            return redirect()->back()->with('error','No default status found for order');
+        } 
+
+
         $sub_total=self::cart_total_without_tax($shared_service_carts); 
         $tax_percentage=$site_setting['tax'];
         $tax_amount=(($tax_percentage/100)*$sub_total);
@@ -349,7 +358,7 @@ class SharedServiceOrderController extends Controller
             'tax_amount'=>$tax_amount,
             'delivery_charge'=>'0',
             'is_paid'=>true,
-            'curent_status'=>'Placed',
+            'status_id'=>$default_status->id,
             'updated_by'=>$current_user->id,
         ]);
 
@@ -467,6 +476,8 @@ class SharedServiceOrderController extends Controller
 
             $shared_service_ordered=SharedServiceOrder::where('user_id',$current_user->id)
                         ->withCount('ordered_shared_services')
+                        ->with('status')
+                        ->whereHas('status')
                         ->orderBy('id','Desc');
             return Datatables::of($shared_service_ordered)
             ->addColumn('action',function($order){
@@ -510,6 +521,8 @@ class SharedServiceOrderController extends Controller
 
             $shared_services_ordered=SharedServiceOrder::withCount('ordered_shared_services')
                         ->with('user')
+                        ->with('status')
+                        ->whereHas('status')
                         ->orderBy('id','Desc');
                         
             return Datatables::of($shared_services_ordered)
@@ -533,6 +546,7 @@ class SharedServiceOrderController extends Controller
         $this->data['page_title']='Shared Service Order Details';
         $shared_service_order=SharedServiceOrder::with('ordered_shared_services','user')->find($order_id);
         $this->data['order']=$shared_service_order;
+        $this->data['statuses']=Status::where('status_for','order')->whereIsActive(true)->get();
         return view($this->view_path.'.manage.order_details',$this->data);
     }
 
@@ -547,7 +561,7 @@ class SharedServiceOrderController extends Controller
     public function update_order_status($order_id,Request $request){
         $shared_service_order=SharedServiceOrder::findOrFail($order_id);
         $shared_service_order->update([
-            'curent_status'=>$request->status,
+            'status_id'=>$request->status,
             'updated_by'=>auth()->guard('admin')->id()
         ]);
 

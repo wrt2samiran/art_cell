@@ -11,7 +11,7 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\{ContractStatus,Contract,User,Property,Service,ContractAttachment,ContractInstallment};
+use App\Models\{Status,Contract,User,Property,Service,ContractAttachment,ContractInstallment};
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
@@ -51,7 +51,7 @@ class UserContractController extends Controller
                 });
             })
             ->when($request->contract_status_id,function($query) use($request){
-            	$query->where('contract_status_id',$request->contract_status_id);
+            	$query->where('status_id',$request->contract_status_id);
             })
             ->when($request->daterange,function($query) use($request){
                 $daterange_arr=explode('_',$request->daterange);
@@ -103,7 +103,7 @@ class UserContractController extends Controller
             ->rawColumns(['action','is_active'])
             ->make(true);
         }
-        $this->data['ContractStatus']=ContractStatus::whereIsActive(true)->get();
+        $this->data['ContractStatus']=Status::where('status_for','contract')->whereIsActive(true)->get();
      
         return view($this->view_path.'.list',$this->data);
     }
