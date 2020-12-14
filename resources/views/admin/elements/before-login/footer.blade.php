@@ -9,7 +9,7 @@
 <script src="{{asset('js/jquery.validate.js')}}"></script>
 
 <script src="{{ asset('js/development-admin.js')}}"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCZr9TxxGyISlVg22_KzBGNMB-vumagWjo&sensor=false&libraries=places"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{config('services.google_map.key')}}&sensor=false&libraries=places"></script>
 
 <script>
 
