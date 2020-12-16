@@ -4,8 +4,8 @@
 
 @section('content')
 
-<div class="login-logo">
-  <a href=""><b>SMMS </b>Admin Login</a>
+<div class="login-logo">  
+  <div class="admin-logo" style="padding: 30px 0 15px;"><img src="{{asset('assets/dist/img/OSOOL_logo.png')}}" alt="Logo" style="width: 250px;"></div>
 </div>
 <div class="container">
   <div class="row">
@@ -28,11 +28,10 @@
 
     <div >
       <div >
-         <h4 >Please fill up the form and submit</h4>
-        
+         <h5 >Please fill up the form and submit to post a quotation</h5>
       </div>
       <div >
-        
+
         <form  method="POST" id="quotetion_submit_form" action="{{route('frontend.store_quotation')}}" enctype="multipart/form-data">
           @csrf
           <div class="row">
@@ -54,7 +53,7 @@
 
           <div class="row">
             <div class="col-md-6 form-group">
-              <label for="property_id">Email</label>
+              <label for="property_id">Email <span class="text-muted">(optional)</span></label>
               <input type="text" class="form-control" id="email" name="email">
               @if($errors->has('email'))
                 <span class="text-danger">{{$errors->first('email')}}</span>
@@ -68,7 +67,6 @@
               @endif
             </div>
           </div>
-
           <div class="row">
             <div class="col-md-6  form-group">
               <label for="country_id">State<span class="error">*</span></label>
@@ -111,7 +109,20 @@
             </div>
           </div>
 
+
           <div class="row">
+            <div class="col-md-12  ">
+              <div id="map_canvas" style="height:400px"></div>
+            </div>
+            <div class="col-md-12">
+              <input type="hidden" name="latitude" id="latitude">
+              <input type="hidden" name="longitude" id="longitude">
+
+              <input type="hidden" name="placeholder_address" id="placeholder_address">
+            </div>
+          </div>
+
+          <div class="row mt-2">
             <div class="col-md-3 form-group">
               <label for="contract_duration">Contract Duration<span class="error">*</span></label>
               <input type="number" min="1" value="1" step="1" class="form-control" id="contract_duration" name="contract_duration">
@@ -144,11 +155,7 @@
                 <span class="text-danger">{{$errors->first('property_type_id')}}</span>
               @endif
             </div>
-
           </div>
-
-
-
           <div class="row">
             <div class="col-md-12">
               <div class="form-group required">
@@ -166,7 +173,27 @@
               </div>
             </div>
           </div>
-          <div class="row">
+          <div class="row mt-3">
+
+            <div class="col-md-6">
+                <div class="form-group ">
+                  <label for="images">Images <span class="text-muted">(Optional)</span></label>
+                  <input type="file" class="form-control" name="images[]" id="images" multiple="true" accept="image/jpg,image/jpeg,image/gif">
+                  <span class="text-muted">upload max. 3 images of type jpeg/png/gif</span>
+                  @if($errors->has('images'))
+                  <span class="text-danger">{{$errors->first('images')}}</span>
+                  @endif
+                </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="no_of_resources">No. Of Resources <span class="text-muted">(optional)</span></label>
+                <input type="number" min="1" step="1" class="form-control" placeholder="No. Of Resources Required" id="no_of_resources" name="no_of_resources">
+                @if($errors->has('no_of_resources'))
+                  <span class="text-danger">{{$errors->first('no_of_resources')}}</span>
+                @endif
+              </div>
+            </div>
             <div class="col-md-12">
               <div class="form-group">
                 <label for="details">Description</label>
@@ -207,6 +234,171 @@
 <script src="https://maps.googleapis.com/maps/api/js?key={{config('services.google_map.key')}}&sensor=false&libraries=places"></script>
 
 <script>
+
+jQuery.validator.addMethod("mustAutocompleteAddress", function (value, element) {
+    
+    var placeholder_address=$('#placeholder_address').val();
+
+    if(value){
+
+      if(placeholder_address){
+        return placeholder_address==value;
+      }
+      
+      return true;
+    } else {
+        return true;
+    }
+},'Drag and drop the marker for accurate address.');
+
+
+
+var geocoder;
+var map;
+var marker;
+var infowindow = new google.maps.InfoWindow({
+  size: new google.maps.Size(150, 50)
+});
+
+
+
+google.maps.event.addDomListener(window, "load", initialize);
+
+function initialize() {
+  geocoder = new google.maps.Geocoder();
+  var latlng = new google.maps.LatLng(-34.397, 150.644);
+  var mapOptions = {
+    zoom: 8,
+    center: latlng,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  }
+  map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
+  google.maps.event.addListener(map, 'click', function() {
+    infowindow.close();
+  });
+}
+
+
+function codeAddress(address) {
+  
+  geocoder.geocode({
+    'address': address
+  }, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      map.setCenter(results[0].geometry.location);
+      if (marker) {
+        marker.setMap(null);
+        if (infowindow) infowindow.close();
+      }
+      marker = new google.maps.Marker({
+        map: map,
+        draggable: true,
+        position: results[0].geometry.location
+      });
+
+      google.maps.event.addListener(marker, 'dragend', function() {
+        geocodePosition(marker.getPosition());
+      });
+      google.maps.event.addListener(marker, 'click', function() {
+        if (marker.formatted_address) {
+          infowindow.setContent(marker.formatted_address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+        } else {
+          infowindow.setContent(address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+        }
+        infowindow.open(map, marker);
+      });
+      google.maps.event.trigger(marker, 'click');
+    } else {
+      alert('Geocode was not successful for the following reason: ' + status);
+    }
+  });
+}
+
+function geocodePosition(pos) {
+  geocoder.geocode({
+    latLng: pos
+  }, function(responses) {
+    if (responses && responses.length > 0) {
+      marker.formatted_address = responses[0].formatted_address;
+
+      $('#landmark').val(responses[0].formatted_address);
+      $('#placeholder_address').val(responses[0].formatted_address);
+
+    } else {
+      marker.formatted_address = 'Cannot determine address at this location.';
+
+        $('#latitude').val('');
+        $('#longitude').val('');
+        $('#landmark').val('');
+        $('#placeholder_address').val('');
+
+    }
+    infowindow.setContent(marker.formatted_address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+    infowindow.open(map, marker);
+  });
+}
+
+
+  google.maps.event.addDomListener(window, 'load', function () {
+        var autocomplete = new google.maps.places.Autocomplete(document.getElementById('landmark'));
+
+        autocomplete.addListener("place_changed", () => {
+          //infowindow.close();
+ 
+          const place = autocomplete.getPlace();
+          
+          if (!place.geometry) {
+            // User entered the name of a Place that was not suggested and
+            // pressed the Enter key, or the Place Details request failed.
+            window.alert("No details available for input: '" + place.name + "'");
+            return;
+          }else{
+
+            var lat=place.geometry.location.lat();
+            var lng=place.geometry.location.lng();
+
+            $('#latitude').val(lat);
+            $('#longitude').val(lng);
+
+            
+            
+            //$('#placeholder_address').val(place.formatted_address);
+            $('#placeholder_address').val($('#landmark').val());
+
+            map.setCenter(place.geometry.location);
+            if (marker) {
+              marker.setMap(null);
+              if (infowindow) infowindow.close();
+            }
+            marker = new google.maps.Marker({
+              map: map,
+              draggable: true,
+              position: place.geometry.location
+            });
+
+            google.maps.event.addListener(marker, 'dragend', function() {
+              geocodePosition(marker.getPosition());
+              
+              $('#latitude').val(marker.getPosition().lat());
+              $('#longitude').val(marker.getPosition().lng());
+
+            });
+            google.maps.event.addListener(marker, 'click', function() {
+              if (marker.formatted_address) {
+                infowindow.setContent(marker.formatted_address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+              } else {
+                infowindow.setContent(place.name + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+              }
+              infowindow.open(map, marker);
+            });
+            google.maps.event.trigger(marker, 'click');
+          }
+
+          //codeAddress(place.formatted_address)
+
+        });
+  });
+
 
   $("#add_service").on("click", function () {
     let random_string = String(Math.random(10)).substring(2,14); 
@@ -320,14 +512,6 @@ $(document).on('change','#state_id',function(e){
 $(document).ready(function () {
 
 
-  google.maps.event.addDomListener(window, 'load', function () {
-          var places = new google.maps.places.Autocomplete(document.getElementById('landmark'));
-          google.maps.event.addListener(places, 'place_changed', function () {
-
-          });
-  });
-
-
     $("#quotetion_submit_form").validate({
         rules: {
             
@@ -356,9 +540,14 @@ $(document).ready(function () {
             },
             landmark: {
                 required: true,
+                mustAutocompleteAddress:true
             },
             contract_duration: {
                 required: true,
+            },
+            no_of_resources:{
+              number:true,
+              maxlength: 100,
             },
             property_type_id:{
                 required: true,
@@ -507,7 +696,64 @@ $('.service-list').select2({
       },
   });
 
+
+$('#images').on('change',function(){
+    
+    var files = document.getElementById("images").files;
+
+    if(files.length>3){
+        reset($('#images'));
+        swal('You can upload maximum 3 images');
+    }else{
+        var file_size_error=false;
+        var file_type_error=false;
+        for (var i = 0; i < files.length; i++)
+        {
+            var file_size_in_kb=(files[i].size/1024);
+            var file_type= files[i].type;
+
+            if(file_size_in_kb>2048){
+               file_size_error=true; 
+            }
+
+            var allowed_file_types=[
+            'image/jpeg',
+            'image/jpg',
+            'image/png',
+            'image/gif',
+            ];
+
+            if(!allowed_file_types.includes(file_type)){
+                file_type_error=true;
+            }
+
+        }
+
+        if(file_size_error==true || file_type_error==true){
+            reset($('#images'));
+
+            var error_message='';
+
+            if(file_size_error==true && file_type_error==true){
+                error_message="Please upload only JPG/JPEG/PNG/GIF files of max size 2mb";
+            }else if(file_size_error==true && file_type_error==false){
+                error_message="File size should not be more than 2 mb";
+            }else{
+                error_message="Please upload only JPG/JPEG/PNG/GIF files";
+            }
+
+            swal(error_message);
+
+        }
+    }
+});
   
+/*-- reset the image file input --*/
+window.reset = function (e) {
+    e.wrap('<form>').closest('form').get(0).reset();
+    e.unwrap();
+}
+
 </script>
 @endpush
 

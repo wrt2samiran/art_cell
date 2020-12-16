@@ -79,10 +79,10 @@ $('#images').on('change',function(){
             }
 
             var allowed_file_types=[
-            'application/jpeg',
-            'application/jpg',
-            'application/png',
-            'application/gif',
+            'image/jpeg',
+            'image/jpg',
+            'image/png',
+            'image/gif',
             ];
 
             if(!allowed_file_types.includes(file_type)){
@@ -97,7 +97,7 @@ $('#images').on('change',function(){
             var error_message='';
 
             if(file_size_error==true && file_type_error==true){
-                error_message="Please upload only JPG/JPEG/PNG/GIF files of max size 1mb";
+                error_message="Please upload only JPG/JPEG/PNG/GIF files of max size 2mb";
             }else if(file_size_error==true && file_type_error==false){
                 error_message="File size should not be more than 2 mb";
             }else{

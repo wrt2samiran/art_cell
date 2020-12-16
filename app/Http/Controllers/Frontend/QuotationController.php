@@ -40,6 +40,24 @@ class QuotationController extends Controller
         if(!$status){
             return redirect()->back()->with('quotation_error','No default status found for quotation');
         }
+
+        if($request->hasFile('images')){
+
+            $images_array=[];
+
+            foreach ($request->file('images')  as $key=>$image) {
+                $image_name = time().$key.'.'.$image->getClientOriginalExtension();
+                $destinationPath = public_path('/uploads/quotation_files');
+                //uploading original image
+                $image->move($destinationPath, $image_name);
+                $images_array[]=$image_name;
+            }
+
+            $images=implode(',', $images_array);
+        }else{
+            $images=null; 
+        }
+
         $quotation=Quotation::create([
             'status_id'=>$status->id,
             'first_name'=>trim($request->first_name, ' '),
@@ -50,6 +68,10 @@ class QuotationController extends Controller
             'city_id'=>$request->city_id,
             'country_id'=>$state->country_id,
             'landmark'=>$request->landmark,
+            'latitude'=>$request->latitude,
+            'longitude'=>$request->longitude,
+            'no_of_resources'=>$request->no_of_resources,
+            'images'=>$images,
             'details'=>$request->details,
             'contract_duration'=>$request->contract_duration.' '.$request->contract_duration_type,
             

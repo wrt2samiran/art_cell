@@ -44,8 +44,8 @@ span.error{
   color: red;
 }
 </style>
-<div class="login-logo">
-  <a href=""><b>SMMS </b>Admin Login</a>
+<div class="login-logo">  
+  <div class="admin-logo" style="padding: 30px 0 15px;"><img src="{{asset('assets/dist/img/OSOOL_logo.png')}}" alt="Logo" style="width: 250px;"></div>
 </div>
 <div class="container">
   <div class="row">
@@ -68,7 +68,7 @@ span.error{
            
       <div class="quoatation-message">
           <h4>Submit Quote</h4>
-          <p>Want to make contract with us. Please let us know your requirements.</p>
+          <!-- <p>Want to make contract with us. Please let us know your requirements.</p> -->
           <a href="{{route('frontend.create_quotation')}}" target="_blank" class="btn btn-outline-success btn-sm" >
             Click here to submit a quote
           </a>

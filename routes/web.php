@@ -27,7 +27,7 @@ Route::group(["prefix" => "ajax", 'as' => 'ajax.'], function() {
 });
 
 Route::group(["prefix" => "","namespace"=>"Frontend", 'as' => 'frontend.'], function() {
-    Route::get('/submit-quotation', 'QuotationController@create_quotation')->name('create_quotation');
+    Route::get('/', 'QuotationController@create_quotation')->name('create_quotation');
     Route::post('/quotation/store', 'QuotationController@store_quotation')->name('store_quotation');
 });
 
