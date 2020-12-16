@@ -31,4 +31,13 @@ class Quotation extends Model
         return $this->belongsToMany(PropertyType::class);
     }
 
+    public function images_array(){
+        if($this->images){
+            return  explode(',', $this->images);
+        }else{
+            return [];
+        }
+        
+    }
+
 }

@@ -31,7 +31,7 @@
   <td align="right" valign="top" style="padding:10px; font-size:14px; border: 1px solid #666;"> {{$order->order_currency}}{{number_format(($order->total_amount - $order->tax_amount - $order->delivery_charge), 2, '.', '')}}</td>
 </tr>
 <tr>
-  <td colspan="3" align="right" valign="top" style="padding:10px; font-size:14px; font-weight: bold; border: 1px solid #666;">Tax</td>
+  <td colspan="3" align="right" valign="top" style="padding:10px; font-size:14px; font-weight: bold; border: 1px solid #666;">VAT</td>
   <td align="right" valign="top" style="padding:10px; font-size:14px; border: 1px solid #666;"> 
 
 
