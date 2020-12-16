@@ -42,6 +42,6 @@ return array (
   'complaints'=>'شكاوي',
   'notifications'=>'إشعارات',
   'unit_management' => 'إدارة الوحدة',
-
+  'skills' => 'مهارات',
 
 );

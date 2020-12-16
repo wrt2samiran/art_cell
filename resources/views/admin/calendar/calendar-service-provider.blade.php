@@ -94,23 +94,11 @@
                                  @endforelse
                              </select>
                           </div>
-                          <!-- <div class="col-md-6 form-group" id="status-filter-container">
-                              <select class="form-control service-type-filter"  name="contract_service" id="contract_service">
-                                 <option value="">Filter by Service</option>
-                                 @forelse($serviceList as $serviceData)
-                                     <option value="{{$serviceData->id}}" @if($serviceData->id==@$request->contract_service) selected @endif >{{$serviceData->service_name}}</option>
-                                  @empty
-                                  <option value="">No Service Found</option>
-                                  @endforelse
-                             </select>
-                          </div>
-                           -->
-                        </div>
-                        <div class="row">
                           <div class="col-md-4" id="status-filter-container">
                              <button type="submit" class="btn btn-success disable-button">Search</button> 
                           </div>
-                        </div>  
+                        </div>
+                         
                       </form>
                     </div>
                 </div>

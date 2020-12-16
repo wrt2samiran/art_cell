@@ -28,7 +28,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'first_name','last_name','name','phone','email', 'password','role_id','created_by','updated_by','status','created_from','deleted_by','profile_pic',
-        'weekly_off','start_date','end_date'
+        'weekly_off', 'country_id', 'state_id', 'city_id'
     ];
 
     /**
@@ -133,5 +133,21 @@ class User extends Authenticatable
         return false;
     }
 
+    
+    public function user_skills(){
+        return $this->hasMany(UserSkills::class, 'user_id', 'id');
+    }
+
+    public function country(){
+        return $this->belongsTo(Country::class, 'country_id', 'id');
+    }
+
+    public function state(){
+        return $this->belongsTo(State::class, 'state_id', 'id');
+    }
+
+    public function city(){
+        return $this->belongsTo(City::class, 'city_id', 'id');
+    }
 
 }

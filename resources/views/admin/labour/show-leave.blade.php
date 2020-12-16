@@ -52,8 +52,20 @@
                         
                         
                         <tr>
-                          <td>Leave At</td>
-                          <td>{{Carbon\Carbon::createFromFormat('Y-m-d', $leaveData->leave_start)->format('d/m/Y')}}</td>
+                          <td>Leave On</td>
+                         
+                          <td> 
+                            <?php //dd($leaveData->leave_dates);?>
+                               <table>
+                                <tr>
+                                  @forelse(@$leaveData->leave_dates as $leaveDate)
+                                    <td>{{Carbon\Carbon::createFromFormat('Y-m-d', $leaveDate->leave_date)->format('d/m/Y')}}</td>
+                                  @empty
+                                    <td>No Date Found</td>
+                                  @endforelse
+                                </tr>
+                              </table>
+                           </td> 
                         </tr>
                         <tr>
                           <td>Status</td>

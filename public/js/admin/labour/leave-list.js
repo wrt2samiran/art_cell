@@ -31,10 +31,10 @@ var labour_table=$('#labour_table').DataTable({
 });
 
 //function to delete user
-function delete_user(url){
+function delete_user_leave(url){
 swal({
 title: "Are you sure?",
-text: "Once deleted, you will not be able to recover this user!",
+text: "Once deleted, you will not be able to recover this user leave!",
 icon: "warning",
 buttons: true,
 dangerMode: true,
@@ -51,7 +51,7 @@ if (willDelete) {
 
       labour_table.ajax.reload(null, false);
       $.LoadingOverlay("hide");
-      toastr.success('User successfully deleted.', 'Success', {timeOut: 5000});
+      toastr.success('User Leave successfully deleted.', 'Success', {timeOut: 5000});
     },
     error: function(jqXHR, textStatus, errorThrown) {
        $.LoadingOverlay("hide");
@@ -71,10 +71,10 @@ if (willDelete) {
 }
 
 //function to change status of gallery
-function change_status(url,activate_or_deactivate){
+function change_leave_status(url,activate_or_deactivate){
 swal({
 title: "Are you sure?",
-text: "You want to "+activate_or_deactivate+" the user.",
+text: "You want to "+activate_or_deactivate+" the user leave.",
 icon: "warning",
 buttons: true,
 dangerMode: true,
@@ -89,7 +89,7 @@ if (confirm) {
     success: function (data) {
       labour_table.ajax.reload(null, false);
       $.LoadingOverlay("hide");
-      toastr.success('Status successfully updated.', 'Success', {timeOut: 5000});
+      toastr.success('User Leave successfully updated.', 'Success', {timeOut: 5000});
 
     },
     error: function(jqXHR, textStatus, errorThrown) {

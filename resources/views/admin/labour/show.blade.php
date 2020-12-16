@@ -49,18 +49,37 @@
                           <td >Phone/Contact Number</td>
                           <td >{{$user->phone}}</td>
                         </tr>
-                        <tr>
-                          <td >Working Day</td>
-                          <td >{{$user->weekly_off}}</td>
+                         <tr>
+                          <td >Country</td>
+                          <td >{{@$user->country->name}}</td>
                         </tr>
                         <tr>
-                          <td >Start time</td>
-                          <td >{{$user->start_time}}</td>
+                          <td >State</td>
+                          <td >{{@$user->state->name}}</td>
                         </tr>
                         <tr>
-                          <td >End time</td>
-                          <td >{{$user->end_time}}</td>
+                          <td >City</td>
+                          <td >{{@$user->city->name}}</td>
                         </tr>
+                        <tr>
+                          <td >Skills</td>
+                           <td> 
+                               <table>
+                                <tr>
+                                  @forelse(@$user->user_skills as $skillData)
+                                    <td>{{$skillData->skill->skill_title}}</td>
+                                  @empty
+                                    <td>No Skill Found</td>
+                                  @endforelse
+                                </tr>
+                              </table>
+                           </td>  
+                        </tr>
+                        <tr>
+                          <td >Weekly Off Day</td>
+                          <td >{{ucfirst($user->weekly_off)}}</td>
+                        </tr>
+                        
                         
                         <tr>
                           <td>Status</td>

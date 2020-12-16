@@ -80,6 +80,9 @@
 @endsection
 
 @push('custom-scripts')
+<script type="text/javascript">
+
+</script>
 <script type="text/javascript" src="{{asset('js/admin/labour/leave-list.js')}}"></script>
 @endpush
 

@@ -24,6 +24,10 @@ class CreateLabourRequest extends FormRequest
             'email'=>'required|email|max:100|unique:users',
             'password'=>'required|min:6|max:100',
             'phone'=>'required|regex:/[0-9]{8,20}/',
+            'country_id'=>'required',
+            'state_id'=>'required',
+            'city_id'=>'required',
+            //'skills'=>'required',
         ];
     }
     public function messages(){
@@ -43,6 +47,10 @@ class CreateLabourRequest extends FormRequest
             'password.max'=>'Password should not be more then 100 characters',
             'phone.required' => 'Phone/Contact number is required',
             'phone.regex'=>'Phone/Contact number should be a valid number of size 8 to 20 characters',
+            'country_id'=>'Please select Country',
+            'state_id'=>'Please select State',
+            'city_id'=>'Please select City',
+           //'skills'=>'Please select Skill',
         ];
     }
 }

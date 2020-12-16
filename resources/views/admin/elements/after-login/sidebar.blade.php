@@ -68,9 +68,9 @@
                     
                 </li>
                 @if(auth()->guard('admin')->user()->hasModulePermission('master-modules'))
-                <li class="nav-item has-treeview {{(request()->is('admin/country/*','admin/country', 'admin/state/*','admin/state', 'admin/cities/*','admin/cities', 'admin/property-types/*','admin/property-types', 'admin/services/*','admin/services','admin/unit','admin/unit/*'))?'menu-open':''}}">
+                <li class="nav-item has-treeview {{(request()->is('admin/country/*','admin/country', 'admin/state/*','admin/state', 'admin/cities/*','admin/cities', 'admin/property-types/*','admin/property-types', 'admin/services/*','admin/services','admin/unit','admin/unit/*','admin/skills','admin/skills/*'))?'menu-open':''}}">
                     <a href="#"
-                       class="nav-link {{(request()->is('admin/country/*','admin/country', 'admin/state/*','admin/state', 'admin/cities/*','admin/cities', 'admin/property-types/*','admin/property-types', 'admin/services/*','admin/services','admin/unit','admin/unit/*'))?'active':''}}">
+                       class="nav-link {{(request()->is('admin/country/*','admin/country', 'admin/state/*','admin/state', 'admin/cities/*','admin/cities', 'admin/property-types/*','admin/property-types', 'admin/services/*','admin/services','admin/unit','admin/unit/*','admin/unit/*','admin/skills','admin/skills/*'))?'active':''}}">
                         <i class="nav-icon fas fa-bars"></i>
                         <p>
                             {{__('nav_link_text.master_modules')}}
@@ -131,8 +131,22 @@
                                 <i class="nav-icon fas fa-envelope-open-text"></i>
                                 <p>{{__('nav_link_text.unit_management')}}</p>
                             </a>
+
+                        </li> 
+
+                        @if(auth()->guard('admin')->user()->hasAllPermission(['manage-skills']))
+                        <li class="nav-item">
+                            <a href="{{ route('admin.skills.list') }}"
+                               class="nav-link {{(request()->is('admin/skills/*','admin/skills'))?'active':''}}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>{{__('nav_link_text.skills')}}</p>
+                            </a>
+                        </li>
+                        @endif       
+
                         </li>   
                         @endif     
+
                     </ul>
                     
                 </li>

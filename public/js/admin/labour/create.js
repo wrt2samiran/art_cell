@@ -37,6 +37,21 @@ $("#labour_create_form").validate({
             maxlength: 20,
             number:true  
         },
+
+        country_id:{
+            required: true,
+        },
+
+        state_id:{
+            required: true,
+        },
+
+        city_id:{
+            required: true,
+        },
+        skills:{
+            required: true,
+        },
         
     },
     messages: {
@@ -67,6 +82,20 @@ $("#labour_create_form").validate({
             maxlength: "Phone/Contact number should not be more then 20 characters",
             number:"Only number allowed"
         },
+        country_id:{
+            required: "Please select Country",
+        },
+
+        state_id:{
+            required: "Please select State",
+        },
+
+        city_id:{
+            required: "Please select City",
+        },
+        skills: {
+            required:  "Please select Labour",
+        },
         
     },
     errorPlacement: function (error, element) {
@@ -84,6 +113,7 @@ $("#labour_create_form").validate({
         form.submit();
     }
 });
+
 
 
 
