@@ -69,12 +69,13 @@
                                       <label for="{{$setting->slug}}">{{$setting->name}}</label>
 
                                       @if($setting->slug=='tax')
-                                      <input type="{{$setting->input_type}}" class="form-control required" name="{{$setting->slug}}" id="{{$setting->slug}}" min="0.0" step="0.1" min="0.0" max="100" placeholder="Enter {{$setting->name}}" value="{{$setting->value}}">
+                                      <input type="{{$setting->input_type}}" class="form-control required" name="{{$setting->slug}}" id="{{$setting->slug}}"  step="0.1" min="0.0" max="100" placeholder="Enter {{$setting->name}}" value="{{$setting->value}}">
+                                      @elseif($setting->slug=='contract-and-property-max-filesize')
+                                      <input type="{{$setting->input_type}}" class="form-control required" name="{{$setting->slug}}" id="{{$setting->slug}}" min="0.1" step="0.1"  placeholder="Enter {{$setting->name}}" value="{{$setting->value}}">
                                       @else
                                       <input type="{{$setting->input_type}}" class="form-control required" name="{{$setting->slug}}" id="{{$setting->slug}}" value="{{$setting->value}}"  placeholder="Enter {{$setting->name}}">
                                       @endif
                         
-
                                       @if($errors->has($setting->slug))
                                       <span class="text-danger">{{$errors->first($setting->slug)}}</span>
                                       @endif

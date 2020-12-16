@@ -155,13 +155,14 @@ $('#property_manager').select2({
 
 
 $("#add_new_file").on("click", function () {
+    var max_filesize=$('#max_filesize').val();
     let random_string = String(Math.random(10)).substring(2,14); 
     var row=`<div class="row mt-1 files_row">`;
     row += `<div class="col-md-6"><input placeholder="Title" class="form-control file_title_list"  id="title_`+random_string+`" name="title[]" type="text"></div>`;
     row += `<div class="col-md-5">
     <input placeholder="File" required class="form-control file_list"  id="property_files_`+random_string+`" name="property_files[]" type="file">
       <small class="form-text text-muted">
-        Upload PDF/DOC/JPEG/PNG/TEXT files of max. 1mb
+        Upload PDF/DOC/JPEG/PNG/TEXT files of max. `+max_filesize+`mb
       </small>
     </div>`;
     row += `<div class="col-md-1"><button data-delete_url="" type="button" class="btn btn-danger files_row_del_btn"><i class="fa fa-trash" aria-hidden="true"></i></button></div>`;
@@ -195,6 +196,9 @@ $(document).on('click', '.files_row_del_btn', function(){
 
 
 $(document).on('change', '.file_list', function() {
+
+    var max_filesize_mb=$('#max_filesize').val();
+    var max_filesize_kb=1024*parseFloat(max_filesize_mb);
     
     var files = this.files;
 
@@ -204,7 +208,7 @@ $(document).on('change', '.file_list', function() {
     var file_size_in_kb=(files[0].size/1024);
     var file_type= files[0].type;
 
-    if(file_size_in_kb>1024){
+    if(file_size_in_kb>max_filesize_kb){
        file_size_error=true; 
     }
 
@@ -223,13 +227,11 @@ $(document).on('change', '.file_list', function() {
 
     if(file_size_error==true || file_type_error==true){
         reset($('#'+$(this).attr("id")));
-
         var error_message='';
-
         if(file_size_error==true && file_type_error==true){
-            error_message="Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files of max size 1mb";
+            error_message="Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files of max size "+max_filesize_mb+"mb";
         }else if(file_size_error==true && file_type_error==false){
-            error_message="File size should not be more than 1 mb";
+            error_message="File size should not be more than "+max_filesize_mb+" mb";
         }else{
             error_message="Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files";
         }

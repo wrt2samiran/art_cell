@@ -31,10 +31,11 @@
 				                    <div><span>Complaints List</span></div>
 					                <div>
                                         
-						                <a class="btn btn-success" href="{{route('admin.complaints.create')}}">
-						                 Create Complaint
-						                </a>
-                                        
+                                        @if(auth()->guard('admin')->user()->hasAllPermission(['complaint-create']))
+                                        <a class="btn btn-success" href="{{route('admin.complaints.create')}}">
+                                         Create Complaint
+                                        </a>
+                                        @endif 
 					                </div>
 				                </div>
 				            </div>

@@ -7,6 +7,10 @@ $(document).ready(function(){
               required: true,
               number: true 
           },
+          profit_in_percentage:{
+              required: true,
+              number: true 
+          },
           notify_installment_before_days:{
               required: true,
               number: true 
@@ -198,6 +202,44 @@ $(document).on("change keyup keydown blur", ".amount_input_list", function(){
 
 
 
+$(document).on("change keyup keydown blur", "#profit_in_percentage", function(){
+
+      var contract_price=$('#contract_price').val();
+      if(contract_price && $.isNumeric(contract_price)){
+          if($.isNumeric(this.value)){
+
+            var amount=(parseFloat(this.value)/100)*parseFloat(contract_price);
+            
+            $('#profit_in_amount_text').html('Amount = '+parseFloat(amount).toFixed(2));
+          }else{
+            $('#profit_in_amount_text').html('');
+          }
+      }else{
+        $('#profit_in_amount_text').html('');
+      }
+
+
+});
+
+$(document).on("change keyup keydown blur", "#contract_price", function(){
+
+      var profit_in_percentage=$('#profit_in_percentage').val();
+
+      if(profit_in_percentage && $.isNumeric(profit_in_percentage)){
+          if($.isNumeric(this.value)){
+
+            var amount=(parseFloat(profit_in_percentage)/100)*parseFloat(this.value);
+            
+            $('#profit_in_amount_text').html('Amount = '+parseFloat(amount).toFixed(2));
+          }else{
+            $('#profit_in_amount_text').html('');
+          }
+      }else{
+        $('#profit_in_amount_text').html('');
+      }
+
+
+});
 
 
 $('#add_installment_button').click(function(){ 

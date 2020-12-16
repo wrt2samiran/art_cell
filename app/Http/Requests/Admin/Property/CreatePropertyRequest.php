@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Admin\Property;
 
 use Illuminate\Foundation\Http\FormRequest;
-
+use Helper;
 class CreatePropertyRequest extends FormRequest
 {
     /**
@@ -18,6 +18,7 @@ class CreatePropertyRequest extends FormRequest
 
     public function rules()
     {
+        $max_file_size=Helper::contract_max_filesize('kb');
         return [
             'property_name'=>'required|min:2|max:100',
             'property_type_id'=>'required',
@@ -29,7 +30,7 @@ class CreatePropertyRequest extends FormRequest
             'location'=>'required|max:255',
             'property_files.*' => [
                 'mimetypes:application/pdf,image/jpeg,image/jpg,image/png,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword',
-                'max:1024',
+                'max:'.$max_file_size,
             ],
 
         ];

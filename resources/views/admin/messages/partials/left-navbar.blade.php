@@ -3,7 +3,9 @@
 @if(request()->route()->getName()=='admin.messages.compose')
 <a href="{{route('admin.messages.list')}}" class="btn btn-primary btn-block mb-3">Back to Inbox</a>
 @else
-<a href="{{route('admin.messages.compose')}}" class="btn btn-primary btn-block mb-3">Compose</a>
+  @if(auth()->guard('admin')->user()->hasAllPermission(['send-message']))
+  <a href="{{route('admin.messages.compose')}}" class="btn btn-primary btn-block mb-3">Compose</a>
+  @endif
 @endif
 <div class="card">
   <div class="card-header">
@@ -16,6 +18,7 @@
   </div>
   <div class="card-body p-0">
     <ul class="nav nav-pills flex-column">
+      @if(auth()->guard('admin')->user()->hasAllPermission(['view-messages']))
       <li class="nav-item active">
         <a href="{{route('admin.messages.list')}}" class="nav-link {{(request()->route()->getName()=='admin.messages.list')?'active':''}}">
           <i class="fas fa-inbox"></i> Inbox
@@ -25,6 +28,7 @@
           
         </a>
       </li>
+      @endif
       <li class="nav-item">
         <a href="{{route('admin.messages.sent')}}" class="nav-link {{(request()->route()->getName()=='admin.messages.sent')?'active':''}}">
           <i class="far fa-envelope"></i> Sent

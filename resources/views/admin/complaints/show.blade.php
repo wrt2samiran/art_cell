@@ -121,7 +121,9 @@
                                           <option value="">No complaint statusses</option>
                                         @endif
                                     </select>
+                                  @if(auth()->guard('admin')->user()->hasAllPermission(['complaint-status-change']))
                                   <button type="submit" class="btn btn-success mb-2">Update</button>
+                                  @endif
                                 </form>
                             </div>
                             <div class="col-md-12">
@@ -158,7 +160,11 @@
                       <div class="col-lg-12">
                           <div class="card">
                               <div class="card-body text-center">
-                                  <h4 class="card-title">Latest Notes <a href="javascript:add_new_note()" class="btn btn-success">Add New Note</a></h4>
+                                  <h4 class="card-title">Latest Notes 
+                                    @if(auth()->guard('admin')->user()->hasAllPermission(['complaint-add-note']))
+                                    <a href="javascript:add_new_note()" class="btn btn-success">Add New Note</a>
+                                    @endif
+                                  </h4>
                               </div>
                               <div class="comment-widgets">
 
@@ -190,8 +196,12 @@
                                           }
                                         @endphp
 
-                                        <button type="button" data-file_url="{{$file_url}}" data-edit_url="{{route('admin.complaints.update_note',['complaint_id'=>$complaint->id,'note_id'=>$note->id])}}" data-note_data="{{json_encode($note)}}" class="btn btn-success btn-sm edit_note_button" >Edit</button>
-                                        <button type="button" data-delete_url="{{route('admin.complaints.delete_note',['complaint_id'=>$complaint->id,'note_id'=>$note->id])}}" class="btn btn-danger btn-sm delete_note_button">Delete</button>
+                                          @if(auth()->guard('admin')->user()->hasAllPermission(['complaint-edit-note']))
+                                          <button type="button" data-file_url="{{$file_url}}" data-edit_url="{{route('admin.complaints.update_note',['complaint_id'=>$complaint->id,'note_id'=>$note->id])}}" data-note_data="{{json_encode($note)}}" class="btn btn-success btn-sm edit_note_button" >Edit</button>
+                                          @endif
+                                          @if(auth()->guard('admin')->user()->hasAllPermission(['complaint-delete-note']))
+                                          <button type="button" data-delete_url="{{route('admin.complaints.delete_note',['complaint_id'=>$complaint->id,'note_id'=>$note->id])}}" class="btn btn-danger btn-sm delete_note_button">Delete</button>
+                                          @endif
                                         @endif
                                         </div>
                                         
