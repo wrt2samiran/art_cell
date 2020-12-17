@@ -437,10 +437,10 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::post('/assign-labour-task', 'WorkOrderManagementController@taskAssign')->name('taskAssign');
                 Route::post('/assign-labour-maintanence-task', 'WorkOrderManagementController@taskMaintanenceAssign')->name('taskMaintanenceAssign');
                 Route::post('/get-data', 'WorkOrderManagementController@checkAvailablity')->name('checkAvailablity');  
-                Route::get('/task_labour_list/{id}', 'WorkOrderManagementController@taskLabourList')->name('taskLabourList');
+                Route::get('/task_labour_list/{id}', 'WorkOrderManagementController@taskLabourList')->name('taskLabourList')->middleware('check_permissions:work-order-list');;
                 Route::post('/get-dates', 'WorkOrderManagementController@checkDateAvailablity')->name('checkDateAvailablity'); 
                 Route::post('/assign-labour-other-maintanence-task', 'WorkOrderManagementController@taskOtherMaintanenceAssign')->name('taskOtherMaintanenceAssign');  
-                
+                Route::get('/labour_task_details/{id}', 'WorkOrderManagementController@labourTaskDetails')->name('labourTaskDetails');
                 
 
                 Route::any('/{id}/delete', 'WorkOrderManagementController@delete')->name('delete');

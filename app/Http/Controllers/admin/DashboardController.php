@@ -180,6 +180,49 @@ class DashboardController extends Controller
         return view('admin.dashboard.customer.index',$this->data);
     }
     public function service_provider_dashboard($request,$current_user){
+        $this->data['total_labours']=User::where('created_by', $current_user->id)->where('is_deleted', 'N')->whereNull('deleted_by')
+        ->whereHas('role',function($q){
+            $q->where('slug','labour');
+        })->count();
+
+        $this->data['total_contracts']=Contract::where('creation_complete',true)->whereNull('deleted_at')
+        ->whereHas('work_orders',function($query) use($current_user){
+                $query->where('user_id',$current_user->id);
+        })
+        ->count();
+        $this->data['total_work_orders']=WorkOrderLists::where('user_id',$current_user->id)->where('is_deleted', 'N')->whereNull('deleted_by')->count();
+
+        $this->data['complaints']=Complaint::
+        with('complaint_status')
+        ->whereHas('contract')
+        ->whereHas('complaint_status')
+        ->whereHas('work_order',function($query) use($current_user){
+                $query->where('user_id',$current_user->id);
+        })
+        ->orderBy('id','desc')->take(5)->get();
+
+        $this->data['work_orders']=WorkOrderLists::where('user_id', $current_user->id)->with('contract', 'contract_services', 'service')
+        ->orderBy('id','desc')->take(5)->get();
+
+        $this->data['tasks']=TaskLists::with('work_order')->where('created_by', $current_user->id)
+        ->whereHas('contract')
+        ->whereHas('property')
+        ->orderBy('id','DESC')->take(10)->get();
+
+        $work_orders=WorkOrderLists::select(DB::raw('count(*) as total_orderrs,  DATE_FORMAT(created_at, "%m-%Y") as month_year'))->where("created_at",">", Carbon::now()->subMonths(6))->where('is_deleted', 'N')->groupBy('month_year')->pluck('total_orderrs','month_year')->toArray();
+
+        for ($i = 0; $i < 12; $i++) {
+
+            $month_year=date('m-Y', strtotime("-$i month"));
+            $last_six_month_work_order_array[]=$month_year;
+
+            
+
+            $six_months_work_orders[]=(array_key_exists($month_year,$work_orders))?$work_orders[$month_year]:0;
+        }
+        $this->data['last_six_month_work_order_array']=$last_six_month_work_order_array;
+        $this->data['six_months_work_orders']=$six_months_work_orders;
+        
         return view('admin.dashboard.service_provider.index',$this->data);
     }
     public function labour_dashboard($request,$current_user){

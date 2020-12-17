@@ -47,6 +47,10 @@
                                     <thead>
                                         <tr>
                                             <th>Id</th>
+                                            <th>Property</th>
+                                            <th>Country</th>
+                                            <th>State</th>
+                                            <th>City</th>
                                             <th>Service</th>
                                             <th>Task Date</th>
                                             <th>Slot</th>
@@ -61,52 +65,69 @@
                 </div>
 
                 <!-- Modal -->
+                <div class="modal fade" id="addTaskModal" role="dialog">
+                  <div class="modal-dialog">
+                  
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        
+                        <h4 class="modal-title">Add Feedback</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                      </div>
+                      <div class="modal-body">
+                        <div class="card-body">
+                            <div class="row justify-content-center">
+                              <div class="col-md-10 col-sm-12">
                                 
-
-                                <div class="modal fade" id="addTaskModal" role="dialog">
-                                <div class="modal-dialog">
-                                
-                                  <!-- Modal content-->
-                                  <div class="modal-content">
-                                    <div class="modal-header">
-                                      
-                                      <h4 class="modal-title">Add Feedback</h4>
-                                      <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                    </div>
-                                    <div class="modal-body">
-                                      <div class="card-body">
-                                          <div class="row justify-content-center">
-                                            <div class="col-md-10 col-sm-12">
-                                              
-                                              <form  method="post" id="admin_labour_task_feedback_form" action="{{route('admin.work-order-management.taskFeedback')}}" method="post" enctype="multipart/form-data">
-                                                @csrf
-                                                      <div>  
-                                                        <input type="hidden" name="task_details_id" id="task_details_id" />
-                                                 
-                                                        <div class="form-group">
-                                                          <label for="service_id">Task Feedback </label>
-                                                          <textarea class="form-control float-right" name="user_feedback" id="user_feedback">{{old('user_feedback')}}</textarea>
-                                                           @if($errors->has('user_feedback'))
-                                                            <span class="text-danger">{{$errors->first('user_feedback')}}</span>
-                                                           @endif  
-                                                        </div>
-                                                        
-                                                    <div>
-                                                   <button type="submit" class="btn btn-success">Submit</button> 
-
-                                                </div>
-                                              </form>
-                                            </div>
+                                <form  method="post" id="admin_labour_task_feedback_form" action="{{route('admin.work-order-management.taskFeedback')}}" method="post" enctype="multipart/form-data">
+                                  @csrf
+                                        <div>  
+                                          <input type="hidden" name="task_details_id" id="task_details_id" />
+                                            
+                                          <div class="form-group">
+                                            <label for="service_id">Feedback <span class="error">*</span></label>
+                                            <textarea class="form-control float-right" name="user_feedback" id="user_feedback">{{old('user_feedback')}}</textarea>
+                                             @if($errors->has('user_feedback'))
+                                              <span class="text-danger">{{$errors->first('user_feedback')}}</span>
+                                             @endif  
                                           </div>
-                                      </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                    </div>
+
+                                          <div class="form-group required">
+                                            <label for="property_id">Feedback Status <span class="error">*</span></label>
+                                              <select class="form-control parent_role_select2" style="width: 100%;" name="status" id="status" aria-invalid="false">
+                                                <option value="">Select Feedback Status</option>
+                                                <option value="2">Completed</option>
+                                                <option value="3">Request for Reschedule</option>
+                                              </select>
+                                          </div>
+
+                                          <div class="form-group required">
+                                              <label>Attach Files</label>
+                                              <div>
+                                                <button type="button" id="add_new_file" class="btn btn-outline-success"><i class="fa fa-plus"></i>&nbsp;Add File</button>
+                                              </div>
+                                          </div>
+                                          <div id="files_container">
+
+                                          </div>
+                                                            
+                                      <div>
+                                     <button type="submit" class="btn btn-success">Submit</button> 
+
                                   </div>
-                                  
-                                </div>
-                                </div>
+                                </form>
+                              </div>
+                            </div>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      </div>
+                    </div>
+                    
+                  </div>
+                </div>
   
         </section>
         <!-- /.content -->
