@@ -105,6 +105,14 @@ div.dataTables_wrapper div.dataTables_filter { text-align: left; }
 
 /* data table end */
 
+.assign-labour-task { width: 100%; text-align: left; }
+.ms-options ul { list-style: none; margin: 0; padding: 0 10px 0 0; }
+
+.work-options .ms-options-wrap > .ms-options > ul li { padding-right: 25px; padding-left: 0px; }
+.work-options .ms-options-wrap > .ms-options > ul li:nth-child(4n+1) 
+ { padding-right: 10px; padding-left: 0px; }
+
+
 
 
 @media (min-width: 992px){

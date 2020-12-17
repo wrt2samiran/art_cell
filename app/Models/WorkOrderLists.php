@@ -47,4 +47,27 @@ class WorkOrderLists extends Model
     public function contract_service_recurrence(){
         return $this->belongsTo(ContractServiceRecurrence::class,'contract_service_id','contract_service_id');
     }
+
+    public function permisions_slug_array(){
+        $permissions_slug_array=[];
+        if($this->role){
+            if(count($this->role->permissions)){
+                foreach ($this->role->permissions as $permission) {
+                    if($permission->functionality){
+                        array_push($permissions_slug_array, $permission->functionality->slug);
+                    }
+                }
+            }
+        }
+        return array_unique($permissions_slug_array);
+    }
+    
+    public function hasAllPermission(array $permissions){
+        foreach ($permissions as $permission) {
+            if(!in_array($permission, $this->permisions_slug_array())){
+                return false;
+            }
+        }
+        return true;
+    }
 }

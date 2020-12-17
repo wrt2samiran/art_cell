@@ -48,58 +48,60 @@
                 <div class="filter-area ">
                   <?php //dd($work_order_list);?>
                     <div class="row">
-                      <form  method="post" id="filter_calendar" action="{{route('admin.calendar.calendardata')}}" method="post" enctype="multipart/form-data">
-                        @csrf
-                        <div class="row">
-                          <input type="hidden" name="search" id="search" value="Search">
-                          <div class="col-md-4 form-group" id="status-filter-container">
-                              <select class="form-control status-filter"  name="contract_id" id="contract_id" >
-                                  
-                                  @forelse($sqlContract as $contractData)
-                                     <option value="{{$contractData->id}}" @if($contractData->id==@$request->contract_id) selected @endif >{{$contractData->title}} ({{$contractData->code}})</option>
-                                  @empty
-                                  <option value="">No Contract Found</option>
-                                  @endforelse
-                             </select>
-                          </div>
-                          <div class="col-md-4 form-group" id="status-filter-container">
-                            <select class="form-control status-filter"  name="work_order_id" id="work_order_id">
-                                    <option value="">Filter by Work Order</option>
-                                    @forelse($work_order_list as $work_order_data)
-                                       <option value="{{$work_order_data->id}}" @if($work_order_data->id==@$request->work_order_id) selected @endif >{{$work_order_data->task_title}}</option>
+                      <div class="col-lg-12">
+                        <form  method="post" id="filter_calendar" action="{{route('admin.calendar.calendardata')}}" method="post" enctype="multipart/form-data">
+                          @csrf
+                          <div class="row">
+                            <input type="hidden" name="search" id="search" value="Search">
+                            <div class="col-md-4 form-group" id="status-filter-container">
+                                <select class="form-control status-filter"  name="contract_id" id="contract_id" >
+                                    
+                                    @forelse($sqlContract as $contractData)
+                                       <option value="{{$contractData->id}}" @if($contractData->id==@$request->contract_id) selected @endif >{{$contractData->title}} ({{$contractData->code}})</option>
                                     @empty
-                                    <option value="">No Work Order Found</option>
+                                    <option value="">No Contract Found</option>
                                     @endforelse
-                             </select>
-                          </div>   
+                               </select>
+                            </div>
+                            <div class="col-md-4 form-group" id="status-filter-container">
+                              <select class="form-control status-filter"  name="work_order_id" id="work_order_id">
+                                      <option value="">Filter by Work Order</option>
+                                      @forelse($work_order_list as $work_order_data)
+                                         <option value="{{$work_order_data->id}}" @if($work_order_data->id==@$request->work_order_id) selected @endif >{{$work_order_data->task_title}}</option>
+                                      @empty
+                                      <option value="">No Work Order Found</option>
+                                      @endforelse
+                               </select>
+                            </div>   
 
-                          <div class="col-md-4 form-group" id="status-filter-container">
-                              <select class="form-control status-filter"  name="contract_status" id="contract_status">
-                                  <option value="">Filter by Status</option>
-                                     <option value="2" @if($request->contract_status==2) selected @endif>Completed</option>
-                                     <option value="3" @if($request->contract_status==3) selected @endif>Pending </option>
-                                     <option value="1" @if($request->contract_status==1) selected @endif>Overdue</option>
-                             </select>
+                            <div class="col-md-4 form-group" id="status-filter-container">
+                                <select class="form-control status-filter"  name="contract_status" id="contract_status">
+                                    <option value="">Filter by Status</option>
+                                       <option value="2" @if($request->contract_status==2) selected @endif>Completed</option>
+                                       <option value="3" @if($request->contract_status==3) selected @endif>Pending </option>
+                                       <option value="1" @if($request->contract_status==1) selected @endif>Overdue</option>
+                               </select>
+                            </div>
                           </div>
-                        </div>
-                        <div class="row">
-                          <div class="col-md-6 form-group" id="status-filter-container">
-                              <select class="form-control service-type-filter"  name="contract_service" id="contract_service">
-                                 <option value="">Filter by Service</option>
-                                 @forelse($serviceList as $serviceData)
-                                     <option value="{{$serviceData->id}}" @if($serviceData->id==@$request->contract_service) selected @endif >{{$serviceData->service_name}}</option>
-                                  @empty
-                                  <option value="">No Service Found</option>
-                                  @endforelse
-                             </select>
+                          <div class="row">
+                            <div class="col-md-6 form-group" id="status-filter-container">
+                                <select class="form-control service-type-filter"  name="contract_service" id="contract_service">
+                                   <option value="">Filter by Service</option>
+                                   @forelse($serviceList as $serviceData)
+                                       <option value="{{$serviceData->id}}" @if($serviceData->id==@$request->contract_service) selected @endif >{{$serviceData->service_name}}</option>
+                                    @empty
+                                    <option value="">No Service Found</option>
+                                    @endforelse
+                               </select>
+                            </div>
+                            <div class="col-md-6" id="status-filter-container">
+                               <button type="submit" class="btn btn-success disable-button">Search</button> 
+                            </div>
+                            
                           </div>
-                          <div class="col-md-6" id="status-filter-container">
-                             <button type="submit" class="btn btn-success disable-button">Search</button> 
-                          </div>
-                          
-                        </div>
-                         
-                      </form>
+                           
+                        </form>
+                      </div>
                     </div>
                 </div>
                 

@@ -5,10 +5,12 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\Models\{User,Country,State,City,WorkOrderLists,TaskLists, TaskDetails, ServiceAllocationManagement, Property, Contract, ContractService, ContractServiceDate, WorkOrderSlot, ContractServiceRecurrence};
-use Auth, Validator;
+use App\Models\{User,Country,State,City,WorkOrderLists,TaskLists, TaskDetails, ServiceAllocationManagement, Property, Contract, ContractService, ContractServiceDate, WorkOrderSlot, ContractServiceRecurrence, TaskDetailsFeedbackFiles, Notification};
+use Auth, Validator, Helper, File, Image;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
+use App\Mail\Admin\LabourFeedback\LabourFeedbackMailToServiceProvider;
+use Mail;
 use DB;
 
 class WorkOrderManagementController extends Controller
@@ -868,11 +870,11 @@ class WorkOrderManagementController extends Controller
     public function taskFeedback(Request $request) {
 
         //dd($request->all());
-        $logedInUser = \Auth::guard('admin')->user()->id;
+        $logedInUser = \Auth::guard('admin')->user();
         $sqlTaskData = TaskDetails::findOrFail($request->task_details_id);
         $totalTask   = TaskDetails::whereTaskId($sqlTaskData->task_id)->get();
         $sqlTask     = TaskLists::findOrFail($sqlTaskData->task_id);
-        $sqlWorkOrder = WorkOrderLists::findOrFail($sqlTask->work_order_id);
+        $sqlWorkOrder = WorkOrderLists::with('userDetails')->findOrFail($sqlTask->work_order_id);
         $workOrderTaskList = TaskLists::whereWorkOrderId($sqlTask->work_order_id)->get();
         $this->data['page_title']     = 'Add Task Feedback';
     
@@ -882,10 +884,12 @@ class WorkOrderManagementController extends Controller
             {
                 $validationCondition = array(
                     'user_feedback' => 'required|max:5000',
+                    'status'        => 'required',
                 );
                 $validationMessages = array(
                     'user_feedback.required'    => 'Please enter your Feedback',
                     'user_feedback.max'         => 'Feedback should not be more than 5000 characters',
+                    'status'                    => 'Please select Feedback status',
                 );
 
                 $Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);
@@ -896,21 +900,107 @@ class WorkOrderManagementController extends Controller
                 } else {
                     
                     $sqlTaskData->user_feedback  = $request->user_feedback;
-                    $sqlTaskData->status         = '2';
+                    $sqlTaskData->status         = $request->status;
                     $sqlTaskData->updated_at     = date('Y-m-d H:i:s');
-                    $sqlTaskData->updated_by     = $logedInUser;
-                    $save                        = $sqlTaskData->save(); 
+                    $sqlTaskData->updated_by     = $logedInUser->id;
+                    if($request->status==3)
+                    {
+                        $sqlTaskData->reschedule_requested_at = date('Y-m-d H:i:s');
+                    }
+                    $save  = $sqlTaskData->save(); 
 
                     
                     $sqlTask->task_complete_percent = ($sqlTask->task_complete_percent+(100/count($totalTask)));
                     $updatePercent = $sqlTask->save();
 
-                    $sqlTaskWorkPercent     = TaskLists::whereWorkOrderId($sqlTask->work_order_id)->whereId($sqlTaskData->task_id)->first();
-                    if($sqlTaskWorkPercent->task_complete_percent==100)
-                    {
-                        $sqlWorkOrder->work_order_complete_percent = ($sqlWorkOrder->work_order_complete_percent+(100/count($workOrderTaskList)));
+                    if(isset($request->feedback_file_title) && count($request->feedback_file_title)){
+                    foreach ($request->feedback_file_title  as $key=>$feedback_file_title) {
+                       
+                            if($request->hasFile('feedback_file') && isset($request->file('feedback_file')[$key])){
+
+                                $file=$request->file('feedback_file')[$key];
+                                //upload new file
+                                $file_name = 'feedback-file-'.time().$key.'.'.$file->getClientOriginalExtension();
+
+                                $thumb_path = public_path('/uploads/feedback_attachments/thumb');
+
+                                $img = Image::make($file->getRealPath());
+                                //resizing and saving resized image
+                                // $img->resize(config("image_upload.thumb_size.width"), config("image_upload.thumb_size.height"), function ($constraint) {
+                                //     $constraint->aspectRatio();
+                                // })->save($thumb_path.'/'.$file_name);
+
+                                $img_thumb = Helper::resize_image($file, 200, 200);
+                               // $file->move($thumb_path, $img_thumb);
+
+                                $destinationPath = public_path('/uploads/feedback_attachments');
+                             
+                                $file->move($destinationPath, $file_name);
+                                $mime_type=$file->getClientMimeType();
+
+                                $file_type=Helper::get_file_type_by_mime_type($mime_type);
+
+                                    TaskDetailsFeedbackFiles::create([
+                                        'task_details_id'=>$request->task_details_id,
+                                        'feedback_file'=>$file_name,
+                                        'file_type'=>$file_type,
+                                        'feedback_file_title'=>$feedback_file_title,
+                                        'created_by'=>$logedInUser->id,
+                                    ]);
+
+                                }
+                        }
                     }
-                    
+
+                   // dd($sqlWorkOrder->userDetails->email);
+                    if($request->status==3)
+                    {
+                        $data=[
+                            'user'      =>$sqlWorkOrder->userDetails->name,
+                            'work_order'=>$sqlWorkOrder->task_title,
+                            'task_title'=>$sqlTask->task_title,
+                            'task_date' => $sqlTaskData->task_date,
+                            'labour'    => $logedInUser->name,
+                            'from_name' =>env('MAIL_FROM_NAME','SMMS'),
+                            'from_email'=>env('MAIL_FROM_ADDRESS', 'info@smms.com'),
+                            'details'   => $request->user_feedback,
+                            'subject'   =>'Task Reschedule request'
+                        ];
+
+                        //dd($data);
+
+                        Mail::to($sqlWorkOrder->userDetails->email)->send(new LabourFeedbackMailToServiceProvider($data));
+
+                       // if($sqlWorkOrder->hasAllPermission(['work-order-list'])){
+                            $redirect_path=route('admin.work-order-management.labourTaskDetails',['id'=>$request->task_details_id],false);
+                       // }
+                        
+                        $notification_message=$logedInUser->name.' requested you to reschedule a task.';
+
+                        $notification_data[]=[
+                            'notificable_id'=>$request->task_details_id,
+                            'notificable_type'=>'App\Models\WorkOrderLists',
+                            'user_id'=>$sqlWorkOrder->userDetails->id,
+                            'message'=>$notification_message,
+                            'redirect_path'=>$redirect_path,
+                            'created_at'=>Carbon::now(),
+                            'updated_at'=>Carbon::now()
+                        ];
+
+                        if(count($notification_data)){
+                            Notification::insert($notification_data);
+                        }
+
+                    }    
+
+                    if($request->status==2)
+                    {
+                        $sqlTaskWorkPercent     = TaskLists::whereWorkOrderId($sqlTask->work_order_id)->whereId($sqlTaskData->task_id)->first();
+                        if($sqlTaskWorkPercent->task_complete_percent==100)
+                        {
+                            $sqlWorkOrder->work_order_complete_percent = ($sqlWorkOrder->work_order_complete_percent+(100/count($workOrderTaskList)));
+                        }
+                    }
 
                     $request->session()->flash('alert-success', 'Task Feedback has been added successfully');
                     return redirect()->route('admin.work-order-management.labourTaskList',$sqlTaskData->task_id);
@@ -964,7 +1054,7 @@ class WorkOrderManagementController extends Controller
 
         if($request->ajax()){
              if($logedInUserRole==5){
-                 $task_list=TaskDetails::with('task')->with('service')->with('work_order_slot')->with('userDetails')->where('user_id', $id)->orderBy('id','Desc');
+                 $task_list=TaskDetails::with('task', 'task.property', 'task.property.country', 'task.property.state', 'task.property.city')->with('service')->with('work_order_slot')->with('userDetails')->where('user_id', $id)->orderBy('id','Desc');
              }
              else{
                 $task_list=TaskLists::with('service')->where('work_order_id', $id)->where('created_by', $logedInUser)->orderBy('id','Desc');
@@ -993,29 +1083,51 @@ class WorkOrderManagementController extends Controller
                    
                    
                 }
-                else
+                else if($task_list->status=='1')
+                {
+                    return '<span class="btn btn-block btn-outline-denger btn-sm">Overdue</a>';
+                }
+                else if($task_list->status=='2')
                 {
                     return '<span class="btn btn-block btn-outline-success btn-sm">Completed</a>';
+                }
+                else if($task_list->status=='3')
+                {
+                    return '<span class="btn btn-block btn-info btn-sm">Requested for Reschedule</a>';
                 }
             })
             ->addColumn('action',function($task_list){
                 $logedInUser = \Auth::guard('admin')->user()->id;
                 $today = date('Y-m-d');
                 $action_buttons='';
+
+
                 
                 if($logedInUser == $task_list->user_id)
                 { 
+
                     if($task_list->user_feedback==''){
                         if($task_list->user_id==$logedInUser){
                             
                             if($today >= $task_list->task_date)
                             {
-                                return '<a title="Add Task Feedback" href="javascript:void(0)" onclick="addFeedback('.$task_list->id.')"><i class="fas fa-head-side-cough"></i></a>&nbsp;&nbsp;';
+                                
+                                $details_url = route('admin.work-order-management.labourTaskDetails',$task_list->id);
+                                $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Show Task" id="details_task" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a> <a title="Add Task Feedback" href="javascript:void(0)" onclick="addFeedback('.$task_list->id.')"><i class="fas fa-head-side-cough"></i></a>&nbsp;&nbsp;';
                             }
                             else
                             {
-                                return 'Permission Denied';
+                               // return 'Permission Denied';
+                                $details_url = route('admin.work-order-management.labourTaskDetails',$task_list->id);
+                                $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Show Task" id="details_task" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
                             }
+
+                            
+                            
+                            if($action_buttons==''){
+                                $action_buttons=$action_buttons.'<span class="text-muted">No access</span>';
+                            } 
+                            return $action_buttons;
                             
                         }
                         else{
@@ -1024,9 +1136,10 @@ class WorkOrderManagementController extends Controller
                     
                     }
                     else{
-                         $details_url = route('admin.work-order-management.taskLabourList',$task_list->id);
-                        return '<a title="View Daily Task Update" id="details_task_feedback" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
+                         $details_url = route('admin.work-order-management.labourTaskDetails',$task_list->id);
+                        return '<a title="View Daily Task Update" id="details_task" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
                     }
+
                 }
                 else
                 {
@@ -1121,6 +1234,31 @@ class WorkOrderManagementController extends Controller
         
     }
 
+    
+
+    /*****************************************************/
+    # WorkOrderManagementController
+    # Function name : labourTaskDetails
+    # Author        :
+    # Created Date  : 16-12-2020
+    # Purpose       : Showing Labour Task details
+    # Params        : Request $request
+    /*****************************************************/
+
+    public function labourTaskDetails($id){
+
+        //dd($request->all());
+        $this->data['page_title']='Labour Task List';
+        $logedInUser = \Auth::guard('admin')->user()->id;
+
+        $this->data['task_data']=TaskDetails::with('task', 'task.property', 'task.property.country', 'task.property.state', 'task.property.city', 'task.work_order', 'service', 'work_order_slot', 'userDetails', 'task_details_feedback_files')->whereId($id)->orderBy('id','Desc')->first();
+        //dd($this->data['task_data']);
+        return view($this->view_path.'.labour-task-details',$this->data);
+       
+        
+    }
+
+
     /*****************************************************/
     # WorkOrderManagementController
     # Function name : taskLabourList
@@ -1180,9 +1318,15 @@ class WorkOrderManagementController extends Controller
             
 
                 if(\Auth::guard('admin')->user()->role_id==4){
-                    $details_url = route('admin.work-order-management.taskLabourList',$labour_task_list->id);
+                    $details_url = route('admin.work-order-management.labourTaskDetails',$labour_task_list->id);
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Daily Task List" id="details_task" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
                  }
+
+                 if($action_buttons=='')
+                 {
+                    $action_buttons=$action_buttons.'<span class="text-muted">No access</span>';
+                 } 
+                 return $action_buttons;
                 
             })
 

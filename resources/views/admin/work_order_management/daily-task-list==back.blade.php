@@ -96,7 +96,7 @@
             @if(@$work_order_list->task_assigned=='N') 
             <div class="card-header">
               <div class="d-flex justify-content-between" >
-                <div class="assign-labour-task">
+                <div>
                   <!-- <a class="btn btn-success" style="text-align: right;" onclick="assignLabourTask()" href="{{route('admin.work-order-management.labourTaskCreate', $work_order_list->id)}}"> -->
                     <?php //dd($work_order_list);?>
                    @if(@$work_order_list->contract_services->service_type=='Maintenance' and @$work_order_list->contract_service_recurrence->interval_type == 'daily')  
@@ -299,7 +299,7 @@
 
                                      <?php //dd($slot_data);?>
                                      @php $arraySlot = array('1'=> 'First Slot', '2'=> 'Second Slot', '3'=> 'Third Slot', '4'=> 'Fourth Slot', '5'=> 'Fifth Slot', '6'=>'Sixth Slot', '7'=> 'Seventh Slot', '8'=> 'Eight Slot', '9'=>'Nineth Slot', '10'=>'Tenth Slot'); @endphp
-                                      <div class="form-group work-options required">
+                                      <div class="form-group required">
                                       <label for="property_id">Work <span class="error">*</span></label>
                                       <select class="form-control work_date" multiple="multiple" style="width: 100%;" name="work_date[]" id="work_date"  onchange="checkMaintanenceDaily()">
                                         @if(!empty($available_dates))

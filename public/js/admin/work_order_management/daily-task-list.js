@@ -306,6 +306,10 @@ $("#admin_other_maintanence_labour_task_add_form").validate({
         ajax: baseUrl+'/admin/work-order-management',
         columns: [
             { data: 'id', name: 'id' },
+            { data: 'task.property.property_name', name: 'task.property.property_name' },
+            { data: 'task.property.country.name', name: 'task.property.country.name' },
+            { data: 'task.property.state.name', name: 'task.property.state.name' },
+            { data: 'task.property.city.name', name: 'task.property.city.name' },
             { data: 'service.service_name', name: 'service.service_name' },
             { data: 'task_date', name: 'task_date' },
             {
@@ -450,12 +454,18 @@ $("#admin_other_maintanence_labour_task_add_form").validate({
                 required: true,
                 maxlength: 5000,
             },
+            status: {
+                required: true,
+            },
            
         },
         messages: {
             user_feedback: {
                 required: 'Please enter your Feedback',
                 maxlength: "Feedback should not be more than 5000 characters"
+            },
+            status: {
+                required: 'Please select Feedback Status',
             },
             
         },
@@ -474,6 +484,85 @@ $("#admin_other_maintanence_labour_task_add_form").validate({
             form.submit();
         }
     });
+
+$("#add_new_file").on("click", function () {
+    let random_string = String(Math.random(10)).substring(2,14); 
+    var row=`<div class="row mt-1 files_row">`;
+    row += `<div class="col-md-6"><input placeholder="Title" class="form-control file_title_list"  id="feedback_file_title_`+random_string+`" name="feedback_file_title[]" type="text"></div>`;
+    row += `<div class="col-md-5">
+    <input placeholder="File" required class="form-control file_list"  id="feedback_file_`+random_string+`" name="feedback_file[]" type="file">
+      <small class="form-text text-muted">
+        Upload JPEG/JPG/PNG/SVG files of max. 2mb
+      </small>
+    </div>`;
+    row += `<div class="col-md-1"><button data-delete_url="" type="button" class="btn btn-danger files_row_del_btn"><i class="fa fa-trash" aria-hidden="true"></i></button></div>`;
+    row +=`</div>`;
+    $("#files_container").append(row);
+
+    $('#feedback_file_title_'+random_string).rules("add", {
+       required: true,
+       maxlength: 100,
+       messages: {
+         required: "Enter title",
+         maxlength: "Maximum 100 characters allowed",
+       }
+    });
+
+});
+
+
+
+$(document).on('click', '.files_row_del_btn', function(){  
+    
+    var element_to_remove=$(this).closest(".files_row");
+    element_to_remove.remove();
+    
+});
+
+
+
+$(document).on('change', '.file_list', function() {
+    
+    var files = this.files;
+
+    var file_size_error=false;
+    var file_type_error=false;
+
+    var file_size_in_kb=(files[0].size/2048);
+    var file_type= files[0].type;
+
+    if(file_size_in_kb>2048){
+       file_size_error=true; 
+    }
+
+    var allowed_file_types=[
+    'image/jpeg',
+    'image/jpg',
+    'image/png',
+    ];
+
+    if(!allowed_file_types.includes(file_type)){
+        file_type_error=true;
+    }
+
+    if(file_size_error==true || file_type_error==true){
+        reset($('#'+$(this).attr("id")));
+
+        var error_message='';
+
+        if(file_size_error==true && file_type_error==true){
+            error_message="Please upload only JPG/JPEG/PNG/SVG files of max size 2mb";
+        }else if(file_size_error==true && file_type_error==false){
+            error_message="File size should not be more than 2mb";
+        }else{
+            error_message="Please upload only JPG/JPEG/PNG/SVG files";
+        }
+
+        swal(error_message);
+    }
+
+
+});
 
 
  $("document").ready(function(){

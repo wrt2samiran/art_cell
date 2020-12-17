@@ -27,4 +27,10 @@ class TaskDetails extends Model
     {
         return $this->belongsTo(ContractService::class);
     }
+
+    public function task_details_feedback_files()
+    {
+        return $this->hasMany(TaskDetailsFeedbackFiles::class);
+    }
+    
 }
