@@ -37,16 +37,6 @@ class   AuthController extends Controller
             // If admin is logged in, redirect him to dashboard page //
             return Redirect::route('admin.dashboard');
         } else {
-            
-            
-            $this->data['property_types']=PropertyType::where('is_active',true)->orderBy('id','desc')->get();
-            $this->data['services']=Service::where('is_active',true)->orderBy('id','desc')->get();
-
-            $this->data['cities']=City::where('is_active',true)->orderBy('name','asc')->get();
-            $this->data['states']=State::whereHas('cities',function($q){
-                $q->where('is_active',true);
-            })->with('cities')->where('is_active',true)->orderBy('name','asc')->get();
-           
 
             // dd($serviceList);
             return view('admin.login.admin_login', $this->data);

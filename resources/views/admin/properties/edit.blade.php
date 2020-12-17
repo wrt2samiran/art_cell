@@ -50,6 +50,10 @@
                       <form  method="post" id="admin_property_edit_form" action="{{route('admin.properties.update',$property->id)}}" method="post" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
+                        @php
+                        $max_filesize=(isset($setting['contract-and-property-max-filesize']))?$setting['contract-and-property-max-filesize']:'1';
+                        @endphp
+                        <input type="hidden" value="{{$max_filesize}}"  id="max_filesize">
                         <div>
                           <div class="form-group required">
                             <label for="property_name">Property Name <span class="error">*</span></label>
@@ -189,7 +193,7 @@
                                   <div class="col-md-5">
                                     <input data-is_required="no" placeholder="File" class="form-control file_list"  id="property_files_{{$file->id}}" name="property_files[]" type="file" aria-describedby="imageHelp{{$file->id}}">
                                     <small class="form-text text-muted">
-                                      Upload PDF/DOC/JPEG/PNG/TEXT files of max. 1mb
+                                      Upload PDF/DOC/JPEG/PNG/TEXT files of max. {{$max_filesize}}mb
                                     </small>
                                     <small id="imageHelp{{$file->id}}" class="form-text text-muted"><b>Leave blank if you do not want to update image.(<a href="{{route('admin.properties.download_attachment',$file->id)}}">download file</a>)</b></small>
                                   </div>

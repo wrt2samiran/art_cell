@@ -24,7 +24,8 @@ class StorePaymentInfoRequest extends FormRequest
     public function rules()
     {
         $rules_array=[
-            'contract_price'=>'required|numeric'
+            'contract_price'=>'required|numeric',
+            'profit_in_percentage'=>'required|numeric'
         ];
         if(request()->in_installment){
             $rules_array['notify_installment_before_days']='required|numeric';

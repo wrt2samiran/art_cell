@@ -716,10 +716,17 @@ class ContractController extends Controller
         $this->authorize('store_payment_info',$contract);
         $current_user=auth()->guard('admin')->user();
 
+        $profit_in_percentage=(int)$request->profit_in_percentage;
+
+        $price=(float)$request->contract_price;
+
+        $profit_in_amount=($profit_in_percentage/100)*$price;
 
         $contract->update([
          'contract_price'=>$request->contract_price,
          'contract_price_currency'=>Helper::getSiteCurrency(),
+         'profit_in_percentage'=>$profit_in_percentage,
+         'profit_in_amount'=>$profit_in_amount,
          'is_paid'=>false,
          'in_installment'=>($request->in_installment)?true:false,
          'absolute_or_percentage'=>$request->absolute_or_percentage,

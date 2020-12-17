@@ -82,19 +82,26 @@ class ComplaintController extends Controller
             ->addColumn('work_order_title',function($complaint){
                 return $complaint->work_order? Str::limit($complaint->work_order->task_title,100):'';
             })
-            ->addColumn('action',function($complaint){
+            ->addColumn('action',function($complaint)use ($current_user){
                 $delete_url=route('admin.complaints.delete',$complaint->id);
                 $details_url=route('admin.complaints.show',$complaint->id);
                 $edit_url=route('admin.complaints.edit',$complaint->id);
                 $action_buttons='';
- 
-                $action_buttons=$action_buttons.'<a title="View Complaint Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
 
+                $has_details_permission=($current_user->hasAllPermission(['complaint-details']))?true:false;
 
-                $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Complaint" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
+                if($has_details_permission){
+                    $action_buttons=$action_buttons.'<a title="View Complaint Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
+                }
+                $has_edit_permission=($complaint->created_by==$current_user->id && $current_user->hasAllPermission(['complaint-edit']))?true:false;
+                if($has_edit_permission){
+                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Complaint" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
+                }
 
-                $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete Complaint" href="javascript:delete_complaint('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
-       
+                $has_delete_permission=($complaint->created_by==$current_user->id && $current_user->hasAllPermission(['complaint-delete']))?true:false;
+                if($has_delete_permission){
+                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete Complaint" href="javascript:delete_complaint('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
+                }
 
                 if($action_buttons==''){
                     $action_buttons=$action_buttons.'<span class="text-muted">No access</span>';

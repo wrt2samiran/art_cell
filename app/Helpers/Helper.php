@@ -2,12 +2,9 @@
 namespace App\Http\Helpers;
 
 use Auth;
-
 use DB;
-use App\Models\Setting;
-use App\Models\EmailTemplate;
 use Carbon\Carbon;
-use App\Models\{Message,Notification};
+use App\Models\{Message,Notification,Setting,EmailTemplate};
 
 class Helper
 {
@@ -398,6 +395,17 @@ class Helper
     public static function latest_three_notifications(){
         $current_user=auth()->guard('admin')->user();
         return Notification::where('user_id',$current_user->id)->take(3)->orderBy('id','desc')->get();
+    }
+
+    public static function contract_max_filesize($mb_or_kb){
+        $file_setting=Setting::where('slug','contract-and-property-max-filesize')->first();
+
+        if($file_setting){
+            return ($mb_or_kb=='mb')?$file_setting->value:$file_setting->value*1024;
+        }else{
+           return ($mb_or_kb=='mb')?1:1024;
+        }
+
     }
 
 

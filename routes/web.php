@@ -26,6 +26,12 @@ Route::group(["prefix" => "ajax", 'as' => 'ajax.'], function() {
    ->name('check_user_email_unique');    
 });
 
+Route::group(["prefix" => "","namespace"=>"Frontend", 'as' => 'frontend.'], function() {
+    Route::get('/', 'QuotationController@create_quotation')->name('create_quotation');
+    Route::post('/quotation/store', 'QuotationController@store_quotation')->name('store_quotation');
+});
+
+
 /* Start Admin's route */
 Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], function() {
         Route::get('/testing','AuthController@mailTest');
@@ -36,9 +42,6 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
         Route::post('/authentication','AuthController@verifyCredentials')->name('authentication');
         Route::any('/forgot-password', 'AuthController@forgotPassword')->name('forgot.password');
         Route::any('/reset-password/{encryptCode}','AuthController@resetPassword')->name('reset.password');
-
-
-        Route::post('/quotation/submit', 'QuotationController@submit_quotation')->name('submit_quotation');
 
         Route::put('/quotation/{quotation_id}/update_status', 'QuotationController@update_status')->name('quotations.update_status');
         
@@ -506,19 +509,19 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
 
             /*Routes for complaint management */
             Route::group(['prefix'=>'complaints','middleware'=>[],'as'=>'complaints.'],function(){
-                Route::get('/', 'ComplaintController@list')->name('list');
-                Route::get('/create', 'ComplaintController@create')->name('create');
-                Route::post('/store', 'ComplaintController@store')->name('store');
-                Route::get('/{id}', 'ComplaintController@show')->name('show');
-                Route::get('/{id}/edit', 'ComplaintController@edit')->name('edit');
-                Route::put('/{id}', 'ComplaintController@update')->name('update');
-                Route::delete('/{id}/delete', 'ComplaintController@delete')->name('delete');
+                Route::get('/', 'ComplaintController@list')->name('list')->middleware('check_permissions:complaint-list');
+                Route::get('/create', 'ComplaintController@create')->name('create')->middleware('check_permissions:complaint-create');
+                Route::post('/store', 'ComplaintController@store')->name('store')->middleware('check_permissions:complaint-create');
+                Route::get('/{id}', 'ComplaintController@show')->name('show')->middleware('check_permissions:complaint-details');
+                Route::get('/{id}/edit', 'ComplaintController@edit')->name('edit')->middleware('check_permissions:complaint-edit');
+                Route::put('/{id}', 'ComplaintController@update')->name('update')->middleware('check_permissions:complaint-edit');
+                Route::delete('/{id}/delete', 'ComplaintController@delete')->name('delete')->middleware('check_permissions:complaint-delete');
 
-                Route::post('/{complaint_id}/add-note', 'ComplaintController@add_note')->name('add_note');
-                Route::put('/{complaint_id}/update-note/{note_id}', 'ComplaintController@update_note')->name('update_note');
-                Route::delete('/{complaint_id}/delete-note/{note_id}', 'ComplaintController@delete_note')->name('delete_note');
+                Route::post('/{complaint_id}/add-note', 'ComplaintController@add_note')->name('add_note')->middleware('check_permissions:complaint-add-note');
+                Route::put('/{complaint_id}/update-note/{note_id}', 'ComplaintController@update_note')->name('update_note')->middleware('check_permissions:complaint-edit-note');
+                Route::delete('/{complaint_id}/delete-note/{note_id}', 'ComplaintController@delete_note')->name('delete_note')->middleware('check_permissions:complaint-delete-note');
 
-                Route::put('/{complaint_id}/update-status', 'ComplaintController@update_status')->name('update_status');
+                Route::put('/{complaint_id}/update-status', 'ComplaintController@update_status')->name('update_status')->middleware('check_permissions:complaint-status-change');
             });
             /************************************/
 
@@ -531,9 +534,9 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
 
             /*Routes for message management */
             Route::group(['prefix'=>'messages','middleware'=>[],'as'=>'messages.'],function(){
-                Route::get('/', 'MessageController@list')->name('list');
-                Route::get('/compose', 'MessageController@compose')->name('compose');
-                Route::post('/store', 'MessageController@store')->name('store');
+                Route::get('/', 'MessageController@list')->name('list')->middleware('check_permissions:view-messages');
+                Route::get('/compose', 'MessageController@compose')->name('compose')->middleware('check_permissions:send-message');
+                Route::post('/store', 'MessageController@store')->name('store')->middleware('check_permissions:send-message');
                 Route::get('/sent', 'MessageController@sent')->name('sent');
                 Route::get('/{message_id}/details', 'MessageController@details')->name('details');
             });

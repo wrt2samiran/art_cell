@@ -49,6 +49,11 @@
                     <div class="col-md-11 col-sm-12">
                       <form id="contract_files_form" action="{{route('admin.contracts.store_files',$contract->id)}}"  method="post" enctype="multipart/form-data">
                         @csrf
+                        <!-- setting data shared from app service provider -->
+                        @php
+                        $max_filesize=(isset($setting['contract-and-property-max-filesize']))?$setting['contract-and-property-max-filesize']:'1';
+                        @endphp
+                        <input type="hidden" value="{{$max_filesize}}"  id="max_filesize">
                         <div>
                           <div class="form-group required">
                             <label>Attach Files</label>
@@ -66,7 +71,7 @@
                                   <div class="col-md-5">
                                     <input data-is_required="no" placeholder="File" class="form-control file_list"  id="contract_files_{{$file->id}}" name="contract_files[]" type="file" aria-describedby="imageHelp{{$file->id}}">
                                     <small class="form-text text-muted">
-                                      Upload PDF/DOC/JPEG/PNG/TEXT files of max. 1mb
+                                      Upload PDF/DOC/JPEG/PNG/TEXT files of max. {{$max_filesize}}mb
                                     </small>
                                     <small id="imageHelp{{$file->id}}" class="form-text text-muted"><b>Leave blank if you do not want to update image.(<a href="{{route('admin.contracts.download_attachment',$file->id)}}">download file</a>)</b></small>
                                   </div>

@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        Commands\SendContractInstallmentPaymentNotification::class,
     ];
 
     /**
@@ -24,8 +24,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $schedule->command('contrat:installmentPaymentNotification')
+                ->dailyAt('00:01'); //scheduling the command every day in the 1st minute. i.e 12.01 am
     }
 
     /**

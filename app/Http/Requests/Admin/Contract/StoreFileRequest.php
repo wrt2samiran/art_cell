@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Admin\Contract;
 
 use Illuminate\Foundation\Http\FormRequest;
-
+use Helper;
 class StoreFileRequest extends FormRequest
 {
     /**
@@ -23,10 +23,11 @@ class StoreFileRequest extends FormRequest
      */
     public function rules()
     {
+        $max_file_size=Helper::contract_max_filesize('kb');
         return [
             'contract_files.*' => [
                 'mimetypes:application/pdf,image/jpeg,image/png,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword',
-                'max:1024',
+                'max:'.$max_file_size,
             ],
         ];
     }

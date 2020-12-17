@@ -358,6 +358,7 @@
                 </li>            
                 @endif
 
+                @if(auth()->guard('admin')->user()->hasAllPermission(['complaint-list']))
                 <li class="nav-item ">
                     <a href="{{route('admin.complaints.list')}}"
                     class="nav-link {{(request()->is('admin/complaints/*','admin/complaints'))?'active':''}}">
@@ -365,6 +366,9 @@
                         <p>{{__('nav_link_text.complaints')}}</p>
                     </a>
                 </li>
+                @endif
+
+                @if(auth()->guard('admin')->user()->hasAllPermission(['view-messages']))
                 <li class="nav-item ">
                     <a href="{{route('admin.messages.list')}}"
                     class="nav-link {{(request()->is('admin/messages/*','admin/messages'))?'active':''}}">
@@ -374,6 +378,8 @@
                         </p>
                     </a>
                 </li>
+                @endif
+
                 <li class="nav-item ">
                     <a href="{{route('admin.notifications.list')}}"
                     class="nav-link {{(request()->is('admin/notifications/*','admin/notifications'))?'active':''}}">

@@ -59,6 +59,20 @@
                             <span class="text-danger">{{$errors->first('contract_price')}}</span>
                             @endif
                           </div>
+
+                          <div class="form-group required">
+                            <label for="contract_price">Osool Profit (in %)<span class="error">*</span></label>
+                            <input type="number" min="0" max="100" class="form-control" value="{{old('profit_in_percentage')?old('profit_in_percentage'):$contract->profit_in_percentage}}" name="profit_in_percentage" id="profit_in_percentage"  placeholder="Osool Profit (in %)">
+                            <span id="profit_in_amount_text">
+                              @if($contract->profit_in_percentage && $contract->profit_in_amount)
+
+                              ( Amount = {{number_format($contract->profit_in_amount, 2, '.', '')}} )
+                              @endif
+                            </span>
+                            @if($errors->has('profit_in_percentage'))
+                            <span class="text-danger">{{$errors->first('profit_in_percentage')}}</span>
+                            @endif
+                          </div>
   
                           <div class="custom-control custom-checkbox">
                             <input class="custom-control-input" type="checkbox" id="in_installment" name="in_installment" value="true" {{($contract->in_installment)?'checked':''}}>
@@ -149,6 +163,39 @@
                                 </div>
                             @endforeach
 
+                          @else
+                              <input type="hidden" name="installment_id[]" value="">
+                              <div class="row" id="row_1">
+                                  <div class="col-sm-5">
+                                        <div class="form-group required">
+
+                                          <label class="absolute_or_percentage_label" for="amount_1">Amount<span class="error">*</span></label>
+
+                                          <input type="number" min="1" name="amount[]" class="form-control amount_input_list" value="" data-id="1" id="amount_1"  placeholder="Amount"
+                                          >
+
+                                          <span id="amount_text_1" class="amount_text"></span>
+
+                                        </div>
+                                  </div>
+                                  <div class="col-sm-5">
+                                        <div class="form-group required">
+                                          <label for="contract_price">Due Date<span class="error">*</span></label>
+                                          <input autocomplete="off" readonly="readonly" type="text" name="due_date[]" class="form-control due_date_input_list datepicker" value="" id="due_date_1"  placeholder="Due Date">
+
+                                        </div>
+                                  </div>
+                                  <div class="col-sm-2">
+                                        <div class="form-group ">
+                                          <label for="">&nbsp;</label>
+                                        
+                                            <div class="installment_input_add" >
+                                              <button type="button"  id="add_installment_button" class="btn btn-success btn-add-speaker">+</button>
+                                            </div> 
+                         
+                                        </div>
+                                  </div>
+                                </div>                         
                           @endif
 
                           </div> 

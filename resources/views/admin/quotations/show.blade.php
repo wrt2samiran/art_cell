@@ -51,17 +51,23 @@
                           <td>{{$quotation->city->name}}</td>
                         </tr>
                         <tr>
-                          <td>Land Mark</td>
-                          <td>{{$quotation->landmark}}</td>
+                          <td>Landmark</td>
+                          <td>
+                            <div>
+                              {{$quotation->landmark}}
+                            </div>
+                            
+                            <div>
+                              <div style="height: 400px" id="map"></div>
+                            </div>
+                          </td>
                         </tr>
                         <tr>
                           <td>Contract Duration</td>
                           <td>{{$quotation->contract_duration}}</td>
                         </tr>
-                        <tr>
-                          <td>Details</td>
-                          <td>{{$quotation->details}}</td>
-                        </tr>
+
+
                         <tr>
                           <td>Property Types</td>
                           <td>{{$quotation->property_types->map(function($property_type) {
@@ -97,7 +103,29 @@
                           </td>
                         </tr>
                         <tr>
-                          
+                          <td>Details</td>
+                          <td>{{$quotation->details}}</td>
+                        </tr>
+                        <tr>
+                          <td>Resources Required</td>
+                          <td>{{$quotation->no_of_resources}}</td>
+                        </tr>
+                        <tr>
+                          <td>Images</td>
+                          <td>
+                            @if(count($quotation->images_array()))
+                              <div class="row">
+                                @foreach($quotation->images_array() as $image)
+                                <div class="col-sm-4">
+                                  <a target="_blank" href="{{asset('uploads/quotation_files/'.$image)}}"><img  width="100%" src="{{asset('uploads/quotation_files/'.$image)}}"></a>
+                                </div>
+                                @endforeach
+                              </div>
+                            @else
+                            No Images
+                            @endif
+                            
+                          </td>
                         </tr>
                         <tr>
                           <td>Created At</td>
@@ -137,4 +165,36 @@
     </section>
 </div>
 @endsection 
+
+@push('custom-scripts')
+
+<script src="https://maps.googleapis.com/maps/api/js?key={{config('services.google_map.key')}}&sensor=false&libraries=places"></script>
+
+
+
+
+
+<script>
+
+  google.maps.event.addDomListener(window, "load", initMap);
+   // Initialize and add the map
+
+  function initMap() {
+    var lat=parseFloat('{{$quotation->latitude}}');
+    var lng=parseFloat('{{$quotation->longitude}}');
+    // The location of quotation landmark
+    const latLng = { lat: lat, lng: lng };
+    // The map, centered at quotation landmark
+    const map = new google.maps.Map(document.getElementById("map"), {
+      zoom: 10,
+      center: latLng,
+    });
+    // The marker, positioned at quotation landmark
+    const marker = new google.maps.Marker({
+      position: latLng,
+      map: map,
+    });
+  }
+</script>
+@endpush
 

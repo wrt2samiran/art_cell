@@ -62,7 +62,7 @@
                         <td> </td>
                      
                         <td>
-                            <h5>Tax</h5>
+                            <h5>VAT</h5>
                         </td>
                         <td class="text-right"><strong>{{$order->order_currency}} {{number_format($order->tax_amount, 2, '.', '')}}</strong>
                         </td>

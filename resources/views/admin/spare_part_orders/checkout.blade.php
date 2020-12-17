@@ -201,7 +201,7 @@
                                                     <td>   </td>
                                                     
                                                     <td>
-                                                        <h5>Tax</h5>
+                                                        <h5>VAT</h5>
                                                     </td>
                                                     <td class="text-right"><strong>({{$tax_percentage}}% ){{Helper::getSiteCurrency()}} {{number_format($tax_amount, 2, '.', '')}}</strong>
                                                     </td>

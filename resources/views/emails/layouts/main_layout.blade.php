@@ -15,7 +15,7 @@
           @yield('body')
 
         <tr>
-          <td align="center" valign="top" style="font-family: Arial; font-size: 12px; color:#fff; line-height: 20px; background:#222; padding: 10px; border:1px solid #666;">Copyright © {{date('Y')}} | SMMS. All Rights Reserved.</td>
+          <td align="center" valign="top" style="font-family: Arial; font-size: 12px; color:#fff; line-height: 20px; background:#222; padding: 10px; border:1px solid #666;">Copyright © {{date('Y')}} | {{env('APP_NAME','OSOOL')}}. All Rights Reserved.</td>
         </tr>         
       </table>   
    
