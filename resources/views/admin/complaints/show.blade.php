@@ -98,7 +98,7 @@
                           </tr>
                           <tr>
                             <td>Created At</td>
-                            <td>{{$complaint->created_at->format('d/m/Y')}}</td>
+                            <td>{{$complaint->created_at->format('d/m/Y g:i A')}}</td>
                           </tr>
                         </tbody>
     

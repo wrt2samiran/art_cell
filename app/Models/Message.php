@@ -15,4 +15,8 @@ class Message extends Model
     public function to_user(){
     	return $this->belongsTo(User::class,'message_to');
     }
+
+    public function message_attachments(){
+        return $this->hasMany(MessageAttachment::class);
+    }
 }

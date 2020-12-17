@@ -4,8 +4,10 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\{User,Message,Contract,Property,Notification};
+use App\Models\{User,Message,Contract,Property,Notification,MessageAttachment};
 use Carbon\Carbon;
+use Illuminate\Support\Str;
+use File,Helper;
 class MessageController extends Controller
 {
     //defining the view path
@@ -157,6 +159,7 @@ class MessageController extends Controller
         }
         
         $this->data['users']=$users;
+        $this->data['upload_unique_key']=Str::random(200);
         return view($this->view_path.'.compose',$this->data);
     }
 
@@ -181,6 +184,14 @@ class MessageController extends Controller
         	'subject'=>$request->subject,
         	'message'=>$request->message
         ]);
+
+        $upload_unique_key=$request->upload_unique_key;
+        MessageAttachment::where('upload_unique_key',$upload_unique_key)->update([
+            'upload_unique_key'=>'',
+            'message_id'=>$message->id
+        ]);
+
+
 
         $user_type=$current_user->role->user_type;
 
@@ -240,6 +251,93 @@ class MessageController extends Controller
 
     }
 
+    /************************************************************************/
+    # Function to upload message attachments                                 #
+    # Function name    : upload_attachments                                  #
+    # Created Date     : 17-12-2020                                          #
+    # Modified date    : 17-12-2020                                          #
+    # Purpose          : To upload message attachments                       #
 
+    public function upload_attachments(Request $request){
+
+        $attachments=[];
+
+    
+        if($request->file('attachments') && count($request->file('attachments'))){
+            
+            foreach ($request->file('attachments')  as $key=>$file) {
+
+              
+                //upload new file
+                $file_name = time().$key.'.'.$file->getClientOriginalName();
+
+                $destinationPath = public_path('/uploads/message_attachments');
+             
+                $file->move($destinationPath, $file_name);
+                $mime_type=$file->getClientMimeType();
+
+                $file_type=Helper::get_file_type_by_mime_type($mime_type);
+
+                $attachment=MessageAttachment::create([
+                    'upload_unique_key'=>$request->upload_unique_key,
+                    'file_name'=>$file_name,
+                    'file_type'=>$file_type,
+                ]);
+
+                $attachments[]=$attachment;
+            }
+        }
+
+        return response()->json($attachments);
+
+    }
+
+    /************************************************************************/
+    # Function to remove message file                                        #
+    # Function name    : remove_attachment                                   #
+    # Created Date     : 17-12-2020                                          #
+    # Modified date    : 17-12-2020                                          #
+    # Purpose          : to remove message file                              #
+    # Param            : attachment_id                                       #
+    public function remove_attachment($attachment_id,Request $request){
+        
+        $attachment=MessageAttachment::find($attachment_id);
+
+        if($attachment){
+            $upload_unique_key=$request->upload_unique_key;
+            if($attachment->upload_unique_key!=$upload_unique_key){
+                return response()->json(['message'=>'Invalid attachment.'],400);
+            }else{
+
+                $file_path=public_path().'/uploads/message_attachments/'.$attachment->file_name;
+                if(File::exists($file_path)){
+                    File::delete($file_path);
+                }
+                $attachment->delete();
+                return response()->json(['message'=>'Attachment removed.'],200);
+            }
+        }else{
+            return response()->json(['message'=>'Attachment not found.'],400);
+        }
+    }
+
+    /************************************************************************/
+    # Function to download message attachment                                #
+    # Function name    : download_attachment                                 #
+    # Created Date     : 17-12-2020                                          #
+    # Modified date    : 17-12-2020                                          #
+    # Purpose          : to download message attachment                      #
+    # Param            : attachment_id                                       #
+    public function download_attachment($attachment_id){
+        
+        $attachment=MessageAttachment::find($attachment_id);
+
+        if($attachment){
+         $file_path=public_path().'/uploads/message_attachments/'.$attachment->file_name;
+         return response()->download($file_path,$attachment->file_name);
+        }else{
+            return response()->json(['message'=>'Attachment not found.'],400);
+        }
+    }
 
 }

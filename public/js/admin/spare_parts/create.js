@@ -72,6 +72,10 @@ $('#images').on('change',function(){
         reset($('#images'));
         swal('You can upload maximum 3 images');
     }else{
+
+        var max_filesize_mb=$('#max_filesize').val();
+        var max_filesize_kb=1024*parseFloat(max_filesize_mb);
+
         var file_size_error=false;
         var file_type_error=false;
         for (var i = 0; i < files.length; i++)
@@ -79,7 +83,7 @@ $('#images').on('change',function(){
             var file_size_in_kb=(files[i].size/1024);
             var file_type= files[i].type;
 
-            if(file_size_in_kb>2048){
+            if(file_size_in_kb>max_filesize_kb){
                file_size_error=true; 
             }
 

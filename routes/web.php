@@ -539,6 +539,10 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::post('/store', 'MessageController@store')->name('store')->middleware('check_permissions:send-message');
                 Route::get('/sent', 'MessageController@sent')->name('sent');
                 Route::get('/{message_id}/details', 'MessageController@details')->name('details');
+
+                Route::post('/upload-attachments', 'MessageController@upload_attachments')->name('upload_attachments');
+                Route::delete('/remove-attachment/{attachment_id}', 'MessageController@remove_attachment')->name('remove_attachment');
+                Route::get('/download-attachment/{attachment_id}', 'MessageController@download_attachment')->name('download_attachment');
             });
             /************************************/
 
