@@ -35,6 +35,7 @@ return array (
   'translation_management' => 'إدارة الترجمة',
   'user_management' => 'إدارةالمستخدم',
   'email_templete' => 'إدارة قالب البريد الإلكتروني',
+  'reports'=>'التقارير',
   'calendar' => 'التقويم',
   'labour_management' => 'إدارة العمل',
   'labour_list' => 'قائمة العمل',

@@ -532,6 +532,13 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             });
             /************************************/
 
+            /*Routes for notifications management */
+            Route::group(['prefix'=>'reports','middleware'=>[],'as'=>'reports.'],function(){
+                Route::any('/', 'ReportController@index')->name('index');
+                
+            });
+            /************************************/
+
             /*Routes for message management */
             Route::group(['prefix'=>'messages','middleware'=>[],'as'=>'messages.'],function(){
                 Route::get('/', 'MessageController@list')->name('list')->middleware('check_permissions:view-messages');

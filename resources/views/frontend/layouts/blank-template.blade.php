@@ -25,7 +25,14 @@
           href="{{asset('assets/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css')}}">
     <link rel="stylesheet" href="{{asset('assets/plugins/select2/css/select2.min.css')}}">
     <link rel="stylesheet" href="{{asset('assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css')}}">
-  
+   @php
+    if(App::getLocale()=='en'){
+        $lang_css_path=asset('css/admin/language_en.css');
+    }else if(App::getLocale()=='ar'){
+        $lang_css_path=asset('css/admin/language_ar.css');
+    }
+    @endphp
+    <link rel="stylesheet" type="text/css" href="{{$lang_css_path}}">
 </head>
 <body class="hold-transition">
 
@@ -43,6 +50,13 @@
 <script src="{{asset('js/jquery.validate.js')}}"></script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script src="{{ asset('js/development-admin.js')}}"></script>
+<script type="text/javascript">
+  window.baseUrl="{{URL::to('/')}}";
+  //this function will call when language will change from header language dropdown
+function onLanguageChange(lang){
+  window.location.href=baseUrl+'/language/'+lang;
+}
+</script>
 
 @stack('custom-scripts')
 </body>

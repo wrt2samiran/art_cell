@@ -2,7 +2,7 @@
 
 
 @section('unique-content')
-
+@php $current_user=auth()->guard('admin')->user(); @endphp
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -92,20 +92,6 @@
                           <td >{{Carbon\Carbon::createFromFormat('Y-m-d', $contract->end_date)->format('d/m/Y')}}</td>
                         </tr>
 
-                        <tr>
-                          <td >Service Provider</td>
-                          <td>
-                            @if($service_provider=$contract->service_provider()->withTrashed()->first())
-                              @if($service_provider->deleted_at)
-                                <span class="text-danger"><del>{{$service_provider->name}} </del>(user deleted)</span>
-                              @else
-                                <a target="_blank" href="{{route('admin.users.show',$service_provider->id)}}">{{$service_provider->name}}</a>
-                              @endif
-                            @else
-                            N/A
-                            @endif
-                          </td>
-                        </tr>
     
                         <tr>
                           <td>Property</td>
@@ -119,7 +105,41 @@
                           <td>Location/Landmark</td>
                           <td >{{$contract->property->location}}</td>
                         </tr>
-   
+
+
+
+                        @if(in_array($current_user->role->user_type->slug,['super-admin','property-owner']) && $contract->in_installment)
+
+                          <tr>
+                          <td>Contract Price</td>
+                          <td >{{$contract->contract_price_currency}}{{number_format($contract->contract_price, 2, '.', '')}}</td>
+                          </tr>
+
+                          @if(count($contract->contract_installments))
+                          <tr>
+                            <td>Installments</td>
+                            <td>
+                              <table class="table table-bordered">
+                                <thead>
+                                  <tr>
+                                    <th>Payment Amount</th>
+                                    <th>Due Date</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  @foreach($contract->contract_installments as $installment)
+                                  <tr>
+                                    <td>{{$installment->currency}} {{number_format($installment->price, 2, '.', '')}}</td>
+                                    <td>
+                                      {{Carbon::parse($installment->due_date)->format('d/m/Y')}}</td>
+                                  </tr>
+                                  @endforeach
+                                </tbody>
+                              </table>
+                            </td>
+                          </tr>
+                          @endif
+                        @endif
 
                         <tr>
                           <td>Status</td>
