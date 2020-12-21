@@ -35,6 +35,7 @@ return array (
   'translation_management' => 'Translation Management',
   'user_management' => 'User Management',
   'email_templete' => 'Email Template Management',
+  'reports'=>'Reports',
   'calendar'  => 'Calendar',
   'labour_management' => 'Labour Management',
   'labour_list' => 'Labour List',

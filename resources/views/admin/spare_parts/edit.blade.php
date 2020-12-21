@@ -49,6 +49,10 @@
                       <form  method="post" id="admin_shared_service_edit_form" action="{{route('admin.spare_parts.update',$spare_part->id)}}" method="post" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
+                        @php
+                        $max_filesize=(isset($setting['service-and-part-max-filesize']))?$setting['service-and-part-max-filesize']:'1';
+                        @endphp
+                        <input type="hidden" value="{{$max_filesize}}"  id="max_filesize">
                         <div>
                           <div class="form-group required">
                             <label for="name">Spare Part Name <span class="error">*</span></label>

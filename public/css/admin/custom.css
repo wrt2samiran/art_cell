@@ -92,6 +92,8 @@ button.editable-cancel{
 
 #task_list, #task_list select { margin-bottom: 10px; }
 
+
+
 @media (max-width: 991px) {
  #external-events {margin: 10px 0 0; }
 

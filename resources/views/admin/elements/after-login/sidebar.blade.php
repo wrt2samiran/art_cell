@@ -386,7 +386,15 @@
                         <i class="nav-icon far fa-bell"></i>
                         <p>{{__('nav_link_text.notifications')}}</p>
                     </a>
-                </li>     
+                </li>
+                <li class="nav-item ">
+                    <a href="{{route('admin.reports.index')}}"
+                    class="nav-link {{(request()->is('admin/reports/*','admin/reports'))?'active':''}}">
+                        <i class="nav-icon fas fa-poll"></i>
+                        <p>{{__('nav_link_text.reports')}}</p>
+                    </a>
+                </li>  
+
                 @if(auth()->guard('admin')->user()->hasAllPermission(['work-order-list']))
                 <li class="nav-item ">
                     <a href="{{route('admin.work-order-management.list')}}"

@@ -4,227 +4,248 @@
 
 @section('content')
 
-<div class="login-logo">  
+<div class="login-logo quotation-page">  
   <div class="admin-logo" style="padding: 30px 0 15px;"><img src="{{asset('assets/dist/img/OSOOL_logo.png')}}" alt="Logo" style="width: 250px;"></div>
 </div>
 <div class="container">
-  <div class="row">
+  <div class="quotation-form-content">
+    <div class="row">
 
-    <div class="col-md-10 offset-md-1">
-      <div >
-        @if(Session::has('quotation_success'))
-            <div class="alert alert-success alert-dismissable __web-inspector-hide-shortcut__">
-                <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-                {{ Session::get('quotation_success') }}
-            </div>
-        @endif
-        @if(Session::has('quotation_error'))
-            <div class="alert alert-danger alert-dismissable">
-                <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-                {{ Session::get('quotation_error') }}
-            </div>
-        @endif
-      </div>
-
-    <div >
-      <div >
-         <h5 >Please fill up the form and submit to post a quotation</h5>
-      </div>
-      <div >
-
-        <form  method="POST" id="quotetion_submit_form" action="{{route('frontend.store_quotation')}}" enctype="multipart/form-data">
-          @csrf
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="property_id">First Name <span class="error">*</span></label>
-              <input type="text" class="form-control" id="first_name" name="first_name">
-              @if($errors->has('first_name'))
-                <span class="text-danger">{{$errors->first('first_name')}}</span>
-              @endif
-            </div>
-            <div class="col-md-6 form-group">
-              <label for="property_id">Last Name <span class="error">*</span></label>
-              <input type="text" class="form-control" id="last_name" name="last_name">
-              @if($errors->has('last_name'))
-                <span class="text-danger">{{$errors->first('last_name')}}</span>
-              @endif
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="property_id">Email <span class="text-muted">(optional)</span></label>
-              <input type="text" class="form-control" id="email" name="email">
-              @if($errors->has('email'))
-                <span class="text-danger">{{$errors->first('email')}}</span>
-              @endif
-            </div>
-            <div class="col-md-6  form-group">
-              <label for="property_id">Contact Number<span class="error">*</span></label>
-              <input type="text" class="form-control" id="contact_number" name="contact_number">
-              @if($errors->has('contact_number'))
-                <span class="text-danger">{{$errors->first('contact_number')}}</span>
-              @endif
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6  form-group">
-              <label for="country_id">State<span class="error">*</span></label>
-              <select class="form-control " id="state_id" name="state_id" style="width: 100%;">
-                <option value="">Select State</option>
-                @forelse($states as $state)
-                  <option data-cities="{{$state->cities}}" value="{{$state->id}}" >{{$state->name}}</option>
-                @empty
-                <option value="">No State Found</option>
-                @endforelse
-              </select>
-              <div id="state_id_error"></div>
-              @if($errors->has('state_id'))
-                  <span class="text-danger">{{$errors->first('state_id')}}</span>
-              @endif
-            </div>
-            <div class="col-md-6  form-group">
-              <label for="name">City<span class="error">*</span></label>
-              <select class="form-control" id="city_id" name="city_id" style="width: 100%;">
-                <option value="">Select city</option>
-                @forelse($cities as $city)
-                  <option value="{{$city->id}}" >{{$city->name}}</option>
-                @empty
-                <option value="">No City Found</option>
-                @endforelse
-              </select>
-              <div id="city_id_error"></div>
-              @if($errors->has('city_id'))
-                <span class="text-danger">{{$errors->first('city_id')}}</span>
-              @endif
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12  form-group">
-              <label for="landmark">Landmark/Location<span class="error">*</span></label>
-              <input type="text" class="form-control" id="landmark" name="landmark">
-                  @if($errors->has('landmark'))
-                    <span class="text-danger">{{$errors->first('landmark')}}</span>
-                  @endif
-            </div>
-          </div>
-
-
-          <div class="row">
-            <div class="col-md-12  ">
-              <div id="map_canvas" style="height:400px"></div>
-            </div>
-            <div class="col-md-12">
-              <input type="hidden" name="latitude" id="latitude">
-              <input type="hidden" name="longitude" id="longitude">
-
-              <input type="hidden" name="placeholder_address" id="placeholder_address">
-            </div>
-          </div>
-
-          <div class="row mt-2">
-            <div class="col-md-3 form-group">
-              <label for="contract_duration">Contract Duration<span class="error">*</span></label>
-              <input type="number" min="1" value="1" step="1" class="form-control" id="contract_duration" name="contract_duration">
-              @if($errors->has('contract_duration'))
-              <span class="text-danger">{{$errors->first('contract_duration')}}</span>
-              @endif
-            </div>
-            <div class="col-md-3 form-group">
-              <label for="contract_duration_type">&nbsp;</label>
-              <select class="form-control " name="contract_duration_type" id="contract_duration_type">
-                <option value="Year(s)">Year(s)</option>
-                <option value="Month(s)">Month(s)</option>
-                <option value="Week(s)">Week(s)</option>
-                <option value="Day(s)">Day(s)</option>
-              </select>
-            </div>
-
-            <div class="col-md-6  form-group">
-              <label for="name">Property Type<span class="error">*</span></label>
-              <select class="form-control" id="property_type_id" name="property_type_id" style="width: 100%;">
-                <option value="">Select Proeprty Type</option>
-                @forelse($property_types as $property_type)
-                  <option value="{{$property_type->id}}" >{{$property_type->type_name}}</option>
-                @empty
-                <option value="">No Property Type Found</option>
-                @endforelse
-              </select>
-              <div id="property_type_id_error"></div>
-              @if($errors->has('property_type_id'))
-                <span class="text-danger">{{$errors->first('property_type_id')}}</span>
-              @endif
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12">
-              <div class="form-group required">
-                <label>Services Required</label>
-                <div>
-                  <button type="button" id="add_service" class="btn btn-outline-success"><i class="fa fa-plus"></i>&nbsp;Add Service</button>
-                </div>
+      <div class="col-md-12">
+        <div >
+          @if(Session::has('quotation_success'))
+              <div class="alert alert-success alert-dismissable __web-inspector-hide-shortcut__">
+                  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                  {{ Session::get('quotation_success') }}
               </div>
-            </div>
-          </div>  
-          <div class="row">
-            <div class="col-md-12">
-              <div id="services_container">
-
+          @endif
+          @if(Session::has('quotation_error'))
+              <div class="alert alert-danger alert-dismissable">
+                  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                  {{ Session::get('quotation_error') }}
               </div>
-            </div>
-          </div>
-          <div class="row mt-3">
+          @endif
+        </div>
 
-            <div class="col-md-6">
-                <div class="form-group ">
-                  <label for="images">Images <span class="text-muted">(Optional)</span></label>
-                  <input type="file" class="form-control" name="images[]" id="images" multiple="true" accept="image/jpg,image/jpeg,image/gif">
-                  <span class="text-muted">upload max. 3 images of type jpeg/png/gif</span>
-                  @if($errors->has('images'))
-                  <span class="text-danger">{{$errors->first('images')}}</span>
-                  @endif
-                </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="no_of_resources">No. Of Resources <span class="text-muted">(optional)</span></label>
-                <input type="number" min="1" step="1" class="form-control" placeholder="No. Of Resources Required" id="no_of_resources" name="no_of_resources">
-                @if($errors->has('no_of_resources'))
-                  <span class="text-danger">{{$errors->first('no_of_resources')}}</span>
+      <div >
+        <div class="d-flex justify-content-between">
+          <div></div>
+          <div>
+            <select class="form-control" id="language" onchange="onLanguageChange(this.value)">
+              <option value="en" {{(App::getLocale()=='en')?'selected':''}}>English</option>
+              <option value="ar" {{(App::getLocale()=='ar')?'selected':''}}>Arabic</option>
+            </select> 
+          </div>
+
+        </div>
+        <div class="quotation-header">
+           <p class="submit-quotation">{{__('submit_quotation_page.general_sentences.submit_quotation')}}</p>
+           <p class="please-fillup">{{__('submit_quotation_page.general_sentences.please_fillup')}}</p>
+        </div>
+        <div class="quotation-form-holder">
+
+          <form  method="POST" id="quotetion_submit_form" action="{{route('frontend.store_quotation')}}" enctype="multipart/form-data">
+            @csrf
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="property_id">{{__('submit_quotation_page.input_labels.first_name')}} <span class="error">*</span></label>
+                <input type="text" placeholder="{{__('submit_quotation_page.input_placeholders.first_name')}}" class="form-control" id="first_name" name="first_name">
+                @if($errors->has('first_name'))
+                  <span class="text-danger">{{$errors->first('first_name')}}</span>
+                @endif
+              </div>
+              <div class="col-md-6 form-group">
+                <label for="property_id">{{__('submit_quotation_page.input_labels.last_name')}} <span class="error">*</span></label>
+                <input type="text" placeholder="{{__('submit_quotation_page.input_placeholders.last_name')}}" class="form-control" id="last_name" name="last_name">
+                @if($errors->has('last_name'))
+                  <span class="text-danger">{{$errors->first('last_name')}}</span>
                 @endif
               </div>
             </div>
-            <div class="col-md-12">
-              <div class="form-group">
-                <label for="details">Description</label>
-                <textarea class="form-control float-right" name="details" id="details">{{old('details')}}</textarea>
+
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="property_id">{{__('submit_quotation_page.input_labels.email')}}</label>
+                <input type="text" placeholder="{{__('submit_quotation_page.input_placeholders.email')}}" class="form-control" id="email" name="email">
+                @if($errors->has('email'))
+                  <span class="text-danger">{{$errors->first('email')}}</span>
+                @endif
+              </div>
+              <div class="col-md-6  form-group">
+                <label for="property_id">{{__('submit_quotation_page.input_labels.contact_number')}}<span class="error">*</span></label>
+                <input type="text" placeholder="{{__('submit_quotation_page.input_placeholders.contact_number')}}" class="form-control" id="contact_number" name="contact_number">
+                @if($errors->has('contact_number'))
+                  <span class="text-danger">{{$errors->first('contact_number')}}</span>
+                @endif
               </div>
             </div>
-            
-          </div>
-
-          <div class="quoatation-message mt-2 mb-2" id="disclaimer" style="display: none;">
-          
-          <p>Total amount may vary as per your property and site visit</p>
-          <p>Total Amount: {{Helper::getSiteCurrency()}}<span id="total_amount">0.00</span></p>
-          </div>
-
-          <div class="row mt-2">
-            <div class="col-md-12">
-              <button type="submit" class="btn btn-success">Submit</button> 
+            <div class="row">
+              <div class="col-md-6  form-group">
+                <label for="country_id">{{__('submit_quotation_page.input_labels.state')}}<span class="error">*</span></label>
+                <select class="form-control " id="state_id" name="state_id" style="width: 100%;">
+                  <option value="">{{__('submit_quotation_page.input_placeholders.state')}}</option>
+                  @forelse($states as $state)
+                    <option data-cities="{{$state->cities}}" value="{{$state->id}}" >{{$state->name}}</option>
+                  @empty
+                  <option value="">No State Found</option>
+                  @endforelse
+                </select>
+                <div id="state_id_error"></div>
+                @if($errors->has('state_id'))
+                    <span class="text-danger">{{$errors->first('state_id')}}</span>
+                @endif
+              </div>
+              <div class="col-md-6  form-group">
+                <label for="name">{{__('submit_quotation_page.input_labels.city')}}<span class="error">*</span></label>
+                <select class="form-control" id="city_id" name="city_id" style="width: 100%;">
+                  <option value="">{{__('submit_quotation_page.input_placeholders.city')}}</option>
+                  @forelse($cities as $city)
+                    <option value="{{$city->id}}" >{{$city->name}}</option>
+                  @empty
+                  <option value="">No City Found</option>
+                  @endforelse
+                </select>
+                <div id="city_id_error"></div>
+                @if($errors->has('city_id'))
+                  <span class="text-danger">{{$errors->first('city_id')}}</span>
+                @endif
+              </div>
             </div>
+            <div class="row">
+              <div class="col-md-12  form-group">
+                <label for="landmark">{{__('submit_quotation_page.input_labels.landmark_or_location')}}<span class="error">*</span></label>
+                <input type="text" placeholder="{{__('submit_quotation_page.input_placeholders.landmark_or_location')}}" class="form-control" id="landmark" name="landmark">
+                    @if($errors->has('landmark'))
+                      <span class="text-danger">{{$errors->first('landmark')}}</span>
+                    @endif
+              </div>
+            </div>
+
+
+            <div class="row">
+              <div class="col-md-12  ">
+                <div id="map_canvas" style="height:400px"></div>
+              </div>
+              <div class="col-md-12">
+                <input type="hidden" name="latitude" id="latitude">
+                <input type="hidden" name="longitude" id="longitude">
+
+                <input type="hidden" name="placeholder_address" id="placeholder_address">
+              </div>
+            </div>
+
+            <div class="row mt-2">
+              <div class="col-md-3 form-group">
+                <label for="contract_duration">{{__('submit_quotation_page.input_labels.contact_duration')}}<span class="error">*</span></label>
+                <input type="number" placeholder="{{__('submit_quotation_page.input_placeholders.contact_duration')}}"  min="1" value="1" step="1" class="form-control" id="contract_duration" name="contract_duration">
+                @if($errors->has('contract_duration'))
+                <span class="text-danger">{{$errors->first('contract_duration')}}</span>
+                @endif
+              </div>
+              <div class="col-md-3 form-group">
+                <label for="contract_duration_type">&nbsp;</label>
+                <select class="form-control " name="contract_duration_type" id="contract_duration_type">
+                  @if(App::getLocale()=='ar')
+                  <option value="Year(s)"> سنوات) </option>
+                  <option value="Month(s)"> الشهور) </option>
+                  <option value="Week(s)"> أسبوع (أسابيع)</option>
+                  <option value="Day(s)"> أيام)</option>
+                  @else
+                  <option value="Year(s)"> Year(s) </option>
+                  <option value="Month(s)"> Month(s) </option>
+                  <option value="Week(s)"> Week(s)</option>
+                  <option value="Day(s)"> Day(s)</option>
+                  @endif
+
+                </select>
+              </div>
+
+              <div class="col-md-6  form-group">
+                <label for="name">{{__('submit_quotation_page.input_labels.property_type')}}<span class="error">*</span></label>
+                <select class="form-control" id="property_type_id" name="property_type_id" style="width: 100%;">
+                  <option value="">{{__('submit_quotation_page.input_placeholders.property_type')}}</option>
+                  @forelse($property_types as $property_type)
+                    <option value="{{$property_type->id}}" >{{$property_type->type_name}}</option>
+                  @empty
+                  <option value="">No Property Type Found</option>
+                  @endforelse
+                </select>
+                <div id="property_type_id_error"></div>
+                @if($errors->has('property_type_id'))
+                  <span class="text-danger">{{$errors->first('property_type_id')}}</span>
+                @endif
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group required">
+                  <label>{{__('submit_quotation_page.input_labels.service_required')}}</label>
+                  <div>
+                    <button type="button" id="add_service" class="btn btn-outline-success"><i class="fa fa-plus"></i>&nbsp;{{__('submit_quotation_page.general_sentences.add_service')}}</button>
+                  </div>
+                </div>
+              </div>
+            </div>  
+            <div class="row">
+              <div class="col-md-12">
+                <div id="services_container">
+
+                </div>
+              </div>
+            </div>
+            <div class="row mt-3">
+
+              <div class="col-md-6">
+                  <div class="form-group ">
+                    <label for="images">{{__('submit_quotation_page.input_labels.images')}}</label>
+                    <input type="file" class="form-control" name="images[]" id="images" multiple="true" accept="image/jpg,image/jpeg,image/gif">
+                    <span class="text-muted">{{__('submit_quotation_page.general_sentences.image_help')}}</span>
+                    @if($errors->has('images'))
+                    <span class="text-danger">{{$errors->first('images')}}</span>
+                    @endif
+                  </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="no_of_resources">{{__('submit_quotation_page.input_labels.no_of_resources')}} </label>
+                  <input type="number" min="1" step="1" class="form-control" placeholder="{{__('submit_quotation_page.input_placeholders.no_of_resources')}}" id="no_of_resources" name="no_of_resources">
+                  @if($errors->has('no_of_resources'))
+                    <span class="text-danger">{{$errors->first('no_of_resources')}}</span>
+                  @endif
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="details">{{__('submit_quotation_page.input_labels.description')}}</label>
+                  <textarea placeholder="{{__('submit_quotation_page.input_placeholders.description')}}" class="form-control float-right" name="details" id="details">{{old('details')}}</textarea>
+                </div>
+              </div>
+              
+            </div>
+
+            <div class="quoatation-message mt-2 mb-2" id="disclaimer" style="display: none;">
             
-          </div>
-        </form>
+            <p>{{__('submit_quotation_page.general_sentences.disclaimer')}}</p>
+            <p>{{__('submit_quotation_page.general_sentences.total_amount')}}: {{Helper::getSiteCurrency()}}<span id="total_amount">0.00</span></p>
+            </div>
+
+            <div class="row mt-2">
+              <div class="col-md-12">
+                <button type="submit" class="btn btn-success">{{__('submit_quotation_page.general_sentences.submit')}}</button> 
+              </div>
+              
+            </div>
+          </form>
+
+        </div>
+
+      </div>
+
+
 
       </div>
 
     </div>
-
-
-
-    </div>
-
   </div>
 </div> 
 @endsection
@@ -249,7 +270,7 @@ jQuery.validator.addMethod("mustAutocompleteAddress", function (value, element) 
     } else {
         return true;
     }
-},'Drag and drop the marker for accurate address.');
+},"{{__('submit_quotation_page.validation_messages.landmark.accurate_address')}}");
 
 
 
@@ -403,10 +424,10 @@ function geocodePosition(pos) {
   $("#add_service").on("click", function () {
     let random_string = String(Math.random(10)).substring(2,14); 
     var row=`<div class="row mt-1 service_row">`;
-    row += `<div class="col-md-6"><input placeholder="Work details in short" class="form-control"  id="work_details_`+random_string+`" name="work_details[]" type="text"></div>`;
-    row += `<div class="col-md-5">
+    row += `<div class="col-md-6 form-group"><input placeholder="{{__('submit_quotation_page.input_placeholders.work_details')}}" class="form-control"  id="work_details_`+random_string+`" name="work_details[]" type="text"></div>`;
+    row += `<div class="col-md-5 form-group">
       <select class="form-control service-list" id="service_id_`+random_string+`" name="service_id[]" style="width: 100%;">
-        <option value="">Select Service</option>
+        <option value="">"{{__('submit_quotation_page.input_placeholders.service')}}"</option>
         @if (count($services))
                 @foreach ($services as $service)
                     <option value="{{$service->id}}"  data-price="{{number_format($service->price, 2, '.', '')}}">{{$service->service_name}} ({{$service->currency}}{{number_format($service->price, 2, '.', '')}})</option>
@@ -421,7 +442,7 @@ function geocodePosition(pos) {
 
     $('.service-list').select2({
         theme: 'bootstrap4',
-        placeholder:'Select service',
+        placeholder:"{{__('submit_quotation_page.input_placeholders.service')}}",
         "language": {
            "noResults": function(){
                return "No service found";
@@ -494,7 +515,7 @@ $(document).on('change','#state_id',function(e){
 
   $('#city_id').select2({
       theme: 'bootstrap4',
-      placeholder:'Select city',
+      placeholder:"{{__('submit_quotation_page.input_placeholders.city')}}",
       "language": {
          "noResults": function(){
              return "No city found";
@@ -527,6 +548,7 @@ $(document).ready(function () {
             },
             email: {
                 email: true,
+                maxlength: 150,
             },
             contact_number: {
                 required: true,
@@ -564,43 +586,44 @@ $(document).ready(function () {
         messages: {
            
             first_name: {
-                required:  "First name is required",
-                minlength: "First name should have 2 characters",
-                maxlength: "First name should not be more then 100 characters"
+                required:  "{{__('submit_quotation_page.validation_messages.first_name.required')}}",
+                minlength: "{{__('submit_quotation_page.validation_messages.minlength.required')}}",
+                maxlength: "{{__('submit_quotation_page.validation_messages.maxlength.required')}}"
             },
             last_name: {
-                required:  "Last name is required",
-                minlength: "Last name should have 2 characters",
-                maxlength: "Last name should not be more then 100 characters"
+                required:  "{{__('submit_quotation_page.validation_messages.last_name.required')}}",
+                minlength: "{{__('submit_quotation_page.validation_messages.last_name.minlength')}}",
+                maxlength: "{{__('submit_quotation_page.validation_messages.last_name.maxlength')}}"
             },
             email: {
-                required: "Email is required",
+                required: "{{__('submit_quotation_page.validation_messages.email.required')}}",
+                maxlength: "{{__('submit_quotation_page.validation_messages.email.maxlength')}}"
             },
             contact_number: {
-                required: "Phone number is required",
-                number:true
+                required: "{{__('submit_quotation_page.validation_messages.contact_number.required')}}",
+                number:"{{__('submit_quotation_page.validation_messages.contact_number.number')}}"
             },
             state_id: {
-                required: "State is required",
+                required: "{{__('submit_quotation_page.validation_messages.state.required')}}",
             },
             city_id: {
-                required: "City is required",
+                required: "{{__('submit_quotation_page.validation_messages.city.required')}}",
             },
             landmark: {
-                required: "Landmark is required",
+                required: "{{__('submit_quotation_page.validation_messages.landmark.required')}}",
             },
             contract_duration: {
-                required: "Contract duration is required",
+                required: "{{__('submit_quotation_page.validation_messages.contract_duration.required')}}d",
             },
             property_type_id:{
-               required: "Select proeprty type",
+               required: "{{__('submit_quotation_page.validation_messages.property_type.required')}}",
             },
             'work_details[]':{
-                required: 'Enter work details in short',
-                maxlength: 'Maximum 250 characters allowed',
+                required: "{{__('submit_quotation_page.validation_messages.work_details.required')}}",
+                maxlength: "{{__('submit_quotation_page.validation_messages.work_details.maxlength')}}",
             },
             'service_id[]':{
-                required: 'Select service',
+                required: "{{__('submit_quotation_page.validation_messages.service.required')}}",
             }
 
         },
@@ -644,7 +667,7 @@ $(document).ready(function () {
 
 $('#state_id').select2({
     theme: 'bootstrap4',
-    placeholder:'Select state',
+    placeholder:"{{__('submit_quotation_page.input_placeholders.state')}}",
     "language": {
        "noResults": function(){
            return "No state found";
@@ -658,7 +681,7 @@ $('#state_id').select2({
 
 $('#city_id').select2({
     theme: 'bootstrap4',
-    placeholder:'Select city',
+    placeholder:"{{__('submit_quotation_page.input_placeholders.city')}}",
     "language": {
        "noResults": function(){
            return "No city found";
@@ -685,7 +708,7 @@ $('.service-list').select2({
 
   $('#property_type_id').select2({
       theme: 'bootstrap4',
-      placeholder:'Select property type',
+      placeholder:"{{__('submit_quotation_page.input_placeholders.property_type')}}",
       "language": {
          "noResults": function(){
              return "No property type found";

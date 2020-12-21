@@ -537,6 +537,13 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             });
             /************************************/
 
+            /*Routes for notifications management */
+            Route::group(['prefix'=>'reports','middleware'=>[],'as'=>'reports.'],function(){
+                Route::any('/', 'ReportController@index')->name('index');
+                
+            });
+            /************************************/
+
             /*Routes for message management */
             Route::group(['prefix'=>'messages','middleware'=>[],'as'=>'messages.'],function(){
                 Route::get('/', 'MessageController@list')->name('list')->middleware('check_permissions:view-messages');
@@ -544,6 +551,10 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::post('/store', 'MessageController@store')->name('store')->middleware('check_permissions:send-message');
                 Route::get('/sent', 'MessageController@sent')->name('sent');
                 Route::get('/{message_id}/details', 'MessageController@details')->name('details');
+
+                Route::post('/upload-attachments', 'MessageController@upload_attachments')->name('upload_attachments');
+                Route::delete('/remove-attachment/{attachment_id}', 'MessageController@remove_attachment')->name('remove_attachment');
+                Route::get('/download-attachment/{attachment_id}', 'MessageController@download_attachment')->name('download_attachment');
             });
             /************************************/
 
