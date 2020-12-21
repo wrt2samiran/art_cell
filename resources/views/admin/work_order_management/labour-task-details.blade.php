@@ -9,7 +9,7 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Task Labour List</h1>
+                <h1>Task Details</h1>
                 <?php //dd($task_data);?>
               </div>
               <div class="col-sm-6">
@@ -66,26 +66,28 @@
                     <td >Slot</td>
                     <td >
 
-                      @if($task_data->work_order_slot->daily_slot == 1)
+                      @if(@$task_data->work_order_slot->daily_slot == 1)
                           First Slot
-                      @elseif($task_data->work_order_slot->daily_slot == 2)
+                      @elseif(@$task_data->work_order_slot->daily_slot == 2)
                           Second Slot
-                      @elseif($task_data->work_order_slot->daily_slot == 3)
+                      @elseif(@$task_data->work_order_slot->daily_slot == 3)
                           Third Slot
-                      @elseif($task_data->work_order_slot->daily_slot == 4)
+                      @elseif(@$task_data->work_order_slot->daily_slot == 4)
                           Fourth Slot
-                      @elseif($task_data->work_order_slot->daily_slot == 5)
+                      @elseif(@$task_data->work_order_slot->daily_slot == 5)
                           Fifth Slot
-                      @elseif($task_data->work_order_slot->daily_slot == 6)
+                      @elseif(@$task_data->work_order_slot->daily_slot == 6)
                           Sixth Slot
-                      @elseif($task_data->work_order_slot->daily_slot == 7)
+                      @elseif(@$task_data->work_order_slot->daily_slot == 7)
                           Seventh Slot
-                      @elseif($task_data->work_order_slot->daily_slot == 8)
+                      @elseif(@$task_data->work_order_slot->daily_slot == 8)
                           Eighth Slot
-                      @elseif($task_data->work_order_slot->daily_slot == 9)
+                      @elseif(@$task_data->work_order_slot->daily_slot == 9)
                           Nineth Slot
-                      @elseif($task_data->work_order_slot->daily_slot == 10)
-                          Tenth Slot                
+                      @elseif(@$task_data->work_order_slot->daily_slot == 10)
+                          Tenth Slot  
+                      @else
+                          No Slot                  
                       @endif
 
                     </td>

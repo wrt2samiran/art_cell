@@ -241,9 +241,9 @@ $("#admin_maintanence_labour_task_add_form").validate({
             { data: 'id', name: 'id' },
             // { data: 'task.property.property_name', name: 'task.property.property_name' },
             { data: 'service.service_name', name: 'service.service_name' },
-            // { data: 'country.name', name: 'country.name' },
-            // { data: 'state.name', name: 'state.name' },
-            // { data: 'city.name', name: 'city.name' },
+            { data: 'country.name', name: 'country.name' },
+            { data: 'state.name', name: 'state.name' },
+            { data: 'city.name', name: 'city.name' },
 
             { data: 'task_date', name: 'task_date' },
 

@@ -15,6 +15,7 @@
 //     return redirect()->route('admin.login');
 // });
 
+
 Route::get('/language/{locale}','admin\DashboardController@changeLanguage')->name('changeLanguage');
 Route::get('/multi-lang','PostController@index');
 
@@ -441,6 +442,7 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::post('/get-dates', 'WorkOrderManagementController@checkDateAvailablity')->name('checkDateAvailablity'); 
                 Route::post('/assign-labour-other-maintanence-task', 'WorkOrderManagementController@taskOtherMaintanenceAssign')->name('taskOtherMaintanenceAssign');  
                 Route::get('/labour_task_details/{id}', 'WorkOrderManagementController@labourTaskDetails')->name('labourTaskDetails');
+                Route::post('/reschedule-labour-task', 'WorkOrderManagementController@labourTaskReschedule')->name('labourTaskReschedule');
                 
 
                 Route::any('/{id}/delete', 'WorkOrderManagementController@delete')->name('delete');
@@ -450,6 +452,9 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::any('/{id}/delete-labour-task', 'WorkOrderManagementController@deleteLabourTask')->name('deleteLabourTask');
                 
                 Route::get('/{id}/change-status', 'WorkOrderManagementController@change_status')->name('change_status');
+                //Route::get('/{id}/reschedule-task', 'WorkOrderManagementController@rescheduleTask')->name('rescheduleTask');
+
+                
   
                 
             });

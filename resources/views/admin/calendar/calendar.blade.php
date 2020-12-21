@@ -24,21 +24,21 @@
         <section class="content">
           <div>
               @if(Session::has('success-message'))
-                  <div class="alert alert-success alert-dismissable">
+                  <div class="alert-success alert-dismissable" style="line-height:300%">
                       <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
                       {{ Session::get('success-message') }}
                       {{ Session::forget('success-message') }}
                   </div>
               @endif
               @if(Session::has('error'))
-                  <div class="alert alert-danger alert-dismissable">
+                  <div class="alert-danger alert-dismissable" style="line-height:300%">
                       <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
                       {{ Session::get('error') }}
                       {{ Session::forget('error') }}
                   </div>
               @endif
               @if(@$error)
-                  <div class="alert alert-danger alert-dismissable">
+                  <div class="alert-danger alert-dismissable" style="line-height:300%">
                       <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
                       {{ @$error}}
                   </div>
@@ -608,6 +608,8 @@ function onTaskChange(work_order_id, start_date, end_date, contract_service_date
 //alert(work_order_id);
   let modified_start_date = JSON.stringify(start_date);
   modified_start_date = modified_start_date.slice(1,11);
+
+  console.log(modified_start_date);
 
   let modified_end_date = JSON.stringify(end_date)
   modified_end_date = modified_end_date.slice(1,11)

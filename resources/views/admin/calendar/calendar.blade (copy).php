@@ -24,13 +24,13 @@
         <section class="content">
             <div class="container-fluid">
               @if(Session::has('success-message'))
-                  <div class="alert alert-success alert-dismissable">
+                  <div class="alert alert-success message">
                       <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
                       {{ Session::get('success-message') }}
                   </div>
               @endif
               @if(Session::has('error'))
-                  <div class="alert alert-danger alert-dismissable">
+                  <div class="alert alert-danger message">
                       <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
                       {{ Session::get('error') }}
                   </div>
@@ -585,7 +585,7 @@ function onTaskChange(task_id, start_date, end_date){
 
 
     setTimeout(function() {
-        $('.alert-dismissable').fadeOut('fast');
+        $('.message').fadeOut('fast');
     }, 5000); 
 
 //Date range picker

@@ -56,8 +56,8 @@ class WorkOrderManagementController extends Controller
                     'city_id.required'      => 'Please select city',
                     'date_range.required'   => 'Please set date range',
                     'task_title.required'   => 'Please enter Task title',
-                    'task_title.min'        => 'Task title should be should be at least 2 characters',
-                    'task_title.max'        => 'Task title should not be more than 255 characters',
+                    'task_title.min'        => 'Work title should be should be at least 2 characters',
+                    'task_title.max'        => 'Work title should not be more than 255 characters',
                     
                 );
 
@@ -133,8 +133,8 @@ class WorkOrderManagementController extends Controller
                             }   
                     }
 
-                        $request->session()->flash('alert-success', 'Task has been added successfully');
-                        return redirect()->route('admin.work-order-management.list');
+                        //$request->session()->flash('alert-success', 'Task has been added successfully');
+                        return redirect()->route('admin.work-order-management.list')->with('success','Work Order successfully created');
                 }
             }
 
@@ -486,10 +486,10 @@ class WorkOrderManagementController extends Controller
                 ->whereHas('property')
                 ->whereHas('service_provider')
                 ->whereHas('service')
-              //  ->whereHas('contract_services')
-                // ->when($request->contract_status_id,function($query) use($request){
-                //     $query->where('contract_status_id',$request->contract_status_id);
-                // })
+               ->whereHas('contract_services')
+                ->when($request->contract_status_id,function($query) use($request){
+                    $query->where('contract_status_id',$request->contract_status_id);
+                })
                 ->select('work_order_lists.*')->orderBy('id', 'Desc');
 
             
@@ -536,15 +536,18 @@ class WorkOrderManagementController extends Controller
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Show Work Order" id="details_task" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
                 } 
 
-               
-                // if( \Auth::guard('admin')->user()->hasAllPermission(['work-order-edit'])){   
+                $checkAssignedOrNot = TaskLists::whereWorkOrderId($workOrder->id)->first();
+                $checkWorkOrderSlot = WorkOrderSlot::whereWorkOrderId($workOrder->id)->first();
+               // echo 'service_type'. $workOrder->contract_services->service_type;
+                //exit;
+                if( \Auth::guard('admin')->user()->hasAllPermission(['work-order-edit']) and !$checkAssignedOrNot and !$checkWorkOrderSlot and $workOrder->contract_services->service_type != 'Maintenance'){   
 
-                //     $edit_url=route('admin.work-order-management.edit',$workOrder->id);
-                //     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Work Order" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
+                    $edit_url=route('admin.work-order-management.edit',$workOrder->id);
+                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Work Order" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
 
-                //     $delete_url=route('admin.work-order-management.delete',$workOrder->id);
-                //     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete contract" href="javascript:delete_task('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
-                // }
+                    $delete_url=route('admin.work-order-management.delete',$workOrder->id);
+                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete Work Order" href="javascript:delete_task('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
+                }
 
                 if($action_buttons==''){
                     $action_buttons=$action_buttons.'<span class="text-muted">No access</span>';
@@ -664,9 +667,9 @@ class WorkOrderManagementController extends Controller
                     'state_id.required'     => 'Please select state',
                     'city_id.required'      => 'Please select city',
                     'date_range.required'   => 'Please set date range',
-                    'task_title.required'   => 'Please enter Task title',
-                    'task_title.min'        => 'Task title should be should be at least 2 characters',
-                    'task_title.max'        => 'Task title should not be more than 255 characters',
+                    'task_title.required'   => 'Please enter Work title',
+                    'task_title.min'        => 'Work title should be should be at least 2 characters',
+                    'task_title.max'        => 'Work title should not be more than 255 characters',
                     
                 );
                 
@@ -729,8 +732,9 @@ class WorkOrderManagementController extends Controller
                         'updated_by'=>$logedInUser
                     ]);
 
-                    $request->session()->flash('alert-success', 'Task updated successfully');
-                    return redirect()->route('admin.work-order-management.list');
+                    //$request->session()->flash('alert-success', 'Task updated successfully');
+                    return redirect()->route('admin.work-order-management.list')->with('success','Work Order successfully updated');
+
                 }
            
             
@@ -1054,11 +1058,12 @@ class WorkOrderManagementController extends Controller
 
         if($request->ajax()){
              if($logedInUserRole==5){
-                 $task_list=TaskDetails::with('task', 'task.property', 'task.property.country', 'task.property.state', 'task.property.city')->with('service')->with('work_order_slot')->with('userDetails')->where('user_id', $id)->orderBy('id','Desc');
+                 $task_list=TaskDetails::with('task', 'task.property', 'task.property.country', 'task.property.state', 'task.property.city')->with('service')->with('work_order_slot')->with('userDetails')->where('user_id', $id);
              }
              else{
-                $task_list=TaskLists::with('service')->where('work_order_id', $id)->where('created_by', $logedInUser)->orderBy('id','Desc');
+                $task_list=TaskLists::with('service')->where('work_order_id', $id)->where('created_by', $logedInUser);
              }
+             
             return Datatables::of($task_list)
             ->editColumn('created_at', function ($task_list) {
                 return $task_list->created_at ? with(new Carbon($task_list->created_at))->format('m/d/Y') : '';
@@ -1173,6 +1178,11 @@ class WorkOrderManagementController extends Controller
                  }
                 
             })
+            ->filter(function ($task_list) use ($request) {
+                        if ($request->get('status')) {
+                            $task_list->where('status', $request->get('status'));
+                        }
+            })            
 
             ->rawColumns(['action','status'])
             ->make(true);
@@ -1229,6 +1239,7 @@ class WorkOrderManagementController extends Controller
        }
        else
        {
+            //dd($this->data);
             return view($this->view_path.'.work-order-task-list',$this->data);
        }
         
@@ -1291,6 +1302,7 @@ class WorkOrderManagementController extends Controller
                 $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
             })
             ->addColumn('status',function($labour_task_list){
+            
                 if($labour_task_list->status=='1'){
                    //$message='deactivate';
                    return '<span class="btn btn-block btn-outline-denger btn-sm">Overdue</a>';
@@ -1306,10 +1318,20 @@ class WorkOrderManagementController extends Controller
                    
                    
                 }
-                else
+                else if($labour_task_list->status=='1')
+                {
+                    return '<span class="btn btn-block btn-outline-denger btn-sm">Overdue</a>';
+                }
+                else if($labour_task_list->status=='2')
                 {
                     return '<span class="btn btn-block btn-outline-success btn-sm">Completed</a>';
                 }
+                else if($labour_task_list->status=='3')
+                {
+                    return '<span class="btn btn-block btn-info btn-sm">Requested for Reschedule</a>';
+                }
+
+
             })
             ->addColumn('action',function($labour_task_list){
                 $logedInUser = \Auth::guard('admin')->user()->id;
@@ -1320,6 +1342,14 @@ class WorkOrderManagementController extends Controller
                 if(\Auth::guard('admin')->user()->role_id==4){
                     $details_url = route('admin.work-order-management.labourTaskDetails',$labour_task_list->id);
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Daily Task List" id="details_task" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
+                 }
+                 if($labour_task_list->status=='3')
+                 {
+                     $allRestrictedDate=  $this->getAllRestricedDates($labour_task_list->user_id);
+
+                    //$details_url = route('admin.work-order-management.rescheduleTask',$labour_task_list->id);
+                    $action_buttons=$action_buttons."&nbsp;&nbsp;<a title='Reschedule Task' id='details_task' 
+                    href='javascript:rescheduleTask(".$labour_task_list->id.", ".json_encode($allRestrictedDate).", ".json_encode($labour_task_list->task_description).")'><i class='far fa-calendar-alt'></i></a>";
                  }
 
                  if($action_buttons=='')
@@ -1369,7 +1399,13 @@ class WorkOrderManagementController extends Controller
     }
 
 
-    
+    public static function getAllRestricedDates($id)
+    {
+        $allRestrictedDates = TaskDetails::whereUserId($id)->whereIsDeleted('N')->groupBy('task_date')->pluck('task_date');
+
+        //dd($allRestrictedDates);
+        return $allRestrictedDates;
+    }
     /*****************************************************/
     # WorkOrderManagementController
     # Function name : taskAssign
@@ -1463,8 +1499,8 @@ class WorkOrderManagementController extends Controller
                         'updated_by'=>$logedInUser
                     ]);
 
-                $request->session()->flash('success', 'Task has been added successfully');
-                return redirect()->route('admin.work-order-management.labourTaskList', $request->work_order_id);                
+                //$request->session()->flash('success', 'Task has been added successfully');
+                return redirect()->route('admin.work-order-management.labourTaskList', $request->work_order_id)->with('success','Task has been added successfully');                 
             }
 
         } catch (Exception $e) {
@@ -1554,7 +1590,7 @@ class WorkOrderManagementController extends Controller
     public function taskMaintanenceAssign(Request $request) {
 
 
-       // dd($request->all());
+        //dd($request->all());
         
 
         $this->data['page_title']     = 'Assign Task';
@@ -1878,5 +1914,65 @@ class WorkOrderManagementController extends Controller
         
         return response()->json(['message'=>'Labour Task successfully deleted.']);
 
+    }
+
+    /*****************************************************/
+    # WorkOrderManagementController
+    # Function name : labourTaskReschedule
+    # Author        :
+    # Created Date  : 18-12-2020
+    # Purpose       : Reschedule Task to Labour
+    # Params        : Request $request
+    /*****************************************************/
+    public function labourTaskReschedule(Request $request) {
+
+        $this->data['page_title']     = 'Assign Task';
+        $taskDetails = TaskDetails::findOrFail($request->task_details_id);
+        
+        $logedInUser = \Auth::guard('admin')->user()->id;
+        
+        try
+        {
+            
+            $validationCondition = array(
+                'task_details_id'  => 'required',
+                'task_date'        => 'required',
+            );
+            $validationMessages = array(
+                
+                'task_date.required'    => 'Please select Task Date',
+            );
+
+            $Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);
+            if ($Validator->fails()) {
+                
+                return redirect()->route('admin.work-order-management.taskLabourList', $taskDetails->task_id)->withErrors($Validator)->withInput();
+                
+            } else {
+              
+                    $addTaskDetails = TaskDetails::create([
+                        'service_id'                 => $taskDetails->service_id, 
+                        'work_order_slot_id'         => $taskDetails->work_order_slot_id,
+                        'task_id'                    => $taskDetails->task_id,
+                        'user_id'                    => $taskDetails->user_id,
+                        'reschedule_task_details_id' => $request->task_details_id,
+                        'task_date'                  => date('o-m-d',strtotime($request->task_date)),
+                        'task_description'           => $request->task_description,
+                        'created_by'                 => auth()->guard('admin')->id(),
+                    ]);
+
+
+                    $taskDetails->update([
+                        'rescheduled'=>'Y',
+                        'updated_by'=>$logedInUser,
+                    ]);
+
+               // $request->session()->flash('success', 'Task has been added successfully');
+                return redirect()->route('admin.work-order-management.taskLabourList', $taskDetails->task_id)->with('success','Task Rescheduled successfully');               
+            }
+
+        } catch (Exception $e) {
+            return redirect()->route('admin.work-order-management.taskLabourList', $taskDetails->task_id)->with('error', $e->getMessage());
+        }
     }
 }

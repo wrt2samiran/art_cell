@@ -12,11 +12,21 @@
             { data: 'id', name: 'id' },          
             { data: 'task_title', name: 'task_title' },
             { data: 'created_at', name: 'created_at' },
-            { data: 'task_complete_percent', name: 'task_complete_percent' },
+            { data: 'task_complete_percent', render:function(data){
+                 if(data<1)
+                 {
+                  var dataval = 0;
+                 }
+                 else
+                 {
+                  var dataval = data;
+                 }
+                 return '<div class="progress"><div class="progress-bar bg-success progress-bar-striped" role="progressbar" aria-valuenow="'+dataval+'" aria-valuemin="0" aria-valuemax="100" style="width:'+dataval+'%">'+dataval+'% </div></div>'
+                }},
             { data: 'status', name: 'ststus' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
-         order: [ [0, 'asc'] ],
+         order: [ [0, 'desc'] ],
         columnDefs: [
         {   "targets": [0],
             "visible": false,
@@ -303,14 +313,28 @@ $("#admin_other_maintanence_labour_task_add_form").validate({
         "autoWidth": false,
         processing: true,
         serverSide: true,
-        ajax: baseUrl+'/admin/work-order-management',
+        ajax: {
+          url:baseUrl+'/admin/work-order-management',
+          data: function (d) {
+            d.status = $('#status').val();
+          }
+        },
+
         columns: [
             { data: 'id', name: 'id' },
             { data: 'task.property.property_name', name: 'task.property.property_name' },
-            { data: 'task.property.country.name', name: 'task.property.country.name' },
-            { data: 'task.property.state.name', name: 'task.property.state.name' },
-            { data: 'task.property.city.name', name: 'task.property.city.name' },
-            { data: 'service.service_name', name: 'service.service_name' },
+            { data: 'task.property',
+              render: function(data){
+                      return '<table>'+
+                      '<tr><td>Country :</td><td>'+data.country.name+'</td></tr>'+
+                      '<tr><td>State :</td><td>'+data.state.name+'</td></tr>'+
+                      '<tr><td>City :</td><td>'+data.city.name+'</td></tr>'+
+                      '</table>';
+                  }, searchable: false, sortable : false
+            }, 
+            
+            { data: 'service.service_name', name: 'service.service_name', searchable: false, sortable : false },
+            { data: 'task.task_title', name: 'task.task_title'},
             { data: 'task_date', name: 'task_date' },
             {
                data: 'work_order_slot.daily_slot', 
@@ -347,17 +371,27 @@ $("#admin_other_maintanence_labour_task_add_form").validate({
                   }
                   return 'No Slot';
               name: 'work_order_slot.daily_slot'
-            }},
-            { data: 'status', name: 'ststus' },
+            }, searchable: false, sortable : false},
+            { data: 'task.task_desc', name: 'task.task_desc' },
+            { data: 'status', name: 'ststus', sortable : false },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
-         order: [ [0, 'asc'] ],
+        order: [ [0, 'desc'] ],
         columnDefs: [
         {   "targets": [0],
             "visible": false,
             "searchable": false
-        }]
+        }],
 
+    });
+
+    $('#status').change(function(){
+        labour_task_management_table.draw();
+    });
+
+    $('.status-filter').select2({
+      theme: 'bootstrap4',
+      placeholder:'Filter by Status'
     });
 
  //function to delete labour task

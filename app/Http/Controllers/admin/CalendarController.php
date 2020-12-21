@@ -161,7 +161,7 @@ class CalendarController extends Controller
                
                 //$taskList = TaskLists::with(['contract', 'task_details', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->where(function ($q) use ($request) {
 
-                $taskList = TaskLists::with(['contract', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->whereWorkOrderId($request->work_order_id)->orderBy('id', 'Desc')->get();
+                $taskList = TaskLists::with(['contract', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->whereWorkOrderId($request->work_order_id)->where('status', '<>', 3)->orderBy('id', 'Desc')->get();
                 //dd($taskList);
                 if(count($taskList)>0)
                 {   
@@ -615,16 +615,22 @@ class CalendarController extends Controller
 
         else
         {
+            $start_date  = date('Y-m-d h:i:s', strtotime($request->modified_start_date));
+            $date_from = strtotime($start_date);
+            $day_to_display = $date_from+86400;
+                
             if($request->contract_service_date_id!='')
             {
+                
+
                 $updateContractService = ContractServiceDate::whereId($request->contract_service_date_id)->update([
-                             'date'=>$request->modified_start_date
+                             'date'=>date('o-m-d',$day_to_display)
                         ]);
             }
             else
             {
                 $updateWorkOrder = WorkOrderLists::whereId($request->work_order_id)->update([
-                             'start_date'=>$request->modified_start_date
+                             'start_date'=>date('o-m-d',$day_to_display)
                         ]);
             }
 
@@ -731,8 +737,12 @@ class CalendarController extends Controller
             $checkTaskdetails = TaskDetails::whereId($request->task_details_id)->where('status','<>','2')->first();
             if($checkTaskdetails)
                {
+                    $start_date  = date('Y-m-d h:i:s', strtotime($request->modified_start_date));
+                    $date_from = strtotime($start_date);
+                    $day_to_display = $date_from+86400;
+            
                     $checkTaskdetails->update([
-                        'task_date'=>$request->modified_start_date,
+                        'task_date'=>date('o-m-d',$day_to_display),
                         'updated_by'=>$logedInUser
                     ]);
 

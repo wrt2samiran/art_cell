@@ -9,12 +9,12 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Task List</h1>
+                <h1>Work Details And Task List</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                   <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item active">Task List</li>
+                  <li class="breadcrumb-item active">Work Details And Task List</li>
                 </ol>
               </div>
             </div>
@@ -23,10 +23,10 @@
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-              @if(Session::has('success-message'))
+              @if(Session::has('success'))
                   <div class="alert alert-success alert-dismissable">
                       <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-                      {{ Session::get('success-message') }}
+                      {{ Session::get('success') }}
                   </div>
               @endif
               @if(Session::has('error'))
@@ -79,7 +79,10 @@
                     <td>Start Date</td> 
                     <td >{{Carbon\Carbon::createFromFormat('Y-m-d', $work_order_list->start_date)->format('d-m-Y')}}</td>
                   </tr>
-
+                  <tr>
+                    <td>Completed</td> 
+                    <td ><div class="progress"><div class="progress-bar bg-success progress-bar-striped" role="progressbar" aria-valuenow="{{$work_order_list->work_order_complete_percent}}" aria-valuemin="0" aria-valuemax="100" style="width: {{$work_order_list->work_order_complete_percent}}%">{{$work_order_list->work_order_complete_percent}}% </div></div></td>
+                  </tr>
                   
                   
                   <!-- <tr>
@@ -126,6 +129,10 @@
                     </tr>
                 </thead>
             </table>
+
+            <div>
+              <a href="{{route('admin.work-order-management.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
+            </div>
             <!-- <input type="hidden" id="labour_assigned_task_list" value="{{route('admin.work-order-management.list')}}"> -->
 
             <!-- On Demand or Free Task -->
@@ -203,7 +210,7 @@
                                       <i class="far fa-calendar-alt"></i>
                                     </span>
                                   </div>
-                                  <input type="text" class="form-control float-right" id="date_range" name="date_range">
+                                  <input type="text" class="form-control float-right" id="date_range" name="date_range" onchange="checkOnDemandFree()">
                                 </div>
                                 <!-- /.input group -->
                               </div>
@@ -521,11 +528,10 @@
     {
 
 
-     // alert('done');
+      //alert('called');
       if (($('#task_title').val().length > 0) && ($('#user_id').val().length  > 0))
       {
-
-        
+        $(".live_list").empty();
         $('.btn-success').prop('disabled', false);
         //var userDataString =  document.getElementById('user_id').innerHTML;
         //var userDataString = $('#user_id option:selected').val();
@@ -552,8 +558,9 @@
              var userLeaveList = JSON.stringify(response.userLeaveList);
              var userLeaveData = JSON.parse(userLeaveList);
              var all_leave_list = '';
-
+             console.log(userLeaveList.length);
             if (userLeaveList.length>0) {
+               // alert('Positive ::'+userLeaveList.length);
                   document.getElementById("live_list").setAttribute("style","overflow:auto;height:150px;width:350px");
                   $.each(userLeaveData,function(index, leave_all_dates){
                     all_leave_list += index+' have leave on below days : '+'<br>';
@@ -566,6 +573,7 @@
                  // $("#live_list").text('dta set');
                   $("div.live_list").html(all_leave_list );
               }
+            
             }
 
             
@@ -758,26 +766,6 @@
     });
 
 
-    
-
-
-
-    // $("#free_ondemand").on('click',function(e){ //also can use on submit
-    //   e.preventDefault(); //prevent submit
-    //   swal({
-    //       title: "Are you sure?",
-    //       type: "warning",
-    //       showCancelButton: true,
-    //       confirmButtonColor: "#DD6B55",
-    //       confirmButtonText: "Yes!",
-    //       cancelButtonText: "Cancel",
-    //       closeOnConfirm: true
-    //   }
-    //   }).then(function(value) {
-    //       if (value) {
-    //         $('#frm_input_srt').submit();
-    //       }
-    //   });
 
     $("#free_ondemand").on('click',function(e){
       e.preventDefault();
@@ -788,10 +776,49 @@
         buttons: true,
         dangerMode: true,
         }).then((isConfirm) => {
+          if(isConfirm){
             jQuery("#admin_labour_task_add_form").submit();
+            $.LoadingOverlay("show");
+          }
         });
 
-    });     
+    });  
+
+
+    $("#maintanence_daily").on('click',function(e){
+      e.preventDefault();
+      swal({
+        title: "Are you sure?",
+        text: "Once Assigned, you will not be able to modify this task!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+        }).then((isConfirm) => {
+          if(isConfirm){
+            jQuery("#admin_maintanence_labour_task_add_form").submit();
+            $.LoadingOverlay("show");
+          }
+        });
+
+    }); 
+
+
+    $("#maintanence_other").on('click',function(e){
+      e.preventDefault();
+      swal({
+        title: "Are you sure?",
+        text: "Once Assigned, you will not be able to modify this task!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+        }).then((isConfirm) => {
+          if(isConfirm){
+            jQuery("#admin_other_maintanence_labour_task_add_form").submit();
+            $.LoadingOverlay("show");
+          }
+        });
+
+    });    
 
 
 

@@ -49,6 +49,16 @@
                   return 'No Slot';
               name: 'work_order_slot.daily_slot'
             }},
+            { data: 'reschedule_task_details_id', 
+              render: function(data){
+                  if(data >0){
+                    return '<strong style="color:#17a2b8">Rescheduled Task</strong>';
+                  }
+                  else{
+                    return 'Normal Task';
+                  }
+              }
+            },
             { data: 'user_feedback', name: 'user_feedback' },
             { data: 'status', name: 'ststus' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
@@ -183,6 +193,72 @@
             form.submit();
         }
     });
+
+ function rescheduleTask(id, allRestrictedDate, task_description)
+ {
+  //alert(id);
+  console.log(id);
+  
+  console.log(JSON.stringify(allRestrictedDate));
+  $('#task_details_id').val(id);
+  $('#taskRescheduleModal').modal('show');
+
+
+
+    var array = JSON.stringify(allRestrictedDate);
+
+    $('#task_date').datepicker({
+        beforeShowDay: function(date){
+            var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
+            return [ array.indexOf(string) == -1 ]
+        }
+    });
+
+    $('#task_description').val(task_description);
+
+}
+
+
+//  $(".ui-state-disabled").hover(function() {
+
+//         alert("Test");  
+// });
+
+
+$("#service_provider_reschedule").validate({
+    ignore: [],
+    rules: {
+        task_date: {
+            required: true,
+        },        
+    },
+    messages: {
+        task_date: {
+            required:  "Please select Task Date",
+        },
+        
+    },
+    //errorElement: "em",
+    errorPlacement: function(error, element) {
+        // Add the `help-block` class to the error element
+        error.addClass('invalid-feedback');
+    //       error.insertAfter(element);
+
+        if (element.prop("type") === "checkbox") {
+            error.insertAfter(element.parent("label"));
+        } else if (element.hasClass('multiselect')) {
+            error.insertAfter(element.next('.btn-group'))
+        } else {
+      error.insertAfter(element);
+    }
+    },
+    highlight: function(element, errorClass, validClass) {
+        $(element).parents(".col-sm-5").addClass("has-error").removeClass("has-success");
+    },
+    unhighlight: function(element, errorClass, validClass) {
+        $(element).parents(".col-sm-5").addClass("has-success").removeClass("has-error");
+    }
+});
 
 
  $("document").ready(function(){

@@ -30,7 +30,9 @@
 
             { data: 'start_date', name: 'start_date' },
             
-            { data: 'work_order_complete_percent', name: 'work_order_complete_percent' },
+            { data: 'work_order_complete_percent', render:function(data){
+                 return '<div class="progress"><div class="progress-bar bg-success progress-bar-striped" role="progressbar" aria-valuenow="'+data+'" aria-valuemin="0" aria-valuemax="100" style="width:'+data+'%">'+data+'% </div></div>'
+                }},
             { data: 'status', name: 'ststus' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],

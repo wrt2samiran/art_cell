@@ -43,5 +43,6 @@ return array (
   'notifications'=>'إشعارات',
   'unit_management' => 'إدارة الوحدة',
   'skills' => 'مهارات',
+  'task-management' => 'ادارة المهام',
 
 );

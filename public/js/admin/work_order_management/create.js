@@ -65,9 +65,9 @@ $("#admin_task_add_form").validate({
                 required:  "Please select date range",
             },
             task_title: {
-                required:  "Task title is required",
-                minlength: "Task title should have 3 characters",
-                maxlength: "Task title should not be more then 50 characters"
+                required:  "Work title is required",
+                minlength: "Work title should have 3 characters",
+                maxlength: "Work title should not be more then 50 characters"
             },
 
         },
@@ -164,6 +164,11 @@ $("#admin_labour_assign_form").validate({
             form.submit();
         }
     });
+
+$('#contract_id').select2({
+    theme: 'bootstrap4',
+    placeholder:'Select contract'
+});
 
 
     

@@ -49,8 +49,7 @@
                     <div class="col-md-10 col-sm-12">
                       <form  method="post" id="admin_task_add_form" action="{{route('admin.work-order-management.workOrderCreate')}}" method="post" enctype="multipart/form-data">
                         @csrf
-                              <div>  
-                                </div>
+                              
                                 <div class="form-group required">
                                   <label for="contract_id">Contract Title <span class="error">*</span></label>
                                   <select class="form-control parent_role_select2"  style="width: 100%;" name="contract_id" id="contract_id" 
@@ -132,20 +131,21 @@
                                   <!-- /.input group -->
                                 </div>
                                 <div class="form-group required">
-                                  <label for="service_id">Task Title <span class="error">*</span></label>
-                                  <input type="text" class="form-control float-right" id="task_title" name="task_title">
+                                  <label for="service_id">Work Title <span class="error">*</span></label>
+                                  <input type="text" class="form-control" id="task_title" name="task_title">
                                    @if($errors->has('task_title'))
                                     <span class="text-danger">{{$errors->first('task_title')}}</span>
                                    @endif
                                 </div>
 
                                 <div class="form-group">
-                                  <label for="service_id">Task Description</label>
-                                  <textarea class="form-control float-right" name="task_desc" id="task_desc">{{old('task_desc')}}</textarea>
+                                  <label for="service_id">Work Description</label>
+                                  <textarea class="form-control" name="task_desc" id="task_desc">{{old('task_desc')}}</textarea>
                                 </div>                                            
                             <div>
-                           <button type="submit" disabled="" class="btn btn-success disable-button">Submit</button> 
-                        </div>
+                               <a href="{{route('admin.work-order-management.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
+                               <button type="submit" disabled="" class="btn btn-success disable-button">Submit</button> 
+                            </div>
                       </form>
                     </div>
                   </div>

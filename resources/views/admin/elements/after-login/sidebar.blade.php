@@ -392,7 +392,11 @@
                     <a href="{{route('admin.work-order-management.list')}}"
                     class="nav-link {{(request()->is('admin/work-order-management/*','admin/work-order-management'))?'active':''}}">
                         <i class="nav-icon fas fa-quote-right"></i>
-                        <p>{{__('nav_link_text.work-order-management')}}</p>
+                        @if($admin->role->user_type->slug=='labour')
+                            <p>{{__('nav_link_text.task-management')}}</p>
+                        @else
+                            <p>{{__('nav_link_text.work-order-management')}}</p>
+                        @endif
                     </a>
                 </li>            
                 @endif

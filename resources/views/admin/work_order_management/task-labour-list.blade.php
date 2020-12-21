@@ -77,6 +77,7 @@
                         <th>Labour Title</th>
                         <th>Task Date</th>
                         <th>Task Slot</th>
+                        <th>Task Mode</th>
                         <th>Labour Feedback</th>
                         <th>Status</th>
                         <th>Action</th>
@@ -84,10 +85,9 @@
                 </thead>
             </table>
             
-                <div class="modal fade" id="addFeedbackModal" role="dialog">
+                <!-- <div class="modal fade" id="addFeedbackModal" role="dialog">
                   <div class="modal-dialog">
                   
-                    <!-- Modal content-->
                     <div class="modal-content">
                       <div class="modal-header">
                         
@@ -126,6 +126,64 @@
                       </div>
                     </div>
                   </div>
+                </div> -->
+                <div>
+                  <a href="{{route('admin.work-order-management.labourTaskList', $task_data->work_order_id)}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
+                </div>
+                <div class="modal fade" id="taskRescheduleModal" role="dialog">
+                  <div class="modal-dialog">
+                  
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        
+                        <h4 class="modal-title">Add Feedback</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                      </div>
+                      <div class="modal-body">
+                        <div class="card-body">
+                            <div class="row justify-content-center">
+                              <div class="col-md-10 col-sm-12">
+                                
+                                <form  id="service_provider_reschedule" action="{{route('admin.work-order-management.labourTaskReschedule')}}" method="post" enctype="multipart/form-data">
+                                  @csrf
+                                        <div>  
+                                          <input type="hidden" name="task_details_id" id="task_details_id" />
+                                   
+                                          <div class="form-group">
+
+                                            <div class="form-group required">
+                                              <label for="task_date">Start Date <span class="error">*</span></label>
+                                              <input type="text" class="form-control" value="{{old('task_date')?old('task_date'):''}}" readonly="readonly" name="task_date" id="task_date" autocomplete="off"  placeholder="Task Date">
+                                              @if($errors->has('task_date'))
+                                              <span class="text-danger">{{$errors->first('task_date')}}</span>
+                                              @endif
+                                            </div>
+                                            <div class="form-group required">
+                                              <label for="task_description">Task Details</label>
+                                              <textarea class="form-control" name="task_description" id="task_description">{{old('task_description')}}</textarea>
+                                               @if($errors->has('task_description'))
+                                                <span class="text-danger">{{$errors->first('task_description')}}</span>
+                                               @endif
+                                            </div>
+                          
+                                            <!-- /.input group -->
+                                          </div>
+                                          
+                                      <div>
+                                     <button type="submit" class="btn btn-success">Submit</button> 
+
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
               <!-- Labour Feedback END-->  
@@ -133,6 +191,9 @@
 @endsection
 
 @push('custom-scripts')
+<script type="text/javascript">
+
+</script>
 
 <script type="text/javascript" src="{{asset('js/admin/work_order_management/task-labour-list.js')}}"></script>
 @endpush
