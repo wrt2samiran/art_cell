@@ -94,14 +94,14 @@
 
                           <div class="form-group required">
                             <label for="start_date">Start Date <span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('start_date')?old('start_date'):Carbon\Carbon::createFromFormat('Y-m-d', $contract->start_date)->format('d/m/Y')}}" name="start_date" id="start_date"  placeholder="Start Date">
+                            <input type="text" class="form-control" value="{{old('start_date')?old('start_date'):Carbon\Carbon::createFromFormat('Y-m-d', $contract->start_date)->format('d/m/Y')}}" name="start_date" id="start_date" autocomplete="off" readonly="readonly"  placeholder="Start Date">
                             @if($errors->has('start_date'))
                             <span class="text-danger">{{$errors->first('start_date')}}</span>
                             @endif
                           </div>
                           <div class="form-group required">
                             <label for="end_date">End Date <span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('end_date')?old('end_date'):Carbon\Carbon::createFromFormat('Y-m-d', $contract->end_date)->format('d/m/Y')}}" name="end_date" id="end_date"  placeholder="End Date">
+                            <input type="text" class="form-control" value="{{old('end_date')?old('end_date'):Carbon\Carbon::createFromFormat('Y-m-d', $contract->end_date)->format('d/m/Y')}}" name="end_date" id="end_date" autocomplete="off" readonly="readonly"  placeholder="End Date">
                             @if($errors->has('end_date'))
                             <span class="text-danger">{{$errors->first('end_date')}}</span>
                             @endif
