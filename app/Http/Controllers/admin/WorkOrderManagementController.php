@@ -1520,6 +1520,7 @@ class WorkOrderManagementController extends Controller
 
     public function checkAvailablity(Request $request)
     {
+       // dd($request);
         $userData = json_decode(stripslashes($request->data));
         $selectedDate = json_decode(stripslashes($request->selectedDate));
         $work_order_id = json_decode(stripslashes($request->work_order_id));
@@ -1563,6 +1564,7 @@ class WorkOrderManagementController extends Controller
                         
                         $counter++;
                     }  
+                   // dd($weeklyLeave);
                     if(count($weeklyLeave)>0)
                     {
                         $userLeaveList[$labourWeekEnd->name] =  $weeklyLeave;

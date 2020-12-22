@@ -108,12 +108,25 @@
                         <tr>
                           <td>Completed</td>
                           <td>
-                              <div class="progress">
-                                <div class="progress-bar bg-success progress-bar-striped" role="progressbar" aria-valuenow="{{$work_order_list->work_order_complete_percent}}"
-                                aria-valuemin="0" aria-valuemax="100" style="width:{{$work_order_list->work_order_complete_percent}}%">
-                                  {{$work_order_list->work_order_complete_percent}}% Complete
+                              @if($work_order_list->work_order_complete_percent>0)
+
+                                <div class="progress">
+                                  <div class="progress-bar bg-success progress-bar-striped" role="progressbar" aria-valuenow="{{$work_order_list->work_order_complete_percent}}"
+                                  aria-valuemin="0" aria-valuemax="100" style="width:{{$work_order_list->work_order_complete_percent}}%">
+                                    {{$work_order_list->work_order_complete_percent}}% Complete
+                                  </div>
                                 </div>
-                              </div>
+                              
+                              @else
+                              
+                                <div class="progress">
+                                  <div class="progress-bar bg-success progress-bar-striped" role="progressbar" aria-valuenow="0"
+                                  aria-valuemin="0" aria-valuemax="100" style="width:0%">
+                                    0% Complete
+                                  </div>
+                                </div>
+                           
+                              @endif
                           </td>
                         </tr>
                        

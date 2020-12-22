@@ -443,7 +443,7 @@
                         @endif
                         @if(auth()->guard('admin')->user()->hasAllPermission(['leave-list']))
                         <li class="nav-item">
-                            <a href="{{ route('admin.labour.leaveList') }}" class="nav-link {{(request()->is('admin/labour/leave-list','admin/labour/leave-list', 'admin/labour/show-leave/*','admin/labour/show-leave'))?'active':''}}"
+                            <a href="{{ route('admin.leaveList') }}" class="nav-link {{(request()->is('admin/labour/leave-list','admin/labour/leave-list', 'admin/labour/show-leave/*','admin/labour/show-leave'))?'active':''}}"
                                >
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>{{__('nav_link_text.labour_leave_management')}}</p>

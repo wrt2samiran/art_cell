@@ -14,7 +14,7 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.labour.leaveList')}}">Labour Leave</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.leaveList')}}">Labour Leave</a></li>
               <li class="breadcrumb-item active">Create</li>
             </ol>
           </div>
@@ -47,7 +47,7 @@
                   @endif
                   <div class="row justify-content-center">
                     <div class="col-md-10 col-sm-12">
-                      <form  method="post" id="labour_leave_create_form" action="{{route('admin.labour.storeLeave')}}" method="post">
+                      <form  method="post" id="labour_leave_create_form" action="{{route('admin.storeLeave')}}" method="post">
                         @csrf
                         <div>
                           <div class="form-group required">
@@ -78,12 +78,12 @@
 
                           <div class="form-group">
                             <label for="service_id">Reason</label>
-                            <textarea class="form-control float-right" name="leave_reason" id="task_description">{{old('leave_reason')}}</textarea>
+                            <textarea class="form-control" name="leave_reason" id="task_description">{{old('leave_reason')}}</textarea>
                           </div>
                         
                         <input type="hidden" id="ajax_check_user_email_unique" value="{{route('ajax.check_user_email_unique')}}">
                         <div>
-                           <a href="{{route('admin.labour.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
+                           <a href="{{route('admin.leaveList')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
                            <button type="submit" class="btn btn-success">Submit</button> 
                         </div>
                       </form>
@@ -104,6 +104,11 @@
              
           })
     });
+
+  $('#labour_id').select2({
+    theme: 'bootstrap4',
+    placeholder:'Select Labour'
+});
 </script>
 <script type="text/javascript" src="{{asset('js/admin/labour/create-leave.js')}}"></script>
 @endpush
