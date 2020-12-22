@@ -198,7 +198,7 @@
     function onCountryChange(country_id){
      $.ajax({
        
-        url: "{{route('admin.labour.getStateList')}}",
+        url: "{{route('admin.getStateList')}}",
         type:'get',
         dataType: "json",
         data:{country_id:country_id,_token:"{{ csrf_token() }}"}
@@ -222,7 +222,7 @@
     function onStateChange(state_id){
      $.ajax({
        
-        url: "{{route('admin.labour.getCityList')}}",
+        url: "{{route('admin.getCityList')}}",
         type:'get',
         dataType: "json",
         data:{state_id:state_id,_token:"{{ csrf_token() }}"}

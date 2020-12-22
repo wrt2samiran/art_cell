@@ -14,7 +14,7 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.labour.leaveList')}}">Laboure Leave Management</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.leaveList')}}">Laboure Leave Management</a></li>
               <li class="breadcrumb-item active">Details</li>
             </ol>
           </div>
@@ -77,7 +77,7 @@
                       </tbody>
                       <tfoot>
                         <tr>
-                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.labour.leaveList')}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
+                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.leaveList')}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
                         </tr>
                       </tfoot>
                   </table>

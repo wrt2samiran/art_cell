@@ -14,7 +14,7 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.labour.leaveList')}}">Labour Leave</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.leaveList')}}">Labour Leave</a></li>
               <li class="breadcrumb-item active">Edit</li>
             </ol>
           </div>
@@ -47,7 +47,7 @@
                   @endif
                   <div class="row justify-content-center">
                     <div class="col-md-10 col-sm-12">
-                      <form  method="post" id="labour_edit_form" action="{{route('admin.labour.updateLeave',$leaveData->id)}}" method="post">
+                      <form  method="post" id="labour_edit_form" action="{{route('admin.updateLeave',$leaveData->id)}}" method="post">
                         @csrf
                         @method('PUT')
                         <div>
@@ -72,14 +72,14 @@
                                   <i class="far fa-calendar-alt"></i>
                                 </span>
                               </div>
-                              <input type="text" class="form-control float-right" id="date_range" name="date_range">
+                              <input type="text" class="form-control" id="date_range" name="date_range">
                             </div>
                             <!-- /.input group -->
                           </div>
 
                           <div class="form-group">
                             <label for="service_id">Reason</label>
-                            <textarea class="form-control float-right" name="leave_reason" id="task_description">{{@$leaveData->leave_reason}}</textarea>
+                            <textarea class="form-control" name="leave_reason" id="task_description">{{@$leaveData->leave_reason}}</textarea>
                           </div>
                         <!--  this the url for remote validattion rule for user email -->
                           <div class="form-group">
@@ -109,6 +109,11 @@
              
           })
     });
+
+  $('#labour_id').select2({
+    theme: 'bootstrap4',
+    placeholder:'Select Labour'
+});
 </script>
 <script type="text/javascript" src="{{asset('js/admin/labour/edit.js')}}"></script>
 @endpush

@@ -29,7 +29,6 @@ class LabourController extends Controller
 {
     //defining the view path
     private $view_path='admin.labour';
-    private $view_path_leave='admin';
     //defining data array
     private $data=[];
 
@@ -220,7 +219,7 @@ class LabourController extends Controller
     public function edit($id){
         $user=User::with('user_skills')->whereId($id)->first();
         //policy is defined in App\Policies\UserPolicy
-        //$this->authorize('update',$user);
+        $this->authorize('update',$user);
         $this->data['page_title']='Edit Laboure';
         $this->data['user']=$user;
         $current_user=auth()->guard('admin')->user();
@@ -259,7 +258,7 @@ class LabourController extends Controller
 
         $user=User::findOrFail($id);
         //policy is defined in App\Policies\UserPolicy
-        //$this->authorize('update',$user);
+        $this->authorize('update',$user);
         $update_data=[
             'first_name'=>$request->first_name,
             'last_name'=>$request->last_name,
@@ -308,7 +307,7 @@ class LabourController extends Controller
     public function delete($id){
         $user=User::findOrFail($id);
         //policy is defined in App\Policies\UserPolicy
-        //$this->authorize('delete',$user);
+        $this->authorize('delete',$user);
         $user->update([
             'email'=>$user->email.'(deleted at-'.Carbon::now().')',
             'deleted_by'=>auth()->guard('admin')->id()
@@ -455,8 +454,6 @@ class LabourController extends Controller
         }
 
         return view($this->view_path.'.leave-list',$this->data);
-
-       // return view($this->view_path_leave.'.leave-list',$this->data);
     }
 
     /************************************************************************/
@@ -563,7 +560,7 @@ class LabourController extends Controller
                     else
                     {
                         empty($arr_days);
-                        return redirect()->route('admin.createLeave')->with('error','Already Leave adde for this user on '.$checkLeave->leave_date);
+                        return redirect()->route('admin.labour.createLeave')->with('error','Already Leave adde for this user on '.$checkLeave->leave_date);
                     }
                 }
                 
@@ -592,7 +589,7 @@ class LabourController extends Controller
         
        
 
-        return redirect()->route('admin.leaveList')->with('success','Labour Leave successfully created.');
+        return redirect()->route('admin.labour.leaveList')->with('success','Labour Leave successfully created.');
 
 
     }
@@ -691,7 +688,7 @@ class LabourController extends Controller
             else
             {
                 empty($arr_days);
-                return redirect()->route('admin.createLeave')->with('error','Already Leave adde for this user on '.$checkLeave->leave_date);
+                return redirect()->route('admin.labour.createLeave')->with('error','Already Leave adde for this user on '.$checkLeave->leave_date);
             }
         }
         
@@ -723,7 +720,7 @@ class LabourController extends Controller
 
         //event(new ServiceProviderCreated($user,$request->password));
 
-        return redirect()->route('admin.leaveList')->with('success','labour successfully updated.');
+        return redirect()->route('admin.labour.leaveList')->with('success','labour successfully updated.');
 
     }
 
