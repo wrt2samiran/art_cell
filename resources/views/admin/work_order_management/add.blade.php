@@ -186,7 +186,7 @@
              var service_list = '<option value=""> Select Service</option>';
              if (serviceData.length > 0) {
                   $.each(serviceData,function(index, service_id){
-                    service_list += '<option value="'+service_id.service_id+'">'+ service_id.service.service_name +' ('+service_id.service_type+')'+'</option>';
+                    service_list += '<option value="'+service_id.id+'">'+ service_id.service.service_name +' ('+service_id.service_type+')'+'</option>';
                   });
               }
 

@@ -79,13 +79,13 @@ class WorkOrderManagementController extends Controller
                     //$date_to = strtotime($end_date);
 
                     $sqlContract = Contract::findOrFail($request->contract_id);
-                    $sqlContractService = ContractService::where('contract_id', $request->contract_id)->whereServiceId($request->service_id)->first();
+                    $sqlContractService = ContractService::where('contract_id', $request->contract_id)->whereId($request->service_id)->first();
                     $sqlSlot = ContractServiceRecurrence::whereContractServiceId($sqlContractService->id)->first();
 
                     $task=WorkOrderLists::create([
                         'contract_id'=>$request->contract_id,
                         'property_id'=>$request->property_id,
-                        'service_id' => $request->service_id,
+                        'service_id' => $sqlContractService->service_id,
                         'contract_service_id' => $sqlContractService->id,
                         // 'country_id' =>$request->country_id,
                         // 'state_id' =>$request->state_id,
@@ -266,7 +266,7 @@ class WorkOrderManagementController extends Controller
               return response()->json(['success' =>false,'message'=>$validator->errors()->first()], 200);
             }
         
-        $sqlService = ContractService::with('service')->whereContractId($request->contract_id)->whereServiceId($request->service_id)->first();
+        $sqlService = ContractService::with('service')->whereContractId($request->contract_id)->whereId($request->service_id)->first();
         if($sqlService){
 
            
@@ -486,7 +486,7 @@ class WorkOrderManagementController extends Controller
                 ->whereHas('property')
                 ->whereHas('service_provider')
                 ->whereHas('service')
-               ->whereHas('contract_services')
+                ->whereHas('contract_services')
                 ->when($request->contract_status_id,function($query) use($request){
                     $query->where('contract_status_id',$request->contract_status_id);
                 })
