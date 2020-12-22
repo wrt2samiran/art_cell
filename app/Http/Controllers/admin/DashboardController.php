@@ -5,7 +5,7 @@ namespace App\Http\Controllers\admin;
 use App;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\{User,Setting, Property, Contract,Complaint,WorkOrderLists,SparePartOrder,SharedServiceOrder,TaskLists};
+use App\Models\{User,Setting, Property, Contract,Complaint,WorkOrderLists,SparePartOrder,SharedServiceOrder,TaskLists,Status};
 use Yajra\Datatables\Datatables;
 use Config;
 use Carbon\Carbon;
@@ -117,6 +117,47 @@ class DashboardController extends Controller
         ->whereHas('contract')
         ->whereHas('property')
         ->orderBy('start_date','asc')->take(10)->get();
+
+
+        $this->data['complaint_statuses']=Status::where('status_for','complaint')->get();
+
+
+        $this->data['complaint_contracts']=Contract::where('creation_complete',true)
+        ->whereHas('complaints')
+        ->get();
+
+        $this->data['work_order_contracts']=Contract::where('creation_complete',true)
+        ->whereHas('work_orders')
+        ->get();
+
+
+        if($request->ajax()){
+            //complaint filter
+            if($request->complaint_filter){
+
+                $this->data['complaints']=Complaint::whereHas('contract')
+                ->whereHas('complaint_status')
+                ->when($request->complaint_status_id && $request->complaint_status_id!='all' ,function($q)use ($request){
+                    $q->where('status_id',$request->complaint_status_id);
+                })
+                ->when($request->complaint_contract_id && $request->complaint_contract_id!='all' ,function($q)use ($request){
+                    $q->where('contract_id',$request->complaint_contract_id);
+                })
+                ->orderBy('id','desc')->take(5)->get();
+
+                $complaint_view=view('admin.dashboard.admin.ajax.complaints',$this->data)->render();
+
+                return  response()->json([
+                    'html'=>$complaint_view
+                ]);
+            }
+
+
+
+
+
+        }
+
 
         return view('admin.dashboard.admin.index',$this->data);
     }

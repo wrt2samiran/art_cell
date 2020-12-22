@@ -939,16 +939,19 @@ class ContractController extends Controller
         $this->data['contract']=$contract;
 
 
-        $this->data['service_providers']=User::whereStatus('A')
+        $this->data['service_providers']=User::where(function($q) use($contract){
+            $q->where('status','A')->orWhere('id',$contract->service_provider_id);
+        })
         ->whereHas('role')
         ->whereHas('role.creator')
         ->whereHas('role.user_type',function($q){
             $q->where('slug','service-provider');
+        })
+        ->get();
+
+        $this->data['properties']=Property::where(function($q) use($contract){
+            $q->where('is_active',true)->orWhere('id',$contract->property_id);
         })->get();
-
-        $this->data['frequency_types']=FrequencyType::get();
-
-        $this->data['properties']=Property::whereIsActive(true)->get();
 
         $this->data['statuses']=Status::where('status_for','contract')->where('is_active',true)->get();
         return view($this->view_path.'.edit',$this->data);

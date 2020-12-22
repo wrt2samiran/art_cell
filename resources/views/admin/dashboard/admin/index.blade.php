@@ -169,15 +169,43 @@
                     <div>
                       <h3 class="card-title">
                         <i class="far fa-question-circle"></i>
-                        Complaints
+                        <a href="{{route('admin.complaints.list')}}">Complaints</a>
                       </h3>
                     </div>
                     <div>
-                      <a href="{{route('admin.complaints.list')}}">View All</a>
+                      <div class="row">
+
+                        <div class="col">
+                          <select id="complaint_contract">
+                            <option value="">Filter By Contract</option>
+                            <option value="all" selected>All Contract</option>
+                            @forelse($complaint_contracts as $complaint_contract)
+                            <option value="{{$complaint_contract->id}}"> {{$complaint_contract->code}}</option>
+                            @empty
+
+                            @endforelse
+                          </select>
+                        </div>
+                        <div class="col">
+                          <select id="complaint_status">
+                            <option value="">Filter By Status</option>
+                            <option value="all" selected>All Status</option>
+                            @forelse($complaint_statuses as $complaint_status)
+                            <option value="{{$complaint_status->id}}">{{$complaint_status->status_name}}</option>
+                            @empty
+
+                            @endforelse
+                          </select>
+                        </div>
+                      </div>
+                      
+
+
+
                     </div>
                   </div>
                 </div>
-                <div class="card-body p-0">
+                <div class="card-body p-0" id="complaints_data">
                   <div class="table-responsive">
                       <table class="table m-0">
                       <thead>
@@ -273,6 +301,80 @@
 @push('custom-scripts')
 <script type="text/javascript">
   
+  /*complaint filter */
+  $('#complaint_status').on('change',function(){
+   filter_complaint();
+  });
+  $('#complaint_contract').on('change',function(){
+   filter_complaint();
+  });
+
+  function filter_complaint(){
+
+    $.LoadingOverlay("show");
+    $.ajax({
+      url: '{{route("admin.dashboard")}}',
+      type: "POST",
+      data:{
+        complaint_filter: true,
+        complaint_status_id: $('#complaint_status').val(),
+        complaint_contract_id: $('#complaint_contract').val(),
+        "_token": $('meta[name="csrf-token"]').attr('content')
+      },
+      success: function (data) {
+        
+        $.LoadingOverlay("hide");
+
+        $('#complaints_data').html(data.html);
+        
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+         $.LoadingOverlay("hide");
+         var response=jqXHR.responseJSON;
+         var status=jqXHR.status;
+         if(status=='404'){
+          toastr.error('Invalid URL', 'Error', {timeOut: 5000});
+         }else{
+           toastr.error('Internal server error.', 'Error', {timeOut: 5000});
+         }
+      }
+    });
+
+
+  }
+
+ $('#complaint_contract').select2({
+    theme: 'bootstrap4',
+    placeholder:'Filter By Contract',
+    "language": {
+       "noResults": function(){
+           return "No Contract";
+       }
+    },
+    escapeMarkup: function(markup) {
+      return markup;
+    },
+});
+$('#complaint_status').select2({
+    theme: 'bootstrap4',
+    placeholder:'Filter By Status',
+    "language": {
+       "noResults": function(){
+           return "No Status";
+       }
+    },
+    escapeMarkup: function(markup) {
+      return markup;
+    },
+});
+
+
+  /*****************/
+
+
+
+
+
     $(function () {
 
       var labels=<?php echo json_encode($last_six_month_array);?>;
