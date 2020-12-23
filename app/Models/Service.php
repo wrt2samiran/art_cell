@@ -12,4 +12,8 @@ class Service extends Model implements TranslatableContract
     use Translatable;
 	public $translatedAttributes = ['service_name', 'description'];
     protected $guarded=[];
+
+    public function work_orders(){
+    	return $this->hasMany(WorkOrderLists::class,'service_id','id');
+    }
 }

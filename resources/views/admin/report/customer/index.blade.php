@@ -51,15 +51,7 @@
                                 <option value="due">Due Services</option>
                               </select>
                           </div>
-                          <div class="form-group required">
-                             <label for="report_mode">Select report mode <span class="error">*</span></label>
-                              <select class="form-control " id="report_mode" name="report_mode" style="width: 100%;">
-                                <option value="daily">Daily</option>
-                                <option value="weekly">Weekly</option>
-                                <option value="monthly">Monthly</option>
-                                <option value="yearly">Yearly</option>
-                              </select>
-                          </div>
+
                           <div class=" form-group required">
                            <label for="from_date">Date (From) <span class="error">*</span></label>
                            <input type="text" readonly="readonly" autocomplete="off" id="from_date" class="form-control" name="from_date">
