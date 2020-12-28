@@ -541,6 +541,26 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             Route::group(['prefix'=>'reports','middleware'=>[],'as'=>'reports.'],function(){
                 Route::any('/', 'ReportController@index')->name('index');
                 
+                Route::post('/schedule-compliance-report', 'ReportController@schedule_compliance_report')->name('schedule_compliance_report');
+                Route::post('/planned-maintenance-report', 'ReportController@planned_maintenance_report')->name('planned_maintenance_report');
+                Route::post('/maintenance-backlog-report', 'ReportController@maintenance_backlog_report')->name('maintenance_backlog_report');
+                Route::post('/open-preventive-maintenance-report', 'ReportController@open_preventive_maintenance_report')->name('open_preventive_maintenance_report');
+
+                Route::post('/upcoming-weekly-maintenance-report', 'ReportController@upcoming_weekly_maintenance_report')->name('upcoming_weekly_maintenance_report');
+
+                Route::post('/planned-two-weekly-maintenance-report', 'ReportController@planned_two_weekly_maintenance_report')->name('planned_two_weekly_maintenance_report');
+
+                Route::post('/upcoming-schedule-maintenance-report', 'ReportController@upcoming_schedule_maintenance_report')->name('upcoming_schedule_maintenance_report');
+
+
+                Route::post('/work-order-report', 'ReportController@work_order_report')->name('work_order_report');
+
+                Route::post('/work-order-completed-per-month', 'ReportController@work_order_completed_per_month_report')->name('work_order_completed_per_month_report');
+
+                Route::post('/work-order-requested-vs-completed', 'ReportController@work_order_requested_vs_completed_report')->name('work_order_requested_vs_completed_report');
+
+                Route::post('/contract-status','ReportController@contract_status_report')->name('contract_status_report');
+
             });
             /************************************/
 

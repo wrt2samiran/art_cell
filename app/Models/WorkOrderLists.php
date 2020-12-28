@@ -42,7 +42,9 @@ class WorkOrderLists extends Model
     public function contract_service_dates(){
         return $this->hasMany(ContractServiceDate::class, 'contract_service_id', 'contract_service_id');
     }
-
+    public function tasks(){
+        return $this->hasMany(TaskLists::class,'work_order_id','id');
+    }
     
     public function contract_service_recurrence(){
         return $this->belongsTo(ContractServiceRecurrence::class,'contract_service_id','contract_service_id');

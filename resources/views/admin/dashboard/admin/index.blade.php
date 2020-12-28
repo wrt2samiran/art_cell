@@ -102,48 +102,82 @@
             </div>
             <!-- /.col -->
         </div>
-                <div class="row">
+        <div class="row">
             <div class="col-md-12">
               <div class="card">
                 <div class="card-header border-0">
                   <div class="d-flex justify-content-between">
                     <div>
                       <h3 class="card-title">
-                        
-                        Upcomming Task Lists
+                        Upcoming Task List
                       </h3>
                     </div>
                     <div>
-                     <!--  <a href="{{route('admin.complaints.list')}}">View All</a> -->
+                      <div class="row">
+                        <div class="col">
+                          <select id="task_contract">
+                            <option value="">Filter By Contract</option>
+                            <option value="all" selected>All Contract</option>
+                            @forelse($work_order_contracts as $work_order_contract)
+                            <option value="{{$work_order_contract->id}}"> {{$work_order_contract->code}} ({{$work_order_contract->title}})</option>
+                            @empty
+
+                            @endforelse
+                          </select>
+                        </div>
+                        <div class="col">
+                          <select id="task_work_order">
+                            <option value="">Filter By Work Order</option>
+                            <option value="all" selected>All Work Order</option>
+                            @forelse($task_work_orders as $task_work_order)
+                            <option value="{{$task_work_order->id}}">
+                              Id : {{$task_work_order->id}} ({{$task_work_order->task_title}})
+                            </option>
+                            @empty
+                            @endforelse
+                          </select>
+                        </div>
+                        <div class="col">
+                          <select id="task_property">
+                            <option value="">Filter By Property</option>
+                            <option value="all" selected>All Properties</option>
+                            @forelse($task_properties as $task_property)
+                            <option value="{{$task_property->id}}">
+                              {{$task_property->code}} ({{$task_property->property_name}})
+                            </option>
+                            @empty
+                            @endforelse
+                          </select>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div class="card-body p-0">
+                <div class="card-body p-0" id="task_data">
                   <div class="table-responsive">
                       <table class="table m-0">
                       <thead>
                           <tr>
                               <th>Contract Code</th>
                               <th>Work Order ID</th>
-                              <th>Service Provider</th>
                               <th>Property</th>
+                              <th>Service Provider</th>
+                              <th>Labour</th>
                               <th>Task Title</th>
                               <th>Task Date</th>
-                              <th>Status</th>
                           </tr>
                       </thead>
                       <tbody>
                           @forelse($tasks as $task)
                           <tr>
-                             <td>{{$task->contract->code}}</td> 
-                             <td>{{$task->work_order_id}}</td> 
-                             <td>{{$task->contract->service_provider->name}}</td>
-                             <td>{{$task->property->property_name}}</td>
-                             <td>{{$task->task_title}}</td>
-                             <td>{{Carbon::parse($task->start_date)->format('d/m/Y')}}</td>
-                             <td>
-                              {{$task->get_status_name()}}
-                             </td>
+                             <td>{{$task->task->contract->code}}</td> 
+                             <td>{{$task->task->work_order_id}}</td> 
+                             <td>{{$task->task->property->property_name}}</td>
+                             <td>{{$task->task->contract->service_provider->name}}</td>
+                             <td>{{$task->userDetails->name}}</td>
+                             <td>{{$task->task->task_title}}</td>
+                             <td>{{Carbon::parse($task->task_date)->format('d/m/Y')}}</td>
+                   
                           </tr>
                           @empty
                           <tr>
@@ -240,21 +274,44 @@
               </div>
             </div>
             <div class="col-md-6">
-                            <div class="card">
+              <div class="card">
                 <div class="card-header border-0">
                   <div class="d-flex justify-content-between">
                     <div>
                       <h3 class="card-title">
-                        <i class="far fas fa-quote-right"></i>
                         Work Orders
                       </h3>
                     </div>
                     <div>
-                      <!-- <a href="#">View All</a> -->
+                      <div class="row">
+
+                        <div class="col">
+                          <select id="work_order_contract">
+                            <option value="">Filter By Contract</option>
+                            <option value="all" selected>All Contract</option>
+                            @forelse($work_order_contracts as $work_order_contract)
+                            <option value="{{$work_order_contract->id}}"> {{$work_order_contract->code}}</option>
+                            @empty
+
+                            @endforelse
+                          </select>
+                        </div>
+                        <div class="col">
+                          <select id="work_order_service">
+                            <option value="">Filter By Service</option>
+                            <option value="all" selected>All Service</option>
+                            @forelse($work_order_services as $service)
+                            <option value="{{$service->id}}"> {{$service->service_name}}</option>
+                            @empty
+
+                            @endforelse
+                          </select>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div class="card-body p-0">
+                <div class="card-body p-0" id="work_order_data">
                   <div class="table-responsive">
                       <table class="table m-0">
                       <thead>
@@ -283,7 +340,6 @@
                       </tbody>
                   </table>
                   </div>
-
                 </div>
                 <!-- /.card-body -->
               </div>
@@ -302,13 +358,14 @@
 <script type="text/javascript">
   
   /*complaint filter */
+
   $('#complaint_status').on('change',function(){
    filter_complaint();
   });
   $('#complaint_contract').on('change',function(){
    filter_complaint();
   });
-
+  
   function filter_complaint(){
 
     $.LoadingOverlay("show");
@@ -343,6 +400,7 @@
 
   }
 
+
  $('#complaint_contract').select2({
     theme: 'bootstrap4',
     placeholder:'Filter By Contract',
@@ -368,10 +426,166 @@ $('#complaint_status').select2({
     },
 });
 
+  /*****************/
 
+  /*Work Order filter */
+
+  $('#work_order_contract').on('change',function(){
+   filter_work_order();
+  });
+  $('#work_order_service').on('change',function(){
+   filter_work_order();
+  });
+  function filter_work_order(){
+
+    $.LoadingOverlay("show");
+    $.ajax({
+      url: '{{route("admin.dashboard")}}',
+      type: "POST",
+      data:{
+        work_order_filter: true,
+        work_order_contract_id: $('#work_order_contract').val(),
+        work_order_service_id: $('#work_order_service').val(),
+        "_token": $('meta[name="csrf-token"]').attr('content')
+      },
+      success: function (data) {
+        
+        $.LoadingOverlay("hide");
+
+        $('#work_order_data').html(data.html);
+        
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+         $.LoadingOverlay("hide");
+         var response=jqXHR.responseJSON;
+         var status=jqXHR.status;
+         if(status=='404'){
+          toastr.error('Invalid URL', 'Error', {timeOut: 5000});
+         }else{
+           toastr.error('Internal server error.', 'Error', {timeOut: 5000});
+         }
+      }
+    });
+
+
+  }
+
+
+ $('#work_order_contract').select2({
+    theme: 'bootstrap4',
+    placeholder:'Filter By Contract',
+    "language": {
+       "noResults": function(){
+           return "No Contract";
+       }
+    },
+    escapeMarkup: function(markup) {
+      return markup;
+    },
+});
+$('#work_order_service').select2({
+    theme: 'bootstrap4',
+    placeholder:'Filter By Service',
+    "language": {
+       "noResults": function(){
+           return "No Service";
+       }
+    },
+    escapeMarkup: function(markup) {
+      return markup;
+    },
+});
   /*****************/
 
 
+  /*Task filter */
+
+  $('#task_contract').on('change',function(){
+   filter_task();
+  });
+  $('#task_work_order').on('change',function(){
+   filter_task();
+  });
+  $('#task_property').on('change',function(){
+   filter_task();
+  });
+
+
+  function filter_task(){
+
+    $.LoadingOverlay("show");
+    $.ajax({
+      url: '{{route("admin.dashboard")}}',
+      type: "POST",
+      data:{
+        task_filter: true,
+        contract_id: $('#task_contract').val(),
+        work_order_id: $('#task_work_order').val(),
+        property_id: $('#task_property').val(),
+        "_token": $('meta[name="csrf-token"]').attr('content')
+      },
+      success: function (data) {
+        
+        $.LoadingOverlay("hide");
+
+        $('#task_data').html(data.html);
+        
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+         $.LoadingOverlay("hide");
+         var response=jqXHR.responseJSON;
+         var status=jqXHR.status;
+         if(status=='404'){
+          toastr.error('Invalid URL', 'Error', {timeOut: 5000});
+         }else{
+           toastr.error('Internal server error.', 'Error', {timeOut: 5000});
+         }
+      }
+    });
+
+
+  }
+
+
+ $('#task_contract').select2({
+    theme: 'bootstrap4',
+    placeholder:'Filter By Contract',
+    "language": {
+       "noResults": function(){
+           return "No Contract";
+       }
+    },
+    escapeMarkup: function(markup) {
+      return markup;
+    },
+});
+$('#task_work_order').select2({
+    theme: 'bootstrap4',
+    placeholder:'Filter By Work Order',
+    "language": {
+       "noResults": function(){
+           return "No Work Order";
+       }
+    },
+    escapeMarkup: function(markup) {
+      return markup;
+    },
+});
+$('#task_property').select2({
+    theme: 'bootstrap4',
+    placeholder:'Filter By Property',
+    "language": {
+       "noResults": function(){
+           return "No Property";
+       }
+    },
+    escapeMarkup: function(markup) {
+      return markup;
+    },
+});
+
+
+/*************/
 
 
 

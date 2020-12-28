@@ -1,4 +1,21 @@
+jQuery.validator.addMethod("toDateShouldGreatherFromDate", function (value, element,from_date) {
+   
+    if(value && from_date){
+       
+        var start_data_string       = String(from_date);
+        var start_date_exploded     = start_data_string.split("/");
+        var start_date_in_integer   = Number(start_date_exploded[2] + start_date_exploded[1] + start_date_exploded[0]);
 
+
+        var end_date_string         = String(value);
+        var end_date_exploded       = end_date_string.split("/");
+        var end_date_in_integer     = Number(end_date_exploded[2] + end_date_exploded[1] + end_date_exploded[0]);
+
+        return end_date_in_integer >= start_date_in_integer;
+    } else {
+        return true;
+    }
+});
 
 /*validation rule for availablity endate should greater enddate */
 jQuery.validator.addMethod("endDateShouldBeGreatherThanStartDate", function (value, element) {

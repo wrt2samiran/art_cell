@@ -5,7 +5,7 @@ namespace App\Http\Controllers\admin;
 use App;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\{User,Setting, Property, Contract,Complaint,WorkOrderLists,SparePartOrder,SharedServiceOrder,TaskLists,Status};
+use App\Models\{User,Setting, Property, Contract,Complaint,WorkOrderLists,SparePartOrder,SharedServiceOrder,TaskLists,Status,Service,TaskDetails};
 use Yajra\Datatables\Datatables;
 use Config;
 use Carbon\Carbon;
@@ -113,14 +113,32 @@ class DashboardController extends Controller
 
         $this->data['six_months_shared_service_orders']=$six_months_shared_service_orders;
 
-        $this->data['tasks']=TaskLists::where('start_date','>=',date('Y-m-d'))
-        ->whereHas('contract')
-        ->whereHas('property')
-        ->orderBy('start_date','asc')->take(10)->get();
+        $this->data['tasks']=TaskDetails::where('task_date','>=',date('Y-m-d'))
+        ->whereHas('task')
+        ->whereHas('task.contract')
+        ->with([
+            'task',
+            'task.userDetails'=>function($q){
+                $q->withTrashed();
+            },
+            'task.contract'=>function($q){
+                $q->withTrashed();
+            },
+            'task.contract.service_provider'=>function($q){
+                $q->withTrashed();
+            },
+            'task.property'=>function($q){
+                $q->withTrashed();
+            }
+        ])
+        ->orderBy('task_date','asc')->take(10)->get();
+
+        $this->data['task_work_orders']=WorkOrderLists::whereHas('tasks.task_details')->get();
+
+        $this->data['task_properties']=Property::whereHas('contracts')->whereHas('contracts.work_orders')->get();
 
 
         $this->data['complaint_statuses']=Status::where('status_for','complaint')->get();
-
 
         $this->data['complaint_contracts']=Contract::where('creation_complete',true)
         ->whereHas('complaints')
@@ -129,6 +147,10 @@ class DashboardController extends Controller
         $this->data['work_order_contracts']=Contract::where('creation_complete',true)
         ->whereHas('work_orders')
         ->get();
+
+        $this->data['work_order_services']=Service::whereHas('work_orders')
+        ->get();
+
 
 
         if($request->ajax()){
@@ -152,6 +174,73 @@ class DashboardController extends Controller
                 ]);
             }
 
+            if($request->work_order_filter){
+
+
+                $this->data['work_orders']=WorkOrderLists::whereHas('contract')
+                ->whereHas('service')
+                ->when($request->work_order_service_id && $request->work_order_service_id!='all' ,function($q)use ($request){
+                    $q->where('service_id',$request->work_order_service_id);
+                })
+                ->when($request->work_order_contract_id && $request->work_order_contract_id!='all' ,function($q)use ($request){
+                    $q->where('contract_id',$request->work_order_contract_id);
+                })
+                ->orderBy('id','desc')->take(5)->get();
+
+                $work_order_view=view('admin.dashboard.admin.ajax.work_orders',$this->data)->render();
+
+                return  response()->json([
+                    'html'=>$work_order_view
+                ]);
+            }
+
+            if($request->task_filter){
+
+                $this->data['tasks']=TaskDetails::where('task_date','>=',date('Y-m-d'))
+                ->whereHas('task')
+                ->whereHas('task.contract')
+                ->with([
+                    'task',
+                    'task.userDetails'=>function($q){
+                        $q->withTrashed();
+                    },
+                    'task.contract'=>function($q){
+                        $q->withTrashed();
+                    },
+                    'task.contract.service_provider'=>function($q){
+                        $q->withTrashed();
+                    },
+                    'task.property'=>function($q){
+                        $q->withTrashed();
+                    }
+                ])
+                ->when($request->contract_id && $request->contract_id!='all' ,function($q)use ($request){
+
+                    $q->whereHas('task',function($q1)use($request){
+                        $q1->where('contract_id',$request->contract_id);
+                    });
+                })
+                ->when($request->work_order_id && $request->work_order_id!='all' ,function($q)use ($request){
+
+                    $q->whereHas('task',function($q1)use($request){
+                        $q1->where('work_order_id',$request->work_order_id);
+                    });
+                })
+                ->when($request->property_id && $request->property_id!='all' ,function($q)use ($request){
+
+                    $q->whereHas('task.contract',function($q1)use($request){
+                        $q1->where('property_id',$request->property_id);
+                    });
+                })
+                ->orderBy('task_date','asc')->take(10)->get();
+
+                $task_view=view('admin.dashboard.admin.ajax.tasks',$this->data)->render();
+
+                return  response()->json([
+                    'html'=>$task_view
+                ]);
+
+            }
 
 
 

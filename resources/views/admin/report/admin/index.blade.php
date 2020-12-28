@@ -40,7 +40,6 @@
                   @endif
                   <div class="row justify-content-center">
                     <div class="col-md-3">
-
                       <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                         <a class="nav-link active" id="v-pills-schedule-compliance-tab" data-toggle="pill" href="#schedule-compliance" role="tab" aria-controls="v-pills-schedule-compliance" aria-selected="true">Schedule Compliance</a>
 
@@ -52,14 +51,6 @@
                         <a class="nav-link" id="v-pills-open-preventive-maintenance-tab" data-toggle="pill" href="#open-preventive-maintenance" role="tab" aria-controls="v-pills-open-preventive-maintenance" aria-selected="false">Open Preventive Maintenance
                         </a>
 
-                        <a class="nav-link" id="v-pills-upcoming-sch-per-week-user-tab" data-toggle="pill" href="#upcoming-sch-per-week-user" role="tab" aria-controls="v-pills-upcoming-sch-per-week-user" aria-selected="false">
-                        Upcoming Scheduled/Week<br>
-                        (By User / Technician) 
-                        </a>
-                        <a class="nav-link" id="v-pills-upcoming-sch-per-week-category-tab" data-toggle="pill" href="#upcoming-sch-per-week-category" role="tab" aria-controls="v-pills-upcoming-sch-per-week-category" aria-selected="false">
-                        Upcoming Scheduled/Week<br>
-                        (By Service Category) 
-                        </a>
                         <a class="nav-link" id="v-pills-upcoming-sch-per-week-tab" data-toggle="pill" href="#upcoming-sch-per-week" role="tab" aria-controls="v-pills-upcoming-sch-per-week" aria-selected="false">
                         Upcoming Scheduled/Week
                         </a>
@@ -69,13 +60,12 @@
                         <a class="nav-link" id="v-pills-upcomming-sch-maintenance-tab" data-toggle="pill" href="#upcomming-sch-maintenance" role="tab" aria-controls="v-pills-upcomming-sch-maintenance" aria-selected="false">
                         Upcoming Schedule Maintenance
                         </a>
-                        <a class="nav-link" id="v-pills-closed-wo-tab" data-toggle="pill" href="#closed-wo" role="tab" aria-controls="v-pills-closed-wo" aria-selected="false">
-                        Closed WO 
+                        <a class="nav-link" id="v-pills-work-order-tab" data-toggle="pill" href="#work-order" role="tab" aria-controls="v-pills-work-order" aria-selected="false">
+                        Work Order Report
                         </a>
                         <a class="nav-link" id="v-pills-completed-wo-per-month-tab" data-toggle="pill" href="#completed-wo-per-month" role="tab" aria-controls="v-pills-completed-wo-per-month" aria-selected="false">
                         Completed WO/Month
                         </a>
-
                         <a class="nav-link" id="v-pills-wo-req-vs-completed-tab" data-toggle="pill" href="#wo-req-vs-completed" role="tab" aria-controls="v-pills-wo-req-vs-completed" aria-selected="false">
                         WO Rquested Vs Completed
                         </a>
@@ -84,73 +74,364 @@
                         Contract/Project Status
                         </a>
 
-                        <a class="nav-link" id="v-pills-overdue-wo-tab" data-toggle="pill" href="#overdue-wo" role="tab" aria-controls="v-pills-overdue-wo" aria-selected="false">
-                        Overdue Work Orders
-                        </a>
-                        <a class="nav-link" id="v-pills-all-wo-tab" data-toggle="pill" href="#all-wo" role="tab" aria-controls="v-pills-all-wo" aria-selected="false">
-                        All Work Orders
-                        </a>
-                        <a class="nav-link" id="v-pills-requested-wo-tab" data-toggle="pill" href="#requested-wo" role="tab" aria-controls="v-pills-requested-wo" aria-selected="false">
-                        Requested Work Orders
-                        </a>
+
                         <a class="nav-link" id="v-pills-financial-tab" data-toggle="pill" href="#financial" role="tab" aria-controls="v-pills-financial" aria-selected="false">
                         Financial Report
                         </a>
-                        
                       </div>
-
                     </div>
                     <div class="col-md-9">
                       <div class="tab-content" id="v-pills-tabContent">
                         <div class="tab-pane fade show active" id="schedule-compliance" role="tabpanel" aria-labelledby="v-pills-schedule-compliance-tab">
-                          Schedule Compliance
+                          <form method="post" action="{{route('admin.reports.schedule_compliance_report')}}" id="schedule_compliance_report_form">
+                          @csrf
+                          <div>
+                            <h4><u>Schedule Compliance Report</u></h4>
+                            <div class="form-group required">
+                               <label for="service_status">Contract </label>
+                                <select class="form-control contract" id="schedule_compliance_contract_id" name="contract_id" style="width: 100%;">
+                                  <option value="">Select Contract</option>
+                                  @forelse($contracts as $contract)
+                                  <option value="{{$contract->id}}">{{$contract->code}}</option>
+                                  @empty
+                                  @endforelse
+                                </select>
+                            </div>
+                            <div style="margin-top: -1rem;">OR</div>
+                            <div class="form-group required">
+                               <label for="service_status">Property </label>
+                                <select class="form-control property" id="schedule_compliance_property_id" name="property_id" style="width: 100%;">
+                                  <option value="">Select Property</option>
+                                  @forelse($properties as $property)
+                                  <option value="{{$property->id}}">{{$property->code}}</option>
+                                  @empty
+                                  @endforelse
+                                </select>
+                            </div>
+                            <div class=" form-group required">
+                             <label for="from_date">Date (From) <span class="error">*</span></label>
+                             <input type="text" readonly="readonly" autocomplete="off" id="schedule_compliance_from_date" class="form-control from_date" name="from_date">
+                            </div>
+                
+                            <div class="form-group required">
+                               <label for="to_date">Date (To) <span class="error">*</span></label>
+                               <input type="text"  readonly="readonly" autocomplete="off" class="form-control to_date" id="schedule_compliance_to_date" name="to_date">
+                            </div>
+                          </div>
+                          <div>
+                            <button type="submit" class="btn btn-success">Download Report</button>
+                          </div>
+                          </form> 
                         </div>
                         <div class="tab-pane fade" id="planned-maintenance" role="tabpanel" aria-labelledby="v-pills-planned-maintenance-tab">
-                          planned-maintenance
+                          <form method="post" action="{{route('admin.reports.planned_maintenance_report')}}" id="planned_maintenance_report_form">
+                          @csrf
+                          <div>
+                            <h4><u>Planned Maintenance Report</u></h4>
+                            <div class="form-group required">
+                               <label for="service_status">Contract </label>
+                                <select class="form-control contract" id="planned_maintenance_contract_id" name="contract_id" style="width: 100%;">
+                                  <option value="">Select Contract</option>
+                                  @forelse($contracts as $contract)
+                                  <option value="{{$contract->id}}">{{$contract->code}}</option>
+                                  @empty
+                                  @endforelse
+                                </select>
+                            </div>
+                            <div style="margin-top: -1rem;">OR</div>
+                            <div class="form-group required">
+                               <label for="service_status">Property </label>
+                                <select class="form-control property" id="planned_maintenance_property_id" name="property_id" style="width: 100%;">
+                                  <option value="">Select Property</option>
+                                  @forelse($properties as $property)
+                                  <option value="{{$property->id}}">{{$property->code}}</option>
+                                  @empty
+                                  @endforelse
+                                </select>
+                            </div>
+                            <div class=" form-group required">
+                             <label for="from_date">Date (From) <span class="error">*</span></label>
+                             <input type="text" readonly="readonly" autocomplete="off" id="planned_maintenance_from_date" class="form-control from_date" name="from_date">
+                            </div>
+                
+                            <div class="form-group required">
+                               <label for="to_date">Date (To) <span class="error">*</span></label>
+                               <input type="text"  readonly="readonly" autocomplete="off" class="form-control to_date" id="planned_maintenance_to_date" name="to_date">
+                            </div>
+                          </div>
+                          <div>
+                          <button type="submit" class="btn btn-success">Download Report</button>
+                          </div>
+                          </form> 
                         </div>
                         <div class="tab-pane fade" id="maintenance-backlog" role="tabpanel" aria-labelledby="v-pills-maintenance-backlog-tab">
-                          maintenance-backlog
+
+                          <form method="post" action="{{route('admin.reports.maintenance_backlog_report')}}" id="maintenance_backlog_report_form">
+                          @csrf
+                          <div>
+                            <h4><u>Maintenance Backlog Report</u></h4>
+                            <div class="form-group required">
+                               <label for="service_status">Service Provider/Labour <span class="error">*</span></label>
+                                <select class="form-control" id="maintenance_backlog_sp_or_labour_id" name="sp_or_labour_id" style="width: 100%;">
+                                  <option value="">Select Service Provider/Labour</option>
+                                  <option value="0" selected>All Service Provider & Labours</option>
+                                  <optgroup label="Service Providers">
+                                  @forelse($service_providers as $service_provider)
+                                  <option value="{{$service_provider->id}}">{{$service_provider->name}}</option>
+                                  @empty
+                                  @endforelse
+                                  </optgroup>
+                                  <optgroup label="Labours">
+                                  @forelse($labours as $labour)
+                                  <option value="{{$labour->id}}">{{$labour->name}}</option>
+                                  @empty
+                                  @endforelse
+                                  </optgroup>
+                                </select>
+                            </div>
+                            <div class=" form-group required">
+                             <label for="from_date">Date (From) <span class="error">*</span></label>
+                             <input type="text" readonly="readonly" autocomplete="off" id="planned_maintenance_from_date" class="form-control from_date" name="from_date">
+                            </div>
+                
+                            <div class="form-group required">
+                               <label for="to_date">Date (To) <span class="error">*</span></label>
+                               <input type="text"  readonly="readonly" autocomplete="off" class="form-control to_date" id="planned_maintenance_to_date" name="to_date">
+                            </div>
+                          </div>
+                          <div>
+                          <button type="submit" class="btn btn-success">Download Report</button>
+                          </div>
+                          </form>
                         </div>
-                        <div class="tab-pane fade" id="upcoming-sch-per-week-user" role="tabpanel" aria-labelledby="v-pills-upcoming-sch-per-week-user-tab">upcoming-sch-per-week-user
-                        </div>
-                        <div class="tab-pane fade" id="upcoming-sch-per-week-category" role="tabpanel" aria-labelledby="v-pills-upcoming-sch-per-week-category-tab">upcoming-sch-per-week-category
-                        </div>
-                        <div class="tab-pane fade" id="upcoming-sch-per-week" role="tabpanel" aria-labelledby="v-pills-upcoming-sch-per-week-tab">upcoming-sch-per-week
+                        <div class="tab-pane fade" id="open-preventive-maintenance" role="tabpanel" aria-labelledby="v-pills-open-preventive-maintenance-tab">
+                          <form method="post" action="{{route('admin.reports.open_preventive_maintenance_report')}}" id="maintenance_backlog_report_form">
+                          @csrf
+                          <div>
+                            <h4><u>Open Preventive Maintenance Report</u></h4>
+             
+                            <div class=" form-group required">
+                             <label for="from_date">Date (From) <span class="error">*</span></label>
+                             <input type="text" readonly="readonly" autocomplete="off" id="open_preventive_maintenance_from_date" class="form-control from_date" name="from_date">
+                            </div>
+                
+                            <div class="form-group required">
+                               <label for="to_date">Date (To) <span class="error">*</span></label>
+                               <input type="text"  readonly="readonly" autocomplete="off" class="form-control to_date" id="open_preventive_maintenance_to_date" name="to_date">
+                            </div>
+                          </div>
+                          <div>
+                          <button type="submit" class="btn btn-success">Download Report</button>
+                          </div>
+                          </form>
                         </div>
 
-                        <div class="tab-pane fade" id="planned-maintenance-per-two-week" role="tabpanel" aria-labelledby="v-pills-planned-maintenance-per-two-week-tab">planned-maintenance-per-two-week
+                        <div class="tab-pane fade" id="upcoming-sch-per-week" role="tabpanel" aria-labelledby="v-pills-upcoming-sch-per-week-tab">
+
+                          <form method="post" action="{{route('admin.reports.upcoming_weekly_maintenance_report')}}" id="upcoming_weekly_maintenance_report_form">
+                          @csrf
+                          <div>
+                            <h4><u>Upcoming Schedule Weekly Report</u></h4>
+                            <div class="form-group required">
+                               <label for="service_status">Service Provider/Labour <span class="error">*</span></label>
+                                <select class="form-control" id="maintenance_backlog_sp_or_labour_id" name="sp_or_labour_id" style="width: 100%;">
+                                  <option value="">Select Service Provider/Labour</option>
+                                  <option value="0" selected>All Service Provider & Labours</option>
+                                  <optgroup label="Service Providers">
+                                  @forelse($service_providers as $service_provider)
+                                  <option value="{{$service_provider->id}}">{{$service_provider->name}}</option>
+                                  @empty
+                                  @endforelse
+                                  </optgroup>
+                                  <optgroup label="Labours">
+                                  @forelse($labours as $labour)
+                                  <option value="{{$labour->id}}">{{$labour->name}}</option>
+                                  @empty
+                                  @endforelse
+                                  </optgroup>
+                                </select>
+                            </div>
+                            <div class="form-group required">
+                               <label for="service_status">Service Service <span class="error">*</span></label>
+                                <select class="form-control" id="maintenance_backlog_sp_or_labour_id" name="sp_or_labour_id" style="width: 100%;">
+                                  <option value="">Select Service</option>
+                                  <option value="0" selected>All Service </option>
+                                 
+                                  @forelse($services as $service)
+                                  <option value="{{$service->id}}">{{$service->service_name}}</option>
+                                  @empty
+                                  @endforelse
+                                </select>
+                            </div>
+                            <div class=" form-group required">
+                             <label for="from_date">Date (From) <span class="error">*</span></label>
+                             <input type="text" readonly="readonly" autocomplete="off" id="planned_maintenance_from_date" class="form-control from_date" name="from_date">
+                            </div>
+                
+                            <div class="form-group required">
+                               <label for="to_date">Date (To) <span class="error">*</span></label>
+                               <input type="text"  readonly="readonly" autocomplete="off" class="form-control to_date" id="planned_maintenance_to_date" name="to_date">
+                            </div>
+                          </div>
+                          <div>
+                          <button type="submit" class="btn btn-success">Download Report</button>
+                          </div>
+                          </form>
+
                         </div>
-                        <div class="tab-pane fade" id="upcomming-sch-maintenance" role="tabpanel" aria-labelledby="v-pills-upcomming-sch-maintenance-tab">upcomming-sch-maintenance
+
+                        <div class="tab-pane fade" id="planned-maintenance-per-two-week" role="tabpanel" aria-labelledby="v-pills-planned-maintenance-per-two-week-tab">
+
+                          <form method="post" action="{{route('admin.reports.planned_two_weekly_maintenance_report')}}" id="planned_two_weekly_maintenance_report_form">
+                          @csrf
+                          <div>
+                            <h4><u>Planned Two Weekly Report</u></h4>
+             
+                            <div class=" form-group required">
+                             <label for="from_date">Date (From) <span class="error">*</span></label>
+                             <input type="text" readonly="readonly" autocomplete="off" id="planned_two_weekly_from_date" class="form-control from_date" name="from_date">
+                            </div>
+                
+                            <div class="form-group required">
+                               <label for="to_date">Date (To) <span class="error">*</span></label>
+                               <input type="text"  readonly="readonly" autocomplete="off" class="form-control to_date" id="planned_two_weekly_to_date" name="to_date">
+                            </div>
+                          </div>
+                          <div>
+                          <button type="submit" class="btn btn-success">Download Report</button>
+                          </div>
+                          </form>
+
                         </div>
-                        <div class="tab-pane fade" id="closed-wo" role="tabpanel" aria-labelledby="v-pills-closed-wo-tab">
-                        Closed Work Orders
+                        <div class="tab-pane fade" id="upcomming-sch-maintenance" role="tabpanel" aria-labelledby="v-pills-upcomming-sch-maintenance-tab">
+
+                          <form method="post" action="{{route('admin.reports.upcoming_schedule_maintenance_report')}}" id="upcoming_schedule_maintenance_report_form">
+                          @csrf
+                          <div>
+                            <h4><u>Planned Two Weekly Report</u></h4>
+             
+                            <div class=" form-group required">
+                             <label for="from_date">Date (From) <span class="error">*</span></label>
+                             <input type="text" readonly="readonly" autocomplete="off" id="upcoming_schedule_maintenance_from_date" class="form-control from_date" name="from_date">
+                            </div>
+                
+                            <div class="form-group required">
+                               <label for="to_date">Date (To) <span class="error">*</span></label>
+                               <input type="text"  readonly="readonly" autocomplete="off" class="form-control to_date" id="upcoming_schedule_maintenance_to_date" name="to_date">
+                            </div>
+                          </div>
+                          <div>
+                          <button type="submit" class="btn btn-success">Download Report</button>
+                          </div>
+                          </form>
                         </div>
+                        <div class="tab-pane fade" id="work-order" role="tabpanel" aria-labelledby="v-pills-work-order-tab">
+
+                          <form method="post" action="{{route('admin.reports.work_order_report')}}" id="work_order_report_form">
+                          @csrf
+                          <div>
+                            <h4><u>Work Orders Report</u></h4>
+                            <div class="form-group required">
+                               <label for="work_order_status">Work Order Status <span class="error">*</span></label>
+                                <select class="form-control" id="work_order_status" name="work_order_status" style="width: 100%;">
+                                  
+                                  <option value="all" selected>All Work Orders</option>
+                                  <option value="closed" >Closed Work Orders</option>
+                                  <option value="requested" >Requested Work Orders</option>
+                                  <option value="overdue" >Overdue Work Orders</option>
+                                </select>
+                            </div>
+                            <div class=" form-group required">
+                             <label for="from_date">Date (From) <span class="error">*</span></label>
+                             <input type="text" readonly="readonly" autocomplete="off" id="work_order_from_date" class="form-control from_date" name="from_date">
+                            </div>
+                
+                            <div class="form-group required">
+                               <label for="to_date">Date (To) <span class="error">*</span></label>
+                               <input type="text"  readonly="readonly" autocomplete="off" class="form-control to_date" id="work_order_to_date" name="to_date">
+                            </div>
+                          </div>
+                          <div>
+                          <button type="submit" class="btn btn-success">Download Report</button>
+                          </div>
+                          </form>
+
+                        </div>
+   
                         <div class="tab-pane fade" id="completed-wo-per-month" role="tabpanel" aria-labelledby="v-pills-completed-wo-per-month-tab">
-                        Completed Work Orders per month
+
+                          <form method="post" action="{{route('admin.reports.work_order_completed_per_month_report')}}" id="work_order_completed_per_month_report_form">
+                          @csrf
+                          <div>
+                            <h4><u>Completed Work Order/Month Report</u></h4>
+             
+                            <div class=" form-group required">
+                             <label for="from_date">Date (From) <span class="error">*</span></label>
+                             <input type="text" readonly="readonly" autocomplete="off" id="work_order_completed_per_month_from_date" class="form-control from_date" name="from_date">
+                            </div>
+                
+                            <div class="form-group required">
+                               <label for="to_date">Date (To) <span class="error">*</span></label>
+                               <input type="text"  readonly="readonly" autocomplete="off" class="form-control to_date" id="work_order_completed_per_month_to_date" name="to_date">
+                            </div>
+                          </div>
+                          <div>
+                          <button type="submit" class="btn btn-success">Download Report</button>
+                          </div>
+                          </form>
+
+
                         </div>
 
                         <div class="tab-pane fade" id="wo-req-vs-completed" role="tabpanel" aria-labelledby="v-pills-wo-req-vs-completed-tab">
-                        wo-req-vs-completed
+                          <form method="post" action="{{route('admin.reports.work_order_requested_vs_completed_report')}}" id="work_order_requested_vs_completed_report_form">
+                          @csrf
+                          <div>
+                            <h4><u>Work Order Requested vs Completed Report</u></h4>
+             
+                            <div class=" form-group required">
+                             <label for="from_date">Date (From) <span class="error">*</span></label>
+                             <input type="text" readonly="readonly" autocomplete="off" id="work_order_requested_vs_completed_form_date" class="form-control from_date" name="from_date">
+                            </div>
+                
+                            <div class="form-group required">
+                               <label for="to_date">Date (To) <span class="error">*</span></label>
+                               <input type="text"  readonly="readonly" autocomplete="off" class="form-control to_date" id="work_order_requested_vs_completed_to_date" name="to_date">
+                            </div>
+                          </div>
+                          <div>
+                          <button type="submit" class="btn btn-success">Download Report</button>
+                          </div>
+                          </form>
                         </div>
                         <div class="tab-pane fade" id="contract-status" role="tabpanel" aria-labelledby="v-pills-contract-status-tab">
-                        Contract/ Project Status
+                          <form method="post" action="{{route('admin.reports.contract_status_report')}}" id="contract_status_report_form">
+                          @csrf
+                          <div>
+                            <h4><u>Contract Status Report</u></h4>
+             
+                            <div class=" form-group required">
+                             <label for="from_date">Date (From) <span class="error">*</span></label>
+                             <input type="text" readonly="readonly" autocomplete="off" id="contract_status_from_date" class="form-control from_date" name="from_date">
+                            </div>
+                
+                            <div class="form-group required">
+                               <label for="to_date">Date (To) <span class="error">*</span></label>
+                               <input type="text"  readonly="readonly" autocomplete="off" class="form-control to_date" id="contract_status_to_date" name="to_date">
+                            </div>
+                          </div>
+                          <div>
+                          <button type="submit" class="btn btn-success">Download Report</button>
+                          </div>
+                          </form>
                         </div>
-                        <div class="tab-pane fade" id="overdue-wo" role="tabpanel" aria-labelledby="v-pills-overdue-wo-tab">
-                        Contract/ Project Status
-                        </div>
-                        <div class="tab-pane fade" id="all-wo" role="tabpanel" aria-labelledby="v-pills-all-wo-tab">
-                        All Work Orders
-                        </div>
-                        <div class="tab-pane fade" id="requested-wo" role="tabpanel" aria-labelledby="v-pills-requested-wo-tab">
-                        Requested Work Orders
-                        </div>
+        
+
                         <div class="tab-pane fade" id="financial" role="tabpanel" aria-labelledby="v-pills-financial-tab">
-                        Financial Report
+                        Financial Report ( Coming Soon.......)
                         </div>
                       </div>
                     </div>
-
-
                   </div>
               </div>
             </div>
@@ -161,5 +442,5 @@
 </div>
 @endsection 
 @push('custom-scripts')
-
+<script type="text/javascript" src="{{asset('js/admin/reports/admin_reports.js')}}"></script>
 @endpush
