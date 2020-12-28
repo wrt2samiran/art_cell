@@ -73,10 +73,67 @@
                           <td >{{$work_order_list->property->city->name}}</td>
                         </tr>
                         <tr>
-                          <td >Start Date</td>
+                          <td >{{$work_order_list->contract_services->service_type}} Date</td>
                           <td >{{$work_order_list->start_date}}</td>
                         </tr>
-                        
+                        <tr>
+                          <td >Service Provider</td>
+                          <td >{{$work_order_list->userDetails->name}}</td>
+                        </tr>
+                        <tr>
+                          <td> Date of Service</td> 
+                          <td >
+                            @if(@$work_order_list->contract_services->service_type=='Maintenance'  and @$work_order_list->contract_service_recurrence->interval_type != 'daily') 
+                              <table class="table table-bordered" >
+                                  <tr> 
+                                        <tr>
+                                          <td scope="col" style="text-align:center;" colspan="6"><strong>Date</strong> </td>
+                                        </tr>
+                                       @foreach(@$work_order_list->contract_service_dates as $valueDate)
+                                          <td>
+                                           {{Carbon\Carbon::createFromFormat('Y-m-d', @$valueDate->date)->format('d/m/Y')}}                             
+                                          </td>
+                                       @endforeach 
+                                  </tr>
+                              </table>
+                            @elseif(@$work_order_list->contract_services->service_type=='Maintenance'  and @$work_order_list->contract_service_recurrence->interval_type == 'daily')  
+                            <div class="scrollit" style="overflow:scroll; height:300px;">
+                              <table class="table table-bordered">
+
+                                @php $arraySlot = array('1'=> 'First Slot', '2'=> 'Second Slot', '3'=> 'Third Slot', '4'=> 'Fourth Slot', '5'=> 'Fifth Slot', '6'=>'Sixth Slot', '7'=> 'Seventh Slot', '8'=> 'Eight Slot', '9'=>'Nineth Slot', '10'=>'Tenth Slot'); @endphp
+                                @if(!empty($available_dates))
+                                  <tr>
+                                    <td scope="col"><strong>Date</strong> </td>
+                                    <td scope="col" colspan="{{count($slot_data)/count(@$available_dates)}}" style="text-align:center;"><strong>Slot</strong></td>
+                                  </tr>
+                                 @foreach(@$available_dates as $valueDate)
+                                  
+                                  <tr>
+                                    <td scope="row">    
+                                    {{@$valueDate->contract_service_dates->date}} 
+                                  </td>
+
+                                        @foreach($slot_data as $slotValue)
+                                          @if(@$valueDate->contract_service_dates->id == $slotValue->contract_service_date_id)
+                                          <td scope="row">
+                                            @if(array_key_exists($slotValue->daily_slot, $arraySlot)){{$arraySlot[$slotValue->daily_slot]}}@endif
+                                          </td>
+                                          @endif 
+                                        @endforeach 
+                                  </tr>        
+                                  @endforeach     
+                                 @endif     
+                              </table>   
+                            </div>
+                            @else
+                              {{Carbon\Carbon::createFromFormat('Y-m-d', @$work_order_list->start_date)->format('d/m/Y')}}  
+                            @endif   
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Completed</td> 
+                          <td ><div class="progress"><div class="progress-bar bg-success progress-bar-striped" role="progressbar" aria-valuenow="{{$work_order_list->work_order_complete_percent}}" aria-valuemin="0" aria-valuemax="100" style="width: {{$work_order_list->work_order_complete_percent}}%">{{$work_order_list->work_order_complete_percent}}% </div></div></td>
+                        </tr>
                        
                         <tr>
                           <td>Status</td>
@@ -105,31 +162,7 @@
                             
                           </td>
                         </tr>
-                        <tr>
-                          <td>Completed</td>
-                          <td>
-                              @if($work_order_list->work_order_complete_percent>0)
-
-                                <div class="progress">
-                                  <div class="progress-bar bg-success progress-bar-striped" role="progressbar" aria-valuenow="{{$work_order_list->work_order_complete_percent}}"
-                                  aria-valuemin="0" aria-valuemax="100" style="width:{{$work_order_list->work_order_complete_percent}}%">
-                                    {{$work_order_list->work_order_complete_percent}}% Complete
-                                  </div>
-                                </div>
-                              
-                              @else
-                              
-                                <div class="progress">
-                                  <div class="progress-bar bg-success progress-bar-striped" role="progressbar" aria-valuenow="0"
-                                  aria-valuemin="0" aria-valuemax="100" style="width:0%">
-                                    0% Complete
-                                  </div>
-                                </div>
-                           
-                              @endif
-                          </td>
-                        </tr>
-                       
+                                              
                       </tbody>
                       <tfoot>
                         <tr>

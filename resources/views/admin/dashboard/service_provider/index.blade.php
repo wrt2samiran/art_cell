@@ -254,11 +254,11 @@
   
     $(function () {
 
-      var labels=<?php echo json_encode($last_six_month_work_order_array);?>;
+      var labels=<?php echo json_encode($last_twelve_month_work_order_array);?>;
       console.log(labels);
       /** spare part orders chart */
-      var workorders_graph_data_array=<?php echo json_encode($six_months_work_orders);?>;
-
+      var workorders_graph_data_array=<?php echo json_encode($twelve_months_work_orders);?>;
+      console.log(workorders_graph_data_array);
       var workOrderChartData = {
           labels  : labels,
           datasets: [

@@ -88,6 +88,7 @@
 
 <script src='{{asset("js/custom-validator-method.js")}}'></script>
 <script src="{{asset('assets/plugins/fancybox/fancybox.min.js')}}"></script>
+<script src="{{asset('assets/dist/js/bootstrap-clockpicker.min.js')}}"></script>
 
 @stack('custom-scripts')
 </body>

@@ -49,6 +49,7 @@
                   return 'No Slot';
               name: 'work_order_slot.daily_slot'
             }},
+            
             { data: 'reschedule_task_details_id', 
               render: function(data){
                   if(data >0){
@@ -59,7 +60,9 @@
                   }
               }
             },
+            
             { data: 'user_feedback', name: 'user_feedback' },
+            { data: 'task_finish_date_time', name: 'task_finish_date_time' },
             { data: 'status', name: 'ststus' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],

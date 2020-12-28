@@ -59,8 +59,8 @@
                     <td >{{$task_data->service->service_name}}</td>
                   </tr>
                   <tr>
-                    <td >Task Date</td>
-                    <td >{{$task_data->task_date}}</td>
+                    <td >Task Finish Date And Time (Assigned)</td>
+                    <td >{{ Carbon\Carbon::parse($task_data->task_date)->format('d/m/Y H:i a') }}</td>
                   </tr>
                   <tr>
                     <td >Slot</td>
@@ -91,6 +91,10 @@
                       @endif
 
                     </td>
+                  </tr>
+                  <tr>
+                    <td >Task Mode</td>
+                    <td >@if($task_data->reschedule_task_details_id>0)Rescheduled @else Normal @endif
                   </tr>
                   <tr>
                     <td >Country</td>
@@ -126,6 +130,15 @@
                             </tr>
                         </table>
                     </td>
+                  </tr>
+                  <tr>
+                    <td >Feedback Date And Time</td>
+                    <td >{{ Carbon\Carbon::parse($task_data->task_finish_date_time)->format('d/m/Y H:i a') }}</td>
+                  </tr>
+
+                  <tr>
+                    <td>Feedback on Time</td>
+                    <td >@if($task_data->late_feedback=="N") No @else Yes @endif</td>
                   </tr>
 
                   <tr>

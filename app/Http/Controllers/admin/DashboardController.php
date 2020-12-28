@@ -250,19 +250,19 @@ class DashboardController extends Controller
         ->whereHas('property')
         ->orderBy('id','DESC')->take(10)->get();
 
-        $work_orders=WorkOrderLists::select(DB::raw('count(*) as total_orderrs,  DATE_FORMAT(created_at, "%m-%Y") as month_year'))->where("created_at",">", Carbon::now()->subMonths(6))->where('is_deleted', 'N')->groupBy('month_year')->pluck('total_orderrs','month_year')->toArray();
+        $work_orders=WorkOrderLists::select(DB::raw('count(*) as total_orderrs,  DATE_FORMAT(created_at, "%m-%Y") as month_year'))->where("created_at",">", Carbon::now()->subMonths(12))->where('user_id', $current_user->id)->where('is_deleted', 'N')->groupBy('month_year')->pluck('total_orderrs','month_year')->toArray();
 
         for ($i = 0; $i < 12; $i++) {
 
             $month_year=date('m-Y', strtotime("-$i month"));
-            $last_six_month_work_order_array[]=$month_year;
+            $last_twelve_month_work_order_array[]=$month_year;
 
             
 
-            $six_months_work_orders[]=(array_key_exists($month_year,$work_orders))?$work_orders[$month_year]:0;
+            $twelve_months_work_orders[]=(array_key_exists($month_year,$work_orders))?$work_orders[$month_year]:0;
         }
-        $this->data['last_six_month_work_order_array']=$last_six_month_work_order_array;
-        $this->data['six_months_work_orders']=$six_months_work_orders;
+        $this->data['last_twelve_month_work_order_array']=$last_twelve_month_work_order_array;
+        $this->data['twelve_months_work_orders']=$twelve_months_work_orders;
         
         return view('admin.dashboard.service_provider.index',$this->data);
     }
