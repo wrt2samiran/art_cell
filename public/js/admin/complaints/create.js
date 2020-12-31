@@ -75,7 +75,7 @@ $('#contract_id').on('change',function(){
   if(work_orders.length>0){
   	var options=`<option value="">Select Order Order</option>`;
   	for (var i = 0; i <work_orders.length; i++) {
-  		options+=`<option value="`+work_orders[0].id+`">`+work_orders[0].task_title+`</option>`;
+  		options+=`<option value="`+work_orders[i].id+`">`+work_orders[i].task_title+`(WO ID-`+work_orders[i].id+`)`+`</option>`;
   	}
 
   	$('#work_order_id').html(options);

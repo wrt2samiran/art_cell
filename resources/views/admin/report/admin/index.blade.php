@@ -41,22 +41,18 @@
                   <div class="row justify-content-center">
                     <div class="col-md-3">
                       <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                        <a class="nav-link active" id="v-pills-schedule-compliance-tab" data-toggle="pill" href="#schedule-compliance" role="tab" aria-controls="v-pills-schedule-compliance" aria-selected="true">Schedule Compliance</a>
+                        <a class="nav-link active" id="v-pills-schedule-compliance-tab" data-toggle="pill" href="#schedule-compliance" role="tab" aria-controls="v-pills-schedule-compliance" aria-selected="true">Maintenance Schedule Completed</a>
 
-                        <a class="nav-link" id="v-pills-planned-maintenance-tab" data-toggle="pill" href="#planned-maintenance" role="tab" aria-controls="v-pills-planned-maintenance" aria-selected="false">Planned Maintenance</a>
 
                         <a class="nav-link" id="v-pills-maintenance-backlog-tab" data-toggle="pill" href="#maintenance-backlog" role="tab" aria-controls="v-pills-maintenance-backlog" aria-selected="false">
                         Maintenance Backlog
                         </a>
-                        <a class="nav-link" id="v-pills-open-preventive-maintenance-tab" data-toggle="pill" href="#open-preventive-maintenance" role="tab" aria-controls="v-pills-open-preventive-maintenance" aria-selected="false">Open Preventive Maintenance
-                        </a>
+               
 
                         <a class="nav-link" id="v-pills-upcoming-sch-per-week-tab" data-toggle="pill" href="#upcoming-sch-per-week" role="tab" aria-controls="v-pills-upcoming-sch-per-week" aria-selected="false">
                         Upcoming Scheduled/Week
                         </a>
-                        <a class="nav-link" id="v-pills-planned-maintenance-per-two-week-tab" data-toggle="pill" href="#planned-maintenance-per-two-week" role="tab" aria-controls="v-pills-planned-maintenance-per-two-week" aria-selected="false">
-                        Planned Maintenance/Two Week
-                        </a>
+ 
                         <a class="nav-link" id="v-pills-upcomming-sch-maintenance-tab" data-toggle="pill" href="#upcomming-sch-maintenance" role="tab" aria-controls="v-pills-upcomming-sch-maintenance" aria-selected="false">
                         Upcoming Schedule Maintenance
                         </a>
@@ -86,11 +82,12 @@
                           <form method="post" action="{{route('admin.reports.schedule_compliance_report')}}" id="schedule_compliance_report_form">
                           @csrf
                           <div>
-                            <h4><u>Schedule Compliance Report</u></h4>
+                            <h4><u>Maintenance Schedule Completed Report</u></h4>
                             <div class="form-group required">
                                <label for="service_status">Contract </label>
                                 <select class="form-control contract" id="schedule_compliance_contract_id" name="contract_id" style="width: 100%;">
                                   <option value="">Select Contract</option>
+                                  <option value="all" selected>All Contract</option>
                                   @forelse($contracts as $contract)
                                   <option value="{{$contract->id}}">{{$contract->code}}</option>
                                   @empty
@@ -102,6 +99,7 @@
                                <label for="service_status">Property </label>
                                 <select class="form-control property" id="schedule_compliance_property_id" name="property_id" style="width: 100%;">
                                   <option value="">Select Property</option>
+                                  <option value="all" selected>All Property</option>
                                   @forelse($properties as $property)
                                   <option value="{{$property->id}}">{{$property->code}}</option>
                                   @empty
@@ -110,12 +108,12 @@
                             </div>
                             <div class=" form-group required">
                              <label for="from_date">Date (From) <span class="error">*</span></label>
-                             <input type="text" readonly="readonly" autocomplete="off" id="schedule_compliance_from_date" class="form-control from_date" name="from_date">
+                             <input type="text" readonly="readonly" autocomplete="off" id="schedule_compliance_from_date" class="form-control" name="from_date">
                             </div>
                 
                             <div class="form-group required">
                                <label for="to_date">Date (To) <span class="error">*</span></label>
-                               <input type="text"  readonly="readonly" autocomplete="off" class="form-control to_date" id="schedule_compliance_to_date" name="to_date">
+                               <input type="text"  readonly="readonly" autocomplete="off" class="form-control" id="schedule_compliance_to_date" name="to_date">
                             </div>
                           </div>
                           <div>
@@ -123,47 +121,7 @@
                           </div>
                           </form> 
                         </div>
-                        <div class="tab-pane fade" id="planned-maintenance" role="tabpanel" aria-labelledby="v-pills-planned-maintenance-tab">
-                          <form method="post" action="{{route('admin.reports.planned_maintenance_report')}}" id="planned_maintenance_report_form">
-                          @csrf
-                          <div>
-                            <h4><u>Planned Maintenance Report</u></h4>
-                            <div class="form-group required">
-                               <label for="service_status">Contract </label>
-                                <select class="form-control contract" id="planned_maintenance_contract_id" name="contract_id" style="width: 100%;">
-                                  <option value="">Select Contract</option>
-                                  @forelse($contracts as $contract)
-                                  <option value="{{$contract->id}}">{{$contract->code}}</option>
-                                  @empty
-                                  @endforelse
-                                </select>
-                            </div>
-                            <div style="margin-top: -1rem;">OR</div>
-                            <div class="form-group required">
-                               <label for="service_status">Property </label>
-                                <select class="form-control property" id="planned_maintenance_property_id" name="property_id" style="width: 100%;">
-                                  <option value="">Select Property</option>
-                                  @forelse($properties as $property)
-                                  <option value="{{$property->id}}">{{$property->code}}</option>
-                                  @empty
-                                  @endforelse
-                                </select>
-                            </div>
-                            <div class=" form-group required">
-                             <label for="from_date">Date (From) <span class="error">*</span></label>
-                             <input type="text" readonly="readonly" autocomplete="off" id="planned_maintenance_from_date" class="form-control from_date" name="from_date">
-                            </div>
-                
-                            <div class="form-group required">
-                               <label for="to_date">Date (To) <span class="error">*</span></label>
-                               <input type="text"  readonly="readonly" autocomplete="off" class="form-control to_date" id="planned_maintenance_to_date" name="to_date">
-                            </div>
-                          </div>
-                          <div>
-                          <button type="submit" class="btn btn-success">Download Report</button>
-                          </div>
-                          </form> 
-                        </div>
+    
                         <div class="tab-pane fade" id="maintenance-backlog" role="tabpanel" aria-labelledby="v-pills-maintenance-backlog-tab">
 
                           <form method="post" action="{{route('admin.reports.maintenance_backlog_report')}}" id="maintenance_backlog_report_form">
@@ -191,12 +149,12 @@
                             </div>
                             <div class=" form-group required">
                              <label for="from_date">Date (From) <span class="error">*</span></label>
-                             <input type="text" readonly="readonly" autocomplete="off" id="planned_maintenance_from_date" class="form-control from_date" name="from_date">
+                             <input type="text" readonly="readonly" autocomplete="off" id="maintenance_backlog_from_date" class="form-control" name="from_date">
                             </div>
                 
                             <div class="form-group required">
                                <label for="to_date">Date (To) <span class="error">*</span></label>
-                               <input type="text"  readonly="readonly" autocomplete="off" class="form-control to_date" id="planned_maintenance_to_date" name="to_date">
+                               <input type="text"  readonly="readonly" autocomplete="off" class="form-control" id="maintenance_backlog_to_date" name="to_date">
                             </div>
                           </div>
                           <div>
@@ -204,27 +162,7 @@
                           </div>
                           </form>
                         </div>
-                        <div class="tab-pane fade" id="open-preventive-maintenance" role="tabpanel" aria-labelledby="v-pills-open-preventive-maintenance-tab">
-                          <form method="post" action="{{route('admin.reports.open_preventive_maintenance_report')}}" id="maintenance_backlog_report_form">
-                          @csrf
-                          <div>
-                            <h4><u>Open Preventive Maintenance Report</u></h4>
              
-                            <div class=" form-group required">
-                             <label for="from_date">Date (From) <span class="error">*</span></label>
-                             <input type="text" readonly="readonly" autocomplete="off" id="open_preventive_maintenance_from_date" class="form-control from_date" name="from_date">
-                            </div>
-                
-                            <div class="form-group required">
-                               <label for="to_date">Date (To) <span class="error">*</span></label>
-                               <input type="text"  readonly="readonly" autocomplete="off" class="form-control to_date" id="open_preventive_maintenance_to_date" name="to_date">
-                            </div>
-                          </div>
-                          <div>
-                          <button type="submit" class="btn btn-success">Download Report</button>
-                          </div>
-                          </form>
-                        </div>
 
                         <div class="tab-pane fade" id="upcoming-sch-per-week" role="tabpanel" aria-labelledby="v-pills-upcoming-sch-per-week-tab">
 
@@ -234,7 +172,7 @@
                             <h4><u>Upcoming Schedule Weekly Report</u></h4>
                             <div class="form-group required">
                                <label for="service_status">Service Provider/Labour <span class="error">*</span></label>
-                                <select class="form-control" id="maintenance_backlog_sp_or_labour_id" name="sp_or_labour_id" style="width: 100%;">
+                                <select class="form-control" id="upcoming_weekly_maintenance_sp_or_labour_id" name="sp_or_labour_id" style="width: 100%;">
                                   <option value="">Select Service Provider/Labour</option>
                                   <option value="0" selected>All Service Provider & Labours</option>
                                   <optgroup label="Service Providers">
@@ -253,7 +191,7 @@
                             </div>
                             <div class="form-group required">
                                <label for="service_status">Service Service <span class="error">*</span></label>
-                                <select class="form-control" id="maintenance_backlog_sp_or_labour_id" name="sp_or_labour_id" style="width: 100%;">
+                                <select class="form-control" id="upcoming_weekly_maintenance_service_id" name="service_id" style="width: 100%;">
                                   <option value="">Select Service</option>
                                   <option value="0" selected>All Service </option>
                                  
@@ -265,12 +203,11 @@
                             </div>
                             <div class=" form-group required">
                              <label for="from_date">Date (From) <span class="error">*</span></label>
-                             <input type="text" readonly="readonly" autocomplete="off" id="planned_maintenance_from_date" class="form-control from_date" name="from_date">
+                             <input type="text" readonly="readonly" autocomplete="off" id="upcoming_weekly_maintenance_from_date" class="form-control" name="from_date">
                             </div>
-                
                             <div class="form-group required">
                                <label for="to_date">Date (To) <span class="error">*</span></label>
-                               <input type="text"  readonly="readonly" autocomplete="off" class="form-control to_date" id="planned_maintenance_to_date" name="to_date">
+                               <input type="text"  readonly="readonly" autocomplete="off" class="form-control to_date" id="upcoming_weekly_maintenance_to_date" name="to_date">
                             </div>
                           </div>
                           <div>
@@ -280,39 +217,16 @@
 
                         </div>
 
-                        <div class="tab-pane fade" id="planned-maintenance-per-two-week" role="tabpanel" aria-labelledby="v-pills-planned-maintenance-per-two-week-tab">
-
-                          <form method="post" action="{{route('admin.reports.planned_two_weekly_maintenance_report')}}" id="planned_two_weekly_maintenance_report_form">
-                          @csrf
-                          <div>
-                            <h4><u>Planned Two Weekly Report</u></h4>
-             
-                            <div class=" form-group required">
-                             <label for="from_date">Date (From) <span class="error">*</span></label>
-                             <input type="text" readonly="readonly" autocomplete="off" id="planned_two_weekly_from_date" class="form-control from_date" name="from_date">
-                            </div>
-                
-                            <div class="form-group required">
-                               <label for="to_date">Date (To) <span class="error">*</span></label>
-                               <input type="text"  readonly="readonly" autocomplete="off" class="form-control to_date" id="planned_two_weekly_to_date" name="to_date">
-                            </div>
-                          </div>
-                          <div>
-                          <button type="submit" class="btn btn-success">Download Report</button>
-                          </div>
-                          </form>
-
-                        </div>
                         <div class="tab-pane fade" id="upcomming-sch-maintenance" role="tabpanel" aria-labelledby="v-pills-upcomming-sch-maintenance-tab">
 
                           <form method="post" action="{{route('admin.reports.upcoming_schedule_maintenance_report')}}" id="upcoming_schedule_maintenance_report_form">
                           @csrf
                           <div>
-                            <h4><u>Planned Two Weekly Report</u></h4>
+                            <h4><u>Upcoming Schedule Maintenance Report</u></h4>
              
                             <div class=" form-group required">
                              <label for="from_date">Date (From) <span class="error">*</span></label>
-                             <input type="text" readonly="readonly" autocomplete="off" id="upcoming_schedule_maintenance_from_date" class="form-control from_date" name="from_date">
+                             <input type="text" readonly="readonly" autocomplete="off" id="upcoming_schedule_maintenance_from_date" class="form-control" name="from_date">
                             </div>
                 
                             <div class="form-group required">

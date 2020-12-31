@@ -44,14 +44,45 @@
                         @csrf
                         <div>
                           <div class="form-group required">
+                             <label for="report_on">Report On <span class="error">*</span></label>
+                              <select class="form-control " id="report_on" name="report_on" style="width: 100%;">
+                                
+                                <option value="work_order">Work Orders</option>
+                                <option value="maintenance_schedule">Maintenance Schedule</option>
+                              </select>
+                          </div>
+                          <div class="form-group required">
                              <label for="service_status">Service Status <span class="error">*</span></label>
                               <select class="form-control " id="service_status" name="service_status" style="width: 100%;">
                                 <option value="all">All</option>
-                                <option value="completed">Completed Services</option>
-                                <option value="due">Due Services</option>
+                                <option value="completed">Completed</option>
+                                <option value="due">Due</option>
+                               
                               </select>
                           </div>
-
+                          <div class="form-group required">
+                               <label for="contract_id">Contract </label>
+                                <select class="form-control contract" id="contract_id" name="contract_id" style="width: 100%;">
+                                  <option value="">Select Contract</option>
+                                  <option value="all" selected>All Contract</option>
+                                  @forelse($contracts as $contract)
+                                  <option value="{{$contract->id}}">{{$contract->code}}</option>
+                                  @empty
+                                  @endforelse
+                                </select>
+                            </div>
+                            <div style="margin-top: -1rem;">OR</div>
+                            <div class="form-group required">
+                               <label for="property_id">Property </label>
+                                <select class="form-control property" id="property_id" name="property_id" style="width: 100%;">
+                                  <option value="">Select Property</option>
+                                  <option value="all" selected>All Property</option>
+                                  @forelse($properties as $property)
+                                  <option value="{{$property->id}}">{{$property->code}}</option>
+                                  @empty
+                                  @endforelse
+                                </select>
+                            </div>
                           <div class=" form-group required">
                            <label for="from_date">Date (From) <span class="error">*</span></label>
                            <input type="text" readonly="readonly" autocomplete="off" id="from_date" class="form-control" name="from_date">
@@ -80,7 +111,30 @@
 @endsection 
 @push('custom-scripts')
 <script type="text/javascript">
-
+$('.contract').select2({
+    theme: 'bootstrap4',
+    placeholder:'Select Contract',
+    "language": {
+        "noResults": function(){
+            return "No Contract Found";
+        }
+    },
+    escapeMarkup: function(markup) {
+        return markup;
+    },
+});
+$('.property').select2({
+    theme: 'bootstrap4',
+    placeholder:'Select Property',
+    "language": {
+        "noResults": function(){
+            return "No Property Found";
+        }
+    },
+    escapeMarkup: function(markup) {
+        return markup;
+    },
+});
 
 $('#from_date').datepicker({
     dateFormat:'dd/mm/yy'
@@ -89,6 +143,20 @@ $('#to_date').datepicker({
     dateFormat:'dd/mm/yy'
 });
 
+
+
+
+$('#property_id').on('change',function(){
+    if(this.value){
+        $('#contract_id').val('').trigger('change');;
+    }
+});
+$('#contract_id').on('change',function(){
+    
+    if(this.value){
+        $('#property_id').val('').trigger('change');;
+    }
+});
 
 $("#report_form").validate({
     ignore:[],
@@ -100,8 +168,10 @@ $("#report_form").validate({
         },
         to_date:{
             required: true,
-            maxlength: 10,
-            toDateShouldBeGreatherThanFromDate:true 
+            maxlength: 10, 
+            toDateShouldGreatherFromDate:function(){
+                return $('#to_date').val();
+            }
         },
     },
     messages: {
@@ -126,8 +196,56 @@ $("#report_form").validate({
         $(element).removeClass('is-invalid');    
     },
     submitHandler: function(form) {
+
         $.LoadingOverlay("show");
-        form.submit();
+
+        var formData = new FormData(form);
+        $.ajax({
+            type: "POST",
+            data: formData,
+            url: form.action,
+            cache: false,
+            contentType: false,
+            processData: false,
+            responseType: 'blob',
+            success: function(response)
+            {
+                const url = window.URL.createObjectURL(new Blob([response]));
+                const link = document.createElement('a');
+                link.href = url;
+
+                var from_date=form.from_date.value.replaceAll('/','-');
+                var to_date=form.to_date.value.replaceAll('/','-');
+
+                if(form.report_on.value=='work_order'){
+                   var file_name='work-order-report-from-'+from_date+'-to-'+to_date+'.csv';
+                }else{
+                  var file_name='schedule_maintenance-report-from-'+from_date+'-to-'+to_date+'.csv';
+                }
+               
+
+                link.setAttribute('download',file_name);
+                document.body.appendChild(link);
+                link.click();
+                $.LoadingOverlay("hide");
+                form.reset(); 
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+               $.LoadingOverlay("hide");
+               var response=jqXHR.responseJSON;
+               var status=jqXHR.status;
+               if(status=='404'){
+                toastr.error('Invalid URL', 'Error', {timeOut: 5000});
+               }else{
+                 toastr.error('Internal server error.', 'Error', {timeOut: 5000});
+               }
+           }
+        });
+
+
+
+
+
     }
 });
 

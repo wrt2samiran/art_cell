@@ -11,6 +11,7 @@ return array (
   'home' => 'Home',
   'master_modules' => 'Master Modules',
   'messages' => 'Messages',
+  'statuses' => 'Statuses',
   'message_and_notifications'=>'Message & Notifications',
   'properties' => 'Properties',
   'property_management' => 'Property Management',

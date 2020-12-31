@@ -273,6 +273,40 @@ class DashboardController extends Controller
 
         $this->data['total_users']=User::whereHas('role')->where('created_by',$current_user->id)->count();
 
+        /**data for order graph */
+        $spare_part_orders=SparePartOrder::where('user_id',$current_user->id)
+        ->select(DB::raw('count(*) as total_orderrs,  DATE_FORMAT(created_at, "%m-%Y") as month_year'))->where("created_at",">", Carbon::now()->subMonths(6))->groupBy('month_year')->pluck('total_orderrs','month_year')->toArray();
+
+        $shared_service_orders=SharedServiceOrder::where('user_id',$current_user->id)
+        ->select(DB::raw('count(*) as total_orderrs,  DATE_FORMAT(created_at, "%m-%Y") as month_year'))->where("created_at",">", Carbon::now()->subMonths(6))->groupBy('month_year')->pluck('total_orderrs','month_year')->toArray();
+
+       
+
+        $current_monyh_year=Carbon::now()->format('m-Y');
+
+        $last_six_month_array[]=$current_monyh_year;
+
+        $six_months_spare_part_orders[]=(array_key_exists($current_monyh_year,$spare_part_orders))?$spare_part_orders[$current_monyh_year]:0;
+
+        $six_months_shared_service_orders[]=(array_key_exists($current_monyh_year,$shared_service_orders))?$shared_service_orders[$current_monyh_year]:0;
+        
+        for ($i = 1; $i < 6; $i++) {
+          
+          $month_year=date('m-Y', strtotime("-$i month"));
+          $last_six_month_array[]=$month_year;
+
+          $six_months_spare_part_orders[]=(array_key_exists($month_year,$spare_part_orders))?$spare_part_orders[$month_year]:0;
+        
+          $six_months_shared_service_orders[]=(array_key_exists($month_year,$shared_service_orders))?$shared_service_orders[$month_year]:0;
+        }
+
+        $this->data['last_six_month_array']=$last_six_month_array;
+        $this->data['six_months_spare_part_orders']=$six_months_spare_part_orders;
+
+        $this->data['six_months_shared_service_orders']=$six_months_shared_service_orders;
+
+        /****************/
+
         $this->data['complaints']=Complaint::whereHas('contract')
         ->with('complaint_status')
         ->whereHas('complaint_status')
@@ -306,6 +340,177 @@ class DashboardController extends Controller
             }
         })
         ->orderBy('id','asc')->take(10)->get();
+
+
+        $this->data['task_work_orders']=WorkOrderLists::whereHas('tasks.task_details')
+        ->whereHas('property',function($query) use($current_user){
+            if($current_user->created_by_admin){
+                $query->where('property_owner',$current_user->id);
+            }else{
+                $query->where('property_manager',$current_user->id);
+            }
+        })->get();
+
+        $this->data['task_properties']=Property::whereHas('contracts')
+        ->whereHas('contracts.work_orders',function($q)use($current_user){
+            $q->whereHas('property',function($query) use($current_user){
+                if($current_user->created_by_admin){
+                    $query->where('property_owner',$current_user->id);
+                }else{
+                    $query->where('property_manager',$current_user->id);
+                }
+            });
+        })->get();
+
+
+        $this->data['complaint_statuses']=Status::where('status_for','complaint')->get();
+
+        $this->data['complaint_contracts']=Contract::where('creation_complete',true)
+        ->whereHas('complaints')
+        ->whereHas('property',function($query) use($current_user){
+            if($current_user->created_by_admin){
+                $query->where('property_owner',$current_user->id);
+            }else{
+                $query->where('property_manager',$current_user->id);
+            }
+        })
+        ->get();
+
+        $this->data['work_order_contracts']=Contract::where('creation_complete',true)
+        ->whereHas('work_orders')
+        ->whereHas('property',function($query) use($current_user){
+            if($current_user->created_by_admin){
+                $query->where('property_owner',$current_user->id);
+            }else{
+                $query->where('property_manager',$current_user->id);
+            }
+        })
+        ->get();
+
+        $this->data['work_order_services']=Service::whereHas('work_orders',function($q)use($current_user){
+            $q->whereHas('property',function($query) use($current_user){
+                if($current_user->created_by_admin){
+                    $query->where('property_owner',$current_user->id);
+                }else{
+                    $query->where('property_manager',$current_user->id);
+                }
+            });
+        })
+        ->get();
+
+
+        if($request->ajax()){
+            //complaint filter
+            if($request->complaint_filter){
+
+                $this->data['complaints']=Complaint::whereHas('contract')
+                ->whereHas('complaint_status')
+                ->whereHas('contract.property',function($query) use($current_user){
+                    if($current_user->created_by_admin){
+                        $query->where('property_owner',$current_user->id);
+                    }else{
+                        $query->where('property_manager',$current_user->id);
+                    }
+                })
+                ->when($request->complaint_status_id && $request->complaint_status_id!='all' ,function($q)use ($request){
+                    $q->where('status_id',$request->complaint_status_id);
+                })
+                ->when($request->complaint_contract_id && $request->complaint_contract_id!='all' ,function($q)use ($request){
+                    $q->where('contract_id',$request->complaint_contract_id);
+                })
+                ->orderBy('id','desc')->take(5)->get();
+
+                $complaint_view=view('admin.dashboard.customer.ajax.complaints',$this->data)->render();
+
+                return  response()->json([
+                    'html'=>$complaint_view
+                ]);
+            }
+
+            if($request->work_order_filter){
+
+
+                $this->data['work_orders']=WorkOrderLists::whereHas('contract')
+                ->whereHas('service')
+                ->whereHas('property',function($query) use($current_user){
+                    if($current_user->created_by_admin){
+                        $query->where('property_owner',$current_user->id);
+                    }else{
+                        $query->where('property_manager',$current_user->id);
+                    }
+                })
+                ->when($request->work_order_service_id && $request->work_order_service_id!='all' ,function($q)use ($request){
+                    $q->where('service_id',$request->work_order_service_id);
+                })
+                ->when($request->work_order_contract_id && $request->work_order_contract_id!='all' ,function($q)use ($request){
+                    $q->where('contract_id',$request->work_order_contract_id);
+                })
+                ->orderBy('id','desc')->take(5)->get();
+
+                $work_order_view=view('admin.dashboard.customer.ajax.work_orders',$this->data)->render();
+
+                return  response()->json([
+                    'html'=>$work_order_view
+                ]);
+            }
+
+            if($request->task_filter){
+
+                $this->data['tasks']=TaskDetails::where('task_date','>=',date('Y-m-d'))
+                ->whereHas('task')
+                ->whereHas('task.contract')
+                ->whereHas('property',function($query) use($current_user){
+                    if($current_user->created_by_admin){
+                        $query->where('property_owner',$current_user->id);
+                    }else{
+                        $query->where('property_manager',$current_user->id);
+                    }
+                })
+                ->with([
+                    'task',
+                    'task.userDetails'=>function($q){
+                        $q->withTrashed();
+                    },
+                    'task.contract'=>function($q){
+                        $q->withTrashed();
+                    },
+                    'task.contract.service_provider'=>function($q){
+                        $q->withTrashed();
+                    },
+                    'task.property'=>function($q){
+                        $q->withTrashed();
+                    }
+                ])
+                ->when($request->contract_id && $request->contract_id!='all' ,function($q)use ($request){
+
+                    $q->whereHas('task',function($q1)use($request){
+                        $q1->where('contract_id',$request->contract_id);
+                    });
+                })
+                ->when($request->work_order_id && $request->work_order_id!='all' ,function($q)use ($request){
+
+                    $q->whereHas('task',function($q1)use($request){
+                        $q1->where('work_order_id',$request->work_order_id);
+                    });
+                })
+                ->when($request->property_id && $request->property_id!='all' ,function($q)use ($request){
+
+                    $q->whereHas('task.contract',function($q1)use($request){
+                        $q1->where('property_id',$request->property_id);
+                    });
+                })
+                ->orderBy('task_date','asc')->take(10)->get();
+
+                $task_view=view('admin.dashboard.customer.ajax.tasks',$this->data)->render();
+
+                return  response()->json([
+                    'html'=>$task_view
+                ]);
+
+            }
+
+        }
+
 
         return view('admin.dashboard.customer.index',$this->data);
     }

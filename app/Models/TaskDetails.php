@@ -9,7 +9,19 @@ class TaskDetails extends Model
 {
  	use SoftDeletes;
  	protected $guarded=[];
-
+    public function get_status_name(){
+        if($this->status=='0'){
+            return 'Pending';
+        }elseif($this->status=='1'){
+            return 'Overdue';
+        }elseif ($this->status=='2') {
+            return 'Completed';
+        }elseif ($this->status=='3') {
+            return 'Reschedule';
+        }else{
+            return '';
+        }
+    }
  	public function userDetails() {
         return $this->belongsTo('\App\Models\User',  'user_id','id');
     }

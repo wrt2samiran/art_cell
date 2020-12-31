@@ -20,7 +20,7 @@
             { data: 'start_date', name: 'start_date'},
             { data: 'end_date', name: 'end_date'},
             { data: 'creation_complete', name: 'creation_complete'},
-            { data: 'contract_status.status_name', name: 'contract_status.status_name'},
+            { data: 'contract_status.status_name', name: 'contract_status.status_name',orderable: false, searchable: false},
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
         order: [ [0, 'desc'] ],

@@ -2,15 +2,24 @@
 
 namespace App\Exports\Reports\Admin;
 
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Illuminate\Contracts\View\View;
+use Maatwebsite\Excel\Concerns\FromView;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class WorkOrderRequestedVsCompleted implements FromCollection
+class WorkOrderRequestedVsCompleted implements FromView,ShouldAutoSize
 {
-    /**
-    * @return \Illuminate\Support\Collection
-    */
-    public function collection()
+    protected $data;
+
+    public function __construct($data)
     {
-        //
+        $this->data = $data;
+    }
+
+    public function view(): View
+    {
+
+        return view('admin.report.exports.admin.wo_requested_vs_completed', [
+            'data' => $this->data
+        ]);
     }
 }

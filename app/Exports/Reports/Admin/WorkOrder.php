@@ -8,18 +8,19 @@ use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
 class WorkOrder implements FromView,ShouldAutoSize
 {
-    protected $data;
+    protected $work_orders;
 
-    public function __construct($data)
+
+    public function __construct($work_orders)
     {
-        $this->data = $data;
+        $this->work_orders = $work_orders;
     }
 
     public function view(): View
     {
 
         return view('admin.report.exports.admin.work_order', [
-            'data' => $this->data
+            'work_orders' => $this->work_orders
         ]);
     }
 }

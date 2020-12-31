@@ -27,6 +27,7 @@ class SparePartsController extends Controller
 
     public function list(Request $request){
         $this->data['page_title']='Spare Parts';
+        $current_user=auth()->guard('admin')->user();
         if($request->ajax()){
 
             $spareParts=SparePart::with('unitmaster')->orderBy('id','Desc');
@@ -37,14 +38,15 @@ class SparePartsController extends Controller
             ->filterColumn('created_at', function ($query, $keyword) {
                 $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
             })
-            ->addColumn('is_active',function($spareParts){
+            ->addColumn('is_active',function($spareParts)use($current_user){
+                $disabled=(!$current_user->hasAllPermission(['spare-part-status-change']))?'disabled':'';
                 if($spareParts->is_active=='1'){
                    $message='deactivate';
-                   return '<a title="Click to deactivate the Spare Parts" href="javascript:change_status('."'".route('admin.spare_parts.change_status',$spareParts->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm">Active</a>';
+                   return '<a title="Click to deactivate the Spare Parts" href="javascript:change_status('."'".route('admin.spare_parts.change_status',$spareParts->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm '.$disabled.'">Active</a>';
                     
                 }else{
                    $message='activate';
-                   return '<a title="Click to activate the Spare Parts" href="javascript:change_status('."'".route('admin.spare_parts.change_status',$spareParts->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm">Inactive</a>';
+                   return '<a title="Click to activate the Spare Parts" href="javascript:change_status('."'".route('admin.spare_parts.change_status',$spareParts->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm '.$disabled.'">Inactive</a>';
                 }
             })
             ->addColumn('action',function($spareParts){

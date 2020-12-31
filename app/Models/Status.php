@@ -4,8 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-class Status extends Model
+use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
+use Astrotomic\Translatable\Translatable;
+class Status extends Model implements TranslatableContract
 {
-   use SoftDeletes;
-   protected $guarded=[];
+    use SoftDeletes;
+    use Translatable;
+	public $translatedAttributes = ['status_name'];
+    protected $guarded=[];
 }
