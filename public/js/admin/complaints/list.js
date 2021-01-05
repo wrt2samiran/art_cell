@@ -18,7 +18,7 @@ var complaints_table=$('#complaints_table').DataTable({
         { 
           data: 'details', name: 'details'
         },
-        { data: 'complaint_status.status_name', name: 'complaint_status.status_name' },
+        { data: 'complaint_status.status_name', name: 'complaint_status.status_name',orderable: false, searchable: false },
         { data: 'created_at', name: 'created_at' },
         {data: 'action', name: 'action', orderable: false, searchable: false}
     ],

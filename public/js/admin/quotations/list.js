@@ -18,7 +18,7 @@
             { data: 'services', name: 'services',orderable: false,searchable: false },
             { data: 'property_types', name: 'property_types',orderable: false,searchable: false },
             { data: 'contract_duration', name: 'contract_duration',orderable: false },
-            { data: 'status.status_name', name: 'status.status_name' },
+            { data: 'status.status_name', name: 'status.status_name',orderable: false, searchable: false },
             { data: 'created_at', name: 'created_at' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],

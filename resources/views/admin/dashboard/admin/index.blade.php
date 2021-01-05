@@ -112,10 +112,10 @@
                         Upcoming Task List
                       </h3>
                     </div>
-                    <div>
+                    <div class="container-fluid">
                       <div class="row">
-                        <div class="col">
-                          <select id="task_contract">
+                        <div class="col-md-4">
+                          <select id="task_contract" style="width: 100%;">
                             <option value="">Filter By Contract</option>
                             <option value="all" selected>All Contract</option>
                             @forelse($work_order_contracts as $work_order_contract)
@@ -125,8 +125,8 @@
                             @endforelse
                           </select>
                         </div>
-                        <div class="col">
-                          <select id="task_work_order">
+                        <div class="col-md-4">
+                          <select id="task_work_order" style="width: 100%;">
                             <option value="">Filter By Work Order</option>
                             <option value="all" selected>All Work Order</option>
                             @forelse($task_work_orders as $task_work_order)
@@ -137,8 +137,8 @@
                             @endforelse
                           </select>
                         </div>
-                        <div class="col">
-                          <select id="task_property">
+                        <div class="col-md-4">
+                          <select id="task_property" style="width: 100%;">
                             <option value="">Filter By Property</option>
                             <option value="all" selected>All Properties</option>
                             @forelse($task_properties as $task_property)
@@ -233,9 +233,6 @@
                         </div>
                       </div>
                       
-
-
-
                     </div>
                   </div>
                 </div>

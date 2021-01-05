@@ -97,6 +97,23 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             });
             /************************************/
 
+            /*Routes for Status Master management */
+            Route::group(['prefix'=>'statuses','middleware'=>['check_permissions:manage-statuses'],'as'=>'statuses.'],function(){
+
+                Route::get('/', 'StatusController@list')->name('list');
+                Route::get('/create', 'StatusController@create')->name('create');
+                Route::post('/store', 'StatusController@store')->name('store');
+                Route::get('/{id}', 'StatusController@show')->name('show');
+                Route::get('/{id}/edit', 'StatusController@edit')->name('edit');
+                Route::put('/{id}', 'StatusController@update')->name('update');
+                Route::delete('/{id}/delete', 'StatusController@delete')->name('delete');
+                Route::get('/{id}/change-change', 'StatusController@change_status')->name('change_status');
+                Route::post('/ajax/ajax_check_status_name_unique/{status_id?}', 'StatusController@ajax_check_status_name_unique')
+                ->name('ajax_check_status_name_unique');
+            });
+            /************************************/
+
+
             /*Routes for service management */
             Route::group(['prefix'=>'services','middleware'=>['check_permissions:manage-services'],'as'=>'services.'],function(){
                 Route::get('/', 'ServiceController@list')->name('list');
@@ -555,13 +572,13 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::any('/', 'ReportController@index')->name('index');
                 
                 Route::post('/schedule-compliance-report', 'ReportController@schedule_compliance_report')->name('schedule_compliance_report');
-                Route::post('/planned-maintenance-report', 'ReportController@planned_maintenance_report')->name('planned_maintenance_report');
+               
                 Route::post('/maintenance-backlog-report', 'ReportController@maintenance_backlog_report')->name('maintenance_backlog_report');
-                Route::post('/open-preventive-maintenance-report', 'ReportController@open_preventive_maintenance_report')->name('open_preventive_maintenance_report');
+               
 
                 Route::post('/upcoming-weekly-maintenance-report', 'ReportController@upcoming_weekly_maintenance_report')->name('upcoming_weekly_maintenance_report');
 
-                Route::post('/planned-two-weekly-maintenance-report', 'ReportController@planned_two_weekly_maintenance_report')->name('planned_two_weekly_maintenance_report');
+               
 
                 Route::post('/upcoming-schedule-maintenance-report', 'ReportController@upcoming_schedule_maintenance_report')->name('upcoming_schedule_maintenance_report');
 

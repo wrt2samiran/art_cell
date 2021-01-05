@@ -11,6 +11,7 @@ return array (
   'home' => 'الصفحة الرئيسية',
   'master_modules' => 'وحدات رئيسية',
   'messages' => 'الرسائل',
+  'statuses' => 'الحالات',
   'message_and_notifications'=>'الرسائل والإخطارات',
   'properties' => 'الخصائص',
   'property_management' => 'إدارة الممتلكات',

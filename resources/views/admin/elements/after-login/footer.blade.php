@@ -16,6 +16,7 @@
 
 <script type="text/javascript">
   window.baseUrl="{{URL::to('/')}}";
+  window.current_locale="{{App::getLocale()}}";
 </script>
 <!-- jQuery -->
 <script src="{{asset('assets/plugins/jquery/jquery.min.js')}}"></script>
@@ -66,6 +67,10 @@
 <script src="{{asset('js/jquery.validate.js')}}"></script>
 <!---------------->
 <script src="{{asset('assets/plugins/jquery-validation/additional-methods.min.js')}}"></script>
+
+@if(App::getLocale()=='ar')
+<script src="{{asset('assets/plugins/jquery-validation/localization/messages_ar.min.js')}}"></script>
+@endif
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="{{ asset('js/development-admin.js')}}"></script>
