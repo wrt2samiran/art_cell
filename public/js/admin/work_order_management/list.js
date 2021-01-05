@@ -18,17 +18,34 @@
                   {
                      return data.service_type
                   }
-              }
+              }, searchable: false, sortable : false
             },
 
 
             { data: 'property.property_name', name: 'property.property_name' },
-            { data: 'service.service_name', name: 'service.service_name' },
-            { data: 'property.country.name', name: 'property.country.name' },
-            { data: 'property.state.name', name: 'property.state.name' },
-            { data: 'property.city.name', name: 'property.city.name' },
-
+            { data: 'service.service_name', name: 'service.service_name', searchable: false, sortable : false },
+            
+            { data: 'property',
+              render: function(data){
+                      return '<table>'+
+                      '<tr><td>Country :</td><td>'+data.country.name+'</td></tr>'+
+                      '<tr><td>State :</td><td>'+data.state.name+'</td></tr>'+
+                      '<tr><td>City :</td><td>'+data.city.name+'</td></tr>'+
+                      '</table>';
+                  }, searchable: false, sortable : false
+            }, 
             { data: 'start_date', name: 'start_date' },
+            { data: 'task_assigned', render:function(data){
+                if(data=='Y')
+                {
+                  return 'Yes'
+                }
+                else
+                {
+                  return 'No'
+                }
+            }},
+
             
             { data: 'work_order_complete_percent', render:function(data){
                 if(data>0)
@@ -40,7 +57,7 @@
                     return '<div class="progress"><div class="progress-bar bg-success progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">0% </div></div>'
                   }  
                 }},
-            { data: 'status', name: 'ststus' },
+            { data: 'status', name: 'ststus', searchable: false, sortable : false },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
          order: [ [0, 'desc'] ],

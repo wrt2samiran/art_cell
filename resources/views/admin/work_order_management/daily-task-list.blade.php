@@ -56,6 +56,11 @@
                     <td >{{$work_order_list->service->service_name}}</td>
                   </tr>
                   <tr>
+                    <td >Service Type</td>
+                    <td >{{$work_order_list->contract_services->service_type}}</td>
+                  </tr>
+
+                  <tr>
                     <td>Country</td>
                     <td >{{$work_order_list->property->country->name}}</td>
                   </tr>
@@ -76,14 +81,86 @@
                     <td >{{$work_order_list->userDetails->name}}</td>
                   </tr>
                   <tr>
-                    <td>Start Date</td> 
-                    <td >{{Carbon\Carbon::createFromFormat('Y-m-d', $work_order_list->start_date)->format('d-m-Y')}}</td>
+                    <td> Date of Service</td> 
+                    <td >
+                      @if(@$work_order_list->contract_services->service_type=='Maintenance'  and @$work_order_list->contract_service_recurrence->interval_type != 'daily') 
+                        <table class="table table-bordered" >
+                            <tr> 
+                                  <tr>
+                                    <td scope="col" style="text-align:center;" colspan="6"><strong>Date</strong> </td>
+                                  </tr>
+                                 @foreach(@$work_order_list->contract_service_dates as $valueDate)
+                                    <td>
+                                     {{Carbon\Carbon::createFromFormat('Y-m-d', @$valueDate->date)->format('d/m/Y')}}                             
+                                    </td>
+                                 @endforeach 
+                            </tr>
+                        </table>
+                      @elseif(@$work_order_list->contract_services->service_type=='Maintenance'  and @$work_order_list->contract_service_recurrence->interval_type == 'daily')  
+                      <div class="scrollit" style="overflow:scroll; height:300px;">
+                        <table class="table table-bordered">
+
+                          @php $arraySlot = array('1'=> 'First Slot', '2'=> 'Second Slot', '3'=> 'Third Slot', '4'=> 'Fourth Slot', '5'=> 'Fifth Slot', '6'=>'Sixth Slot', '7'=> 'Seventh Slot', '8'=> 'Eight Slot', '9'=>'Nineth Slot', '10'=>'Tenth Slot'); @endphp
+                          @if(!empty($available_dates))
+                            <tr>
+                              <td scope="col"><strong>Date</strong> </td>
+                              <td scope="col" colspan="{{count(@$all_slot_data)/count(@$all_available_dates)}}" style="text-align:center;"><strong>Slot</strong></td>
+                            </tr>
+                           @foreach(@$all_available_dates as $valueDate)
+                            
+                            <tr>
+                              <td scope="row">    
+                              {{@$valueDate->contract_service_dates->date}} 
+                            </td>
+
+                                  @foreach($all_slot_data as $slotValue)
+                                    @if(@$valueDate->contract_service_dates->id == $slotValue->contract_service_date_id)
+                                    <td scope="row"  @if(@$slotValue->booked_status=='Y') style="color: red" @endif>
+                                      @if(array_key_exists($slotValue->daily_slot, $arraySlot)){{$arraySlot[$slotValue->daily_slot]}}@endif
+                                    </td>
+                                    @endif 
+                                  @endforeach 
+                            </tr>        
+                            @endforeach     
+                           @endif     
+                        </table>   
+                      </div>
+                      @else
+                        {{Carbon\Carbon::createFromFormat('Y-m-d', @$work_order_list->start_date)->format('d/m/Y')}}  
+                      @endif   
+                    </td>
                   </tr>
                   <tr>
-                    <td>Completed</td> 
+                    <td>Completed (%)</td> 
                     <td ><div class="progress"><div class="progress-bar bg-success progress-bar-striped" role="progressbar" aria-valuenow="{{$work_order_list->work_order_complete_percent}}" aria-valuemin="0" aria-valuemax="100" style="width: {{$work_order_list->work_order_complete_percent}}%">{{$work_order_list->work_order_complete_percent}}% </div></div></td>
                   </tr>
-                  
+                  <tr>
+                    <td>Status</td>
+                    <td>
+                      @php
+                        if($work_order_list->status=='0'){
+                            $button = 'warning';
+                            $status = 'Pending';
+                          }
+                          
+                        else if($work_order_list->status=='1'){
+                            $button = 'danger';
+                            $status = 'Over Due';
+
+                          }
+                          
+                        else{
+
+                            $button = 'success';
+                            $status = 'Completed';
+                          }
+                          
+                        @endphp  
+
+                      <button role="button" class="btn btn-{{$button}}">{{$status}}</button>
+                      
+                    </td>
+                  </tr>
                   
                   <!-- <tr>
                     <td>Status</td>
@@ -202,7 +279,7 @@
                               </div> 
 
                               <div class="form-group">
-                                <label>Date range <span class="error">*</span></label>
+                                <label>Task Date range <span class="error">*</span></label>
 
                                 <div class="input-group">
                                   <div class="input-group-prepend">
@@ -214,6 +291,13 @@
                                 </div>
                                 <!-- /.input group -->
                               </div>
+
+                              <div class="form-group required">
+                                <label for="finish_time">Task Finish Time<span class="error">*</span></label>
+                                    
+                                    <input type="text" class="form-control clockpicker" readonly="" value="" name="assigned_finish_time" id="assigned_finish_time" onchange="checkOnDemandFree()">
+                                  </label>
+                              </div> 
 
                              <div>
                               <button type="submit" class="btn btn-success" id="free_ondemand" disabled="">Submit</button> 
@@ -235,7 +319,7 @@
 
             <!-- Maintanence Task -->
               <div class="modal fade" id="addMaintanenceTaskModal" role="dialog">
-              <div class="modal-dialog">
+              <div class="modal-dialog modal-lg">
               
                 <!-- Modal content-->
                 <div class="modal-content">
@@ -245,110 +329,157 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                   </div>
                   <div class="modal-body">
-                    <div class="card-body">
-                            <div class="row justify-content-center">
-                              <div class="col-md-10 col-sm-12">
+                    <div>
                                 <form  method="post" id="admin_maintanence_labour_task_add_form" action="{{route('admin.work-order-management.taskMaintanenceAssign')}}" method="post" enctype="multipart/form-data">
                                       @csrf
-                                       
-                                    <div class="form-group required">
-                                        <label for="service_id">Work Order Title <span class="error">*</span></label>
-                                        <select class="form-control parent_role_select2" style="width: 100%;" name="work_order_id" id="work_order_id">
-                                            <option value="{{@$work_order_list->id}}" {{(old('task_id')== @$work_order_list->id)? 'selected':''}}>{{@$work_order_list->task_title}} ({{@$work_order_list->contract->code}})</option>
-                                          </select>
-                                        @if($errors->has('work_order_id'))
-                                        <span class="text-danger">{{$errors->first('work_order_id')}}</span>
-                                        @endif
-                                    </div>
+                                    
+                                     <div class="row">
+                                      <div class="col-lg-6">
+                                          <div class="form-group required">
+                                              <label for="service_id">Work Order Title <span class="error">*</span></label>
+                                              <select class="form-control parent_role_select2" style="width: 100%;" name="work_order_id" id="work_order_id">
+                                                  <option value="{{@$work_order_list->id}}" {{(old('task_id')== @$work_order_list->id)? 'selected':''}}>{{@$work_order_list->task_title}} ({{@$work_order_list->contract->code}})</option>
+                                                </select>
+                                              @if($errors->has('work_order_id'))
+                                              <span class="text-danger">{{$errors->first('work_order_id')}}</span>
+                                              @endif
+                                          </div>
+                                      </div>
+                                      <div class="col-lg-6">
+                                          <div class="form-group required">
+                                              <label for="property_id">Task Title <span class="error">*</span></label>
+                                              <input class="form-control parent_role_select2" style="width: 100%;" type="text" name="task_title_maintanence_daily" id="task_title_maintanence_daily" value="{{(old('task_title_maintanence_daily'))? old('task_title_maintanence_daily'):''}}" onkeyup="checkMaintanenceDaily()">
+                                              
+                                              @if($errors->has('task_title'))
+                                              <span class="text-danger">{{$errors->first('task_title')}}</span>
+                                              @endif
+                                          </div> 
+                                      </div>
+                                    </div>   
+                                 
+                                    <div class="row">
+                                      <div class="col-lg-6">
+                                        <div class="form-group required">
+                                          <label for="property_id">Service <span class="error">*</span></label>
+                                          <select class="form-control parent_role_select2" style="width: 100%;" name="service_id" id="service_id" >
+                                                   <option value="{{@$work_order_list->service_id}}" {{(old('service_id')== @$work_order_list->service_id)? 'selected':''}}>{{@$work_order_list->service->service_name}}</option>
+                                            </select>
+                                          @if($errors->has('property_id'))
+                                          <span class="text-danger">{{$errors->first('property_id')}}</span>
+                                          @endif
+                                        </div>
+                                      </div>
+                                      <div class="col-lg-6">
+                                        <div class="form-group">
+                                          <label for="service_id">Task Description</label>
+                                          <textarea class="form-control" name="task_description" id="task_description">{{old('task_description')}}</textarea>
+                                        </div>
+                                      </div>
+                                    </div>     
+                                 
+
+                                    
+                                    <div class="row">
+                                      <div class="col-lg-6">
+                                        <div class="form-group required">
+                                          <label for="labour_list_id">Labour List <span class="error">*</span></label>
+                                          <select class="form-control" multiple="multiple" searchable="Search for..."  name="maintanence_user_id[]" id="maintanence_user_id" onchange="checkMaintanenceDaily()">
+                                             
+                                             @forelse($labour_list as $labour_data)
+                                                   <option value="{{@$labour_data->id}}" >{{@$labour_data->name}}</option>
+                                              @empty
+                                              <option value="">No Labour Found</option>
+                                              @endforelse     
+                                                                       
+                                            </select>
+                                          @if($errors->has('maintanence_user_id'))
+                                          <span class="text-danger">{{$errors->first('maintanence_user_id')}}</span>
+                                          @endif
+                                        </div>
+                                      </div>
+                                      <div class="col-lg-6">
                                         
-                                    <div class="form-group required">
-                                      <label for="property_id">Task Title <span class="error">*</span></label>
-                                      <input class="form-control parent_role_select2" style="width: 100%;" type="text" name="task_title_maintanence_daily" id="task_title_maintanence_daily" value="{{(old('task_title_maintanence_daily'))? old('task_title_maintanence_daily'):''}}" onkeyup="checkMaintanenceDaily()">
-                                      
-                                      @if($errors->has('task_title'))
-                                      <span class="text-danger">{{$errors->first('task_title')}}</span>
-                                      @endif
-                                    </div>  
-                                    <div class="form-group required">
-                                      <label for="property_id">Service <span class="error">*</span></label>
-                                      <select class="form-control parent_role_select2" style="width: 100%;" name="service_id" id="service_id" >
-                                               <option value="{{@$work_order_list->service_id}}" {{(old('service_id')== @$work_order_list->service_id)? 'selected':''}}>{{@$work_order_list->service->service_name}}</option>
-                                        </select>
-                                      @if($errors->has('property_id'))
-                                      <span class="text-danger">{{$errors->first('property_id')}}</span>
-                                      @endif
-                                    </div>
+                                        @if(@$work_order_list->contract_services->service_type=='Maintenance'  and @$work_order_list->contract_service_recurrence->interval_type == 'daily') 
 
-                                    <div class="form-group">
-                                      <label for="service_id">Task Description</label>
-                                      <textarea class="form-control float-right" name="task_description" id="task_description">{{old('task_description')}}</textarea>
-                                    </div>
-                                   
+                                         <?php //dd($slot_data);?>
+                                         @php $arraySlot = array('1'=> 'First Slot', '2'=> 'Second Slot', '3'=> 'Third Slot', '4'=> 'Fourth Slot', '5'=> 'Fifth Slot', '6'=>'Sixth Slot', '7'=> 'Seventh Slot', '8'=> 'Eight Slot', '9'=>'Nineth Slot', '10'=>'Tenth Slot'); @endphp
+                                          <div class="form-group work-options required">
+                                          <label for="property_id">Task Date And Slot<span class="error">*</span></label>
+                                          <select class="form-control work_date" multiple="multiple" style="width: 100%;" name="work_date[]" id="work_date"  onchange="checkMaintanenceDaily()">
+                                            @if(!empty($available_dates))
+                                               @forelse(@$available_dates as $valueDate)
+                                                <ul style="importent">
+                                                  <li class="parent-term">
+                                                   <option value="{{@$valueDate->contract_service_dates->date}}" >{{@$valueDate->contract_service_dates->date}}  </option>
+                                                     <ul>
+                                                      
+                                                      @forelse($slot_data as $slotValue)
+                                                        @if(@$valueDate->contract_service_dates->id == $slotValue->contract_service_date_id)
+                                                          <li class="child-term">
+                                                           <option value="{{@$slotValue->id}}" >@if(array_key_exists($slotValue->daily_slot, $arraySlot)){{$arraySlot[$slotValue->daily_slot]}}@endif</option>
+                                                          </li> 
+                                                        @endif  
+                                                      @empty
+                                                      <option value="">No Labour Found</option>
+                                                      @endforelse 
+                                                     </ul> 
+                                                  </li> 
+                                                </ul> 
+                                                 @empty
+                                                 <option value="">No Date Found</option>
+                                               @endforelse
+                                               @endif     
+                                              </select>
+                                            @if($errors->has('work_date'))
+                                            <span class="text-danger">{{$errors->first('work_date')}}</span>
+                                            @endif
+                                        </div>
 
-                                    <div class="form-group required">
-                                      <label for="labour_list_id">Labour List <span class="error">*</span></label>
-                                      <select class="form-control" multiple="multiple" searchable="Search for..."  name="maintanence_user_id[]" id="maintanence_user_id" onchange="checkMaintanenceDaily()">
-                                         
-                                         @forelse($labour_list as $labour_data)
-                                               <option value="{{@$labour_data->id}}" >{{@$labour_data->name}}</option>
-                                          @empty
-                                          <option value="">No Labour Found</option>
-                                          @endforelse     
-                                                                   
-                                        </select>
-                                      @if($errors->has('maintanence_user_id'))
-                                      <span class="text-danger">{{$errors->first('maintanence_user_id')}}</span>
-                                      @endif
-                                    </div>
-                                   
-                                   
-                                     @if(@$work_order_list->contract_services->service_type=='Maintenance'  and @$work_order_list->contract_service_recurrence->interval_type == 'daily') 
-
-                                     <?php //dd($slot_data);?>
-                                     @php $arraySlot = array('1'=> 'First Slot', '2'=> 'Second Slot', '3'=> 'Third Slot', '4'=> 'Fourth Slot', '5'=> 'Fifth Slot', '6'=>'Sixth Slot', '7'=> 'Seventh Slot', '8'=> 'Eight Slot', '9'=>'Nineth Slot', '10'=>'Tenth Slot'); @endphp
-                                      <div class="form-group work-options required">
-                                      <label for="property_id">Work <span class="error">*</span></label>
-                                      <select class="form-control work_date" multiple="multiple" style="width: 100%;" name="work_date[]" id="work_date"  onchange="checkMaintanenceDaily()">
-                                        @if(!empty($available_dates))
-                                           @forelse(@$available_dates as $valueDate)
-                                            <ul style="importent">
-                                              <li>
-                                               <option value="{{@$valueDate->contract_service_dates->date}}" >{{@$valueDate->contract_service_dates->date}}  </option>
-                                                 <ul>
-                                                  
-                                                  @forelse($slot_data as $slotValue)
-                                                    @if(@$valueDate->contract_service_dates->id == $slotValue->contract_service_date_id)
-                                                      <li>
-                                                       <!-- <option value="{{@$slotValue->id}}" >@if(array_key_exists($slotValue->daily_slot, $arraySlot)){{$arraySlot[$slotValue->daily_slot]}}@endif</option> -->
-                                                       <option value="{{@$slotValue->id}}" >@if(array_key_exists($slotValue->daily_slot, $arraySlot)){{$arraySlot[$slotValue->daily_slot]}}@endif</option>
-                                                      </li> 
-                                                    @endif  
-                                                  @empty
-                                                  <option value="">No Labour Found</option>
-                                                  @endforelse 
-                                                   
-                                                 </ul>   
-                                              </li> 
-                                            </ul> 
-                                             @empty
-                                             <option value="">No Date Found</option>
-                                           @endforelse
-                                           @endif     
-                                          </select>
-                                        @if($errors->has('work_date'))
-                                        <span class="text-danger">{{$errors->first('work_date')}}</span>
                                         @endif
-                                    </div>
 
-                                    @endif
-                                                                           
+                                      </div>
+                                    </div>
+                                    
+                                   
+
+                                    <div class="row">
+                                      <div class="col-lg-12">
+                                        <div class="form-group required">
+                                          <label for="slot_time">Task Finish Time<span class="error">*</span></label>
+                                        </div>
+                                      </div>                                      
+                                    </div>
+                                   
+                                   
+                                    <div class="row">
+                                      @php $i=0; @endphp
+                                      @foreach(@$slot_data as $slotValue)
+                                        @if(@$valueDate->contract_service_dates->id == $slotValue->contract_service_date_id)
+                                        <div class="col-lg-4">
+                                        <label for="service_id" style="margin-bottom: 15px;">
+                                          @if(array_key_exists($slotValue->daily_slot, $arraySlot)){{$arraySlot[$slotValue->daily_slot]}}@endif
+                                          
+                                          <input type="text" class="form-control clockpicker" readonly="" value="" name="slot_time[]" id="slot_id_{{$i}}" onchange="checkMaintanenceDaily()">
+                                        </label> 
+                                        </div>
+                                        @php $i++; @endphp 
+                                        @endif
+
+                                        
+                                       @endforeach  
+                                    </div>                                                                        
                                   <div>
+                                  @if(!empty($slot_data)) 
+                                  
+
+                                   <input type="hidden" name="total_slot" id="total_slot" value="{{count(@$all_slot_data)/count(@$all_available_dates)}}"> 
+                                  @endif 
                                    <button type="submit" class="btn btn-success" id="maintanence_daily" disabled="">Submit</button> 
                                 </div>
                                 <div class="live_list" id="live_list" content="width=device-width, initial-scale=1"></div>
                               </form>
-                              </div>
-                            </div>
+                              
+                           
                         </div>
                     </div>
                   <div class="modal-footer">
@@ -433,11 +564,13 @@
 
                                      <?php //dd($work_order_list->contract_service_dates);?>
                                       <div class="form-group required">
-                                      <label for="property_id">Work <span class="error">*</span></label>
+                                      <label for="property_id">Task Date <span class="error">*</span></label>
                                       <select class="form-control work_date" multiple="multiple" style="width: 100%;" name="work_date_other[]" id="work_date_other"  onchange="checkMaintanenceOther()">
                                            @forelse(@$work_order_list->contract_service_dates as $valueDate)
-                                             <option value="{{@$valueDate->date}}" >{{@$valueDate->date}} </option>
-                                             @empty
+                                             @if(@$valueDate->task_assigned=='N') 
+                                              <option value="{{@$valueDate->date}}" >{{Carbon\Carbon::createFromFormat('Y-m-d', @$valueDate->date)->format('d/m/Y')}} </option>
+                                             @endif 
+                                           @empty
                                              <option value="">No Date Found</option>
                                            @endforelse     
                                           </select>
@@ -447,11 +580,19 @@
                                     </div>
 
                                     @endif
+
+                                  <div class="form-group required">
+                                    <label for="finish_time">Task Finish Time<span class="error">*</span></label>
+                                        
+                                        <input type="text" readonly="" class="form-control clockpicker" value="" name="assigned_finish_time_maintain" id="assigned_finish_time_maintain" onchange="checkMaintanenceOther()">
+
+                                      </label>
+                                  </div>  
                                                                            
                                   <div>
                                    <button type="submit" class="btn btn-success" id="maintanence_other" disabled="">Submit</button> 
                                 </div>
-                                <div class="live_list" id="live_list" content="width=device-width, initial-scale=1"></div>
+                                <div class="live_list_mo" id="live_list_mo" content="width=device-width, initial-scale=1"></div>
                               </form>
                               </div>
                             </div>
@@ -527,9 +668,7 @@
     function checkOnDemandFree()
     {
 
-
-      //alert('called');
-      if (($('#task_title').val().length > 0) && ($('#user_id').val().length  > 0))
+      if (($('#task_title').val().length > 0) && ($('#user_id').val().length  > 0) && ($('#assigned_finish_time').val().length>0))
       {
         $(".live_list").empty();
         $('.btn-success').prop('disabled', false);
@@ -561,7 +700,7 @@
              console.log(userLeaveList.length);
             if (userLeaveList.length>0) {
                // alert('Positive ::'+userLeaveList.length);
-                  document.getElementById("live_list").setAttribute("style","overflow:auto;height:150px;width:350px");
+                  document.getElementById("live_list").setAttribute("style","overflow:auto;height:150px;width:350px;color: red; font-weight: bold;");
                   $.each(userLeaveData,function(index, leave_all_dates){
                     all_leave_list += index+' have leave on below days : '+'<br>';
                     $.each(leave_all_dates,function(indexval, leave_date){
@@ -585,8 +724,20 @@
       }
     }
 
+    
+
+$( document ).ready(function() {
+      $(".clockpicker").clockpicker({
+           timeFormat: 'HH:mm',
+           interval: 30,
+           scrollbar: true,
+       });
+});
+
     function assignLabourMaintanenceTask()
     {
+     // $('.clockpicker').clockpicker();
+      
       $('#addMaintanenceTaskModal').modal('show');
     }
 
@@ -597,51 +748,82 @@
       if (($('#task_title_maintanence_daily').val().length > 0) && ($('#maintanence_user_id').val().length  > 0)  && ($('#work_date').val().length  > 0))
       {
 
-        
-        $('.btn-success').prop('disabled', false);
-        //var userDataString =  document.getElementById('user_id').innerHTML;
-        //var userDataString = $('#user_id option:selected').val();
-        var userDataString = $('#maintanence_user_id').val();
-        var dateString = $('#work_date').val();
-        var work_order_id = $('#work_order_id');
-        console.log(dateString);
-        var userData = JSON.stringify(userDataString);
-        var selectedDate = JSON.stringify(dateString);
-        var work_order_id = JSON.stringify(work_order_id);
-        $.ajax({
-        
-        url: "{{route('admin.work-order-management.checkAvailablity')}}",
-        type:'post',
-        dataType: "json",
-        data: {data : userData, selectedDate : selectedDate, work_order_id : work_order_id, _token:"{{ csrf_token() }}"},
-        cache: false,
-        }).done(function(response) {
-           
-           console.log(response.status);
-           if(response.status){
-            //console.log(response.userLeaveList);
-            // var stringifiedWeeklyLeave = JSON.stringify(response.weeklyLeave);
-             var userLeaveList = JSON.stringify(response.userLeaveList);
-             var userLeaveData = JSON.parse(userLeaveList);
-             var all_leave_list = '';
-
-            if (userLeaveList.length>0) {
-                  document.getElementById("live_list").setAttribute("style","overflow:auto;height:150px;width:350px");
-                  $.each(userLeaveData,function(index, leave_all_dates){
-                    all_leave_list += index+' have leave on below days : '+'<br>';
-                    $.each(leave_all_dates,function(indexval, leave_date){
-                    console.log(index);
-                    console.log(leave_date);
-                    all_leave_list += leave_date+'<br>';
-                    });
-                  });  
-                 // $("#live_list").text('dta set');
-                  $("div.live_list").html(all_leave_list );
-              }
+        var total_slot = $('#total_slot').val();
+        if(total_slot>0){
+          var slot_time_all = new Array();
+          var i;
+          var slot_count=0;
+          for(i=0; i<total_slot; i++)
+          {
+            //var slot_id=$('#slot_id_'+i);
+           // var slot_id_+i = $('#slot_id_'+i).val();
+            if($('#slot_id_'+i).val())
+            {
+              slot_count=(slot_count+1);
+              slot_time_all[i]=$('#slot_id_'+i).val();
             }
-
+           
+          }
+          // alert('slot_count ::'+slot_count);
+          // alert('total_slot::'+total_slot);
+          if(slot_count==total_slot)
+          {
+           // alert("Matched");
+           $(".live_list").empty();
+            $('.btn-success').prop('disabled', false);
+            //var userDataString =  document.getElementById('user_id').innerHTML;
+            //var userDataString = $('#user_id option:selected').val();
+            var userDataString = $('#maintanence_user_id').val();
+            var dateString = $('#work_date').val();
+            var work_order_id = $('#work_order_id');
+            console.log(dateString);
+            var userData = JSON.stringify(userDataString);
+            var selectedDate = JSON.stringify(dateString);
+            var work_order_id = JSON.stringify(work_order_id);
+            var slot_time_string = JSON.stringify(slot_time_all);
+            $.ajax({
             
-        });
+            url: "{{route('admin.work-order-management.checkAvailablity')}}",
+            type:'post',
+            dataType: "json",
+            data: {data : userData, selectedDate : selectedDate, slot_time_string: slot_time_string, work_order_id : work_order_id, _token:"{{ csrf_token() }}"},
+            cache: false,
+            }).done(function(response) {
+               
+               console.log(response.status);
+                 if(response.status){
+                  //console.log(response.userLeaveList);
+                  // var stringifiedWeeklyLeave = JSON.stringify(response.weeklyLeave);
+                   var userLeaveList = JSON.stringify(response.userLeaveList);
+                   var userLeaveData = JSON.parse(userLeaveList);
+                   var all_leave_list = '';
+
+                    if (userLeaveList.length>0) {
+                          document.getElementById("live_list").setAttribute("style","overflow:auto;height:150px;width:350px;color: red; font-weight: bold;");
+                          $.each(userLeaveData,function(index, leave_all_dates){
+                            all_leave_list += index+' have leave on below days : '+'<br>';
+                            $.each(leave_all_dates,function(indexval, leave_date){
+                            console.log(index);
+                            console.log(leave_date);
+                            all_leave_list += leave_date+'<br>';
+                            });
+                          });  
+                         // $("#live_list").text('dta set');
+                         $("div.live_list").html(all_leave_list );
+                      }
+                  }            
+              });
+          }
+
+          else
+          {
+            $('.btn-success').prop('disabled', true);
+          }
+        }
+        else
+        {
+          $('.btn-success').prop('disabled', true);
+        }
       }
       else
       {
@@ -659,18 +841,17 @@
     
     function checkMaintanenceOther()
     {
-     // alert($('#task_title_maintanence_daily').val().length);
-      if (($('#task_title_maintanence_other').val().length > 0) && ($('#maintanence_other_user_id').val().length  > 0)  && ($('#work_date_other').val().length  > 0))
+      if (($('#task_title_maintanence_other').val().length > 0) && ($('#maintanence_other_user_id').val().length  > 0)  && ($('#work_date_other').val().length  > 0) && ($('#assigned_finish_time_maintain').val().length>0))
       {
 
-        
+        $(".live_list_mo").empty();
         $('.btn-success').prop('disabled', false);
         //var userDataString =  document.getElementById('user_id').innerHTML;
         //var userDataString = $('#user_id option:selected').val();
         var userDataString = $('#maintanence_other_user_id').val();
         var dateString = $('#work_date_other').val();
         var work_order_id = $('#work_order_id');
-        console.log(dateString);
+        //console.log(dateString);
         var userData = JSON.stringify(userDataString);
         var selectedDate = JSON.stringify(dateString);
         var work_order_id = JSON.stringify(work_order_id);
@@ -683,16 +864,17 @@
         cache: false,
         }).done(function(response) {
            
-           console.log(response.status);
+          // console.log(response.status);
            if(response.status){
-            //console.log(response.userLeaveList);
+            console.log(response.userLeaveList);
             // var stringifiedWeeklyLeave = JSON.stringify(response.weeklyLeave);
              var userLeaveList = JSON.stringify(response.userLeaveList);
              var userLeaveData = JSON.parse(userLeaveList);
              var all_leave_list = '';
 
             if (userLeaveList.length>0) {
-                  document.getElementById("live_list").setAttribute("style","overflow:auto;height:150px;width:350px");
+             // alert(userLeaveList.length);
+                  document.getElementById("live_list_mo").setAttribute("style","overflow:auto;height:150px;width:350px;color: red; font-weight: bold;");
                   $.each(userLeaveData,function(index, leave_all_dates){
                     all_leave_list += index+' have leave on below days : '+'<br>';
                     $.each(leave_all_dates,function(indexval, leave_date){
@@ -702,7 +884,7 @@
                     });
                   });  
                  // $("#live_list").text('dta set');
-                  $("div.live_list").html(all_leave_list );
+                  $("div.live_list_mo").html(all_leave_list );
               }
             }
 
@@ -827,5 +1009,4 @@
 
 <script type="text/javascript" src="{{asset('js/admin/work_order_management/daily-task-list.js')}}"></script>
 @endpush
-
 

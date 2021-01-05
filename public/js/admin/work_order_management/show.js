@@ -11,7 +11,6 @@
         columns: [
             { data: 'id', name: 'id' },          
             { data: 'user_details.name', name: 'user_details.name' },
-            { data: 'task_date', name: 'task_date' },
             
             {
                data: 'work_order_slot.daily_slot', 
@@ -50,20 +49,10 @@
               name: 'work_order_slot.daily_slot'
             }},
             
-            { data: 'reschedule_task_details_id', 
-              render: function(data){
-                  if(data >0){
-                    return '<strong style="color:#17a2b8">Rescheduled Task</strong>';
-                  }
-                  else{
-                    return 'Normal Task';
-                  }
-              }
-            },
+          
             
             { data: 'user_feedback', name: 'user_feedback' },
             { data: 'task_finish_date_time', name: 'task_finish_date_time' },
-            { data: 'status', name: 'ststus' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
          order: [ [0, 'asc'] ],

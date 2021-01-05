@@ -372,7 +372,20 @@ $("#admin_other_maintanence_labour_task_add_form").validate({
                   return 'No Slot';
               name: 'work_order_slot.daily_slot'
             }, searchable: false, sortable : false},
-            { data: 'task.task_desc', name: 'task.task_desc' },
+            
+            // { data: 'task.task_desc', name: 'task.task_desc' },
+            { data: 'task_finish_date_time', name: 'task_finish_date_time' },
+            { data: 'late_feedback', 
+              render: function(data){
+                if(data == 'N'){
+                  return 'NO';
+                }
+                else{
+                  return "YES";
+                }
+                name: 'late_feedback' 
+              }
+            },
             { data: 'status', name: 'ststus', sortable : false },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
@@ -598,6 +611,11 @@ $(document).on('change', '.file_list', function() {
 
 });
 
+/*-- reset the image file input --*/
+window.reset = function (e) {
+    e.wrap('<form>').closest('form').get(0).reset();
+    e.unwrap();
+}
 
  $("document").ready(function(){
     setTimeout(function(){

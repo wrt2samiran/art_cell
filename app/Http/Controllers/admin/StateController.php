@@ -114,7 +114,8 @@ class StateController extends Controller
                         
                         $insertedId = $new->id;
 
-                        $languages = \Helper::WEBITE_LANGUAGES;
+                       // $languages = \Helper::WEBITE_LANGUAGES;
+                        $languages = array('en', 'ar');
                         foreach ($languages as $language) {
                             $newLocal                   = new StateTranslation;
                             $newLocal->state_id          = $insertedId;
@@ -193,7 +194,8 @@ class StateController extends Controller
                     $save = $details->save();                        
                     if ($save) {
                         StateTranslation::where('state_id', $id)->delete();
-                        $languages = \Helper::WEBITE_LANGUAGES;
+                        //$languages = \Helper::WEBITE_LANGUAGES;
+                        $languages = array('en', 'ar');
                         foreach($languages as $language){
                             $newLocal                   = new StateTranslation;
                             $newLocal->state_id          = $id;

@@ -160,3 +160,9 @@ table.dataTable.dtr-inline.collapsed > tbody > tr[role="row"] > td:first-child::
 {right: 4px; left: auto;}
 
 }
+
+
+#status-filter-container { padding-left: 100px; padding-right: 0px;}
+#status-filter-container input[type="button"] {left: 7.5px; right: auto; }
+
+.btn-en-ar { text-align: right; }

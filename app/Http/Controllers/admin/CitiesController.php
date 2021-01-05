@@ -116,7 +116,8 @@ class CitiesController extends Controller
                     if ($save) { 
                         $insertedId = $new->id;
 
-                        $languages = \Helper::WEBITE_LANGUAGES;
+                        //$languages = \Helper::WEBITE_LANGUAGES;
+                        $languages = array('en', 'ar');
                         foreach ($languages as $language) {
                             $newLocal                   = new CityTranslation;
                             $newLocal->city_id          = $insertedId;
@@ -200,7 +201,8 @@ class CitiesController extends Controller
                     if ($save) {
 
                         CityTranslation::where('city_id', $id)->delete();
-                        $languages = \Helper::WEBITE_LANGUAGES;
+                        //$languages = \Helper::WEBITE_LANGUAGES;
+                        $languages = array('en', 'ar');
                         foreach($languages as $language){
                             $newLocal                   = new CityTranslation;
                             $newLocal->city_id          = $id;

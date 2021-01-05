@@ -52,6 +52,12 @@
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
     <!-- <link rel="stylesheet" href="{{asset('assets/css/styles.css')}}"> -->
     <link rel="stylesheet" type="text/css" href="{{asset('css/admin/custom.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('assets/dist/css/bootstrap.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('assets/dist/css/bootstrap-clockpicker.min.css')}}">
+    
+    <!-- *****************for chosen multiselect with search option, select all and scrollbar End *************-->
+    <link rel="stylesheet" href="{{asset('assets/dist/css/chosen-multi-select/docsupport/style.css')}}">
+    <link rel="stylesheet" href="{{asset('assets/dist/css/chosen-multi-select/chosen.css')}}">
 
     @php
     if(App::getLocale()=='en'){

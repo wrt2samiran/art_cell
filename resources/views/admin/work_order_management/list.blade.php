@@ -63,10 +63,9 @@
                                             <th>Type</th>
                                             <th>Property Name</th>
                                             <th>Service</th>
-                                            <th>Country</th>
-                                            <th>State</th>
-                                            <th>City</th>
+                                            <th>Address</th>
                                             <th>Service Start Date</th>
+                                            <th>Assigned</th>
                                             <th>Completed (%)</th>
                                             <th>Status</th>
                                             

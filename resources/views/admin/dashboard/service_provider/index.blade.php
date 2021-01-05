@@ -111,12 +111,12 @@
                       <tbody>
                           @forelse($tasks as $task)
                           <tr>
-                             <td>{{$task->contract->code}}</td> 
-                             <td>{{$task->work_order->task_title}}</td> 
-                             <td>{{$task->contract->service_provider->name}}</td>
-                             <td>{{$task->property->property_name}}</td>
-                             <td>{{$task->task_title}}</td>
-                             <td>@if($task->task_complete_percent>0){{$task->task_complete_percent}}@else{{'Not Started Yet'}}@endif</td>
+                             <td>{{@$task->contract->code}}</td> 
+                             <td>{{@$task->work_order->task_title}}</td> 
+                             <td>{{@$task->contract->service_provider->name}}</td>
+                             <td>{{@$task->property->property_name}}</td>
+                             <td>{{@$task->task_title}}</td>
+                             <td>@if(@$task->task_complete_percent>0){{@$task->task_complete_percent}}@else{{'Not Started Yet'}}@endif</td>
                              <!-- <td>
                               {{$task->get_status_name()}}
                              </td> -->
@@ -168,11 +168,11 @@
                       <tbody>
                           @forelse($complaints as $complaint)
                           <tr>
-                             <td>{{$complaint->contract->code}}</td> 
-                             <td>{{$complaint->work_order_id?$complaint->work_order_id:'N/A'}}</td> 
-                             <td>{{$complaint->details}}</td>
-                             <td>{{$complaint->complaint_status->status_name}}</td>
-                             <td>{{$complaint->created_at->format('d/m/Y')}}</td>
+                             <td>{{@$complaint->contract->code}}</td> 
+                             <td>{{@$complaint->work_order_id?$complaint->work_order_id:'N/A'}}</td> 
+                             <td>{{@$complaint->details}}</td>
+                             <td>{{@$complaint->complaint_status->status_name}}</td>
+                             <td>{{@$complaint->created_at->format('d/m/Y')}}</td>
                           </tr>
                           @empty
                           <tr>
@@ -219,11 +219,11 @@
                           @forelse($work_orders as $work_order)
                           <tr>
                              <!-- <td>{{$work_order->id}}</td> --> 
-                             <td>{{$work_order->contract->code}}</td> 
-                             <td>{{$work_order->task_title}}</td>
-                             <td>{{$work_order->contract_services->service_type}}</td>
-                             <td>{{$work_order->service->service_name}}</td>
-                             <td>{{$work_order->created_at->format('d/m/Y')}}</td>
+                             <td>{{@$work_order->contract->code}}</td> 
+                             <td>{{@$work_order->task_title}}</td>
+                             <td>{{@$work_order->contract_services->service_type}}</td>
+                             <td>{{@$work_order->service->service_name}}</td>
+                             <td>{{@$work_order->created_at->format('d/m/Y')}}</td>
                           </tr>
                           @empty
                           <tr>
@@ -247,6 +247,8 @@
 
   <!-- /.content-wrapper -->
 
+  <?php //dd($twelve_months_work_orders);?>
+
 @endsection
 
 @push('custom-scripts')
@@ -254,11 +256,11 @@
   
     $(function () {
 
-      var labels=<?php echo json_encode($last_six_month_work_order_array);?>;
+      var labels=<?php echo json_encode(@$last_twelve_month_work_order_array);?>;
       console.log(labels);
       /** spare part orders chart */
-      var workorders_graph_data_array=<?php echo json_encode($six_months_work_orders);?>;
-
+      var workorders_graph_data_array=<?php echo json_encode(@$twelve_months_work_orders);?>;
+      console.log(workorders_graph_data_array);
       var workOrderChartData = {
           labels  : labels,
           datasets: [

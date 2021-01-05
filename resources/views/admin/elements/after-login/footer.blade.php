@@ -98,12 +98,19 @@ window.translations = {!! $translations !!};
 <!-- <script src="{{asset('assets/plugins/chart.js/Chart.min.js')}}"></script> -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
-<!-- *****************for multiselect with search option, select all and scrollbar *************-->
+<!-- *****************for boostrap multiselect with search option, select all and scrollbar *************-->
 <script src='{{asset("js/jquery.multiselect.js")}}'></script>
-<!-- *****************for multiselect with search option, select all and scrollbar End *************-->
+<!-- *****************for boostrap multiselect with search option, select all and scrollbar End *************-->
 
 <script src='{{asset("js/custom-validator-method.js")}}'></script>
 <script src="{{asset('assets/plugins/fancybox/fancybox.min.js')}}"></script>
+<script src="{{asset('assets/dist/js/bootstrap-clockpicker.min.js')}}"></script>
+
+
+<!-- *****************for chosen multiselect with search option, select all and scrollbar End *************-->
+<script src="{{asset('assets/dist/js/chosen-multi-select/chosen.jquery.js')}}" type="text/javascript"></script>
+<script src="{{asset('assets/dist/js/chosen-multi-select/docsupport/init.js')}}" type="text/javascript" charset="utf-8"></script>
+<!-- *****************for chosen multiselect with search option, select all and scrollbar End *************-->
 
 @stack('custom-scripts')
 </body>
