@@ -30,11 +30,16 @@ class CalendarController extends Controller
         $logedInUserRole = \Auth::guard('admin')->user();
         $workOrder = array();
         $taskDetailsList = array();
+        $allPropertyRelatedWorkOrders = array();
+        $allContractServices = array();
+        $allWorkOrdersRelatedServiceProvider = array();
+        $allWorkOrdersRelatedContractServices = array();
+        $allWorkOrdersRelatedServices = array();
        
 
         if($logedInUserRole->role->user_type->slug=='property-owner' || $logedInUserRole->role->user_type->slug=='property-manager')
         {
-            $sqlContract=Contract::where(function($q) use ($logedInUser){
+            $sqlContract=Contract::with('property')->where(function($q) use ($logedInUser){
           
                
                 //OR if logged in user is the property_owner or added as property manager of the property related to this contract 
@@ -44,6 +49,8 @@ class CalendarController extends Controller
                 });
             })
 
+
+
             ->when($request->contract_status_id,function($query) use($request){
                 $query->where('contract_status_id',$request->contract_status_id);
             })->orderBy('id', 'Desc')->get();
@@ -51,64 +58,160 @@ class CalendarController extends Controller
             $this->data['sqlContract'] = $sqlContract;
      
        
-
+            //dd($sqlContract);
             $sqlService=ServiceAllocationManagement::with('service')->with('contract')->whereStatus('A')->where('work_status', '<>','2')->whereServiceProviderId($logedInUser)->get();
 
-            $labour_list= User::whereStatus('A')->whereRoleId('5')->whereCreatedBy($logedInUser)->get();
-            $this->data['service_list'] = $sqlService;
-            $this->data['labour_list']  = $labour_list;
+        
+            $propertyList = array();
+            foreach ($sqlContract as $key => $value) {
+                $propertyList[]=$value->property_id;
+            }
+            
+            $property_list = Property::whereIn('id', $propertyList)->orderBy('id', 'Desc')->get();
 
             if ($request->has('search')) {
+
+                if($request->un_assigned==''){
                
-                $workOrder = WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'contract_service_dates', 'property.country', 'property.state', 'property.city'])->where(function ($q) use ($request) {
-                    
-                    if ($request->contract_id!='') {
-                       
-                        $q->where(function ($que) use ($request) {
-                            $que->whereContractId( $request->contract_id);
-                           
-                         });                   
+                        $workOrder = WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'contract_service_dates', 'property.country', 'property.state', 'property.city', 'tasks', 'tasks.task_details'])->where(function ($q) use ($request, $property_list, $sqlContract) {
+                            
+                            if ($request->property_id!='') {
+                                    
+                                    $q->where(function ($que) use ($request) {
+                                        $que->whereIn('property_id', $request->property_id);
+                                       
+                                     });                   
 
-                    }
+                            } 
 
-                    if ($request->work_order_id!='') {
-                       
-                        $q->where(function ($que) use ($request) {
-                            $que->whereId( $request->work_order_id);
-                           
-                         });                   
+                            else{
 
-                    }
-                    
+                                    $q->where(function ($que) use ($property_list) {
+                                        $que->where('property_id', $property_list[0]->id);
+                                       
+                                     }); 
 
-                    if ($request->contract_status!='') {
-                        
-                         if($request->contract_status ==3)
-                            {
-                                $contract_status = '0';
                             }
-                         else
-                            {
-                                $contract_status = $request->contract_status;
+
+                            if ($request->contract_list!='') {
+                               
+                                $q->where(function ($que) use ($request) {
+                                    $que->whereContractId( $request->contract_list);
+                                   
+                                 });                   
+
+                            }
+
+                            
+
+                            if ($request->work_order_id!='') {
+                                        
+                                    $q->where(function ($que) use ($request) {
+                                        $que->whereIn('id', $request->work_order_id);
+                                       
+                                     });                   
+
+                            }     
+
+                            if ($request->maintenance_type!='') {
+                                //dd($request->maintenance_type);
+                                    
+                                    $q->where(function ($que) use ($request) {
+                                        $que->whereIn('contract_service_id', $request->maintenance_type);
+                                       
+                                     });                   
+
+                            }  
+
+                            if ($request->service_provider_id!='') {
+                                    
+                                    $q->where(function ($que) use ($request) {
+                                        $que->whereIn('user_id', $request->service_provider_id);
+                                       
+                                     });                   
+
+                            }
+
+                            if ($request->service_type!='') {
+                                    
+                                    $q->where(function ($que) use ($request) {
+                                        $que->whereIn('user_id', $request->service_type);
+                                       
+                                     });                   
+
+                            }
+
+                            // if ($request->status!='') {
+                            //          $q->whereHas('tasks.task_details',function($q1) use ($request){
+                            //                 $q1->where('status',$request->status);
+                            //             }); 
+                                                  
+                            //         }
+
+                            if ($request->status!='') {
+
+                                if(in_array(4, $request->status))
+                                {
+                                     $q->where(function ($que) use ($request) {
+                                        $que->whereIn('status', $request->status)
+                                            ->orWhere('warning', '<>', 0);
+                                     }); 
+                                }
+                                else
+                                {
+                                    $q->where(function ($que) use ($request) {
+                                        $que->whereIn('status', $request->status);
+                                    }); 
+                                }                
+
                             }   
 
-                        $q->where(function ($que) use ($contract_status) {
-                            $que->where('status', $contract_status);
-                           
-                         });                   
+                        })->get();
 
-                    } 
+                        if($request->property_id!='')
+                        {
+                            $allPropertyRelatedWorkOrders = WorkOrderLists::whereNull('deleted_at')->whereIn('property_id', $request->property_id)->where(function($q) use ($request){
 
-                    if ($request->contract_service!='') {
-                        
-                        $q->where(function ($que) use ($request) {
-                            $que->where('service_id', $request->contract_service);
-                           
-                         });                   
+                                    if ($request->contract_list!='') {
+                                    
+                                            $q->where(function ($que) use ($request) {
+                                                $que->whereIn('contract_id', $request->contract_list);
+                                               
+                                             });                   
 
-                    }    
+                                    }   
+                                })->get();
+                        }
+                        else
+                        {
+                            $allPropertyRelatedWorkOrders = WorkOrderLists::whereNull('deleted_at')->where('property_id', $property_list[0]->id)->get();
 
-                })->get();
+                            $request["property_id"] = $property_list[0]->id;
+                        }
+
+                        if($request->work_order_id!='')
+                        {
+                            //$allWorkOrdersRelatedData = WorkOrderLists::with('service_provider', 'contract_services', 'service')->whereNull('deleted_at')->whereIn('id', $request->work_order_id)->get();
+                            
+                            $allWorkOrdersRelatedServiceProvider = WorkOrderLists::with('userDetails')->whereNull('deleted_at')->whereIn('id', $request->work_order_id)->groupBy('user_id')->get();
+
+                            $allWorkOrdersRelatedContractServices = WorkOrderLists::with('contract_services')->whereNull('deleted_at')->whereIn('id', $request->work_order_id)->groupBy('contract_service_id')->get();
+
+                            $allWorkOrdersRelatedServices = WorkOrderLists::with('service')->whereNull('deleted_at')->whereIn('id', $request->work_order_id)->groupBy('service_id')->get();
+                        }
+
+                }
+                else
+                {
+                   // dd($sqlContract);
+                    //$sqlContract = array();
+                        foreach ($sqlContract as $key => $value) {
+                            $contractList[]=$value->id;
+                    }
+                    //dd($contractList);
+
+                    $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->whereIn('contract_id', $contractList)->where('task_assigned', 'N')->orderBy('id','Desc')->get();   
+                }   
 
             } 
             else 
@@ -133,9 +236,12 @@ class CalendarController extends Controller
 
             $this->data['serviceList'] = Service::whereIsActive(1)->get();
 
-            //dd($sqlCalendar);
+            //dd($workOrder);
             $this->data['work_order_list']  = $workOrder;
-            
+            $this->data['allPropertyRelatedWorkOrders'] = $allPropertyRelatedWorkOrders;
+            $this->data['allWorkOrdersRelatedServiceProvider'] = $allWorkOrdersRelatedServiceProvider;
+            $this->data['allWorkOrdersRelatedContractServices'] = $allWorkOrdersRelatedContractServices;
+            $this->data['allWorkOrdersRelatedServices'] = $allWorkOrdersRelatedServices;
             $this->data['slug'] = $logedInUserRole ->role->user_type->slug;
             $this->data['request'] = $request;
 
@@ -145,6 +251,7 @@ class CalendarController extends Controller
 
         else if($logedInUserRole->role->user_type->slug=='service-provider')
         {
+            $allLabourList=array();
             $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->where('user_id',$logedInUser)->orderBy('id','Desc')->get();
 
             $taskList = TaskLists::with(['contract', 'task_details', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->whereWorkOrderId($workOrder[0]->id)->get();
@@ -152,98 +259,199 @@ class CalendarController extends Controller
             $this->data['work_order_list'] = $workOrder;
             //$sqlService=ServiceAllocationManagement::with('service')->with('contract')->whereStatus('A')->where('work_status', '<>','2')->whereServiceProviderId($logedInUser)->get();
 
-            $labour_list= User::whereStatus('A')->whereRoleId('5')->whereCreatedBy($logedInUser)->get();
+           // $labour_list= User::whereStatus('A')->whereRoleId('5')->whereCreatedBy($logedInUser)->get();
             //$this->data['service_list'] = $sqlService;
-            $this->data['labour_list']  = $labour_list;
+            //$this->data['labour_list']  = $labour_list;
+
+            //dd($workOrder[0]->property);
+            $propertyList = array();
+            foreach ($workOrder as $key => $value) {
+                $propertyList[]=$value->property_id;
+            }
+            
+            $property_list = Property::whereIn('id', $propertyList)->orderBy('id', 'Desc')->get();
 
             if ($request->has('search')) 
             {
-               
-                //$taskList = TaskLists::with(['contract', 'task_details', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->where(function ($q) use ($request) {
+                if($request->un_assigned=='')
+                {
+                    //dd($request->all());
+                    //$taskList = TaskLists::with(['contract', 'task_details', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->where(function ($q) use ($request) {
+                    $allContractServices = array();
 
-                $taskList = TaskLists::with(['contract', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->whereWorkOrderId($request->work_order_id)->where('status', '<>', 3)->orderBy('id', 'Desc')->get();
-                //dd($taskList);
-                if(count($taskList)>0)
-                {   
-                   
-                    $taskDetailsList = TaskDetails::with('userDetails', 'task')->where(function ($q) use ($request, $taskList) {
+                    $taskList = TaskLists::with(['contract', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->where(function ($q) use ($request, $property_list) {
+
+
+                        if ($request->property_id!='') {
+                                
+                                $q->where(function ($que) use ($request) {
+                                    $que->whereIn('property_id', $request->property_id);
+                                   
+                                 });                   
+
+                        } 
+
+                        else{
+
+                                $q->where(function ($que) use ($property_list) {
+                                    $que->where('property_id', $property_list[0]->id);
+                                   
+                                 }); 
+
+                        }
+
+
+                        if ($request->work_order_id!='') {
+                                
+                                $q->where(function ($que) use ($request) {
+                                    $que->whereIn('work_order_id', $request->work_order_id);
+                                   
+                                 });                   
+
+                        } 
+
+                        if ($request->maintenance_type!='') {
+                            //dd($request->maintenance_type);
+                                
+                                $q->where(function ($que) use ($request) {
+                                    $que->whereIn('contract_service_id', $request->maintenance_type);
+                                   
+                                 });                   
+
+                        }
+
+                         
                         
-                        if ($request->task_id!='') {
-                            
-                            $q->where(function ($que) use ($request) {
-                                $que->where('task_id', $request->task_id);
-                               
-                             });                   
+                        
 
+                    })->groupBy('id')->get();
+                    //dd($taskList);
+                    
+                    //dd($taskListData);
+
+                    if(count($taskList)>0)
+                    {  
+
+                        $taskListData = array();
+                        foreach ($taskList as $key => $value) {
+                            $taskListData[]=$value->id;
                         } 
-                        else
+                       
+                        $taskDetailsList = TaskDetails::with('userDetails', 'task')->where(function ($q) use ($request, $taskListData) {
+                            
+
+                            if ($request->task_id!='') {
+                                
+                                $q->where(function ($que) use ($request) {
+                                    $que->whereIn('task_id', $request->task_id);
+                                   
+                                 });                   
+
+                            } 
+                            else
+                            {
+                                $q->where(function ($que) use ($taskListData) {
+                                    $que->whereIn('task_id', $taskListData);
+                                   
+                                 });
+
+                                //$request->task_id = @$taskListData;
+                                
+                            } 
+
+                          
+                            if ($request->service_type!='') {
+                                
+                                $q->where(function ($que) use ($request) {
+                                    $que->whereIn('service_id', $request->service_type);
+                                   
+                                 });                   
+
+                            } 
+
+                            if ($request->labour_id!='') {
+                                
+                                $q->where(function ($que) use ($request) {
+                                    $que->whereIn('user_id', $request->labour_id);
+                                   
+                                 });                   
+
+                            }  
+
+                            if ($request->status!='') {
+                              
+                                $q->where(function ($que) use ($request) {
+                                    $que->whereIn('status', $request->status);
+                                   
+                                 });  
+                                          
+                            }   
+
+                        })->get();
+
+                        if(count($taskDetailsList)==0)
                         {
-                            $q->where(function ($que) use ($taskList) {
-                                $que->whereTaskId(@$taskList[0]->id);
-                               
-                             });
+                            $this->data['error'] = 'No data found!';
+                        }
+                    }
 
-                            $request->task_id = @$taskList[0]->id;
-                            
-                        } 
-
-                        if ($request->task_details_status!='') {
-                            
-                             if($request->task_details_status ==3)
-                                {
-                                    $contract_status = '0';
-                                }
-                             else
-                                {
-                                    $contract_status = $request->task_details_status;
-                                }   
-
-                            $q->where(function ($que) use ($contract_status) {
-                                $que->where('status', $contract_status);
-                               
-                             });                   
-
-                        } 
-
-                        if ($request->contract_service!='') {
-                            
-                            $q->where(function ($que) use ($request) {
-                                $que->where('service_id', $request->contract_service);
-                               
-                             });                   
-
-                        } 
-
-                        if ($request->labour_id!='') {
-                            
-                            $q->where(function ($que) use ($request) {
-                                $que->where('user_id', $request->labour_id);
-                               
-                             });                   
-
-                        }    
-
-                    })->get();
-
-                    if(count($taskDetailsList)==0)
+                    else
                     {
                         $this->data['error'] = 'No data found!';
                     }
-                }
 
+                   // dd($request->all());
+                    if($request->property_id!='')
+                    {
+                        $allPropertyRelatedWorkOrders = WorkOrderLists::whereNull('deleted_at')->whereIn('property_id', $request->property_id)->get();
+                    }
+                    else
+                    {
+                        $allPropertyRelatedWorkOrders = WorkOrderLists::whereNull('deleted_at')->where('property_id', $property_list[0]->id)->get();
+
+                        $request["property_id"] = $property_list[0]->id;
+                    }
+                    
+                    
+                    if($request->task_id)
+                        {
+                            $allLabourList = TaskDetails::with('userDetails')->whereNull('deleted_at')->whereIn('task_id', $request->task_id)->groupBy('user_id')->get();
+                        }
+                   $this->data['allLabourList'] = $allLabourList;
+
+                   if($request->work_order_id)
+                       {
+                            $allContractServices = TaskLists::with(['contract', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->whereIn('work_order_id',$request->work_order_id)->orderBy('id', 'Desc')->get();
+                       }
+               
+                }
                 else
                 {
-                    $this->data['error'] = 'No data found!';
+                    $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->where('user_id',$logedInUser)->where('task_assigned', 'N')->orderBy('id','Desc')->get();   
                 }
 
             } 
             else 
-            {
+            {       
                     
-                    $taskList = TaskLists::with(['contract', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->whereWorkOrderId($workOrder[0]->id)->orderBy('id', 'Desc')->get();
+                   // $taskList = TaskLists::with(['contract', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->whereWorkOrderId($workOrder[0]->id)->orderBy('id', 'Desc')->get();
+                    $taskList = TaskLists::with(['contract', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->where(function ($q) use ($property_list) {
+
+
+                        if ($property_list!='') {
+                            $q->where(function ($que) use ($property_list) {
+                                $que->where('property_id', $property_list[0]->id);
+                             }); 
+
+                        } 
+                    })->get();
+
+                    $allContractServices = TaskLists::with(['contract', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->whereWorkOrderId($workOrder[0]->id)->orderBy('id', 'Desc')->get();
+
                     
                     if(count($taskList)>0)
                     {
+                        $request["property_id"] = $property_list[0]->id; 
                         $taskDetailsList = TaskDetails::with('userDetails', 'task')->whereTaskId($taskList[0]->id)->get();
                     }
                     else
@@ -252,7 +460,8 @@ class CalendarController extends Controller
                     }
                    
             }      
-
+            $this->data['workOrder'] = $workOrder;
+            $this->data['property_list'] = $property_list;
             $this->data['serviceList'] = Service::whereIsActive(1)->get();
 
             //dd($taskDetailsList);
@@ -260,98 +469,192 @@ class CalendarController extends Controller
             $this->data['task_details_list']  = $taskDetailsList;
             $this->data['slug'] = $logedInUserRole ->role->user_type->slug;
             $this->data['request'] = $request;
+            $this->data['allPropertyRelatedWorkOrders'] = $allPropertyRelatedWorkOrders;
+            $this->data['allContractServices'] = $allContractServices;
             return view($this->view_path.'.calendar-service-provider',$this->data);
         }  
 
         else if($logedInUserRole->role->user_type->slug=='super-admin' || $logedInUserRole->role->user_type->slug=='sub-admin') 
         {
-            $this->data['sqlProperty'] = Property::whereIsActive(1)->whereNull('deleted_at')->orderBy('id', 'Desc')->get();   
-            
-            if($this->data['sqlProperty'])
-            {
-                $this->data['sqlContract'] = Contract::wherePropertyId($this->data['sqlProperty'][0]->id)->whereIsActive(1)->whereNull('deleted_at')->orderBy('id', 'Desc')->get();
-                //$request->property_id =$this->data['sqlProperty'][0]->id;
-            }
+            $sqlContract=Contract::with('property')->whereIsActive(1)->whereNull('deleted_at')
 
 
+
+            ->when($request->contract_status_id,function($query) use($request){
+                $query->where('contract_status_id',$request->contract_status_id);
+            })->orderBy('id', 'Desc')->get();
+
+            $this->data['sqlContract'] = $sqlContract;
+     
+       
+            //dd($sqlContract);
             $sqlService=ServiceAllocationManagement::with('service')->with('contract')->whereStatus('A')->where('work_status', '<>','2')->whereServiceProviderId($logedInUser)->get();
 
-            $labour_list= User::whereStatus('A')->whereRoleId('5')->whereCreatedBy($logedInUser)->get();
-            $this->data['service_list'] = $sqlService;
-            $this->data['labour_list']  = $labour_list;
+        
+            $propertyList = array();
+            foreach ($sqlContract as $key => $value) {
+                $propertyList[]=$value->property_id;
+            }
+            
+            $property_list = Property::whereIn('id', $propertyList)->orderBy('id', 'Desc')->get();
 
             if ($request->has('search')) {
 
-                $this->data['sqlContract'] = Contract::wherePropertyId($request->property_id)->whereIsActive(1)->whereNull('deleted_at')->orderBy('id', 'Desc')->get();
+                if($request->un_assigned==''){
+               
+                        $workOrder = WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'contract_service_dates', 'property.country', 'property.state', 'property.city', 'tasks', 'tasks.task_details'])->where(function ($q) use ($request, $property_list, $sqlContract) {
+                            
+                            if ($request->property_id!='') {
+                                    
+                                    $q->where(function ($que) use ($request) {
+                                        $que->whereIn('property_id', $request->property_id);
+                                       
+                                     });                   
 
-                $workOrder = WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'contract_service_dates', 'property.country', 'property.state', 'property.city'])->where(function ($q) use ($request) {
-                    
-                    if ($request->property_id!='') {
-                       
-                        $q->where(function ($que) use ($request) {
-                            $que->wherePropertyId( $request->property_id);
-                           
-                         });                   
+                            } 
 
-                    }
+                            else{
 
-                    if ($request->contract_id!='') {
-                       
-                        $q->where(function ($que) use ($request) {
-                            $que->whereContractId( $request->contract_id);
-                           
-                         });                   
+                                    $q->where(function ($que) use ($property_list) {
+                                        $que->where('property_id', $property_list[0]->id);
+                                       
+                                     }); 
 
-                    }
-
-                    if ($request->work_order_id!='') {
-                       
-                        $q->where(function ($que) use ($request) {
-                            $que->whereId( $request->work_order_id);
-                           
-                         });                   
-
-                    }
-                    
-
-                    if ($request->contract_status!='') {
-                        
-                         if($request->contract_status ==3)
-                            {
-                                $contract_status = '0';
                             }
-                         else
-                            {
-                                $contract_status = $request->contract_status;
+
+                            if ($request->contract_list!='') {
+                               
+                                $q->where(function ($que) use ($request) {
+                                    $que->whereContractId( $request->contract_list);
+                                   
+                                 });                   
+
+                            }
+
+                            
+
+                            if ($request->work_order_id!='') {
+                                        
+                                    $q->where(function ($que) use ($request) {
+                                        $que->whereIn('id', $request->work_order_id);
+                                       
+                                     });                   
+
+                            }     
+
+                            if ($request->maintenance_type!='') {
+                                //dd($request->maintenance_type);
+                                    
+                                    $q->where(function ($que) use ($request) {
+                                        $que->whereIn('contract_service_id', $request->maintenance_type);
+                                       
+                                     });                   
+
+                            }  
+
+                            if ($request->service_provider_id!='') {
+                                    
+                                    $q->where(function ($que) use ($request) {
+                                        $que->whereIn('user_id', $request->service_provider_id);
+                                       
+                                     });                   
+
+                            }
+
+                            if ($request->service_type!='') {
+                                    
+                                    $q->where(function ($que) use ($request) {
+                                        $que->whereIn('user_id', $request->service_type);
+                                       
+                                     });                   
+
+                            }
+
+                            // if ($request->status!='') {
+                            //          $q->whereHas('tasks.task_details',function($q1) use ($request){
+                            //                 $q1->where('status',$request->status);
+                            //             }); 
+                                                  
+                            //         }
+
+                            if ($request->status!='') {
+
+                                if(in_array(4, $request->status))
+                                {
+                                     $q->where(function ($que) use ($request) {
+                                        $que->whereIn('status', $request->status)
+                                            ->orWhere('warning', '<>', 0);
+                                     }); 
+                                }
+                                else
+                                {
+                                    $q->where(function ($que) use ($request) {
+                                        $que->whereIn('status', $request->status);
+                                    }); 
+                                }                
+
                             }   
 
-                        $q->where(function ($que) use ($contract_status) {
-                            $que->where('status', $contract_status);
-                           
-                         });                   
+                        })->get();
 
-                    } 
+                        if($request->property_id!='')
+                        {
+                            $allPropertyRelatedWorkOrders = WorkOrderLists::whereNull('deleted_at')->whereIn('property_id', $request->property_id)->where(function($q) use ($request){
 
-                    if ($request->contract_service!='') {
-                        
-                        $q->where(function ($que) use ($request) {
-                            $que->where('service_id', $request->contract_service);
-                           
-                         });                   
+                                    if ($request->contract_list!='') {
+                                    
+                                            $q->where(function ($que) use ($request) {
+                                                $que->whereIn('contract_id', $request->contract_list);
+                                               
+                                             });                   
 
-                    }    
+                                    }   
+                                })->get();
+                        }
+                        else
+                        {
+                            $allPropertyRelatedWorkOrders = WorkOrderLists::whereNull('deleted_at')->where('property_id', $property_list[0]->id)->get();
 
-                })->get();
+                            $request["property_id"] = $property_list[0]->id;
+                        }
+
+                        if($request->work_order_id!='')
+                        {
+                            //$allWorkOrdersRelatedData = WorkOrderLists::with('service_provider', 'contract_services', 'service')->whereNull('deleted_at')->whereIn('id', $request->work_order_id)->get();
+                            
+                            $allWorkOrdersRelatedServiceProvider = WorkOrderLists::with('userDetails')->whereNull('deleted_at')->whereIn('id', $request->work_order_id)->groupBy('user_id')->get();
+
+                            $allWorkOrdersRelatedContractServices = WorkOrderLists::with('contract_services')->whereNull('deleted_at')->whereIn('id', $request->work_order_id)->groupBy('contract_service_id')->get();
+
+                            $allWorkOrdersRelatedServices = WorkOrderLists::with('service')->whereNull('deleted_at')->whereIn('id', $request->work_order_id)->groupBy('service_id')->get();
+                        }
+
+                }
+                else
+                {
+                   // dd($sqlContract);
+                    //$sqlContract = array();
+                        foreach ($sqlContract as $key => $value) {
+                            $contractList[]=$value->id;
+                    }
+                    //dd($contractList);
+
+                    $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->whereIn('contract_id', $contractList)->where('task_assigned', 'N')->orderBy('id','Desc')->get();   
+                }   
 
             } 
             else 
             {          
-               if($this->data['sqlContract'])
-               {
-                    $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'contract_service_dates', 'property.country', 'property.state', 'property.city'])->whereContractId(@$this->data['sqlContract'][0]->id)->get();
-               }
+               // $sqlTask=TaskLists::with('property')->with('service')->with('country')->with('state')->with('city')->with('contract_services')->whereCreatedBy($logedInUser)->orWhere('user_id',$logedInUser)->orderBy('id','Desc')->get();
                 
+                    if(count($sqlContract)>0)
+                    {
+                        $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'contract_service_dates', 'property.country', 'property.state', 'property.city'])->whereContractId($sqlContract[0]->id)->get();
+                    }
                     
+                   // $this->data['work_order_all']  = $workOrderAll;
+               
+                
             }
 
             if(count($workOrder)==0)
@@ -361,9 +664,12 @@ class CalendarController extends Controller
 
             $this->data['serviceList'] = Service::whereIsActive(1)->get();
 
-            //dd($sqlCalendar);
+            //dd($workOrder);
             $this->data['work_order_list']  = $workOrder;
-            
+            $this->data['allPropertyRelatedWorkOrders'] = $allPropertyRelatedWorkOrders;
+            $this->data['allWorkOrdersRelatedServiceProvider'] = $allWorkOrdersRelatedServiceProvider;
+            $this->data['allWorkOrdersRelatedContractServices'] = $allWorkOrdersRelatedContractServices;
+            $this->data['allWorkOrdersRelatedServices'] = $allWorkOrdersRelatedServices;
             $this->data['slug'] = $logedInUserRole ->role->user_type->slug;
             $this->data['request'] = $request;
 
@@ -392,9 +698,23 @@ class CalendarController extends Controller
            if ($validator->fails()) { 
               return response()->json(['success' =>false,'message'=>$validator->errors()->first()], 200);
             }
+        $allTasks = TaskLists::whereIsDeleted('N')->whereIn('work_order_id', $request->work_order_id)->get();
+        $allService = WorkOrderLists::with('service')->whereIsDeleted('N')->whereIn('id', $request->work_order_id)->groupBy('service_id')->get();
+        $allContractServices = TaskLists::with(['contract_services'])->whereIn('work_order_id', $request->work_order_id)->orderBy('id', 'Desc')->get();
+           // dd($allContractServices->contract_services->service_type);
 
-        $allTasks = TaskLists::whereIsDeleted('N')->where('work_order_id', $request->work_order_id)->get();
-        return response()->json(['status'=>true, 'allTasks'=>$allTasks,],200);
+        if(count($allContractServices)>0)
+        {
+            foreach ($allContractServices as $key => $value) {
+                $allContractServicesData [] = $value->contract_services;
+            }
+            
+        }
+        
+       $allContractServicesDataList = array_unique($allContractServicesData);
+        //dd($allContractServicesDataList);
+       // $allTasks = TaskLists::whereIsDeleted('N')->whereIn('work_order_id', $request->work_order_id)->get();
+        return response()->json(['status'=>true, 'allTasks'=>$allTasks, 'allService'=>$allService, 'allContractServices'=>$allContractServicesDataList,],200);
     }
 
 
@@ -426,6 +746,55 @@ class CalendarController extends Controller
     
     /*****************************************************/
     # CalendarController
+    # Function name : getPropertyWorkOrderLIst
+    # Author        :
+    # Created Date  : 28-12-2020
+    # Purpose       : Get Property wise Work Order List
+    # Params        : Request $request
+    /*****************************************************/
+
+
+    public function getPropertyWorkOrderLIst(Request $request)
+    {
+         $validator = Validator::make($request->all(), [ 
+            'property_id' => 'required',
+            ]);
+
+           if ($validator->fails()) { 
+              return response()->json(['success' =>false,'message'=>$validator->errors()->first()], 200);
+            }
+
+        $allWorkOrders = WorkOrderLists::whereNull('deleted_at')->whereIn('property_id', $request->property_id)->get();
+        return response()->json(['status'=>true, 'allWorkOrders'=>$allWorkOrders,],200);
+    }
+
+    /*****************************************************/
+    # CalendarController
+    # Function name : getTaskLabour
+    # Author        :
+    # Created Date  : 28-12-2020
+    # Purpose       : Get Task wise Labour List
+    # Params        : Request $request
+    /*****************************************************/
+
+
+    public function getTaskLabour(Request $request)
+    {
+       // dd($request->all());
+         $validator = Validator::make($request->all(), [ 
+            'task_id' => 'required',
+            ]);
+
+           if ($validator->fails()) { 
+              return response()->json(['success' =>false,'message'=>$validator->errors()->first()], 200);
+            }
+
+        $allLabourList = TaskDetails::with('userDetails')->whereNull('deleted_at')->whereIn('task_id', $request->task_id)->groupBy('user_id')->get();
+        return response()->json(['status'=>true, 'allLabourList'=>$allLabourList,],200);
+    }
+
+    /*****************************************************/
+    # CalendarController
     # Function name : getWorkOrderLIst
     # Author        :
     # Created Date  : 09-12-2020
@@ -446,6 +815,85 @@ class CalendarController extends Controller
 
         $allWorkOrders = WorkOrderLists::whereNull('deleted_at')->where('contract_id', $request->contract_id)->get();
         return response()->json(['status'=>true, 'allWorkOrders'=>$allWorkOrders,],200);
+    }
+
+
+    /*****************************************************/
+    # CalendarController
+    # Function name : getPropertyContractList
+    # Author        :
+    # Created Date  : 03-01-2021
+    # Purpose       : Get Property wise Contract List
+    # Params        : Request $request
+    /*****************************************************/
+
+
+    public function getPropertyContractList(Request $request)
+    {
+         $validator = Validator::make($request->all(), [ 
+            'property_id' => 'required',
+            ]);
+
+           if ($validator->fails()) { 
+              return response()->json(['success' =>false,'message'=>$validator->errors()->first()], 200);
+            }
+
+        $allProperties = Contract::whereNull('deleted_at')->whereIn('property_id', $request->property_id)->get();
+        return response()->json(['status'=>true, 'allProperties'=>$allProperties,],200);
+    }
+
+    /*****************************************************/
+    # CalendarController
+    # Function name : getContractWorkOrderLIst
+    # Author        :
+    # Created Date  : 03-01-2021
+    # Purpose       : Get Contract wise Work Order  List
+    # Params        : Request $request
+    /*****************************************************/
+
+
+    public function getContractWorkOrderLIst(Request $request)
+    {
+         $validator = Validator::make($request->all(), [ 
+            'contract_list' => 'required',
+            ]);
+
+           if ($validator->fails()) { 
+              return response()->json(['success' =>false,'message'=>$validator->errors()->first()], 200);
+            }
+
+        $allWorkOrders = WorkOrderLists::whereNull('deleted_at')->whereIn('contract_id', $request->contract_list)->get();
+        return response()->json(['status'=>true, 'allWorkOrders'=>$allWorkOrders,],200);
+    }
+
+
+    /*****************************************************/
+    # CalendarController
+    # Function name : getServiceProviderList
+    # Author        :
+    # Created Date  : 03-01-2021
+    # Purpose       : Get Work Order wise Service List
+    # Params        : Request $request
+    /*****************************************************/
+
+
+    public function getServiceProviderList(Request $request)
+    {
+       // dd($request->all());
+         $validator = Validator::make($request->all(), [ 
+            'work_order_id' => 'required',
+            ]);
+
+           if ($validator->fails()) { 
+              return response()->json(['success' =>false,'message'=>$validator->errors()->first()], 200);
+            }
+
+        $allServiceProvider = WorkOrderLists::with('userDetails')->whereNull('deleted_at')->whereIn('id', $request->work_order_id)->groupBy('user_id')->get();
+
+        $allService = WorkOrderLists::with('service')->whereIsDeleted('N')->whereIn('id', $request->work_order_id)->groupBy('service_id')->get();
+        $allContractServices = WorkOrderLists::with(['contract_services'])->whereIn('id', $request->work_order_id)->orderBy('id', 'Desc')->get();
+
+        return response()->json(['status'=>true, 'allServiceProvider'=>$allServiceProvider, 'allService'=>$allService, 'allContractServices'=>$allContractServices],200);
     }
 
 

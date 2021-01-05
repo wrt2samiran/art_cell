@@ -856,8 +856,206 @@ class WorkOrderManagementController extends Controller
     # Params        : Request $request
     /*****************************************************/
 
-    public function show($id){
-        $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'property.country', 'property.state', 'property.city'])->whereId($id)->first();
+    public function show(Request $request, $id){
+        $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'property.country', 'property.state', 'property.city', 'tasks'])->whereId($id)->first();
+        $checkSlot = WorkOrderSlot::with('contract_service_dates')->whereWorkOrderId($id)->whereBookedStatus('N')->get();
+                $slot_data = $checkSlot;
+
+        $checkDate = WorkOrderSlot::with('contract_service_dates')->whereWorkOrderId($id)->whereBookedStatus('N')->groupBy('contract_service_date_id')->get();
+
+        $checkallDate = WorkOrderSlot::with('contract_service_dates')->whereWorkOrderId($id)->groupBy('contract_service_date_id')->get(); 
+        $this->data['all_available_dates'] = $checkallDate;
+
+        $checkAllSlot = WorkOrderSlot::with('contract_service_dates')->whereWorkOrderId($id)->get();
+        $this->data['all_slot_data'] = $checkAllSlot;
+
+        $logedInUser = \Auth::guard('admin')->user()->id;
+        //dd($workOrder);
+        $taskId = array();
+        foreach ($workOrder->tasks as $key => $value) {
+            $taskId[]=$value->id;
+        }
+
+        //dd($taskId);
+        // if($request->ajax()){
+            
+        //    // $tasks=WorkOrderLists::with('property')->with('service')->with('country')->with('state')->with('city')->where('created_by', $logedInUser)->orWhere('user_id', $logedInUser)->orderBy('id','Desc');
+
+        //     $workOrder=WorkOrderLists::with(['contract','userDetails', 'tasks', 'tasks.task_details', 'tasks.task_details.userDetails'])->whereId($id)
+        //     ->where(function($q) use ($logedInUser){
+              
+        //             // if logged in user is the service_provider of the contract 
+        //             $q->WhereHas('property',function($q1) use ($logedInUser){
+        //                 $q1->where('property_owner',$logedInUser)
+        //                 ->orWhere('property_manager',$logedInUser);
+        //             });
+        //         })
+              
+        //         ->select('work_order_lists.*')->orderBy('id', 'Desc');
+
+            
+        //     return Datatables::of($workOrder)
+        //     ->editColumn('created_at', function ($workOrder) {
+        //         return $workOrder->created_at ? with(new Carbon($workOrder->created_at))->format('d/m/Y') : '';
+        //     })
+        //     ->editColumn('start_date', function ($workOrder) {
+        //         return $workOrder->start_date ? with(new Carbon($workOrder->start_date))->format('d/m/Y') : '';
+        //     })
+            
+        //     ->filterColumn('created_at', function ($query, $keyword) {
+        //         $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
+        //     })
+        //     ->addColumn('status',function($workOrder){
+        //         if($workOrder->status=='0'){
+        //            $message='Pending';
+        //             return '<a href="" class="btn btn-block btn-outline-warning btn-sm">Pending</a>';
+                    
+        //         }elseif($workOrder->status=='1'){
+        //            $message='Overdue';
+        //            return '<a  href="" class="btn btn-block btn-outline-success btn-sm">Overdue</a>';
+                   
+        //         }
+        //         else{
+        //             $message='Completed';
+        //             return '<a href="" class="btn btn-block btn-outline-success btn-sm">Completed</a>';
+        //         }
+        //     })
+        //     ->addColumn('action',function($workOrder) use($logedInUser){
+        //         $action_buttons='';
+               
+             
+        //         if($logedInUser==$workOrder->user_id){
+        //              $add_url=route('admin.work-order-management.labourTaskList',$workOrder->id);
+
+        //              $action_buttons =$action_buttons.'<a title="Labour Task List" href="'.$add_url.'"><i class="fas fa-plus text-success"></i></a>';
+        //         }
+                
+
+        //         else{
+        //                 $details_url = route('admin.work-order-management.show',$workOrder->id);
+        //                 $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Show Work Order" id="details_task" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
+        //             } 
+
+        //         $checkAssignedOrNot = TaskLists::whereWorkOrderId($workOrder->id)->first();
+        //         $checkWorkOrderSlot = WorkOrderSlot::whereWorkOrderId($workOrder->id)->first();
+        //        // echo 'service_type'. $workOrder->contract_services->service_type;
+        //         //exit;
+        //         if( \Auth::guard('admin')->user()->hasAllPermission(['work-order-edit']) and !$checkAssignedOrNot and !$checkWorkOrderSlot and $workOrder->contract_services->service_type != 'Maintenance'){   
+
+        //             $edit_url=route('admin.work-order-management.edit',$workOrder->id);
+        //             $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Work Order" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
+
+        //             $delete_url=route('admin.work-order-management.delete',$workOrder->id);
+        //             $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete Work Order" href="javascript:delete_task('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
+        //         }
+
+        //         if($action_buttons==''){
+        //             $action_buttons=$action_buttons.'<span class="text-muted">No access</span>';
+        //         } 
+        //         return $action_buttons;
+
+        //     })
+        //     ->rawColumns(['action','status'])
+        //     ->make(true);
+        // }
+
+        if($request->ajax()){
+            // if($logedInUserRole!=5){
+            //     $task_detail_list=TaskDetails::with('task')->with('service')->with('userDetails')->where('task_id', $id)->orderBy('id','Desc');
+            // }
+            // else{
+            $labour_task_list=TaskDetails::with('task')->with('userDetails')->with('work_order_slot')->whereIn('task_id', $taskId)->whereNotNull('user_feedback')->whereStatus('4')->orderBy('id','Desc');
+            // }
+            return Datatables::of($labour_task_list)
+            ->editColumn('created_at', function ($labour_task_list) {
+                return $labour_task_list->created_at ? with(new Carbon($labour_task_list->created_at))->format('m/d/Y') : '';
+            })
+            ->editColumn('task_date', function ($task_list) {
+                return $task_list->task_date ? with(new Carbon($task_list->task_date))->format('d/m/Y H:i a') : '';
+            })
+            ->editColumn('task_finish_date_time', function ($task_list) {
+                return $task_list->task_finish_date_time ? with(new Carbon($task_list->task_finish_date_time))->format('d/m/Y H:i a') : '';
+            })
+            
+            ->filterColumn('created_at', function ($query, $keyword) {
+                $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
+            })
+            ->filterColumn('task_date', function ($query, $keyword) {
+                $query->whereRaw("DATE_FORMAT(task_date,'%d/%m/%Y') like ?", ["%$keyword%"]);
+            })
+            ->filterColumn('task_finish_date_time', function ($query, $keyword) {
+                $query->whereRaw("DATE_FORMAT(task_finish_date_time,'%d/%m/%Y') like ?", ["%$keyword%"]);
+            })
+
+            ->addColumn('status',function($labour_task_list){
+            
+                if($labour_task_list->status=='1'){
+                   //$message='deactivate';
+                   return '<span class="btn btn-block btn-outline-denger btn-sm">Overdue</a>';
+                    
+                }else if($labour_task_list->status=='0'){
+                   $message='complete';
+                   if($labour_task_list->user_feedback==''){
+                        return '<span class="btn btn-block btn-outline-warning btn-sm">Pending</a>';
+                   }
+                   else{
+                        return '<a title="Click to Complete the daily task" href="javascript:change_status('."'".route('admin.work-order-management.change_status',$labour_task_list->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm">Pending</a>';
+                   }
+                   
+                   
+                }
+                else if($labour_task_list->status=='1')
+                {
+                    return '<span class="btn btn-block btn-outline-denger btn-sm">Overdue</a>';
+                }
+                else if($labour_task_list->status=='2')
+                {
+                    return '<span class="btn btn-block btn-outline-success btn-sm">Completed</a>';
+                }
+                else if($labour_task_list->status=='3')
+                {
+                    return '<span class="btn btn-block btn-info btn-sm">Requested for Reschedule</a>';
+                }
+
+
+            })
+            ->addColumn('action',function($labour_task_list){
+                $logedInUser = \Auth::guard('admin')->user()->id;
+                $today = date('Y-m-d');
+                $action_buttons='';
+            
+
+                //if(\Auth::guard('admin')->user()->role_id==4){
+                    $details_url = route('admin.work-order-management.labourTaskDetails',$labour_task_list->id);
+                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Daily Task List" id="details_task" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
+                 // }
+                 // if($labour_task_list->status=='3' and $labour_task_list->rescheduled=='N')
+                 // {
+                 //     $allRestrictedDate=  $this->getAllRestricedDates($labour_task_list->user_id);
+
+                 //    //$details_url = route('admin.work-order-management.rescheduleTask',$labour_task_list->id);
+                 //    $action_buttons=$action_buttons."&nbsp;&nbsp;<a title='Reschedule Task' id='details_task' 
+                 //    href='javascript:rescheduleTask(".$labour_task_list->id.", ".json_encode($allRestrictedDate).", ".json_encode($labour_task_list->task_description).")'><i class='far fa-calendar-alt'></i></a>";
+                 // }
+
+                 if($action_buttons=='')
+                 {
+                    $action_buttons=$action_buttons.'<span class="text-muted">No access</span>';
+                 } 
+                 return $action_buttons;
+                
+            })
+
+            ->rawColumns(['action','status'])
+            ->make(true);
+        }
+        
+      
+        $this->data['request'] = $request;
+
+
+        $this->data['available_dates'] = $checkDate;
+        $this->data['slot_data'] = $slot_data;
         $this->data['page_title']='Work Order Details';
         $this->data['work_order_list']=$workOrder;
 
@@ -925,6 +1123,14 @@ class WorkOrderManagementController extends Controller
                     }
                     $save  = $sqlTaskData->save(); 
 
+
+                    if($request->status==4)
+                    {
+                        $sqlWorkOrder->update([
+                                'warning'=>($sqlWorkOrder->warning+1),
+                                'updated_by'=>$logedInUser->id
+                            ]);
+                    }
                     
                     // $sqlTask->task_complete_percent = ($sqlTask->task_complete_percent+(100/count($totalTask)));
                     // $updatePercent = $sqlTask->save();
@@ -1009,7 +1215,7 @@ class WorkOrderManagementController extends Controller
 
                     }    
 
-                    if($request->status==2)
+                    if($request->status==2 || $request->status==4)
                     {
                         //$sqlTaskWorkPercent     = TaskLists::whereWorkOrderId($sqlTask->work_order_id)->whereId($sqlTaskData->task_id)->whereIsDeleted('N')->first();
                         // if($sqlTaskWorkPercent->task_complete_percent==100)
@@ -1834,12 +2040,14 @@ class WorkOrderManagementController extends Controller
                                 'task_id'               => $addTask->id,
                                 'user_id'               => $maintainUser,
                                 'task_date'             => date('Y-m-d H:i:s', strtotime("$sqlContractServiceDate->date $assigned_time")),
-                                //'assigned_finish_time'  => ,
                                 'work_order_slot_id'    => $sqlSlot->id,
                                 'task_description'      => $request->task_description,
                                 'created_by'            => auth()->guard('admin')->id(),
                             ]);
 
+                         $sqlContractServiceDate->update([
+                                'task_assigned'=>'Y',
+                            ]);
                     }
 
                 }
@@ -2200,5 +2408,32 @@ class WorkOrderManagementController extends Controller
         } catch (Exception $e) {
             return redirect()->route('admin.work-order-management.taskLabourList', $taskDetails->task_id)->with('error', $e->getMessage());
         }
+    }
+
+    
+    /*****************************************************/
+    # WorkOrderManagementController
+    # Function name : labourTaskRating
+    # Author        :
+    # Created Date  : 02-12-2020
+    # Purpose       : Set Supervisor Feedback Rating for Labour Task
+    # Params        : Request $request
+    /*****************************************************/
+
+   
+
+    public function labourTaskRating(Request $request)
+    {
+        $logedInUser = \Auth::guard('admin')->user()->id;
+         
+        
+        $sqlTaskDetails= TaskDetails::whereId($request->task_details_id)->first();
+        
+        $sqlTaskDetails->update([
+            'rating'=> $request->ratingValue,
+            'updated_by' => $logedInUser
+            ]);
+
+        return response()->json(['status'=>true,],200);
     }
 }

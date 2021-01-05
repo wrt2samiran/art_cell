@@ -319,7 +319,7 @@
 
             <!-- Maintanence Task -->
               <div class="modal fade" id="addMaintanenceTaskModal" role="dialog">
-              <div class="modal-dialog">
+              <div class="modal-dialog modal-lg">
               
                 <!-- Modal content-->
                 <div class="modal-content">
@@ -329,111 +329,134 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                   </div>
                   <div class="modal-body">
-                    <div class="card-body">
-                            <div class="row justify-content-center">
-                              <div class="col-md-10 col-sm-12">
+                    <div>
                                 <form  method="post" id="admin_maintanence_labour_task_add_form" action="{{route('admin.work-order-management.taskMaintanenceAssign')}}" method="post" enctype="multipart/form-data">
                                       @csrf
-                                       
-                                    <div class="form-group required">
-                                        <label for="service_id">Work Order Title <span class="error">*</span></label>
-                                        <select class="form-control parent_role_select2" style="width: 100%;" name="work_order_id" id="work_order_id">
-                                            <option value="{{@$work_order_list->id}}" {{(old('task_id')== @$work_order_list->id)? 'selected':''}}>{{@$work_order_list->task_title}} ({{@$work_order_list->contract->code}})</option>
-                                          </select>
-                                        @if($errors->has('work_order_id'))
-                                        <span class="text-danger">{{$errors->first('work_order_id')}}</span>
-                                        @endif
-                                    </div>
+                                    
+                                     <div class="row">
+                                      <div class="col-lg-6">
+                                          <div class="form-group required">
+                                              <label for="service_id">Work Order Title <span class="error">*</span></label>
+                                              <select class="form-control parent_role_select2" style="width: 100%;" name="work_order_id" id="work_order_id">
+                                                  <option value="{{@$work_order_list->id}}" {{(old('task_id')== @$work_order_list->id)? 'selected':''}}>{{@$work_order_list->task_title}} ({{@$work_order_list->contract->code}})</option>
+                                                </select>
+                                              @if($errors->has('work_order_id'))
+                                              <span class="text-danger">{{$errors->first('work_order_id')}}</span>
+                                              @endif
+                                          </div>
+                                      </div>
+                                      <div class="col-lg-6">
+                                          <div class="form-group required">
+                                              <label for="property_id">Task Title <span class="error">*</span></label>
+                                              <input class="form-control parent_role_select2" style="width: 100%;" type="text" name="task_title_maintanence_daily" id="task_title_maintanence_daily" value="{{(old('task_title_maintanence_daily'))? old('task_title_maintanence_daily'):''}}" onkeyup="checkMaintanenceDaily()">
+                                              
+                                              @if($errors->has('task_title'))
+                                              <span class="text-danger">{{$errors->first('task_title')}}</span>
+                                              @endif
+                                          </div> 
+                                      </div>
+                                    </div>   
+                                 
+                                    <div class="row">
+                                      <div class="col-lg-6">
+                                        <div class="form-group required">
+                                          <label for="property_id">Service <span class="error">*</span></label>
+                                          <select class="form-control parent_role_select2" style="width: 100%;" name="service_id" id="service_id" >
+                                                   <option value="{{@$work_order_list->service_id}}" {{(old('service_id')== @$work_order_list->service_id)? 'selected':''}}>{{@$work_order_list->service->service_name}}</option>
+                                            </select>
+                                          @if($errors->has('property_id'))
+                                          <span class="text-danger">{{$errors->first('property_id')}}</span>
+                                          @endif
+                                        </div>
+                                      </div>
+                                      <div class="col-lg-6">
+                                        <div class="form-group">
+                                          <label for="service_id">Task Description</label>
+                                          <textarea class="form-control" name="task_description" id="task_description">{{old('task_description')}}</textarea>
+                                        </div>
+                                      </div>
+                                    </div>     
+                                 
+
+                                    
+                                    <div class="row">
+                                      <div class="col-lg-6">
+                                        <div class="form-group required">
+                                          <label for="labour_list_id">Labour List <span class="error">*</span></label>
+                                          <select class="form-control" multiple="multiple" searchable="Search for..."  name="maintanence_user_id[]" id="maintanence_user_id" onchange="checkMaintanenceDaily()">
+                                             
+                                             @forelse($labour_list as $labour_data)
+                                                   <option value="{{@$labour_data->id}}" >{{@$labour_data->name}}</option>
+                                              @empty
+                                              <option value="">No Labour Found</option>
+                                              @endforelse     
+                                                                       
+                                            </select>
+                                          @if($errors->has('maintanence_user_id'))
+                                          <span class="text-danger">{{$errors->first('maintanence_user_id')}}</span>
+                                          @endif
+                                        </div>
+                                      </div>
+                                      <div class="col-lg-6">
                                         
-                                    <div class="form-group required">
-                                      <label for="property_id">Task Title <span class="error">*</span></label>
-                                      <input class="form-control parent_role_select2" style="width: 100%;" type="text" name="task_title_maintanence_daily" id="task_title_maintanence_daily" value="{{(old('task_title_maintanence_daily'))? old('task_title_maintanence_daily'):''}}" onkeyup="checkMaintanenceDaily()">
-                                      
-                                      @if($errors->has('task_title'))
-                                      <span class="text-danger">{{$errors->first('task_title')}}</span>
-                                      @endif
-                                    </div> 
+                                        @if(@$work_order_list->contract_services->service_type=='Maintenance'  and @$work_order_list->contract_service_recurrence->interval_type == 'daily') 
 
-                                    <div class="form-group required">
-                                      <label for="property_id">Service <span class="error">*</span></label>
-                                      <select class="form-control parent_role_select2" style="width: 100%;" name="service_id" id="service_id" >
-                                               <option value="{{@$work_order_list->service_id}}" {{(old('service_id')== @$work_order_list->service_id)? 'selected':''}}>{{@$work_order_list->service->service_name}}</option>
-                                        </select>
-                                      @if($errors->has('property_id'))
-                                      <span class="text-danger">{{$errors->first('property_id')}}</span>
-                                      @endif
-                                    </div>
+                                         <?php //dd($slot_data);?>
+                                         @php $arraySlot = array('1'=> 'First Slot', '2'=> 'Second Slot', '3'=> 'Third Slot', '4'=> 'Fourth Slot', '5'=> 'Fifth Slot', '6'=>'Sixth Slot', '7'=> 'Seventh Slot', '8'=> 'Eight Slot', '9'=>'Nineth Slot', '10'=>'Tenth Slot'); @endphp
+                                          <div class="form-group work-options required">
+                                          <label for="property_id">Task Date And Slot<span class="error">*</span></label>
+                                          <select class="form-control work_date" multiple="multiple" style="width: 100%;" name="work_date[]" id="work_date"  onchange="checkMaintanenceDaily()">
+                                            @if(!empty($available_dates))
+                                               @forelse(@$available_dates as $valueDate)
+                                                <ul style="importent">
+                                                  <li class="parent-term">
+                                                   <option value="{{@$valueDate->contract_service_dates->date}}" >{{@$valueDate->contract_service_dates->date}}  </option>
+                                                     <ul>
+                                                      
+                                                      @forelse($slot_data as $slotValue)
+                                                        @if(@$valueDate->contract_service_dates->id == $slotValue->contract_service_date_id)
+                                                          <li class="child-term">
+                                                           <option value="{{@$slotValue->id}}" >@if(array_key_exists($slotValue->daily_slot, $arraySlot)){{$arraySlot[$slotValue->daily_slot]}}@endif</option>
+                                                          </li> 
+                                                        @endif  
+                                                      @empty
+                                                      <option value="">No Labour Found</option>
+                                                      @endforelse 
+                                                     </ul> 
+                                                  </li> 
+                                                </ul> 
+                                                 @empty
+                                                 <option value="">No Date Found</option>
+                                               @endforelse
+                                               @endif     
+                                              </select>
+                                            @if($errors->has('work_date'))
+                                            <span class="text-danger">{{$errors->first('work_date')}}</span>
+                                            @endif
+                                        </div>
 
-                                    <div class="form-group">
-                                      <label for="service_id">Task Description</label>
-                                      <textarea class="form-control float-right" name="task_description" id="task_description">{{old('task_description')}}</textarea>
-                                    </div>
-                                   
-
-                                    <div class="form-group required">
-                                      <label for="labour_list_id">Labour List <span class="error">*</span></label>
-                                      <select class="form-control" multiple="multiple" searchable="Search for..."  name="maintanence_user_id[]" id="maintanence_user_id" onchange="checkMaintanenceDaily()">
-                                         
-                                         @forelse($labour_list as $labour_data)
-                                               <option value="{{@$labour_data->id}}" >{{@$labour_data->name}}</option>
-                                          @empty
-                                          <option value="">No Labour Found</option>
-                                          @endforelse     
-                                                                   
-                                        </select>
-                                      @if($errors->has('maintanence_user_id'))
-                                      <span class="text-danger">{{$errors->first('maintanence_user_id')}}</span>
-                                      @endif
-                                    </div>
-                                   
-                                   
-                                     @if(@$work_order_list->contract_services->service_type=='Maintenance'  and @$work_order_list->contract_service_recurrence->interval_type == 'daily') 
-
-                                     <?php //dd($slot_data);?>
-                                     @php $arraySlot = array('1'=> 'First Slot', '2'=> 'Second Slot', '3'=> 'Third Slot', '4'=> 'Fourth Slot', '5'=> 'Fifth Slot', '6'=>'Sixth Slot', '7'=> 'Seventh Slot', '8'=> 'Eight Slot', '9'=>'Nineth Slot', '10'=>'Tenth Slot'); @endphp
-                                      <div class="form-group work-options required">
-                                      <label for="property_id">Task Date And Slot<span class="error">*</span></label>
-                                      <select class="form-control work_date" multiple="multiple" style="width: 100%;" name="work_date[]" id="work_date"  onchange="checkMaintanenceDaily()">
-                                        @if(!empty($available_dates))
-                                           @forelse(@$available_dates as $valueDate)
-                                            <ul style="importent">
-                                              <li class="parent-term">
-                                               <option value="{{@$valueDate->contract_service_dates->date}}" >{{@$valueDate->contract_service_dates->date}}  </option>
-                                                 <ul>
-                                                  
-                                                  @forelse($slot_data as $slotValue)
-                                                    @if(@$valueDate->contract_service_dates->id == $slotValue->contract_service_date_id)
-                                                      <li class="child-term">
-                                                       <option value="{{@$slotValue->id}}" >@if(array_key_exists($slotValue->daily_slot, $arraySlot)){{$arraySlot[$slotValue->daily_slot]}}@endif</option>
-                                                      </li> 
-                                                    @endif  
-                                                  @empty
-                                                  <option value="">No Labour Found</option>
-                                                  @endforelse 
-                                                 </ul> 
-                                              </li> 
-                                            </ul> 
-                                             @empty
-                                             <option value="">No Date Found</option>
-                                           @endforelse
-                                           @endif     
-                                          </select>
-                                        @if($errors->has('work_date'))
-                                        <span class="text-danger">{{$errors->first('work_date')}}</span>
                                         @endif
-                                    </div>
 
-                                    @endif
-                                    <div class="form-group required">
-                                      <label for="slot_time">Task Finish Time<span class="error">*</span></label>
+                                      </div>
                                     </div>
-                                    <div style="background-color: lightgrey; width: 300px; border: 10px solid green; padding: 50px; margin: 20px; float:left; width:100%; overflow-y: auto; height: 200px;">
-                                     
+                                    
+                                   
+
+                                    <div class="row">
+                                      <div class="col-lg-12">
+                                        <div class="form-group required">
+                                          <label for="slot_time">Task Finish Time<span class="error">*</span></label>
+                                        </div>
+                                      </div>                                      
+                                    </div>
+                                   
+                                   
+                                    <div class="row">
                                       @php $i=0; @endphp
                                       @foreach(@$slot_data as $slotValue)
                                         @if(@$valueDate->contract_service_dates->id == $slotValue->contract_service_date_id)
-                                        <div>
-                                        <label for="service_id">
+                                        <div class="col-lg-4">
+                                        <label for="service_id" style="margin-bottom: 15px;">
                                           @if(array_key_exists($slotValue->daily_slot, $arraySlot)){{$arraySlot[$slotValue->daily_slot]}}@endif
                                           
                                           <input type="text" class="form-control clockpicker" readonly="" value="" name="slot_time[]" id="slot_id_{{$i}}" onchange="checkMaintanenceDaily()">
@@ -444,7 +467,7 @@
 
                                         
                                        @endforeach  
-                                    </div>                                       
+                                    </div>                                                                        
                                   <div>
                                   @if(!empty($slot_data)) 
                                   
@@ -455,8 +478,8 @@
                                 </div>
                                 <div class="live_list" id="live_list" content="width=device-width, initial-scale=1"></div>
                               </form>
-                              </div>
-                            </div>
+                              
+                           
                         </div>
                     </div>
                   <div class="modal-footer">
@@ -986,5 +1009,4 @@ $( document ).ready(function() {
 
 <script type="text/javascript" src="{{asset('js/admin/work_order_management/daily-task-list.js')}}"></script>
 @endpush
-
 

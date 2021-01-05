@@ -452,6 +452,8 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::any('/{id}/delete-labour-task', 'WorkOrderManagementController@deleteLabourTask')->name('deleteLabourTask');
                 
                 Route::get('/{id}/change-status', 'WorkOrderManagementController@change_status')->name('change_status');
+                Route::post('/labour-task-rating', 'WorkOrderManagementController@labourTaskRating')->name('labourTaskRating'); 
+                
                 //Route::get('/{id}/reschedule-task', 'WorkOrderManagementController@rescheduleTask')->name('rescheduleTask');
 
                 
@@ -469,6 +471,17 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::post('/update-task-details', 'CalendarController@updateTaskDetails')->name('updateTaskDetails');
                 Route::post('/get-contract-list', 'CalendarController@getContractLIst')->name('getContractLIst');
                 Route::post('/get-work-order-list', 'CalendarController@getWorkOrderLIst')->name('getWorkOrderLIst');
+                Route::post('/get-property-work-order-list', 'CalendarController@getPropertyWorkOrderLIst')->name('getPropertyWorkOrderLIst');
+                //Route::post('/get-property-work-order-list', 'CalendarController@getWorkOrderLabour')->name('getWorkOrderLabour');
+                Route::post('/get-task-labour-list', 'CalendarController@getTaskLabour')->name('getTaskLabour');
+                Route::post('/get-property-list', 'CalendarController@getPropertyContractList')->name('getPropertyContractList');
+                Route::post('/get-work-order-list', 'CalendarController@getContractWorkOrderLIst')->name('getContractWorkOrderLIst');
+                Route::post('/get-service-provider-list', 'CalendarController@getServiceProviderList')->name('getServiceProviderList');
+                
+                
+                
+                
+                
         
                 
             });

@@ -199,4 +199,26 @@ legend{
 .work-options .ms-options-wrap > .ms-options > ul li:nth-child(4n+1) 
  { padding-left: 10px; }
 
-  #admin_labour_task_feedback_form textarea { margin-bottom: 15px; }
+#admin_labour_task_feedback_form textarea { margin-bottom: 15px; }
+
+
+#external-events {width: 100%!important;}
+#showTaskListModal table th { text-align: center; }
+#task_labour_list_management_table.table-bordered { border: 0; }
+#task_labour_list_management_table.table-bordered tr.text-right td { padding-bottom: 10px!important; border: 0!important; }
+.btn-success p { margin: 0; padding: 0; }
+
+#filter_calendar { padding: 10px; border: 1px solid #ccc; background: #dcedfc; margin-bottom: 10px; }
+#status-filter-container { padding-right: 100px; }
+#status-filter-container input[type="button"] { width: 90px; height: 40px; background: #4f008c; color: #fff;  position: absolute; top: 0; right: 7.5px; }
+#status-filter-container .chosen-container-multi { width: 100%!important; }
+
+.chosen-container-multi .chosen-choices { height: 40px!important; overflow-y: auto!important; }
+
+#filter_calendar { display: none; }
+#filter_calendar.show{ display: block; }
+
+.btn-filter-drop {height: 40px; background: #4f008c; color: #fff; padding: 10px 15px; border: 0; cursor: pointer; margin-bottom: 10px;}
+
+.btn-search {height: 40px; background: #4f008c; color: #fff; padding: 10px 15px; border: 0; cursor: pointer;}
+.btn-search:hover { color: #fff; }

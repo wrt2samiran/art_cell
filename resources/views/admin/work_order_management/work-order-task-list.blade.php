@@ -81,7 +81,7 @@
                                             <th>Task Title</th>
                                             <th>Task Finish Date And Time (Assigned)</th>
                                             <th>Slot</th>
-                                            <th width="25%">Task Details</th>
+                                            <!-- <th width="25%">Task Details</th> -->
                                             <th>Feedback Date And Time</th>
                                             <th>Feedback on Time</th>
                                             <th width="10%">Status</th>
@@ -128,7 +128,9 @@
                                               <select class="form-control parent_role_select2" style="width: 100%;" name="status" id="status" aria-invalid="false">
                                                 <option value="">Select Feedback Status</option>
                                                 <option value="2">Completed</option>
+                                                <option value="4">Completed with Warning</option>
                                                 <option value="3">Request for Reschedule</option>
+
                                               </select>
                                           </div>
 

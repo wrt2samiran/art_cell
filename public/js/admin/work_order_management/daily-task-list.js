@@ -373,7 +373,7 @@ $("#admin_other_maintanence_labour_task_add_form").validate({
               name: 'work_order_slot.daily_slot'
             }, searchable: false, sortable : false},
             
-            { data: 'task.task_desc', name: 'task.task_desc' },
+            // { data: 'task.task_desc', name: 'task.task_desc' },
             { data: 'task_finish_date_time', name: 'task_finish_date_time' },
             { data: 'late_feedback', 
               render: function(data){
