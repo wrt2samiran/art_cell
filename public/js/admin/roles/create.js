@@ -27,20 +27,38 @@ $("#admin_roles_create_form").validate({
     },
     messages: {
         role_name: {
-            required:  "Group name is required",
-            minlength: "Group name should have 3 characters",
-            maxlength: "Group name should not be more then 50 characters",
-            remote:"Group name alredy exist. Enter different name",
+            required:function(){
+                return current_locale=='ar'?'اسم المجموعة مطلوب':'Group name is required';
+            },
+            minlength:function(){
+                return current_locale=='ar'?'يجب أن يتكون اسم المجموعة من 3 أحرف':'Group name should have 3 characters';
+            },
+            maxlength:function(){
+                return current_locale=='ar'?'يجب ألا يزيد اسم المجموعة عن 50 حرفًا':'Group name should not be more than 50 characters';
+            },
+            remote:function(){
+                return current_locale=='ar'?'اسم المجموعة موجود بالفعل. أدخل اسمًا مختلفًا':'Group name already exists. Enter different ';
+            },
         },
         role_description: {
-            required:  "Group description is required",
-            minlength: "Group description should have 3 characters",
-            maxlength: "Group description should not more then 255 characters"
+            required:function(){
+                return current_locale=='ar'?'وصف المجموعة مطلوب':'Group description is required';
+            },
+            minlength:function(){
+                return current_locale=='ar'?'يجب أن يتكون وصف المجموعة من 3 أحرف':'Group description should have 3 characters';
+            },
+            maxlength:function(){
+                return current_locale=='ar'?'يجب ألا يزيد وصف المجموعة عن 255 حرفًا':'Group description should not more than 255 characters';
+            },
         },
         user_type_id:{
-            required:  "Please select the user type you are creating the group for",
+            required:function(){
+                return current_locale=='ar'?'الرجاء تحديد نوع المستخدم الذي تقوم بإنشاء المجموعة له':'Please select the user type you are creating the group for';
+            },
         },
-        'functionalities[]':'Select atleast one permission'
+        'functionalities[]':function(){
+            return current_locale=='ar'?'حدد إذنًا واحدًا على الأقل':'Select at least one permission';
+        }
     },
     errorPlacement: function (error, element) {
         
@@ -72,7 +90,8 @@ $("#admin_roles_create_form").validate({
 
 $('.user_type_select2').select2({
   theme: 'bootstrap4',
-  placeholder:'Select user type'
+  placeholder:translations.group_manage_module.placeholders.user_type,
+  language: current_locale,
 });
 
 

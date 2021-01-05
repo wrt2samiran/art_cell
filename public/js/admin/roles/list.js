@@ -1,4 +1,4 @@
-//initializing galleries datatable
+
     var roles_table=$('#roles_table').DataTable({
         "responsive": true,
         "autoWidth": false,
@@ -27,6 +27,9 @@
         }],
         "drawCallback": function( settings ) {
             $.LoadingOverlay("hide");
+        },
+        "language": {
+            "url": (current_locale=="ar")?"//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Arabic.json":"//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/English.json"
         }
 
     });
@@ -34,10 +37,10 @@
  //function to delete role
  function delete_role(url){
   swal({
-  title: "Are you sure?",
-  text: "Once deleted, you will not be able to recover this group!",
+  title: translations.group_manage_module.warning_title,
+  text: translations.group_manage_module.delete_warning,
   icon: "warning",
-  buttons: true,
+buttons: [translations.general_sentence.button_and_links.ok,translations.general_sentence.button_and_links.cancel],
   dangerMode: true,
   })
   .then((willDelete) => {
@@ -51,7 +54,7 @@
         success: function (data) {
           roles_table.ajax.reload(null, false);
           $.LoadingOverlay("hide");
-          toastr.success('Group successfully deleted.', 'Success', {timeOut: 5000});
+          toastr.success(translations.group_manage_module.delete_success_message, 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");
@@ -81,11 +84,12 @@
 
 //function to change status of gallery
  function change_status(url,activate_or_deactivate){
+
   swal({
-  title: "Are you sure?",
-  text: "You want to "+activate_or_deactivate+" the role.",
+  title: translations.group_manage_module.warning_title,
+  text: translations.group_manage_module.change_status_warning,
   icon: "warning",
-  buttons: true,
+  buttons: [translations.general_sentence.button_and_links.ok,translations.general_sentence.button_and_links.cancel],
   dangerMode: true,
   })
   .then((confirm) => {
@@ -98,7 +102,7 @@
         success: function (data) {
           roles_table.ajax.reload(null, false);
           $.LoadingOverlay("hide");
-          toastr.success('Status successfully updated.', 'Success', {timeOut: 5000});
+          toastr.success(translations.group_manage_module.change_status_success_message, 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");
@@ -123,7 +127,8 @@
 
 $('.user_type-filter').select2({
   theme: 'bootstrap4',
-  placeholder:'Filter By User type'
+  placeholder:translations.group_manage_module.placeholders.filter_by_user_type,
+  language: current_locale,
 });
 
 

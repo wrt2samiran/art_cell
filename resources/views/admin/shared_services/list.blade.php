@@ -9,12 +9,12 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Shared Service Management</h1>
+                <h1>{{__('shared_service_manage_module.module_title')}}</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item active">Shared Services</li>
+                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
+                  <li class="breadcrumb-item active">{{__('general_sentence.breadcrumbs.shared_services')}}</li>
                 </ol>
               </div>
             </div>
@@ -28,10 +28,10 @@
                         <div class="card">
 				            <div class="card-header">
 				                <div class="d-flex justify-content-between" >
-				                    <div><span>Shared Service List</span></div>
+				                    <div><span>{{__('shared_service_manage_module.shared_service_list')}}</span></div>
 					                <div>
 						                <a class="btn btn-success" href="{{route('admin.shared_services.create')}}">
-						                 Create Shared Service
+						                 {{__('general_sentence.button_and_links.create_shared_service')}}
 						                </a>
 					                </div>
 				                </div>
@@ -55,12 +55,12 @@
                                     <thead>
                                         <tr>
                                             <th>Id</th>
-                                            <th>Shared Service Name</th>
-                                            <th>Selling Price</th>
-                                            <th>Sharing Price</th>
-                                            <th>Status</th>
-                                            <th>Created At</th>
-                                            <th>Action</th>
+                                            <th>{{__('shared_service_manage_module.labels.shared_service_name')}}</th>
+                                            <th>{{__('shared_service_manage_module.labels.selling_price')}}</th>
+                                            <th>{{__('shared_service_manage_module.labels.sharing_price')}}</th>
+                                            <th>{{__('shared_service_manage_module.labels.status')}}</th>
+                                            <th>{{__('shared_service_manage_module.labels.created_at')}}</th>
+                                            <th>{{__('shared_service_manage_module.labels.action')}}</th>
                                         </tr>
                                     </thead>
                                 </table>

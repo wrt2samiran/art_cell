@@ -369,7 +369,10 @@ class SparePartOrderController extends Controller
                 $details_ajax_url=route('admin.spare_part_orders.ajax_my_order_details',$order->id);
                 return '<a class="btn btn-success" href="javascript:order_details('."'".$details_ajax_url."'".')">Details</a>';
             })
-            ->rawColumns(['action'])
+            ->editColumn('status.status_name', function ($order) {
+                return '<span style="color:'.$order->status->color_code.'">'.$order->status->status_name.'<span>';
+            })
+            ->rawColumns(['action','status.status_name'])
             ->make(true);
         }
         return view($this->view_path.'.my_orders',$this->data);
@@ -413,7 +416,10 @@ class SparePartOrderController extends Controller
                 
                 return '<a class="btn btn-success" href="'.route('admin.spare_part_orders.order_details',$order->id).'">Details</a>';
             })
-            ->rawColumns(['action'])
+            ->editColumn('status.status_name', function ($order) {
+                return '<span style="color:'.$order->status->color_code.'">'.$order->status->status_name.'<span>';
+            })
+            ->rawColumns(['action','status.status_name'])
             ->make(true);
         }
         return view($this->view_path.'.manage.order_list',$this->data);

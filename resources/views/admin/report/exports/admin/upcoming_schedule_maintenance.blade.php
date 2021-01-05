@@ -1,7 +1,7 @@
 <table>
     <thead>
     <tr>
-        <th></th>
+
         <th>Service Date</th>
         <th>Contract Code</th>
         <th>Contract Name</th>
@@ -21,7 +21,7 @@
     <tbody>
     	@forelse($upcoming_service_dates as $upcoming_service_date)
 	    <tr>
-            <td></td>
+
 	        <td>{{$upcoming_service_date->date}}</td>
 	        <td>{{$upcoming_service_date->contract->code}}</td>
 	        <td>{{$upcoming_service_date->contract->title}}</td>

@@ -9,13 +9,13 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Shared Service Management</h1>
+            <h1>{{__('shared_service_manage_module.module_title')}}</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.shared_services.list')}}">Shared Services</a></li>
-              <li class="breadcrumb-item active">Details</li>
+              <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.shared_services.list')}}">{{__('general_sentence.breadcrumbs.shared_services')}}</a></li>
+              <li class="breadcrumb-item active">{{__('general_sentence.breadcrumbs.details')}}</li>
             </ol>
           </div>
         </div>
@@ -28,23 +28,24 @@
             <!-- Default box -->
             <div class="card card-success">
                 <div class="card-header">
-                  Shared Service Deatils
+                  {{__('shared_service_manage_module.shared_service_details')}}
                 </div> 
               <div class="card-body"> 
                  <table class="table table-bordered table-hover" id="country-details-table">
                       <tbody>
                         <tr>
-                          <td>Shared Service Name</td>
+                          <td>{{__('shared_service_manage_module.labels.shared_service_name')}}</td>
                           <td>{{$sharedServices->name}}</td>
                         </tr>
                         <tr>
-                          <td>Description</td>
+                          <td>{{__('shared_service_manage_module.labels.description')}}</td>
                           <td>{!! $sharedServices->description !!}</td>
                         </tr>
 
                         <tr>
-                          <td>Sharing Price</td>
+                          <td>{{__('shared_service_manage_module.labels.sharing_price')}}</td>
                           <td >
+
                             @if($sharedServices->is_sharing)
                             <div><span>{{$sharedServices->currency}} {{number_format($sharedServices->price, 2, '.', '')}}</span> for {{$sharedServices->number_of_days}} days</div>
                             <div>+{{$sharedServices->currency}}{{number_format($sharedServices->extra_price_per_day, 2, '.', '')}}/day</div>
@@ -54,7 +55,7 @@
                           </td>
                         </tr>
                         <tr>
-                          <td>Selling Price</td>
+                          <td>{{__('shared_service_manage_module.labels.selling_price')}}</td>
                           <td>
                             @if($sharedServices->is_selling)
                             <div><span>{{$sharedServices->currency}}{{number_format($sharedServices->selling_price, 2, '.', '')}}</span></div>
@@ -64,13 +65,13 @@
                           </td>
                         </tr>
                         <tr>
-                          <td>Status</td>
+                          <td>{{__('shared_service_manage_module.labels.status')}}</td>
                           <td>
                             <button role="button" class="btn btn-{{($sharedServices->is_active=='1')?'success':'danger'}}">{{($sharedServices->is_active=='1')?'Active':'Inactive'}}</button>
                           </td>
                         </tr>
                         <tr>
-                          <td>Images</td>
+                          <td>{{__('shared_service_manage_module.uploaded_images_text')}}</td>
                           <td>
                               <div class="card card-body">
                                      <div class="row">
@@ -85,7 +86,7 @@
          
                                       @else
                                        <div class="col-md-12">
-                                         <p>No images</p>
+                                         <p>{{__('shared_service_manage_module.no_images_text')}}</p>
                                        </div>
                                       @endif
                                        
@@ -97,7 +98,7 @@
                       </tbody>
                       <tfoot>
                         <tr>
-                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.shared_services.list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
+                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.shared_services.list')}}"><i class="fas fa-backward"></i>&nbsp;{{__('general_sentence.button_and_links.back')}}</a></td>
                         </tr>
                       </tfoot>
                   </table>

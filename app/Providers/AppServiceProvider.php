@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use App\Models\Setting;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -29,5 +30,6 @@ class AppServiceProvider extends ServiceProvider
         View::composer('*', function ($view) use ($data) {
            $view->with($data);
         });
+
     }
 }

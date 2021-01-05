@@ -200,7 +200,8 @@ class RoleController extends Controller
         }
         //insert new records
         RolePermission::insert($role_permission_data_array);
-        return redirect()->route('admin.roles.list')->with('success','Group successfully created.');
+
+        return redirect()->route('admin.roles.list')->with('success',__('group_manage_module.create_success_message'));
     }
 
     /************************************************************************/
@@ -321,8 +322,7 @@ class RoleController extends Controller
 
         //insert new records
         RolePermission::insert($role_permission_data_array);
-
-        return redirect()->route('admin.roles.list')->with('success','Group successfully updated');
+        return redirect()->route('admin.roles.list')->with('success',__('group_manage_module.edit_success_message'));
     }
 
     /************************************************************************/

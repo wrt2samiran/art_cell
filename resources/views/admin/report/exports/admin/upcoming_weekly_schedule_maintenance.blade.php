@@ -1,7 +1,6 @@
 <table>
     <thead>
     <tr>
-        <th></th>
         <th>Week Number</th>
         <th>Year</th>
         <th>Date Range</th>
@@ -30,7 +29,7 @@
             @endphp
             @foreach($upcoming_weekly_service['upcoming_service_dates'] as $upcoming_service_date)
             <tr>
-                <td></td>
+
                 <td>
                 @if($index=='0')
                 {{$upcoming_weekly_service['week_number']}}
@@ -78,7 +77,7 @@
             @endforeach
         @else
         <tr>
-            <td></td>
+
             <td>{{$upcoming_weekly_service['week_number']}}</td>
             <td>{{$upcoming_weekly_service['year']}}</td>
             <td>{{$upcoming_weekly_service['effective_from']}}- {{$upcoming_weekly_service['effective_to']}}</td>

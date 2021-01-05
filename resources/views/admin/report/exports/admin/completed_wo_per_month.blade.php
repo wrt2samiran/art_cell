@@ -1,7 +1,7 @@
 <table>
     <thead>
     <tr>
-        <th></th>
+
         <th>Month</th>
         <th>Date-Range</th>
         <th>Total Completed Work Orders</th>
@@ -29,7 +29,7 @@
         @if(count($record['work_orders']))
             @foreach($record['work_orders'] as $key=> $work_order)
             <tr>
-                <td></td>
+
                 <td>
                 @if($key=='0')
                 {{$month_year}}
@@ -77,7 +77,7 @@
             @endforeach
         @else
         <tr>
-            <td></td>
+
             <td>{{$month_year}}</td>
             <td>{{$record['effective_from']}}-{{$record['effective_to']}}</td>
             <td>{{$record['total_wo']}}</td>

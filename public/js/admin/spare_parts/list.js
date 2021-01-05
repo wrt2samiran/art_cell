@@ -9,8 +9,8 @@
             { data: 'id', name: 'id' },
             { data: 'name', name: 'name'},
             { data: 'manufacturer', name: 'manufacturer'},
-            { data: 'unitmaster.unit_name', name: 'unitmaster.unit_name'},
-            { data: "price", render: function ( data, type, row, meta ) {return row['currency'] + ' ' + data ;} },
+            { data: 'unitmaster.unit_name', name: 'unitmaster.unit_name',orderable: false, searchable: false },
+            { data: "price", render: function ( data, type, row, meta ) {return row['currency'] + ' ' + data ;}},
             { data: 'is_active', name: 'is_active' },
             { data: 'created_at', name: 'created_at' },
             {data: 'action', name: 'action', orderable: false, searchable: false}

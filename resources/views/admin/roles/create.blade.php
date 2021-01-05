@@ -9,13 +9,13 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>User Groups Management</h1>
+            <h1>{{__('group_manage_module.module_title')}}</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.roles.list')}}">Groups</a></li>
-              <li class="breadcrumb-item active">Create</li>
+              <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.roles.list')}}">{{__('general_sentence.breadcrumbs.user_groups')}}</a></li>
+              <li class="breadcrumb-item active">{{__('general_sentence.breadcrumbs.create')}}</li>
             </ol>
           </div>
         </div>
@@ -28,7 +28,7 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Create Group</h3>
+                <h3 class="card-title">{{__('group_manage_module.create_group')}}</h3>
               </div>
               <div class="card-body">
                   @if(Session::has('success'))
@@ -50,24 +50,24 @@
                         @csrf
                         <div>
                           <div class="form-group required">
-                            <label for="role_name">Group Name <span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('role_name')?old('role_name'):''}}" name="role_name" id="role_name"  placeholder="Group Name">
+                            <label for="role_name">{{__('group_manage_module.labels.group_name')}} <span class="error">*</span></label>
+                            <input type="text" class="form-control" value="{{old('role_name')?old('role_name'):''}}" name="role_name" id="role_name"  placeholder="{{__('group_manage_module.placeholders.group_name')}}">
                             @if($errors->has('role_name'))
                             <span class="text-danger">{{$errors->first('role_name')}}</span>
                             @endif
                           </div>
                           <div class="form-group required">
-                             <label for="role_description">Group Description <span class="error">*</span></label>
-                             <textarea rows="5" class="form-control"  name="role_description" id="role_description"  placeholder="Group Description">{{old('role_description')?old('role_description'):''}}</textarea>
+                             <label for="role_description">{{__('group_manage_module.labels.description')}} <span class="error">*</span></label>
+                             <textarea rows="5" class="form-control"  name="role_description" id="role_description"  placeholder="{{__('group_manage_module.placeholders.description')}}">{{old('role_description')?old('role_description'):''}}</textarea>
                              @if($errors->has('role_description'))
                               <span class="text-danger">{{$errors->first('role_description')}}</span>
                              @endif
                           </div>
                           @if(auth()->guard('admin')->user()->can_select_user_type_during_group_creation())
                           <div class="form-group required">
-                             <label for="user_type_id">Please select user type you creating the group for<span class="error">*</span></label>
+                             <label for="user_type_id">{{__('group_manage_module.labels.user_type')}}<span class="error">*</span></label>
                               <select class="form-control user_type_select2" name="user_type_id" id="user_type_id" style="width: 100%;">
-                                <option value="">Select user type</option>
+                                <option value="">{{__('group_manage_module.placeholders.user_type')}}</option>
                                 @forelse($user_types as $user_type)
                                    <option data-slug="{{$user_type->slug}}" value="{{$user_type->id}}" >{{$user_type->name}}</option>
                                 @empty
@@ -110,8 +110,8 @@
                         <!--  this the url for remote validattion rule for role name -->
                         <input type="hidden" id="ajax_check_role_name_unique_url" value="{{route('admin.roles.ajax_check_role_name_unique')}}">
                         <div>
-                           <a href="{{route('admin.roles.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
-                           <button type="submit" class="btn btn-success">Submit</button> 
+                           <a href="{{route('admin.roles.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;{{__('general_sentence.button_and_links.back')}}</a>
+                           <button type="submit" class="btn btn-success">{{__('general_sentence.button_and_links.submit')}}</button> 
                         </div>
                       </form>
                     </div>

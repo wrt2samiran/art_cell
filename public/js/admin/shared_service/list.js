@@ -20,22 +20,25 @@
             { data: 'created_at', name: 'created_at' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
-         order: [ [0, 'desc'] ],
+        order: [ [0, 'desc'] ],
         columnDefs: [
         {   "targets": [0],
             "visible": false,
             "searchable": false
-        }]
+        }],
+        "language": {
+            "url": (current_locale=="ar")?"//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Arabic.json":"//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/English.json"
+        }
 
     });
 
  //function to delete country
  function delete_shared_service(url){
   swal({
-  title: "Are you sure?",
-  text: "Once deleted, you will not be able to recover this Shared Service!",
+  title: translations.shared_service_manage_module.warning_title,
+  text: translations.shared_service_manage_module.delete_warning,
   icon: "warning",
-  buttons: true,
+buttons: [translations.general_sentence.button_and_links.ok,translations.general_sentence.button_and_links.cancel],
   dangerMode: true,
   })
   .then((willDelete) => {
@@ -50,7 +53,7 @@
         success: function (data) {
           shared_service_table.ajax.reload(null, false);
           $.LoadingOverlay("hide");
-          toastr.success('Shared Service successfully deleted.', 'Success', {timeOut: 5000});
+          toastr.success(translations.shared_service_manage_module.delete_success_message, 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");
@@ -75,10 +78,10 @@
 //function to change status of gallery
  function change_status(url,activate_or_deactivate){
   swal({
-  title: "Are you sure?",
-  text: "You want to "+activate_or_deactivate+" the shared service.",
+  title: translations.shared_service_manage_module.warning_title,
+  text: translations.shared_service_manage_module.change_status_warning,
   icon: "warning",
-  buttons: true,
+buttons: [translations.general_sentence.button_and_links.ok,translations.general_sentence.button_and_links.cancel],
   dangerMode: true,
   })
   .then((confirm) => {
@@ -91,7 +94,7 @@
         success: function (data) {
           $.LoadingOverlay("hide");
           shared_service_table.ajax.reload(null, false);
-          toastr.success('Status successfully updated.', 'Success', {timeOut: 5000});
+          toastr.success(translations.shared_service_manage_module.change_status_success_message, 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");

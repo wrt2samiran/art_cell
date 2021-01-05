@@ -43,6 +43,7 @@ class ComplaintController extends Controller
 
         if($request->ajax()){
             $complaints=Complaint::with(['contract','work_order','complaint_status'])
+            ->whereHas('complaint_status')
             ->whereHas('contract',function($query)use($current_user,$user_type,$labours_contract_id_array){
 
                 if($user_type=='property-owner'){
@@ -78,7 +79,9 @@ class ComplaintController extends Controller
             ->editColumn('details', function ($complaint) {
                 return Str::limit($complaint->details,100);
             })
-            
+            ->editColumn('complaint_status.status_name', function ($complaint) {
+                return '<span style="color:'.$complaint->complaint_status->color_code.'">'.$complaint->complaint_status->status_name.'<span>';
+            })
             ->addColumn('work_order_title',function($complaint){
                 return $complaint->work_order? Str::limit($complaint->work_order->task_title,100):'';
             })
@@ -108,7 +111,7 @@ class ComplaintController extends Controller
                 } 
                 return $action_buttons;
             })
-            ->rawColumns(['action','is_active'])
+            ->rawColumns(['action','is_active','complaint_status.status_name'])
             ->make(true);
         }
 

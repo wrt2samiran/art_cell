@@ -42,35 +42,16 @@ $("#admin_user_create_form").validate({
         }
     },
     messages: {
-        first_name: {
-            required:  "First name is required",
-            minlength: "First name should have 2 characters",
-            maxlength: "First name should not be more then 100 characters",
-        },
-        last_name: {
-            required:  "Last name is required",
-            minlength: "Last name should have 2 characters",
-            maxlength: "Last name should not be more then 100 characters",
-        },
         email: {
-            required:  "Email is required",
-            email: "Please enter valid email address",
-            maxlength: "Email not be more then 100 characters",
-            remote:"Email alredy exist. Try with different email",
+            remote:function(){
+                return current_locale=='ar'?'البريد الالكتروني موجود بالفعل. حاول باستخدام بريد إلكتروني مختلف':'Email already exists. Try with a different email';
+            },
         },
-        password: {
-            required:  "Password is required",
-            minlength: "Password should have 6 characters",
-            maxlength: "Password should not be more then 100 characters",
-        },
-        phone: {
-            required:  "Phone/Contact number is required",
-            minlength: "Phone/Contact number should have minimum 8 characters",
-            maxlength: "Phone/Contact number should not be more then 20 characters",
-            number:"Only number allowed"
-        },
+ 
         role_id:{
-            required:'Select a group'
+            required:function(){
+                return current_locale=='ar'?'حدد مجموعة':'Select a group';
+            },
         }
     },
     errorPlacement: function (error, element) {
@@ -89,9 +70,8 @@ $("#admin_user_create_form").validate({
     }
 });
 
-
-
 $('#role_id').select2({
   theme: 'bootstrap4',
-  placeholder:'Select a group'
+  placeholder:translations.user_manage_module.placeholders.group,
+  language: current_locale,
 });
