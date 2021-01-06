@@ -40,9 +40,73 @@
                   @endif
                   <div class="row justify-content-center">
                     <div class="col-md-10 col-sm-12">
-                      <form >
+                      <form method="post" id="report_form" >
                         @csrf
+                          <div>
+                          <div class="form-group required">
+                             <label for="report_on">Report On <span class="error">*</span></label>
+                              <select class="form-control " id="report_on" name="report_on" style="width: 100%;" onchange="getWorkOderList(this.value);">
+                                <option value=""> Select Type </option>
+                                <option value="work_order">Work Orders</option>
+                                <option value="maintenance_schedule">Maintenance Schedule</option>
+                              </select>
+                          </div>
 
+                          <div class="form-group required">
+                             <label for="contract_id">Work Orders <span class="error">*</span></label>
+                              <select class="form-control contract" multiple="multiple" size="1" searchable="Search for..." id="work_order_id" name="work_order_id[]" style="width: 100%;" onchange="getTaskList()">
+                              </select>
+                          </div>
+
+                        
+
+                          <div class="form-group required">
+                             <label for="service_status">Task List <span class="error">*</span></label>
+                              <select class="form-control" multiple="multiple" size="1" searchable="Search for..." name="task_id[]" id="task_id" style="width: 100%;" onchange="getServices();">
+                               
+                              </select>
+                          </div>
+                          
+                          <div class="form-group required">
+                             <label for="service_status">Services <span class="error">*</span></label>
+                              <select class="form-control" multiple="multiple" size="1" searchable="Search for..." name="service_id[]" id="service_id" style="width: 100%;">
+                               
+                              </select>
+                          </div>
+
+                          <div class="form-group required">
+                             <label for="service_status">Task Type <span class="error">*</span></label>
+                              <select class="form-control" Placeholder="Select Task Type" name="task_type" id="task_type" style="width: 100%;">
+                                <option value="">Select Task Type</option>
+                                <option value="labour_task">Labour Task</option>
+                                <option value="main_task">Main Task</option>
+                              </select>
+                          </div>
+
+                          <div class="form-group required">
+                             <label for="service_status">Task Status <span class="error">*</span></label>
+                              <select class="form-control" Placeholder="Select Task Status" multiple="multiple" size="1" searchable="Search for..."  name="task_status[]" id="task_status" style="width: 100%;">
+                                <option value="0">Pending</option>
+                                <option value="1">Over Due</option>
+                                <option value="2">Completed</option>
+                              </select>
+                          </div>
+                            
+                          <div class=" form-group required">
+                           <label for="from_date">Date (From) <span class="error">*</span></label>
+                           <input type="text" readonly="readonly" autocomplete="off" id="from_date" class="form-control" name="from_date">
+                          </div>
+              
+                          <div class="form-group required">
+                             <label for="to_date">Date (To) <span class="error">*</span></label>
+                             <input type="text"  readonly="readonly" autocomplete="off" class="form-control" id="to_date" name="to_date">
+                          </div>
+
+                        </div>
+                        <div>
+                           
+                          <button type="submit" class="btn btn-success">Generate Report</button> 
+                        </div>
                       </form>
                     </div>
                   </div>
@@ -55,5 +119,305 @@
 </div>
 @endsection 
 @push('custom-scripts')
+<script type="text/javascript">
+$('#task_status').multiselect({
+    columns: 1,
+    placeholder: 'Select Work Order',
+    search: true,
+    selectAll: true
+    });
 
+
+// $('#task_id').multiselect({
+//     columns: 1,
+//     placeholder: 'Select Task',
+//     search: true,
+//     selectAll: true
+//     });
+
+
+// $('#service_id').multiselect({
+//     columns: 1,
+//     placeholder: 'Select Service',
+//     search: true,
+//     selectAll: true
+//     });
+
+function getWorkOderList(report_on){
+    
+    $.ajax({
+   
+    url: "{{route('admin.reports.getWorkOderList')}}",
+    type:'get',
+    dataType: "json",
+    data:{report_on:report_on,_token:"{{ csrf_token() }}"}
+    }).done(function(response) {
+       
+       console.log(response.status);
+        if(response.status==true){
+         
+        var stringified = JSON.stringify(response.allWorkOrders);
+        var workOrderData = JSON.parse(stringified);
+        console.log(workOrderData);
+         var workorder_list = '';
+         $.each(workOrderData,function(index, workorder){
+                workorder_list += '<option value="'+workorder.id+'">'+ workorder.task_title +'</option>';
+         });
+            
+            $('#work_order_id').multiselect({
+            columns: 1,
+            placeholder: 'Select Work Order',
+            search: true,
+            selectAll: true,
+            
+            });
+            $("#work_order_id").html(workorder_list).multiselect("reload");
+        }
+
+      else
+        {
+            var workorder_list = '';
+            $("#work_order_id").html(workorder_list).multiselect("refresh");
+        }
+    });
+}
+
+function getTaskList()
+{
+  var work_order_id =  $('#work_order_id').val();
+  $.ajax({
+   
+    url: "{{route('admin.reports.getTaskList')}}",
+    type:'get',
+    dataType: "json",
+    data:{work_order_id:work_order_id,_token:"{{ csrf_token() }}"}
+    }).done(function(response) {
+       
+       console.log(response.status);
+        if(response.status==true){
+         
+        var stringified = JSON.stringify(response.allTasks);
+        var taskData = JSON.parse(stringified);
+        console.log(taskData);
+         var task_list = '';
+         $.each(taskData,function(index, task){
+                task_list += '<option value="'+task.id+'">'+ task.task_title +'</option>';
+         });
+            $('#task_id').multiselect({
+            columns: 1,
+            placeholder: 'Select Work Order',
+            search: true,
+            selectAll: true,
+            });
+            $("#task_id").html(task_list).multiselect("reload");
+        }
+
+      else
+        {
+            var task_list = '';
+            $("#task_id").html(task_list).multiselect("refresh");
+        }
+    });
+
+}
+    
+
+function getServices()
+{
+  var task_id =  $('#task_id').val();
+  $.ajax({
+   
+    url: "{{route('admin.reports.getServices')}}",
+    type:'get',
+    dataType: "json",
+    data:{task_id:task_id,_token:"{{ csrf_token() }}"}
+    }).done(function(response) {
+       
+       console.log(response.status);
+        if(response.status==true){
+         
+        var stringified = JSON.stringify(response.allServices);
+        var serviceData = JSON.parse(stringified);
+        console.log(serviceData);
+         var service_list = '';
+         $.each(serviceData,function(index, serviceValue){
+                service_list += '<option value="'+serviceValue.service.id+'">'+ serviceValue.service.service_name +'</option>';
+         });
+            $('#service_id').multiselect({
+            columns: 1,
+            placeholder: 'Select Work Order',
+            search: true,
+            selectAll: true,
+            });
+            $("#service_id").html(service_list).multiselect("reload");
+        }
+
+      else
+        {
+            var workorder_list = '';
+            $("#service_id").html(service_list).multiselect("refresh");
+        }
+    });
+
+}   
+ 
+
+
+$('#from_date').datepicker({
+    dateFormat:'dd/mm/yy'
+});
+$('#to_date').datepicker({
+    dateFormat:'dd/mm/yy'
+});
+
+
+
+
+$('#property_id').on('change',function(){
+    if(this.value){
+        $('#contract_id').val('').trigger('change');;
+    }
+});
+$('#contract_id').on('change',function(){
+    
+    if(this.value){
+        $('#property_id').val('').trigger('change');;
+    }
+});
+
+$("#report_form").validate({
+    rules: {
+        
+        report_on:{
+            required: true, 
+        },
+
+        'work_order_id[]': {
+          required: true
+        },
+
+        'task_id[]':{
+            required: true, 
+        },
+        'service_id[]':{
+            required: true, 
+        },
+        'service_id[]':{
+            required: true, 
+        },
+        task_type:{
+            required: true, 
+        },
+        'task_status[]':{
+            required: true,
+        },
+        from_date:{
+            required: true, 
+            maxlength: 10,
+        },
+        to_date:{
+            required: true,
+            maxlength: 10, 
+            toDateShouldBeGreatherThanFromDate:function(){
+                return $('#to_date').val();
+            }
+        },
+    },
+    messages: {
+        report_on:{
+            required: "Select Report On", 
+        },
+
+        'work_order_id[]': {
+          required: "Select Work Order",
+        },
+
+        'task_id[]':{
+            required: "Select Tasks List", 
+        },
+        'service_id[]':{
+            required: "Select Services", 
+        },
+       
+        task_type:{
+            required: "Select Task Type", 
+        },
+        'task_status[]':{
+            required: "Select Task Status",
+        },
+        from_date:{
+            required:  "Enter from date in dd/mm/yyy format",
+        },
+        to_date:{
+            required:  "Enter to date in dd/mm/yyy format",
+            toDateShouldBeGreatherThanFromDate : "TO date should be greater than from date"
+        },
+
+    },
+    errorPlacement: function (error, element) {
+        error.addClass('invalid-feedback');
+        error.insertAfter(element);
+    },
+    highlight: function (element, errorClass, validClass) {
+        $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+        $(element).removeClass('is-invalid');    
+    },
+    submitHandler: function(form) {
+
+        $.LoadingOverlay("show");
+
+        var formData = new FormData(form);
+        $.ajax({
+            type: "POST",
+            data: formData,
+            url: form.action,
+            cache: false,
+            contentType: false,
+            processData: false,
+            responseType: 'blob',
+            success: function(response)
+            {
+                const url = window.URL.createObjectURL(new Blob([response]));
+                const link = document.createElement('a');
+                link.href = url;
+
+                var from_date=form.from_date.value;
+                var to_date=form.to_date.value;
+
+                if(form.report_on.value=='work_order'){
+                   var file_name='work-order-report-from-'+from_date+'-to-'+to_date+'.csv';
+                }else{
+                  var file_name='schedule_maintenance-report-from-'+from_date+'-to-'+to_date+'.csv';
+                }
+               
+
+                link.setAttribute('download',file_name);
+                document.body.appendChild(link);
+                link.click();
+                $.LoadingOverlay("hide");
+                form.reset(); 
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+               $.LoadingOverlay("hide");
+               var response=jqXHR.responseJSON;
+               var status=jqXHR.status;
+               if(status=='404'){
+                toastr.error('Invalid URL', 'Error', {timeOut: 5000});
+               }else{
+                 toastr.error('Internal server error.', 'Error', {timeOut: 5000});
+               }
+           }
+        });
+
+
+
+
+
+    }
+});
+
+
+</script>
 @endpush

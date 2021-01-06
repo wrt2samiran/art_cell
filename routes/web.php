@@ -591,6 +591,14 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
 
                 Route::post('/contract-status','ReportController@contract_status_report')->name('contract_status_report');
 
+                Route::get('/get-work-order-list', 'ReportController@getWorkOderList')->name('getWorkOderList');
+
+                Route::get('/get-task-list', 'ReportController@getTaskList')->name('getTaskList');
+
+                Route::get('/get-service-list', 'ReportController@getServices')->name('getServices');
+                
+                
+
             });
             /************************************/
 

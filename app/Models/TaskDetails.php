@@ -18,6 +18,8 @@ class TaskDetails extends Model
             return 'Completed';
         }elseif ($this->status=='3') {
             return 'Reschedule';
+        }elseif ($this->status=='5') {
+            return 'Completed with Warning';
         }else{
             return '';
         }
