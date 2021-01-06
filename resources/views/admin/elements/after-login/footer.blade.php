@@ -13,11 +13,22 @@
   <!-- /.control-sidebar -->
     </div>
 <!-- ./wrapper -->
-
+@php
+$lang_path=resource_path('lang/'.App::getLocale());
+$translations=collect(File::allFiles($lang_path))->flatMap(function ($file)use($lang_path) {
+    return [
+        ($translation = $file->getBasename('.php')) => trans($translation),
+    ];
+})->toJson();
+@endphp
 <script type="text/javascript">
-  window.baseUrl="{{URL::to('/')}}";
-  window.current_locale="{{App::getLocale()}}";
+window.baseUrl="{{URL::to('/')}}";
+window.current_locale="{{App::getLocale()}}";
+window.translations = {!! $translations !!};
+  
 </script>
+
+
 <!-- jQuery -->
 <script src="{{asset('assets/plugins/jquery/jquery.min.js')}}"></script>
 <!-- jQuery UI 1.11.4 -->

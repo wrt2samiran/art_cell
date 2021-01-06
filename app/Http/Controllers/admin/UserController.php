@@ -175,7 +175,7 @@ class UserController extends Controller
         ]);
         $user->load('role');
         event(new UserCreated($user,$request->password));
-        return redirect()->route('admin.users.list')->with('success','User successfully created.');
+        return redirect()->route('admin.users.list')->with('success',__('user_manage_module.create_success_message'));
     }
 
     /************************************************************************/
@@ -252,7 +252,7 @@ class UserController extends Controller
 
         //event(new ServiceProviderCreated($user,$request->password));
 
-        return redirect()->route('admin.users.list')->with('success','User successfully updated.');
+        return redirect()->route('admin.users.list')->with('success',__('user_manage_module.edit_success_message'));
 
     }
 

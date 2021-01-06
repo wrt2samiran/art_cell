@@ -9,12 +9,12 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>User Groups Management</h1>
+                <h1>{{__('group_manage_module.module_title')}}</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item active">User Groups</li>
+                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
+                  <li class="breadcrumb-item active">{{__('general_sentence.breadcrumbs.user_groups')}}</li>
                 </ol>
               </div>
             </div>
@@ -28,11 +28,11 @@
                         <div class="card">
 				            <div class="card-header">
 				                <div class="d-flex justify-content-between" >
-				                    <div><span>Group List</span></div>
+				                    <div><span>{{__('group_manage_module.group_list')}}</span></div>
 					                <div>
                                         @if(auth()->guard('admin')->user()->hasAllPermission(['group-create']))
 						                <a class="btn btn-success" href="{{route('admin.roles.create')}}">
-						                 Create Group
+						                 {{__('general_sentence.button_and_links.create_group')}}
 						                </a>
                                         @endif
 					                </div>
@@ -57,14 +57,14 @@
                                     <div class="row">
                                         <div class="col-sm-4" id="user_type-filter-container">
                                             <select class="form-control user_type-filter"  name="user_type_id" id="user_type_id">
-                                                <option value="">Filter By User type</option>
+                                                <option value="">{{__('group_manage_module.placeholders.filter_by_user_type')}}</option>
                                                 @forelse($user_types as $user_type)
                                                    <option value="{{$user_type->id}}">{{$user_type->name}}</option>
                                                 @empty
                                                 <option value="">No User Type Found</option>
                                                 @endforelse
                                            </select>
-                                           <a href="javascript::void(0)" title="Click to clear filter" style="display: none;" id="user_type-filter-clear"><span class="badge badge-danger">Clear Filter <i class="fas fa-times"></i></span></a>
+                                           <a href="javascript::void(0)" title="Click to clear filter" style="display: none;" id="user_type-filter-clear"><span class="badge badge-danger">{{__('group_manage_module.clear_filter')}} <i class="fas fa-times"></i></span></a>
                                         </div>
                                     </div>
                                 </div>
@@ -73,12 +73,12 @@
                                     <thead>
                                         <tr>
                                             <th>Id</th>
-                                            <th>Group Name</th>
-                                            <th>Group User Type</th>
-                                            <th>Created By</th>
-                                            <th>Status</th>
-                                            <th>Created At</th>
-                                            <th>Action</th>
+                                            <th>{{__('group_manage_module.labels.group_name')}}</th>
+                                            <th>{{__('group_manage_module.labels.user_type')}}</th>
+                                            <th>{{__('group_manage_module.labels.created_by')}}</th>
+                                            <th>{{__('group_manage_module.labels.status')}}</th>
+                                            <th>{{__('group_manage_module.labels.created_at')}}</th>
+                                            <th>{{__('group_manage_module.labels.action')}}</th>
                                         </tr>
                                     </thead>
                                 </table>
@@ -96,6 +96,7 @@
 @endsection
 
 @push('custom-scripts')
+
 <script type="text/javascript" src="{{asset('js/admin/roles/list.js')}}"></script>
 @endpush
 

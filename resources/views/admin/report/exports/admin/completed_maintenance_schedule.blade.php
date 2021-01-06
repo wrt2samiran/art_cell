@@ -1,7 +1,7 @@
 <table>
     <thead>
     <tr>
-        <th></th>
+
         <th>Service Date</th>
         <th>Contract Code</th>
         <th>Contract Name</th>

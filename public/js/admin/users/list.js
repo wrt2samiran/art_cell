@@ -27,16 +27,19 @@
         }],
         "drawCallback": function( settings ) {
             $.LoadingOverlay("hide");
+        },
+        "language": {
+            "url": (current_locale=="ar")?"//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Arabic.json":"//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/English.json"
         }
     });
 
  //function to delete user
  function delete_user(url){
   swal({
-  title: "Are you sure?",
-  text: "Once deleted, you will not be able to recover this user!",
+  title: translations.user_manage_module.warning_title,
+  text: translations.user_manage_module.delete_warning,
   icon: "warning",
-  buttons: true,
+buttons: [translations.general_sentence.button_and_links.ok,translations.general_sentence.button_and_links.cancel],
   dangerMode: true,
   })
   .then((willDelete) => {
@@ -48,10 +51,9 @@
         type: "DELETE",
         data:{ "_token": $('meta[name="csrf-token"]').attr('content')},
         success: function (data) {
-
           users_table.ajax.reload(null, false);
           $.LoadingOverlay("hide");
-          toastr.success('User successfully deleted.', 'Success', {timeOut: 5000});
+          toastr.success(translations.user_manage_module.delete_success_message, 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");
@@ -73,10 +75,10 @@
 //function to change status of gallery
  function change_status(url,activate_or_deactivate){
   swal({
-  title: "Are you sure?",
-  text: "You want to "+activate_or_deactivate+" the user.",
+  title: translations.user_manage_module.warning_title,
+  text: translations.user_manage_module.change_status_warning,
   icon: "warning",
-  buttons: true,
+buttons: [translations.general_sentence.button_and_links.ok,translations.general_sentence.button_and_links.cancel],
   dangerMode: true,
   })
   .then((confirm) => {
@@ -89,7 +91,7 @@
         success: function (data) {
           users_table.ajax.reload(null, false);
           $.LoadingOverlay("hide");
-          toastr.success('Status successfully updated.', 'Success', {timeOut: 5000});
+          toastr.success(translations.user_manage_module.change_status_success_message, 'Success', {timeOut: 5000});
 
         },
         error: function(jqXHR, textStatus, errorThrown) {
@@ -114,7 +116,8 @@
 
  $('.role-filter').select2({
   theme: 'bootstrap4',
-  placeholder:'Filter By Group'
+  placeholder:translations.user_manage_module.placeholders.filter_by_group,
+  language: current_locale,
 });
 
 

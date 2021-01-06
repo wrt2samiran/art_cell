@@ -96,6 +96,9 @@ class ContractController extends Controller
             ->editColumn('end_date', function ($contract) {
                 return $contract->end_date ? with(new Carbon($contract->end_date))->format('d/m/Y') : '';
             })
+            ->editColumn('contract_status.status_name', function ($contract) {
+                return '<span style="color:'.$contract->contract_status->color_code.'">'.$contract->contract_status->status_name.'<span>';
+            })
             ->filterColumn('start_date', function ($query, $keyword) {
                 $query->whereRaw("DATE_FORMAT(start_date,'%d/%m/%Y') like ?", ["%$keyword%"]);
             })
@@ -123,7 +126,7 @@ class ContractController extends Controller
                 } 
                 return $action_buttons;
             })
-            ->rawColumns(['action','is_active','creation_complete'])
+            ->rawColumns(['action','is_active','creation_complete','contract_status.status_name'])
             ->make(true);
         }
         $this->data['ContractStatus']=Status::where('status_for','contract')->whereIsActive(true)->get();

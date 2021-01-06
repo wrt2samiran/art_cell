@@ -20,6 +20,7 @@ class QuotationController extends Controller
         if($request->ajax()){
 
             $quotations=Quotation::with(['services','property_types','city','state','status'])
+            ->whereHas('status')
             ->when($request->service,function($query) use($request){
             	$query->whereHas('services',function($sub_query)use ($request){
             		$sub_query->where('service_id',$request->service);
@@ -58,6 +59,9 @@ class QuotationController extends Controller
                     return $property_type->type_name;
                 })->implode(',<br>');
             })
+            ->editColumn('status.status_name', function ($quotation) {
+                return '<span style="color:'.$quotation->status->color_code.'">'.$quotation->status->status_name.'<span>';
+            })
             ->addColumn('action',function($quotation){
                 $delete_url=route('admin.quotations.delete',$quotation->id);
                 $details_url=route('admin.quotations.show',$quotation->id);
@@ -75,7 +79,7 @@ class QuotationController extends Controller
                 } 
                 return $action_buttons;
             })
-            ->rawColumns(['action','services','property_types'])
+            ->rawColumns(['action','services','property_types','status.status_name'])
             ->make(true);
         }
 

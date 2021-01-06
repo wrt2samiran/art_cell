@@ -1,7 +1,6 @@
 <table>
     <thead>
     <tr>
-        <th></th>
         <th>Work Order Id</th>
         <th>Contract Code</th>
         <th>Contract Name</th>
@@ -24,7 +23,7 @@
     <tbody>
     	@forelse($work_orders as $work_order)
 	    <tr>
-            <td></td>
+ 
 	        <td>{{$work_order->id}}</td>
 	        <td>{{$work_order->contract->code}}</td>
 	        <td>{{$work_order->contract->title}}</td>

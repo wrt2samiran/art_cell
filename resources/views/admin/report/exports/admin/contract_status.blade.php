@@ -1,7 +1,7 @@
 <table>
     <thead>
     <tr>
-        <th></th>
+
         <th>Contract ID</th>
         <th>Contract Start Date</th>
         <th>Contract End Date</th>
@@ -15,7 +15,7 @@
     <tbody>
     	@forelse($contracts as $contract)
     	<tr>
-            <td></td>
+
     		<td>{{$contract->id}}</td>
     		<td>{{$contract->start_date}}</td>
     		<td>{{$contract->end_date}}</td>

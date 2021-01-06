@@ -9,12 +9,12 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>User Manageent</h1>
+                <h1>{{__('user_manage_module.module_title')}}</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item active">Users</li>
+                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
+                  <li class="breadcrumb-item active">{{__('general_sentence.breadcrumbs.users')}}</li>
                 </ol>
               </div>
             </div>
@@ -28,11 +28,11 @@
                         <div class="card">
 				            <div class="card-header">
 				                <div class="d-flex justify-content-between" >
-				                    <div><span>User List</span></div>
+				                    <div><span>{{__('user_manage_module.user_list')}}</span></div>
 					                <div>
                                         @if(auth()->guard('admin')->user()->hasAllPermission(['user-create']))
 						                <a class="btn btn-success" href="{{route('admin.users.create')}}">
-						                 Create User
+						                 {{__('general_sentence.button_and_links.create_user')}}
 						                </a>
                                         @endif
 					                </div>
@@ -57,14 +57,14 @@
                                     <div class="row">
                                         <div class="col-sm-4" id="role-filter-container">
                                             <select class="form-control role-filter"  name="role_id" id="role_id">
-                                                <option value="">Filter By Group</option>
+                                                <option value="">{{__('user_manage_module.placeholders.filter_by_group')}}</option>
                                                 @forelse($roles as $role)
                                                    <option value="{{$role->id}}">{{$role->role_name}}</option>
                                                 @empty
                                                 <option value="">No Group Found</option>
                                                 @endforelse
                                            </select>
-                                           <div class="cursor-poiner" title="Click to clear filter" style="display: none;" id="role-filter-clear"><span class="badge badge-danger">Clear Filter <i class="fas fa-times"></i></span></div>
+                                           <div class="cursor-poiner" title="Click to clear filter" style="display: none;" id="role-filter-clear"><span class="badge badge-danger">{{__('user_manage_module.clear_filter')}} <i class="fas fa-times"></i></span></div>
                                         </div>
                                     </div>
                                 </div>
@@ -73,12 +73,12 @@
                                     <thead>
                                         <tr>
                                             <th>Id</th>
-                                            <th>Name</th>
-                                            <th>Email</th>
-                                            <th>Group</th>
-                                            <th>Status</th>
-                                            <th>Created At</th>
-                                            <th>Action</th>
+                                            <th>{{__('user_manage_module.labels.name')}}</th>
+                                            <th>{{__('user_manage_module.labels.email')}}</th>
+                                            <th>{{__('user_manage_module.labels.group')}}</th>
+                                            <th>{{__('user_manage_module.labels.status')}}</th>
+                                            <th>{{__('user_manage_module.labels.created_at')}}</th>
+                                            <th>{{__('user_manage_module.labels.action')}}</th>
                                         </tr>
                                     </thead>
                                 </table>
