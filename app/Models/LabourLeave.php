@@ -16,4 +16,8 @@ class LabourLeave extends Model
     public function leave_dates(){
         return $this->hasMany(LeaveDates::class, 'leave_id', 'id');
     }
+
+    public function users() {
+        return $this->belongsTo('\App\Models\User',  'labour_id','id');
+    }
 }

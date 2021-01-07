@@ -12,14 +12,14 @@ var labour_table=$('#labour_table').DataTable({
     },
     columns: [
         { data: 'id', name: 'id' },
-        { data: 'user_details.name', name: 'user_details.name'},
-        { data: 'user_details.email', name: 'user_details.email' },
+        { data: 'users.name', name: 'users.name'},
+        { data: 'users.email', name: 'users.email' },
         { data: 'leave_start', name: 'leave_start'},
         { data: 'leave_end',  name: 'leave_end'},
         { data: 'status', name: 'status',orderable: false },
         {data: 'action', name: 'action', orderable: false, searchable: false}
     ],
-    order: [ [0, 'asc'] ],
+    order: [ [0, 'desc'] ],
     columnDefs: [
     {   "targets": [0],
         "visible": false,
@@ -68,6 +68,19 @@ if (willDelete) {
 } 
 });
 
+}
+
+function not_acceable()
+{
+  swal({
+  title: "Date Over!!",
+  text: "You can not modify now!!",
+  icon: "warning",
+  buttons: ["Cancel", true],
+  showConfirmButton: false,
+  dangerMode: true,
+  type: 'error',
+  })
 }
 
 //function to change status of gallery

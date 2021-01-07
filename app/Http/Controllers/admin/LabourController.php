@@ -413,7 +413,7 @@ class LabourController extends Controller
 
         if($request->ajax()){
 
-            $leaveData=LabourLeave::with(['userDetails'])
+            $leaveData=LabourLeave::with(['users'])
             ->whereNull('deleted_at')
             ->whereCreatedBy($current_user->id)
             ->where(function($q)use ($current_user){
@@ -422,6 +422,7 @@ class LabourController extends Controller
                     $q->whereCreatedBy($current_user->id);
                 }
             })
+            ->whereHas('users')
             ->when($request->role_id,function($query) use($request){
                 $query->where('role_id',$request->role_id);
             })
@@ -448,21 +449,35 @@ class LabourController extends Controller
             ->addColumn('status',function($leaveData)use ($current_user){
 
                 //$disabled=(!$current_user->hasAllPermission(['user-status-change']))?'disabled':'';
-
-                if($leaveData->status=='Approved'){
-                   $message='deactivate';
-                   return '<a title="Click to deactivate the user" href="javascript:change_leave_status('."'".route('admin.labour.change_leave_status',$leaveData->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm" >Approved</a>';
-                    
-                }else{
-                   $message='activate';
-                   return '<a title="Click to activate the user" href="javascript:change_leave_status('."'".route('admin.labour.change_leave_status',$leaveData->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm">Waiting for Approval</a>';
+                $date_now = date("Y-m-d");
+               
+                if ($date_now < $leaveData->leave_start) {
+                    if($leaveData->status=='Approved'){
+                       $message='deactivate';
+                       return '<a title="Click to deactivate the user" href="javascript:change_leave_status('."'".route('admin.leave_management.change_leave_status',$leaveData->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm" >Approved</a>';
+                        
+                    }else{
+                       $message='activate';
+                       return '<a title="Click to activate the user" href="javascript:change_leave_status('."'".route('admin.leave_management.change_leave_status',$leaveData->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm">Waiting for Approval</a>';
+                    }
+                }
+                else
+                {
+                    if($leaveData->status=='Approved'){
+                       $message='deactivate';
+                       return '<a title="Click to deactivate the user" href="javascript:not_acceable()" class="btn btn-block btn-outline-success btn-sm" >Approved</a>';
+                        
+                    }else{
+                       $message='activate';
+                       return '<a title="Click to activate the user" href="javascript:not_acceable()" class="btn btn-block btn-outline-danger btn-sm">Waiting for Approval</a>';
+                    }
                 }
             })
 
             ->addColumn('action',function($leaveData) use ($current_user){
-                $delete_url=route('admin.labour.deleteLeave',$leaveData->id);
-                $details_url=route('admin.labour.showLeave',$leaveData->id);
-                $edit_url=route('admin.labour.editLeave',$leaveData->id);
+                $delete_url=route('admin.leave_management.deleteLeave',$leaveData->id);
+                $details_url=route('admin.leave_management.showLeave',$leaveData->id);
+                $edit_url=route('admin.leave_management.editLeave',$leaveData->id);
                 $action_buttons='';
                 
                //need to check permissions later
