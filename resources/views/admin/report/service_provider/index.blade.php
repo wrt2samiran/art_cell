@@ -45,10 +45,16 @@
                           <div>
                           <div class="form-group required">
                              <label for="report_on">Report On <span class="error">*</span></label>
-                              <select class="form-control " id="report_on" name="report_on" style="width: 100%;" onchange="getWorkOderList(this.value);">
+                              <select class="form-control " id="report_on" name="report_on" style="width: 100%;" onchange="getAssignedProperty(this.value);">
                                 <option value=""> Select Type </option>
                                 <option value="work_order">Work Orders</option>
                                 <option value="maintenance_schedule">Maintenance Schedule</option>
+                              </select>
+                          </div>
+
+                          <div class="form-group required">
+                             <label for="contract_id">Propperty<span class="error">*</span></label>
+                              <select class="form-control contract" multiple="multiple" size="1" searchable="Search for..." id="property_id" name="property_id[]" style="width: 100%;" onchange="getWorkOderList()">
                               </select>
                           </div>
 
@@ -76,10 +82,17 @@
 
                           <div class="form-group required">
                              <label for="service_status">Task Type <span class="error">*</span></label>
-                              <select class="form-control" Placeholder="Select Task Type" name="task_type" id="task_type" style="width: 100%;">
+                              <select class="form-control" Placeholder="Select Task Type" name="task_type" id="task_type" style="width: 100%;" onchange="getLabour()">
                                 <option value="">Select Task Type</option>
                                 <option value="labour_task">Labour Task</option>
                                 <option value="main_task">Main Task</option>
+                              </select>
+                          </div>
+
+                          <div class="form-group required assigned_labour_id" style="display: none;">
+                             <label for="service_status">Assigned Labour List <span class="error">*</span></label>
+                              <select class="form-control" multiple="multiple" size="1" searchable="Search for..." name="labour_id[]" id="labour_id" style="width: 100%;">
+                               
                               </select>
                           </div>
 
@@ -143,14 +156,58 @@ $('#task_status').multiselect({
 //     selectAll: true
 //     });
 
-function getWorkOderList(report_on){
+
+
+function getAssignedProperty(report_on){
     
+    $.ajax({
+   
+    url: "{{route('admin.reports.getAssignedProperty')}}",
+    type:'get',
+    dataType: "json",
+    data:{report_on:report_on,_token:"{{ csrf_token() }}"}
+    }).done(function(response) {
+       
+       console.log(response.status);
+        if(response.status==true){
+         
+        var stringifiedProperty = JSON.stringify(response.property_list);
+        var propertyData = JSON.parse(stringifiedProperty);
+        console.log(propertyData);
+         var property_list = '';
+         $.each(propertyData,function(index, property){
+                property_list += '<option value="'+property.id+'">'+ property.property_name +'</option>';
+         });
+            
+            $('#property_id').multiselect({
+            columns: 1,
+            placeholder: 'Select Property',
+            search: true,
+            selectAll: true,
+            
+            });
+            $("#property_id").html(property_list).multiselect("reload");
+        }
+
+      else
+        {
+            var property_list = '';
+            $("#property_id").html(property_list).multiselect("refresh");
+        }
+    });
+}
+
+
+function getWorkOderList(){
+    
+    var property_id =  $('#property_id').val();
+
     $.ajax({
    
     url: "{{route('admin.reports.getWorkOderList')}}",
     type:'get',
     dataType: "json",
-    data:{report_on:report_on,_token:"{{ csrf_token() }}"}
+    data:{property_id:property_id,_token:"{{ csrf_token() }}"}
     }).done(function(response) {
        
        console.log(response.status);
@@ -257,10 +314,61 @@ function getServices()
             var workorder_list = '';
             $("#service_id").html(service_list).multiselect("refresh");
         }
+
+        getLabour();
     });
 
 }   
  
+
+function getLabour()
+{
+  var task_type = $('#task_type').val();
+  var task_id =  $('#task_id').val();
+  if(task_type=='labour_task' && task_id.length>0)
+  {
+    $('.assigned_labour_id').show();
+  }
+  else
+  {
+    $('.assigned_labour_id').hide();
+  }
+  
+  $.ajax({
+   
+    url: "{{route('admin.reports.getLabourList')}}",
+    type:'get',
+    dataType: "json",
+    data:{task_id:task_id,task_type:task_type,_token:"{{ csrf_token() }}"}
+    }).done(function(response) {
+       
+       console.log(response.status);
+        if(response.status==true){
+         
+        var stringified = JSON.stringify(response.allAssignedLabours);
+        var labourData = JSON.parse(stringified);
+        console.log(labourData);
+         var labour_list = '';
+         $.each(labourData,function(index, labourData){
+                labour_list += '<option value="'+labourData.id+'">'+ labourData.name +'</option>';
+         });
+            $('#labour_id').multiselect({
+            columns: 1,
+            placeholder: 'Select Labour',
+            search: true,
+            selectAll: true,
+            });
+            $("#labour_id").html(labour_list).multiselect("reload");
+        }
+
+      else
+        {
+            var labour_list = '';
+            $("#labour_id").html(labour_list).multiselect("reload");
+        }
+    });
+
+}   
 
 
 $('#from_date').datepicker({
@@ -273,17 +381,17 @@ $('#to_date').datepicker({
 
 
 
-$('#property_id').on('change',function(){
-    if(this.value){
-        $('#contract_id').val('').trigger('change');;
-    }
-});
-$('#contract_id').on('change',function(){
+// $('#property_id').on('change',function(){
+//     if(this.value){
+//         $('#contract_id').val('').trigger('change');;
+//     }
+// });
+// $('#contract_id').on('change',function(){
     
-    if(this.value){
-        $('#property_id').val('').trigger('change');;
-    }
-});
+//     if(this.value){
+//         $('#property_id').val('').trigger('change');;
+//     }
+// });
 
 $("#report_form").validate({
     rules: {
@@ -291,9 +399,11 @@ $("#report_form").validate({
         report_on:{
             required: true, 
         },
-
+        'property_id[]': {
+          required: true,
+        },
         'work_order_id[]': {
-          required: true
+          required: true,
         },
 
         'task_id[]':{
@@ -307,6 +417,9 @@ $("#report_form").validate({
         },
         task_type:{
             required: true, 
+        },
+        'labour_id[]':{
+            required : $("#task_type").val()=='labour_id', 
         },
         'task_status[]':{
             required: true,
@@ -327,7 +440,9 @@ $("#report_form").validate({
         report_on:{
             required: "Select Report On", 
         },
-
+        'property_id[]': {
+          required: "Select Property",
+        },
         'work_order_id[]': {
           required: "Select Work Order",
         },
@@ -342,6 +457,11 @@ $("#report_form").validate({
         task_type:{
             required: "Select Task Type", 
         },
+
+        'labour_id[]':{
+            required: "Select Services", 
+        },
+       
         'task_status[]':{
             required: "Select Task Status",
         },

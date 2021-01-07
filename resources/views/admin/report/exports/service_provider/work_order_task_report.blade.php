@@ -1,7 +1,6 @@
 <table>
     <thead>
     <tr>
-        <th></th>
         <th>Task Id</th>
         <th>Task Title</th>
         <th>Work Order Title</th>
@@ -22,23 +21,22 @@
     <tbody>
     	@forelse($task_lists as $task_list)
 	    <tr>
-            <td></td>
-	        <td>{{$task_list->id}}</td>
-            <td>{{$task_list->task_title}}</td>
-	        <td>{{$task_list->work_order->task_title}}</td>
-            <td>{{$task_list->contract->code}}</td>
-	        <td>{{$task_list->contract->title}}</td>
-	        <td>{{$task_list->contract_services->service_type}}</td>
-	        <td>{{$task_list->service->service_name}}</td>
-            <td>{{$task_list->property->property_name}}</td>
-	        <td>{{$task_list->property->address}}</td>
-	        <td>{{$task_list->property->owner_details->email}}</td>
-	        <td>{{$task_list->property->owner_details->name}}</td>
-	        <td>{{$task_list->task_complete_percent}}%</td>
+	        <td>{{@$task_list->id}}</td>
+            <td>{{@$task_list->task_title}}</td>
+	        <td>{{@$task_list->work_order->task_title}}</td>
+            <td>{{@$task_list->contract->code}}</td>
+	        <td>{{@$task_list->contract->title}}</td>
+	        <td>{{@$task_list->contract_services->service_type}}</td>
+	        <td>{{@$task_list->service->service_name}}</td>
+            <td>{{@$task_list->property->property_name}}</td>
+	        <td>{{@$task_list->property->address}}</td>
+	        <td>{{@$task_list->property->owner_details->email}}</td>
+	        <td>{{@$task_list->property->owner_details->name}}</td>
+	        <td>{{@$task_list->task_complete_percent}}%</td>
             <td>
-                {{$task_list->get_status_name()}}
+                {{@$task_list->get_status_name()}}
             </td>
-	        <td>{{Carbon::parse($task_list->created_at)->format('d/m/Y')}}</td>
+	        <td>{{Carbon::parse(@$task_list->created_at)->format('d/m/Y')}}</td>
 	    </tr>
     	@empty
     	<tr>

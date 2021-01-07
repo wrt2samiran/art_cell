@@ -753,6 +753,10 @@ class ReportController extends Controller
                         $q->whereIn('status',$request->task_status);
 
                     })
+                    ->when($request->labour_id,function($q)use($request){
+                        $q->whereIn('user_id',$request->labour_id);
+
+                    })
                     ->where(function($q)use($request,$from_date,$to_date){
                         $q->whereDate('task_date','>=',$from_date)->whereDate('task_date','<=',$to_date);
                     })
@@ -791,6 +795,50 @@ class ReportController extends Controller
        return view('admin.dashboard.default',$this->data); 
     }
 
+
+    
+    /*****************************************************/
+    # ReportController
+    # Function name : getAssignedProperty
+    # Author        :
+    # Created Date  : 06-01-2021
+    # Purpose       : Get Assigned Property List with Service Porvider
+    # Params        : Request $request
+    /*****************************************************/
+
+
+    public function getAssignedProperty(Request $request)
+    {
+        $current_user=auth()->guard('admin')->user();
+
+            if($request->report_on!='')
+            {
+               
+            $property_list = Property::with('work_order')->whereIsActive('1')
+                ->where(function($q) use($current_user){
+                       
+                        $q->whereHas('work_order',function($q1){
+                            $q1->where('is_deleted', 'N');
+                            
+                        });
+
+                        $q->whereHas('work_order',function($q1) use($current_user){
+                            $q1->where('user_id', $current_user->id);
+                            
+                        });
+                          
+                    })->orderBy('id', 'Desc')->get();
+
+                return response()->json(['status'=>true, 'property_list'=>$property_list,],200);
+            }
+       
+            else
+            {
+                return response()->json(['status'=>false],200);
+            }
+        
+    }
+
     
     /*****************************************************/
     # ReportController
@@ -806,36 +854,17 @@ class ReportController extends Controller
     {
         $current_user=auth()->guard('admin')->user();
 
-            if($request->report_on!='')
-            {
-                $allWorkOrders = WorkOrderLists::with('contract_services')->whereUserId($current_user->id)
-                    ->where(function($q) use($request){
-                        if($request->report_on =='work_order')
-                            {
-                                $q->whereHas('contract_services',function($q1){
-                                    $q1->where('service_type','<>', 'Maintenance');
-                                    
-                                });
-                            }
-                        else
-                            {
-                                $q->whereHas('contract_services',function($q1){
-                                    $q1->where('service_type', 'Maintenance');
-                                    
-                                });
-                            }        
-                            
-                    })
-                    ->orderBy('id','desc')->get();
+            
+        $allWorkOrders = WorkOrderLists::with('contract_services')->whereUserId($current_user->id)
+            ->where(function($q) use($request){
+                
+                $q->whereIn('property_id', $request->property_id);
+                                 
+            })
+            ->orderBy('id','desc')->get();
 
-                return response()->json(['status'=>true, 'allWorkOrders'=>$allWorkOrders,],200);
-            }
-       
-            else
-            {
-                return response()->json(['status'=>false],200);
-            }
-        
+        return response()->json(['status'=>true, 'allWorkOrders'=>$allWorkOrders,],200);
+            
     }
 
     /*****************************************************/
@@ -895,5 +924,52 @@ class ReportController extends Controller
             }
         
     }
+
+    
+    /*****************************************************/
+    # ReportController
+    # Function name : getLabourList
+    # Author        :
+    # Created Date  : 06-01-2021
+    # Purpose       : Get Task wise Labour List
+    # Params        : Request $request
+    /*****************************************************/
+
+
+    public function getLabourList(Request $request)
+    {
+        $current_user=auth()->guard('admin')->user();
+        if($request->task_type=='labour_task')
+        {
+            if($request->task_id!='')
+            {
+
+                $allAssignedLabours = User::with('task_details')->whereStatus('A')
+                ->where(function($q) use($current_user, $request){
+                       
+                        $q->whereHas('task_details',function($q1) use($request){
+                            $q1->where('is_deleted', 'N');
+                            $q1->whereIn('task_id', $request->task_id);
+                            
+                        });
+
+                    })->orderBy('id', 'Desc')->get();
+
+                   
+                return response()->json(['status'=>true, 'allAssignedLabours'=>$allAssignedLabours,],200);
+            }
+       
+            else
+            {
+                return response()->json(['status'=>false],200);
+            }
+        
+        }
+
+        else
+        {
+            return response()->json(['status'=>false],200);
+        }
+    }    
 
 }

@@ -59,6 +59,10 @@
     <link rel="stylesheet" href="{{asset('assets/dist/css/chosen-multi-select/docsupport/style.css')}}">
     <link rel="stylesheet" href="{{asset('assets/dist/css/chosen-multi-select/chosen.css')}}">
 
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2-rc.1/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2-rc.1/js/select2.min.js" type="text/javascript"></script>
+
     @php
     if(App::getLocale()=='en'){
         $lang_css_path=asset('css/admin/language_en.css');

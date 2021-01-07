@@ -196,7 +196,7 @@
 
                 
 
-                <div class="modal fade" id="showWorkOrderListModal" role="dialog">
+                <div class="modal fade" id="showWorkOrderListModal" role="dialog" style="padding-right: 100px !important;">
                   <div class="modal-dialog">
                     <div class="modal-content" style=" width: 1000px; margin: auto;">
                       <div class="modal-header">

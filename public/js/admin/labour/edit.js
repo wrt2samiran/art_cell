@@ -1,5 +1,5 @@
 
-$("#admin_user_edit_form").validate({
+$("#labour_edit_form").validate({
     rules: {
         first_name:{
             required: true,
@@ -36,6 +36,21 @@ $("#admin_user_edit_form").validate({
             maxlength: 20,
             number:true  
         },
+        country_id:{
+            required: true, 
+        },
+        state_id:{
+            required: true, 
+        },
+        city_id:{
+            required: true, 
+        },
+        start_time:{
+            required: true, 
+        },
+        end_time:{
+            required: true, 
+        },
         
     },
     messages: {
@@ -65,7 +80,22 @@ $("#admin_user_edit_form").validate({
             maxlength: "Phone/Contact number should not be more then 20 characters",
             number:"Only number allowed"
         },
-        
+
+       country_id:{
+            required: "Please select Country", 
+        },
+        state_id:{
+            required: "Please select State", 
+        },
+        city_id:{
+            required: "Please select City", 
+        },
+        start_time:{
+            required: "Please enter Start Time", 
+        },
+        end_time:{
+            required: "Please enter End Time", 
+        },
     },
     errorPlacement: function (error, element) {
         error.addClass('invalid-feedback');

@@ -202,7 +202,7 @@
                 
                 <!-- *********Showing the Day wise Labour Task (Sub-Task) List********** -->
 
-                <div class="modal fade" id="showTaskListModal" role="dialog">
+                <div class="modal fade" id="showTaskListModal" role="dialog" style="padding-right: 100px !important;">
                   <div class="modal-dialog">
                     <div class="modal-content" style=" width: 1000px; margin: auto;">
                       <div class="modal-header">

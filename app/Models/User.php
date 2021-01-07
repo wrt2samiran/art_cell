@@ -28,7 +28,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'first_name','last_name','name','phone','email', 'password','role_id','created_by','updated_by','status','created_from','deleted_by','profile_pic',
-        'weekly_off', 'country_id', 'state_id', 'city_id'
+        'weekly_off', 'start_time', 'end_time', 'country_id', 'state_id', 'city_id'
     ];
 
     /**
@@ -149,5 +149,10 @@ class User extends Authenticatable
     public function city(){
         return $this->belongsTo(City::class, 'city_id', 'id');
     }
+
+    public function task_details(){
+        return $this->belongsTo(TaskDetails::class, 'id', 'user_id');
+    }
+    
 
 }

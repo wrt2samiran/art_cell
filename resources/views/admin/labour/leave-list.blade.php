@@ -30,7 +30,7 @@
 				                <div class="d-flex justify-content-between" >
 				                    <div><span>Labour Leave List</span></div>
 					                <div>
-						                <a class="btn btn-success" href="{{route('admin.createLeave')}}">
+						                <a class="btn btn-success" href="{{route('admin.leave_management.createLeave')}}">
 						                 Create Labour Leave
 						                </a>
 					                </div>
@@ -67,7 +67,7 @@
                                     </thead>
                                 </table>
                                 <!-- calling this url from datatable data which is inside public\js\admin\users\list.js-->
-                                <input type="hidden" id="labour_leave_data_url" value="{{route('admin.leaveList')}}">
+                                <input type="hidden" id="labour_leave_data_url" value="{{route('admin.leave_management.leaveList')}}">
                             </div>
                         </div>
                     </div>

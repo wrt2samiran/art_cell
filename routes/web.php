@@ -515,22 +515,31 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::any('/{id}', 'LabourController@update')->name('update');
                 Route::delete('/{id}/delete', 'LabourController@delete')->name('delete');
                 Route::get('/{id}/change-change', 'LabourController@change_status')->name('change_status');
-                // Route::get('/get_state_list', 'LabourController@getStateList')->name('getStateList');
-                // Route::get('/get-city-list', 'LabourController@getCityList')->name('getCityList');
-                //Route::get('/leave-list', 'LabourController@leaveList')->name('leaveList');
-                // Route::get('/create-leave', 'LabourController@createLeave')->name('createLeave');
-                // Route::post('/store-leave', 'LabourController@storeLeave')->name('storeLeave');
                 
-                 Route::get('/{id}/change-leave-status', 'LabourController@change_leave_status')->name('change_leave_status');
-                
-                 Route::get('/edit-leave/{id}', 'LabourController@editLeave')->name('editLeave');
-                // Route::put('/{id}', 'LabourController@updateLeave')->name('updateLeave');
                
-                 Route::get('/show-leave/{id}', 'LabourController@showLeave')->name('showLeave');
-                 Route::get('/{id}', 'LabourController@show')->name('show');
-                 Route::delete('/{id}/delete-leave', 'LabourController@deleteLeave')->name('deleteLeave');
+                Route::get('/{id}', 'LabourController@show')->name('show');
                 
             });
+
+
+            Route::group(['prefix'=>'leave-management','as'=>'leave_management.'],function(){
+                Route::get('/get_state_list', 'LabourController@getStateList')->name('getStateList');
+                Route::get('/get-city-list', 'LabourController@getCityList')->name('getCityList');
+                Route::get('/leave-list', 'LabourController@leaveList')->name('leaveList');
+
+                Route::get('/create-leave', 'LabourController@createLeave')->name('createLeave');
+                Route::post('/store-leave', 'LabourController@storeLeave')->name('storeLeave');
+                
+                Route::get('/{id}/change-leave-status', 'LabourController@change_leave_status')->name('change_leave_status');
+                
+                Route::get('/edit-leave/{id}', 'LabourController@editLeave')->name('editLeave');
+                Route::put('/{id}', 'LabourController@updateLeave')->name('updateLeave');
+               
+                Route::get('/show-leave/{id}', 'LabourController@showLeave')->name('showLeave');
+                Route::get('/{id}', 'LabourController@show')->name('show');
+                Route::delete('/{id}/delete-leave', 'LabourController@deleteLeave')->name('deleteLeave');
+            });
+
             /*Routes for unit management */
             Route::group(['prefix'=>'unit','middleware'=>['check_permissions:manage-units'],'as'=>'unit.'],function(){
                 Route::get('/', 'UnitController@list')->name('list');
@@ -591,11 +600,17 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
 
                 Route::post('/contract-status','ReportController@contract_status_report')->name('contract_status_report');
 
+                Route::get('/get-property-list', 'ReportController@getAssignedProperty')->name('getAssignedProperty');
+
                 Route::get('/get-work-order-list', 'ReportController@getWorkOderList')->name('getWorkOderList');
 
                 Route::get('/get-task-list', 'ReportController@getTaskList')->name('getTaskList');
 
                 Route::get('/get-service-list', 'ReportController@getServices')->name('getServices');
+
+                Route::get('/get-labour-list', 'ReportController@getLabourList')->name('getLabourList');
+
+                
                 
                 
 
@@ -632,22 +647,9 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
 
             });
             /************************************/
-
-            Route::get('/get_state_list', 'LabourController@getStateList')->name('getStateList');
+            Route::get('/get-state-list', 'LabourController@getStateList')->name('getStateList');
             Route::get('/get-city-list', 'LabourController@getCityList')->name('getCityList');
-            Route::get('/leave-list', 'LabourController@leaveList')->name('leaveList');
-
-            Route::get('/create-leave', 'LabourController@createLeave')->name('createLeave');
-            Route::post('/store-leave', 'LabourController@storeLeave')->name('storeLeave');
             
-            Route::get('/{id}/change-leave-status', 'LabourController@change_leave_status')->name('change_leave_status');
-            
-            Route::get('/edit-leave/{id}', 'LabourController@editLeave')->name('editLeave');
-            Route::put('/{id}', 'LabourController@updateLeave')->name('updateLeave');
-           
-            Route::get('/show-leave/{id}', 'LabourController@showLeave')->name('showLeave');
-            Route::get('/{id}', 'LabourController@show')->name('show');
-            Route::delete('/{id}/delete-leave', 'LabourController@deleteLeave')->name('deleteLeave');
 
         });
        

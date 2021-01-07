@@ -27,31 +27,31 @@
     <tbody>
     	@forelse($task_details_list as $task_details)
 	    <tr>
-            <td>{{$task_details->task->task_title}}</td>
-	        <td>{{$task_details->task->work_order->task_title}}</td>
-            <td>{{$task_details->task->contract->code}}</td>
-	        <td>{{$task_details->task->contract->title}}</td>
-	        <td>{{$task_details->task->contract_services->service_type}}</td>
-	        <td>{{$task_details->task->service->service_name}}</td>
+            <td>{{@$task_details->task->task_title}}</td>
+	        <td>{{@$task_details->task->work_order->task_title}}</td>
+            <td>{{@$task_details->task->contract->code}}</td>
+	        <td>{{@$task_details->task->contract->title}}</td>
+	        <td>{{@$task_details->task->contract_services->service_type}}</td>
+	        <td>{{@$task_details->task->service->service_name}}</td>
 
-            <td>{{$task_details->task_description}}</td>
-            <td>@if($task_details->rescheduled=='N'){{'No'}}@else{{'Yes'}}@endif</td>
-            <td>{{Carbon::parse($task_details->task_date)->format('d/m/Y H:i a')}}</td>
-            <td>{{$task_details->userDetails->name}}</td>
-            <td>{{Carbon::parse($task_details->task_finish_date_time)->format('d/m/Y H:i a')}}</td>
-            <td>@if($task_details->late_feedback=='N'){{'No'}}@else{{'Yes'}}@endif</td>
+            <td>{{@$task_details->task_description}}</td>
+            <td>@if(@$task_details->rescheduled=='N'){{'No'}}@else{{'Yes'}}@endif</td>
+            <td>{{Carbon::parse(@$task_details->task_date)->format('d/m/Y H:i a')}}</td>
+            <td>{{@$task_details->userDetails->name}}</td>
+            <td>{{Carbon::parse(@$task_details->task_finish_date_time)->format('d/m/Y H:i a')}}</td>
+            <td>@if(@$task_details->late_feedback=='N'){{'No'}}@else{{'Yes'}}@endif</td>
 
-            <td>{{$task_details->rating}}</td>
-            <td>{{$task_details->task_complete_percent}}%</td>
-            <td>{{$task_details->task->property->property_name}}</td>
-	        <td>{{$task_details->task->property->address}}</td>
-	        <td>{{$task_details->task->property->owner_details->email}}</td>
-	        <td>{{$task_details->task->property->owner_details->name}}</td>
+            <td>{{@$task_details->rating}}</td>
+            <td>{{@$task_details->task_complete_percent}}%</td>
+            <td>{{@$task_details->task->property->property_name}}</td>
+	        <td>{{@$task_details->task->property->address}}</td>
+	        <td>{{@$task_details->task->property->owner_details->email}}</td>
+	        <td>{{@$task_details->task->property->owner_details->name}}</td>
 	        
             <td>
-                {{$task_details->get_status_name()}}
+                {{@$task_details->get_status_name()}}
             </td>
-	        <td>{{Carbon::parse($task_details->created_at)->format('d/m/Y')}}</td>
+	        <td>{{Carbon::parse(@$task_details->created_at)->format('d/m/Y')}}</td>
 	    </tr>
     	@empty
     	<tr>

@@ -125,7 +125,7 @@
                                  <select name="city_id" id="city_id" class="form-control">
                                     <option value=""> Select City</option>
                                     @forelse($city_list as $city_data)
-                                       <option value="{{$city_data->id}}" {{($user->country_id == $city_data->id)? 'selected':''}}>{{$city_data->name}}</option>
+                                       <option value="{{$city_data->id}}" {{($user->city_id == $city_data->id)? 'selected':''}}>{{$city_data->name}}</option>
                                     @empty
                                     <option value="">No City Found</option>
                                     @endforelse
@@ -138,42 +138,49 @@
                           <?php //dd($user_skill_list); ?>
                           <div class="form-group required">
                             <label for="service_id">Skills </label>
-                            <select class="form-control" multiple="multiple" searchable="Search for..."  name="skills[]" id="skills">  
+                            <select  class="form-control" data-placeholder="Select Skills" multiple class="chosen-select" tabindex="8"  name="skills[]" id="skills">  
                                
                                @forelse(@$skill_list as $key=> $skill_data)
                                      <option value="{{@$skill_data->id}}" @if(in_array(@$skill_data->id, @$user_skill_list)){{'selected'}}@endif>{{@$skill_data->skill_title}}</option>
                                 @empty
                                 <option value="">No Skill Found</option>
                                 @endforelse     
-                                                         
+                                                      
                               </select>
+                              <input type="checkbox" id="skill_all" value="Select All">Select All
                             @if($errors->has('skills'))
                             <span class="text-danger">{{$errors->first('skills')}}</span>
                             @endif
+
+
                           </div>
+                          <?php //dd($weekly_off_list);?>
 
                           <div class="form-group">
-                            <label for="weekly_off">Select Weekly Off Day</label>
-                             <select class="form-control " id="weekly_off" name="weekly_off" style="width: 100%;">
-                               <option value="">Select Working Day</option>
-                               <option {{old('weekly_off',$user->weekly_off)=="monday"? 'selected':''}} value="monday">Monday</option>
-                               <option {{old('weekly_off',$user->weekly_off)=="tuesday"? 'selected':''}} value="tuesday">Tuesday</option>
-                               <option {{old('weekly_off',$user->weekly_off)=="wednesday"? 'selected':''}} value="wednesday">Wednesday</option>
-                               <option {{old('weekly_off',$user->weekly_off)=="thursday"? 'selected':''}} value="thursday">Thursday</option>
-                               <option {{old('weekly_off',$user->weekly_off)=="friday"? 'selected':''}} value="friday">Friday</option>
-                               <option {{old('weekly_off',$user->weekly_off)=="saturday"? 'selected':''}} value="saturday">Saturday</option>
-                               <option {{old('weekly_off',$user->weekly_off)=="sunday"? 'selected':''}} value="sunday">Sunday</option>
+                            <label for="weekly_off_data">Select Weekly Off Day :</label>
+
+                             <select class="form-control " id="weekly_off" name="weekly_off[]" style="width: 100%;" multiple class="chosen-select">
+                               <option @if(is_array($weekly_off_list)) @if(in_array("monday",$weekly_off_list)) selected @endif @endif value="monday">Monday</option>
+                               <option @if(is_array($weekly_off_list)) @if(in_array("tuesday",$weekly_off_list)) selected @endif @endif value="tuesday">Tuesday</option>
+                               <option @if(is_array($weekly_off_list)) @if(in_array("wednesday",$weekly_off_list)) selected @endif @endif value="wednesday">Wednesday</option>
+                               <option @if(is_array($weekly_off_list)) @if(in_array("thursday",$weekly_off_list)) selected @endif @endif value="thursday">Thursday</option>
+                               <option @if(is_array($weekly_off_list)) @if(in_array("friday",$weekly_off_list)) selected @endif @endif value="friday">Friday</option>
+                               <option @if(is_array($weekly_off_list)) @if(in_array("saturday",$weekly_off_list)) selected @endif @endif value="saturday">Saturday</option>
+                               <option @if(is_array($weekly_off_list)) @if(in_array("sunday", $weekly_off_list)) selected @endif @endif  value="sunday">Sunday</option>
                              </select>
+
+                             <input type="checkbox" id="weekly_off_all" value="Select All">Select All
+                         
                          </div>
                          
-                          <!-- <div class="form-group">
-                            <label for="start_time">Select a Start time:</label>
+                          <div class="form-group">
+                            <label for="start_time">Select a Start time:<span class="error">*</span></label>
                             <input class="form-control" type="time" id="start_time" name="start_time" value="{{old('start_time')?old('start_time'):$user->start_time}}">
                           </div>
                           <div class="form-group">
-                            <label for="end_time">Select a End time:</label>
+                            <label for="end_time">Select a End time:<span class="error">*</span></label>
                             <input class="form-control" type="time" id="end_time" name="end_time" value="{{old('end_time')?old('end_time'):$user->end_time}}">
-                          </div> -->
+                          </div>
                           
                         </div>
                         <!--  this the url for remote validattion rule for user email -->
@@ -242,12 +249,35 @@
         });
     }
 
-    $('#skills').multiselect({
-    columns: 1,
-    placeholder: 'Select Skill',
-    search: true,
-    selectAll: true
+   
+
+    
+
+    $('#skills').chosen();
+    $("#skill_all").click(function(){
+
+        if($("#skill_all").is(':checked')){
+            $(this).parent().find('option').prop("selected", "selected");
+            $("#skills").trigger("chosen:updated");
+        } else {
+            $(this).parent().find('option').prop("selected", "");
+            $("#skills").trigger("chosen:updated");
+        }
     });
+
+    
+    $('#weekly_off').chosen();
+    $("#weekly_off_all").click(function(){
+
+        if($("#weekly_off_all").is(':checked')){
+            $(this).parent().find('option').prop("selected", "selected");
+            $("#weekly_off").trigger("chosen:updated");
+        } else {
+            $(this).parent().find('option').prop("selected", "");
+            $("#weekly_off").trigger("chosen:updated");
+        }
+    });
+
 </script>
 <script type="text/javascript" src="{{asset('js/admin/labour/edit.js')}}"></script>
 @endpush
