@@ -40,6 +40,7 @@ return array (
   'translation_management' => 'Translation Management',
   'user_management' => 'User Management',
   'email_templete' => 'Email Template Management',
+  'sms_templates' => 'SMS Template Management',
   'reports'=>'Reports',
   'calendar'  => 'Calendar',
   'labour_management' => 'Labour Management',
