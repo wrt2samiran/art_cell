@@ -9,12 +9,12 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Spare Parts Management</h1>
+                <h1>{{__('spare_part_manage_module.module_title')}}</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item active">Spare Parts</li>
+                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
+                  <li class="breadcrumb-item active">{{__('general_sentence.breadcrumbs.spare_parts')}}</li>
                 </ol>
               </div>
             </div>
@@ -28,10 +28,10 @@
                         <div class="card">
 				            <div class="card-header">
 				                <div class="d-flex justify-content-between" >
-				                    <div><span>Spare Parts List</span></div>
+				                    <div><span>{{__('spare_part_manage_module.spare_part_list')}}</span></div>
 					                <div>
 						                <a class="btn btn-success" href="{{route('admin.spare_parts.create')}}">
-						                 Create Spare Part
+						                 {{__('general_sentence.button_and_links.create_spare_part')}}
 						                </a>
 					                </div>
 				                </div>
@@ -55,15 +55,15 @@
                                     <thead>
                                         <tr>
                                             <th>Id</th>
-                                            <th>Spare Part Name</th>
-                                            <th>Manufacturer</th>
-                                            <th>Unit</th>
+                                            <th>{{__('spare_part_manage_module.labels.spare_part_name')}}</th>
+                                            <th>{{__('spare_part_manage_module.labels.manufacturer')}}</th>
+                                            <th>{{__('spare_part_manage_module.labels.unit')}}</th>
                                            
-                                            <th>Price</th>
+                                            <th>{{__('spare_part_manage_module.labels.price')}}</th>
                                             
-                                            <th>Status</th>
-                                            <th>Created At</th>
-                                            <th>Action</th>
+                                            <th>{{__('spare_part_manage_module.labels.status')}}</th>
+                                            <th>{{__('spare_part_manage_module.labels.created_at')}}</th>
+                                            <th>{{__('spare_part_manage_module.labels.action')}}</th>
                                         </tr>
                                     </thead>
                                 </table>

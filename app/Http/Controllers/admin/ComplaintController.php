@@ -149,7 +149,7 @@ class ComplaintController extends Controller
     # Created Date     : 20-11-2020                                          #
     # Modified date    : 14-11-2020                                          #
     # Purpose          : To load complaint create view page                  #
-    public function create(){
+    public function create(Request $request){
         $this->data['page_title']='Create Complaint';
         $current_user=auth()->guard('admin')->user();
         $user_type=$current_user->role->user_type->slug;
@@ -187,6 +187,19 @@ class ComplaintController extends Controller
         ->with(['work_orders'])
         ->orderBy('id','DESC')->get();
 
+        if($request->workorder_id){
+            $work_order=WorkOrderLists::where('id',$request->workorder_id)->first();
+            $this->data['work_order']=$work_order;
+            if($work_order){
+                $this->data['work_order_contract']=Contract::find($work_order->contract_id);
+            }else{
+                $this->data['work_order_contract']=null;
+            }
+
+        }else{
+            $this->data['work_order']=null;
+            $this->data['work_order_contract']=null;
+        }
         return view($this->view_path.'.create',$this->data);
     }
 

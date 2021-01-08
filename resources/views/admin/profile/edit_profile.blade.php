@@ -93,6 +93,13 @@
                             <span class="text-danger">{{$errors->first('phone')}}</span>
                             @endif
                           </div>
+                          <div class="form-group required">
+                            <label for="secondary_contact_number">Secondary Contact Number </label>
+                            <input type="text" class="form-control" value="{{old('secondary_contact_number')?old('secondary_contact_number'):auth()->guard('admin')->user()->secondary_contact_number}}" name="secondary_contact_number" id="secondary_contact_number"  placeholder="Secondary Contact Number">
+                            @if($errors->has('secondary_contact_number'))
+                            <span class="text-danger">{{$errors->first('secondary_contact_number')}}</span>
+                            @endif
+                          </div>
 
                         </div>
                         <!--  this the url for remote validattion rule for user email -->

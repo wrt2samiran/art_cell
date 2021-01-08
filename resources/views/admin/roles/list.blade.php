@@ -56,7 +56,7 @@
                                 <div class="filter-area ">
                                     <div class="row">
                                         <div class="col-sm-4" id="user_type-filter-container">
-                                            <select class="form-control user_type-filter"  name="user_type_id" id="user_type_id">
+                                            <select class="form-control"  name="user_type_id" id="user_type_id">
                                                 <option value="">{{__('group_manage_module.placeholders.filter_by_user_type')}}</option>
                                                 @forelse($user_types as $user_type)
                                                    <option value="{{$user_type->id}}">{{$user_type->name}}</option>
@@ -64,8 +64,18 @@
                                                 <option value="">No User Type Found</option>
                                                 @endforelse
                                            </select>
-                                           <a href="javascript::void(0)" title="Click to clear filter" style="display: none;" id="user_type-filter-clear"><span class="badge badge-danger">{{__('group_manage_module.clear_filter')}} <i class="fas fa-times"></i></span></a>
+                                           <a href="javascript::void(0)" title="{{__('group_manage_module.clear_filter')}}" style="display: none;" id="user_type-filter-clear"><span class="badge badge-danger">{{__('group_manage_module.clear_filter')}} <i class="fas fa-times"></i></span></a>
                                         </div>
+                                        <div class="col-sm-4" id="status-wise-filter-container">
+                                            <select class="form-control status-filter"  name="status" id="status">
+                                                <option value="">{{__('group_manage_module.placeholders.filter_by_status')}}</option>
+                                                <option value="active">Active</option>
+                                                <option value="inactive">Inactive</option>
+                                               
+                                           </select>
+                                           <a href="javascript::void(0)" title="{{__('group_manage_module.clear_filter')}}" style="display: none;" id="status-filter-clear"><span class="badge badge-danger">{{__('group_manage_module.clear_filter')}} <i class="fas fa-times"></i></span></a>
+                                        </div>
+
                                     </div>
                                 </div>
                                 <hr class="mt-3 mb-3"/>

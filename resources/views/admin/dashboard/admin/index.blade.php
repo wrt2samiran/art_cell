@@ -14,12 +14,12 @@
                 <h3>
                   {{$total_customers}}
                 </h3>
-                <p><strong>NUMBER OF CUSTOMERS</strong></p>
+                <p><strong>{{__('dashboard.number_of_customer')}}</strong></p>
               </div>
               <div class="icon">
                 <i class="fa fa-user"></i>
               </div>
-              <a href="{{route('admin.users.list')}}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="{{route('admin.users.list')}}" class="small-box-footer">{{__('dashboard.more_info')}}<i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           <!-- ./col -->
@@ -31,12 +31,12 @@
                   {{$total_service_providers}}
                 </h3>
 
-                <p><strong> NUMBER OF SERVICE PROVIDERS</strong> </p>
+                <p><strong>{{__('dashboard.number_of_service_providers')}}</strong> </p>
               </div>
               <div class="icon">
                 <i class="fa fa-user"></i>
               </div>
-              <a href="{{route('admin.users.list')}}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="{{route('admin.users.list')}}" class="small-box-footer">{{__('dashboard.more_info')}} <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           <!-- ./col -->
@@ -47,12 +47,12 @@
                 <h3>
                   {{$total_contracts}}
                 </h3>
-                <p><strong>NUMBER OF CONTRACTS </strong></p>
+                <p><strong>{{__('dashboard.number_of_contracts')}} </strong></p>
               </div>
               <div class="icon">
                 <i class="fas fa-handshake"></i>
               </div>
-              <a href="{{route('admin.contracts.list')}}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="{{route('admin.contracts.list')}}" class="small-box-footer">{{__('dashboard.more_info')}} <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
         </div>
@@ -64,11 +64,11 @@
                   <div>
                     <h3 class="card-title">
                       <i class="fas fa-book-open mr-1"></i>
-                      Last six month spare part orders
+                      {{__('dashboard.six_month_spare_part')}}
                     </h3>
                   </div>
                   <div>
-                    <a href="{{route('admin.spare_part_orders.order_list')}}">View All</a>
+                    <a href="{{route('admin.spare_part_orders.order_list')}}">{{__('dashboard.View_All')}}</a>
                   </div>
                 </div>
               </div>
@@ -86,11 +86,11 @@
                   <div>
                     <h3 class="card-title">
                       <i class="fas fa-book-open mr-1"></i>
-                      Last six month shared service orders
+                      {{__('dashboard.six_month_shared_service_orders')}}
                     </h3>
                   </div>
                   <div>
-                    <a href="{{route('admin.shared_service_orders.order_list')}}">View All</a>
+                    <a href="{{route('admin.shared_service_orders.order_list')}}">{{__('dashboard.View_All')}}</a>
                   </div>
                 </div>
               </div>
@@ -109,15 +109,15 @@
                   <div class="d-flex justify-content-between">
                     <div>
                       <h3 class="card-title">
-                        Upcoming Task List
+                        {{__('dashboard.upcoming_task_list')}}
                       </h3>
                     </div>
                     <div class="container-fluid">
                       <div class="row">
                         <div class="col-md-4">
                           <select id="task_contract" style="width: 100%;">
-                            <option value="">Filter By Contract</option>
-                            <option value="all" selected>All Contract</option>
+                            <option value="">{{__('dashboard.filter_by_contract')}}</option>
+                            <option value="all" selected>{{__('dashboard.all_contract')}}</option>
                             @forelse($work_order_contracts as $work_order_contract)
                             <option value="{{$work_order_contract->id}}"> {{$work_order_contract->code}} ({{$work_order_contract->title}})</option>
                             @empty
@@ -127,11 +127,11 @@
                         </div>
                         <div class="col-md-4">
                           <select id="task_work_order" style="width: 100%;">
-                            <option value="">Filter By Work Order</option>
-                            <option value="all" selected>All Work Order</option>
+                            <option value="">{{__('dashboard.filter_work_order')}}</option>
+                            <option value="all" selected>{{__('dashboard.all_work_order')}}</option>
                             @forelse($task_work_orders as $task_work_order)
                             <option value="{{$task_work_order->id}}">
-                              Id : {{$task_work_order->id}} ({{$task_work_order->task_title}})
+                              {{__('dashboard.more_info')}} {{__('dashboard.Id')}} : {{$task_work_order->id}} ({{$task_work_order->task_title}})
                             </option>
                             @empty
                             @endforelse
@@ -139,8 +139,8 @@
                         </div>
                         <div class="col-md-4">
                           <select id="task_property" style="width: 100%;">
-                            <option value="">Filter By Property</option>
-                            <option value="all" selected>All Properties</option>
+                            <option value="">{{__('dashboard.filter_property')}}</option>
+                            <option value="all" selected>{{__('dashboard.all_properties')}}</option>
                             @forelse($task_properties as $task_property)
                             <option value="{{$task_property->id}}">
                               {{$task_property->code}} ({{$task_property->property_name}})
@@ -158,13 +158,13 @@
                       <table class="table m-0">
                       <thead>
                           <tr>
-                              <th>Contract Code</th>
-                              <th>Work Order ID</th>
-                              <th>Property</th>
-                              <th>Service Provider</th>
-                              <th>Labour</th>
-                              <th>Task Title</th>
-                              <th>Task Date</th>
+                              <th>{{__('dashboard.contract_code')}}</th>
+                              <th>{{__('dashboard.work_order_ID')}}</th>
+                              <th>{{__('dashboard.Property')}}</th>
+                              <th>{{__('dashboard.Service_Provider')}}</th>
+                              <th>{{__('dashboard.Labour')}}</th>
+                              <th>{{__('dashboard.Task_Title')}}</th>
+                              <th>{{__('dashboard.Task_Date')}}</th>
                           </tr>
                       </thead>
                       <tbody>
@@ -181,7 +181,7 @@
                           </tr>
                           @empty
                           <tr>
-                             <td colspan="7">No upcomming tasks</td> 
+                             <td colspan="7">{{__('dashboard.No_upcomming_tasks')}}</td> 
                           </tr>
                           @endforelse
                       </tbody>
@@ -203,7 +203,7 @@
                     <div>
                       <h3 class="card-title">
                         <i class="far fa-question-circle"></i>
-                        <a href="{{route('admin.complaints.list')}}">Complaints</a>
+                        <a href="{{route('admin.complaints.list')}}">{{__('dashboard.Complaints')}}</a>
                       </h3>
                     </div>
                     <div>
@@ -211,8 +211,8 @@
 
                         <div class="col">
                           <select id="complaint_contract">
-                            <option value="">Filter By Contract</option>
-                            <option value="all" selected>All Contract</option>
+                            <option value="">{{__('dashboard.filter_by_contract')}}</option>
+                            <option value="all" selected>{{__('dashboard.All_Contract')}}</option>
                             @forelse($complaint_contracts as $complaint_contract)
                             <option value="{{$complaint_contract->id}}"> {{$complaint_contract->code}}</option>
                             @empty
@@ -222,8 +222,8 @@
                         </div>
                         <div class="col">
                           <select id="complaint_status">
-                            <option value="">Filter By Status</option>
-                            <option value="all" selected>All Status</option>
+                            <option value="">{{__('dashboard.Filter_By_Status')}}</option>
+                            <option value="all" selected>{{__('dashboard.All_Status')}}</option>
                             @forelse($complaint_statuses as $complaint_status)
                             <option value="{{$complaint_status->id}}">{{$complaint_status->status_name}}</option>
                             @empty
@@ -241,25 +241,25 @@
                       <table class="table m-0">
                       <thead>
                           <tr>
-                              <th>Contract Code</th>
-                              <th>Work Order ID</th>
-                              <th>Complaint</th>
-                              <th>Status</th>
-                              <th>Created At</th>
+                              <th>{{__('dashboard.contract_code')}}</th>
+                              <th>{{__('dashboard.work_order_ID')}}</th>
+                              <th>{{__('dashboard.Complaints')}}</th>
+                              <th>{{__('dashboard.Status')}}</th>
+                              <th>{{__('dashboard.Created_At')}}</th>
                           </tr>
                       </thead>
                       <tbody>
                           @forelse($complaints as $complaint)
                           <tr>
                              <td>{{$complaint->contract->code}}</td> 
-                             <td>{{$complaint->work_order_id?$complaint->work_order_id:'N/A'}}</td> 
+                             <td>{{$complaint->work_order_id?$complaint->work_order_id : __('dashboard.not_applicable') }}</td> 
                              <td>{{$complaint->details}}</td>
                              <td>{{$complaint->complaint_status->status_name}}</td>
                              <td>{{$complaint->created_at->format('d/m/Y')}}</td>
                           </tr>
                           @empty
                           <tr>
-                             <td colspan="5">No complaints</td> 
+                             <td colspan="5">{{__('dashboard.No_complaints')}}</td> 
                           </tr>
                           @endforelse
                       </tbody>
@@ -276,7 +276,7 @@
                   <div class="d-flex justify-content-between">
                     <div>
                       <h3 class="card-title">
-                        Work Orders
+                        {{__('dashboard.Work_Orders')}}
                       </h3>
                     </div>
                     <div>
@@ -284,8 +284,8 @@
 
                         <div class="col">
                           <select id="work_order_contract">
-                            <option value="">Filter By Contract</option>
-                            <option value="all" selected>All Contract</option>
+                            <option value="">{{__('dashboard.filter_by_contract')}}</option>
+                            <option value="all" selected>{{__('dashboard.all_contract')}}</option>
                             @forelse($work_order_contracts as $work_order_contract)
                             <option value="{{$work_order_contract->id}}"> {{$work_order_contract->code}}</option>
                             @empty
@@ -295,8 +295,8 @@
                         </div>
                         <div class="col">
                           <select id="work_order_service">
-                            <option value="">Filter By Service</option>
-                            <option value="all" selected>All Service</option>
+                            <option value="">{{__('dashboard.Filter_By_Service')}}</option>
+                            <option value="all" selected>{{__('dashboard.All_Service')}}</option>
                             @forelse($work_order_services as $service)
                             <option value="{{$service->id}}"> {{$service->service_name}}</option>
                             @empty
@@ -313,11 +313,11 @@
                       <table class="table m-0">
                       <thead>
                           <tr>
-                              <th>ID</th>
-                              <th>Contract Code</th>
-                              <th>Task Titile</th>
-                              <th>Service</th>
-                              <th>Created At</th>
+                              <th>{{__('dashboard.Id')}}</th>
+                              <th>{{__('dashboard.contract_code')}}</th>
+                              <th>{{__('dashboard.Task_Titile')}}</th>
+                              <th>{{__('dashboard.Service')}}</th>
+                              <th>{{__('dashboard.Created_At')}}</th>
                           </tr>
                       </thead>
                       <tbody>
@@ -331,7 +331,7 @@
                           </tr>
                           @empty
                           <tr>
-                             <td colspan="5">No complaints</td> 
+                             <td colspan="5">{{__('dashboard.No_complaints')}}</td> 
                           </tr>
                           @endforelse
                       </tbody>

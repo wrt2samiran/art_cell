@@ -330,6 +330,7 @@ class DashboardController extends Controller
         })
         ->orderBy('id','desc')->take(5)->get();
 
+
         $this->data['tasks']=TaskLists::where('start_date','>=',date('Y-m-d'))
         ->whereHas('contract')
         ->whereHas('property',function($query) use($current_user){
@@ -510,6 +511,36 @@ class DashboardController extends Controller
             }
 
         }
+
+
+        $rated_work_order_query=WorkOrderLists::whereHas('contract')
+        ->whereHas('service')
+        ->whereHas('contract.property',function($query) use($current_user){
+            if($current_user->created_by_admin){
+                $query->where('property_owner',$current_user->id);
+            }else{
+                $query->where('property_manager',$current_user->id);
+            }
+        })->whereNotNull('rating');
+
+        $rated_work_orders=$rated_work_order_query->get();
+
+        $this->data['average_rating']=$average_rating=$rated_work_order_query->avg('rating');
+        $this->data['total_rating']=$total_rating=$rated_work_order_query->count();
+        
+
+        $rating_array=[];
+        foreach ([1,2,3,4,5] as $number) {
+
+            $filtered = $rated_work_orders->filter(function ($rated_work_order, $key)use($number) {
+                return $rated_work_order->rating==$number;
+
+            });
+            $total_number_of_ratings=$filtered->all(); 
+            $rating_array[]=count($total_number_of_ratings);
+        }
+
+       $this->data['rating_array']=$rating_array;
 
 
         return view('admin.dashboard.customer.index',$this->data);

@@ -4,13 +4,13 @@
             <table class="table table-hover table-bordered">
                 <tbody>
 	                <tr>
-	                	<td>Service Name</td>
+	                	<td>{{__('contract_manage_module.labels.service')}}</td>
 	                	<td>
 	                		{{$contract_service->service->service_name}}
 	                	</td>
 	                </tr>
 	               	<tr>
-	                	<td>Service Type</td>
+	                	<td>{{__('contract_manage_module.labels.service_type')}}</td>
 	                	<td>
 	                		{{$contract_service->service_type}}
 	                		@if($contract_service->service_type=='On Demand')
@@ -21,50 +21,47 @@
 	                </tr>
 	                @if($contract_service->service_type=='Maintenance')
 	               	<tr>
-	                	<td>Recurrence Details</td>
+	                	<td>{{__('contract_manage_module.recurrence_details')}}</td>
 	                	<td>
 	                		<div>
-	                			<span>From {{Carbon::parse($contract_service->recurrence_details->start_date)->format('d/m/Y')}}</span> To 
+	                			<span>{{__('contract_manage_module.from')}}  {{Carbon::parse($contract_service->recurrence_details->start_date)->format('d/m/Y')}}</span> {{__('contract_manage_module.to')}}  
 	                			<span>
 	                			@if($contract_service->recurrence_details->end_by_or_after=='end_by')
 	                				{{Carbon::parse($contract_service->recurrence_details->end_date)->format('d/m/Y')}}
 	                			@else
-	                				after {{$contract_service->recurrence_details->no_of_occurrences}} occurrences
+	                				{{__('contract_manage_module.after')}}  {{$contract_service->recurrence_details->no_of_occurrences}} {{__('contract_manage_module.occurences')}} 
 	                			@endif
 	                			</span>
 
-	                		</div>
-	                		<div>
-	                			{{Carbon::parse($contract_service->recurrence_details->start_time)->format('g:i A')}}-{{Carbon::parse($contract_service->recurrence_details->end_time)->format('g:i A')}}
 	                		</div>
 
 	                		<div>
 	                			
 	                			@if($contract_service->recurrence_details->interval_type=='yearly')
-								<div>Recurre every {{$contract_service->recurrence_details->reccure_every}} year(s)</div>
+								<div>{{__('contract_manage_module.reccur_every')}} {{$contract_service->recurrence_details->reccure_every}} {{__('general_sentence.years')}}</div>
 								<div>
 									@if($contract_service->recurrence_details->on_or_on_the=='on')
-									On <span>{{$contract_service->recurrence_details->day_number}} {{$contract_service->recurrence_details->month_name}}</span>
+									{{__('contract_manage_module.on')}} <span>{{$contract_service->recurrence_details->day_number}} {{$contract_service->recurrence_details->month_name}}</span>
 									@else
-									On the <span>{{$contract_service->recurrence_details->ordinal}}, {{$contract_service->recurrence_details->week_day_name}}, {{$contract_service->recurrence_details->month_name}}</span>
+									{{__('contract_manage_module.on_the')}} <span>{{$contract_service->recurrence_details->ordinal}}, {{$contract_service->recurrence_details->week_day_name}}, {{$contract_service->recurrence_details->month_name}}</span>
 									@endif
 								</div>
 	                			@elseif($contract_service->recurrence_details->interval_type=='monthly')
-								<div>Recurre every {{$contract_service->recurrence_details->reccure_every}} month(s)</div>
+								<div>{{__('contract_manage_module.reccur_every')}} {{$contract_service->recurrence_details->reccure_every}} {{__('general_sentence.months')}}</div>
 								<div>
 									@if($contract_service->recurrence_details->on_or_on_the=='on')
-									On <span>{{$contract_service->recurrence_details->day_number}} day 
+									{{__('contract_manage_module.on')}} <span>{{$contract_service->recurrence_details->day_number}} {{__('general_sentence.day')}} 
 									@else
-									On the <span>{{$contract_service->recurrence_details->ordinal}}, {{$contract_service->recurrence_details->week_day_name}}</span>
+									{{__('contract_manage_module.on_the')}} <span>{{$contract_service->recurrence_details->ordinal}}, {{$contract_service->recurrence_details->week_day_name}}</span>
 									@endif
-									Of every {{$contract_service->recurrence_details->reccure_every}} month(s)
+									{{__('contract_manage_module.of_every')}} {{$contract_service->recurrence_details->reccure_every}} {{__('general_sentence.months')}}
 								</div>
 
 	                			@elseif($contract_service->recurrence_details->interval_type=='weekly')
-								<div>Recurre every {{$contract_service->recurrence_details->reccure_every}} week(s)</div>
+								<div>{{__('contract_manage_module.reccur_every')}} {{$contract_service->recurrence_details->reccure_every}} {{__('general_sentence.weeks')}}</div>
 								<div>({{$contract_service->recurrence_details->weekly_days}})</div>
 	                			@else
-								<div>Recurre every {{$contract_service->recurrence_details->reccure_every}} day(s)</div>
+								<div>{{__('contract_manage_module.reccur_every')}} {{$contract_service->recurrence_details->reccure_every}} {{__('general_sentence.days')}}</div>
 	                			@endif
 
 	                		</div>
@@ -73,13 +70,13 @@
 	                </tr>
 	                @endif
 	              	<tr>
-	                	<td>Service Price</td>
+	                	<td>{{__('contract_manage_module.labels.service_price')}}</td>
 	                	<td>
 	                		{{$contract_service->currency}} {{$contract_service->price}}
 	                	</td>
 	                </tr>
 	               	<tr>
-	                	<td>Note</td>
+	                	<td>{{__('contract_manage_module.labels.note')}}</td>
 	                	<td>{{$contract_service->note}}
 	                	</td>
 	                </tr>

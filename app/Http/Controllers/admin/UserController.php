@@ -57,6 +57,14 @@ class UserController extends Controller
             ->when($request->role_id,function($query) use($request){
                 $query->where('role_id',$request->role_id);
             })
+            ->when($request->status,function($query) use($request){
+                if($request->status=='active'){
+                    $query->where('status','A');
+                }elseif ($request->status=='inactive') {
+                    $query->where('status','I');
+                }
+                
+            })
             ->select('users.*');
             return Datatables::of($users)
             ->editColumn('created_at', function ($user) {
@@ -93,7 +101,6 @@ class UserController extends Controller
                 if($has_details_permission){
                     $action_buttons=$action_buttons.'<a title="View Servide Provider Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
                 }
-
 
                 if($has_edit_permission){
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Servide Provider" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
@@ -167,6 +174,7 @@ class UserController extends Controller
             'email'=>strtolower($request->email),
             'password'=>$request->password,
             'phone'=>$request->phone,
+            'secondary_contact_number'=>$request->secondary_contact_number,
             'role_id'=>$request->role_id,
             'status'=>'A',
             'created_by_admin'=>($current_user->role->user_type->slug=='super-admin')?true:false,
@@ -240,6 +248,7 @@ class UserController extends Controller
             'name'=>$request->first_name.' '.$request->last_name,
             'email'=>strtolower($request->email),
             'phone'=>$request->phone,
+            'secondary_contact_number'=>$request->secondary_contact_number,
             'role_id'=>$request->role_id,
             'updated_by'=>auth()->guard('admin')->id()
         ];

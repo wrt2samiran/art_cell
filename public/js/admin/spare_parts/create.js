@@ -22,25 +22,6 @@
             },
         },
         messages: {
-            name: {
-                required:  "Spare Parts name is required",
-                minlength: "Spare Parts name should have 3 characters",
-                maxlength: "Spare Parts name should not be more then 255 characters"
-            },
-            manufacturer: {
-                required:  "Spare Parts name is required",
-                minlength: "Spare Parts name should have 3 characters",
-                maxlength: "Spare Parts name should not be more then 255 characters"
-            },
-            unit_master_id: {
-                required:  "Unit is required",
-            },
-            price: {
-                required:  "Price is required",
-            },
-            image: {
-                required:  "Image is required",
-            },
 
         },
 
@@ -106,11 +87,11 @@ $('#images').on('change',function(){
             var error_message='';
 
             if(file_size_error==true && file_type_error==true){
-                error_message="Please upload only JPG/JPEG/PNG/GIF files of max size 2mb";
+                error_message=(current_locale=="ar")?"يرجى تحميل ملفات JPG / JPEG / PNG / GIF فقط بحجم 2 ميغابايت بحد أقصى":"Please upload only JPG/JPEG/PNG/GIF files of max size 2MB";
             }else if(file_size_error==true && file_type_error==false){
-                error_message="File size should not be more than 2 mb";
+                error_message=(current_locale=="ar")?"يجب ألا يزيد حجم الملف عن 2 ميغا بايت":"File size should not be more than 2MB";
             }else{
-                error_message="Please upload only JPG/JPEG/PNG/GIF files";
+                error_message=(current_locale=="ar")?"يرجى تحميل ملفات JPG / JPEG / PNG / GIF فقط":"Please upload only JPG/JPEG/PNG/GIF files";
             }
 
             swal(error_message);

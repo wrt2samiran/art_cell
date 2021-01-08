@@ -35,8 +35,7 @@ Route::group(["prefix" => "","namespace"=>"Frontend", 'as' => 'frontend.'], func
 
 /* Start Admin's route */
 Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], function() {
-        Route::get('/testing','AuthController@mailTest');
-        Route::get('/test', 'AuthController@test');
+
         Route::get('/', 'AuthController@index');
         Route::any('/login', 'AuthController@index')->name('login');
        
@@ -425,6 +424,18 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 
             });
 
+            /** sms template routes **/
+            Route::group(['prefix' => 'sms-templates','middleware'=>['check_permissions:manage-sms-template'], 'as' => 'sms_templates.'], function () {
+                Route::get('/', 'SmsTemplateController@list')->name('list');
+                Route::get('/create','SmsTemplateController@create')->name('create');
+                Route::post('/store', 'SmsTemplateController@store')->name('store');
+                Route::get('/{id}', 'SmsTemplateController@show')->name('show');
+                Route::get('/{id}/edit','SmsTemplateController@edit')->name('edit');
+                Route::put('/{id}/update', 'SmsTemplateController@update')->name('update');   
+
+            });
+            /************/
+
 
             Route::group(['prefix' => 'service_management', 'as' => 'service_management.'], function () {
                 Route::get('/', 'ServiceManagementController@list')->name('list')->middleware('check_permissions:service_management_list');
@@ -539,6 +550,9 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::put('/{id}', 'UnitController@update')->name('update');
                 Route::delete('/{id}/delete', 'UnitController@delete')->name('delete');
                 Route::get('/{id}/change-change', 'UnitController@change_status')->name('change_status');
+
+                Route::post('/ajax/ajax_check_unit_name_unique/{unit_master_id?}', 'UnitController@ajax_check_unit_name_unique')
+                ->name('ajax_check_unit_name_unique');
   
             });
 

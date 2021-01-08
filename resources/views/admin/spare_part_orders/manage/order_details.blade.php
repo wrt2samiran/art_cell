@@ -9,13 +9,13 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Manage Spare Part Orders</h1>
+                <h1>{{__('manage_order_module.manage_spare_part_order_title')}}</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item" ><a href="{{route('admin.spare_part_orders.order_list')}}">Spare Part Orders</a></li>
-                  <li class="breadcrumb-item active">Details</li>
+                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
+                  <li class="breadcrumb-item" ><a href="{{route('admin.spare_part_orders.order_list')}}">{{__('general_sentence.breadcrumbs.spare_part_orders')}}</a></li>
+                  <li class="breadcrumb-item active">{{__('general_sentence.breadcrumbs.details')}}</li>
                 </ol>
               </div>
             </div>
@@ -29,9 +29,9 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="d-flex justify-content-between" >
-                                    <div><span>Order Details</span></div>
+                                    <div><span>{{__('manage_order_module.order_details')}}</span></div>
                                     <div>
-                                        <a class="btn btn-primary" href="{{route('admin.spare_part_orders.download_invoice',$order->id)}}">Download Invoice</a>
+                                        <a class="btn btn-primary" href="{{route('admin.spare_part_orders.download_invoice',$order->id)}}">{{__('general_sentence.button_and_links.download_invoice')}}</a>
                                     </div>
                                 </div>
                             </div>
@@ -53,15 +53,15 @@
                                 <div class="container-fluid">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h5>User Details</h5>
+                                        <h5>{{__('manage_order_module.user_details')}}</h5>
                                         <div class="table-responsive">
                                             <table class="table table-bordered table-hover">
                                                 <tr>
-                                                    <td>Name</td>
+                                                    <td>{{__('manage_order_module.labels.name')}}</td>
                                                     <td>{{$order->user->name}}</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Email</td>
+                                                    <td>{{__('manage_order_module.labels.email')}}</td>
                                                     <td>{{$order->user->email}}</td>
                                                 </tr>
 
@@ -71,14 +71,14 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12 table-responsive">
-                                        <h5>Order Item Details</h5>
+                                        <h5>{{__('manage_order_module.order_item_details')}}</h5>
                                         <table class="table table-hover table-bordered">
                                             <thead>
                                                 <tr>
-                                                    <th style="width: 50%">Spare Part</th>
-                                                    <th style="width: 10%">Quantity</th>
-                                                    <th class="text-center">Price</th>
-                                                    <th class="text-center">Total </th>
+                                                    <th style="width: 50%">{{__('manage_order_module.labels.spare_part')}}</th>
+                                                    <th style="width: 10%">{{__('manage_order_module.labels.quantity')}}</th>
+                                                    <th class="text-center">{{__('manage_order_module.labels.price')}}</th>
+                                                    <th class="text-center">{{__('manage_order_module.labels.total')}} </th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -124,7 +124,7 @@
                                                     <td> </td>
                                                  
                                                     <td>
-                                                        <h5>Subtotal</h5>
+                                                        <h5>{{__('manage_order_module.labels.sub_total')}}</h5>
                                                     </td>
                                                     <td class="text-right"><strong>{{$order->order_currency}} {{number_format(($order->total_amount - $order->tax_amount - $order->delivery_charge), 2, '.', '')}}</strong>
                                                     </td>
@@ -134,7 +134,7 @@
                                                     <td> </td>
                                                  
                                                     <td>
-                                                        <h5>VAT</h5>
+                                                        <h5>{{__('manage_order_module.labels.vat')}}</h5>
                                                     </td>
                                                     <td class="text-right"><strong>{{$order->order_currency}} {{number_format($order->tax_amount, 2, '.', '')}}</strong>
                                                     </td>
@@ -144,7 +144,7 @@
                                                     <td> </td>
                                                  
                                                     <td>
-                                                        <h5>Total</h5>
+                                                        <h5>{{__('manage_order_module.labels.total')}}</h5>
                                                     </td>
                                                     <td class="text-right"><strong>{{$order->order_currency}} {{number_format($order->total_amount, 2, '.', '')}}</strong>
                                                     </td>
@@ -157,27 +157,27 @@
 
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h5>Delivery Details</h5>
+                                        <h5>{{__('manage_order_module.delivery_details')}}</h5>
                                         <div class="table-responsive">
                                             <table class="table table-bordered table-hover">
                                                 <tr>
-                                                    <td>Name</td>
+                                                    <td>{{__('manage_order_module.labels.name')}}</td>
                                                     <td>{{$order->delivery_address->first_name}} {{$order->delivery_address->last_name}}</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Contact Number</td>
+                                                    <td>{{__('manage_order_module.labels.contact_number')}}</td>
                                                     <td>{{$order->delivery_address->contact_number}}</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Address</td>
+                                                    <td>{{__('manage_order_module.labels.address')}}</td>
                                                     <td>{{$order->delivery_address->address_line_1}} <br>{{$order->delivery_address->address_line_2}}</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>City</td>
+                                                    <td>{{__('manage_order_module.labels.city')}}</td>
                                                     <td>{{$order->delivery_address->city->name}}</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Pincode</td>
+                                                    <td>{{__('manage_order_module.labels.pincode')}}</td>
                                                     <td>{{$order->delivery_address->pincode}}</td>
                                                 </tr>
                                             </table>
@@ -187,11 +187,11 @@
 
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h5>Update Order Status</h5>
+                                        <h5>{{__('manage_order_module.update_order_status')}}</h5>
                                         <form class="form-inline" action="{{route('admin.spare_part_orders.update_order_status',$order->id)}}" method="post">
                                             @csrf
                                             @method("PUT")
-                                          <label for="email" class="mr-sm-2">Status:</label>
+                                          <label for="email" class="mr-sm-2">{{__('manage_order_module.labels.status')}}:</label>
                                       
                                             <select class="form-control mb-2 mr-sm-2" name="status" id="status">
                                               @forelse($statuses as $status)
@@ -202,13 +202,13 @@
                                             </select>
                                          
                         
-                                          <button type="submit" class="btn btn-success mb-2">Update</button>
+                                          <button type="submit" class="btn btn-success mb-2">{{__('general_sentence.button_and_links.update')}}</button>
                                         </form>
                                     </div>
                                 </div>
                             </div>
                             <div class="card-footer">
-                                <a class="btn btn-primary" href="{{route('admin.spare_part_orders.order_list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a>
+                                <a class="btn btn-primary" href="{{route('admin.spare_part_orders.order_list')}}"><i class="fas fa-backward"></i>&nbsp;{{__('general_sentence.button_and_links.back')}}</a>
                             </div>
                             </div>
                         </div>

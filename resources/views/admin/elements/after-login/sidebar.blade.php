@@ -225,24 +225,24 @@
                     </a>
                     <ul class="nav nav-treeview">
                         @if(auth()->guard('admin')->user()->hasAllPermission(['shared-service-list']))
-                        <li class="nav-item has-treeview {{(request()->is('admin/shared-services/*','admin/shared-services'))?'menu-open':''}}">
-                            <li class="nav-item">
-                                    <a href="{{ route('admin.shared_services.list') }}" class="nav-link {{(request()->is('admin/shared-services/*','admin/shared-services'))?'active':''}}">
-                                        <i class="nav-icon fas fa-hammer"></i>
-                                        <p>{{__('nav_link_text.shared_services')}}</p>
-                                    </a>
-                            </li>
+    
+                        <li class="nav-item">
+                                <a href="{{ route('admin.shared_services.list') }}" class="nav-link {{(request()->is('admin/shared-services/*','admin/shared-services'))?'active':''}}">
+                                    <i class="nav-icon fas fa-hammer"></i>
+                                    <p>{{__('nav_link_text.shared_services')}}</p>
+                                </a>
                         </li>
+
                         @endif
                         @if(auth()->guard('admin')->user()->hasAllPermission(['spare-parts-list']))
-                        <li class="nav-item has-treeview {{(request()->is('admin/spare-parts/*','admin/spare-parts'))?'menu-open':''}}">
-                            <li class="nav-item">
-                                <a href="{{route('admin.spare_parts.list')}}" class="nav-link {{(request()->is('admin/spare-parts/*','admin/spare-parts'))?'active':''}}">
-                                    <i class="nav-icon fas fa-screwdriver"></i>
-                                        <p>{{__('nav_link_text.spare_parts')}}</p>
-                                </a>
-                            </li>
+  
+                        <li class="nav-item">
+                            <a href="{{route('admin.spare_parts.list')}}" class="nav-link {{(request()->is('admin/spare-parts/*','admin/spare-parts'))?'active':''}}">
+                                <i class="nav-icon fas fa-screwdriver"></i>
+                                    <p>{{__('nav_link_text.spare_parts')}}</p>
+                            </a>
                         </li>
+                      
                         @endif
                     </ul>
                 </li>
@@ -395,6 +395,16 @@
                     class="nav-link {{(request()->is('admin/email/*','admin/email'))?'active':''}}">
                         <i class="nav-icon fa fa-file"></i>
                         <p>{{__('nav_link_text.email_templete')}}</p>
+                    </a>
+                </li>            
+                @endif
+
+                @if(auth()->guard('admin')->user()->hasAllPermission(['manage-sms-template']))
+                <li class="nav-item ">
+                    <a href="{{route('admin.sms_templates.list')}}"
+                    class="nav-link {{(request()->is('admin/sms-templates/*','admin/sms-templates'))?'active':''}}">
+                        <i class="nav-icon fa fa-file"></i>
+                        <p>{{__('nav_link_text.sms_templates')}}</p>
                     </a>
                 </li>            
                 @endif

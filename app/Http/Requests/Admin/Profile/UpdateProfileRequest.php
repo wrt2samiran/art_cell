@@ -23,6 +23,7 @@ class UpdateProfileRequest extends FormRequest
             'last_name'=>'required|min:2|max:100',
             'email'=>'required|email|max:100|unique:users,email,'.auth()->guard('admin')->id(),
             'phone'=>'required|regex:/[0-9]{8,20}/',
+            'secondary_contact_number'=>'nullable|regex:/[0-9]{8,20}/',
             'profile_image'=>[
                 'nullable',
                 'mimes:jpeg,jpg,png',
@@ -44,6 +45,7 @@ class UpdateProfileRequest extends FormRequest
             'email.max'=>'Email should not be more then 100 characters',
             'phone.required' => 'Phone/Contact is required',
             'phone.regex'=>'Phone/Contact number should be a valid number of size 8 to 20 characters',
+            'secondary_contact_number.regex'=>'Phone/Contact number should be a valid number of size 8 to 20 characters',
             'profile_image.max'=>'File size should not be more than 1 mb',
             'profile_image.mimes'=>'Please upload only jpg/jpeg/png image',
         ];

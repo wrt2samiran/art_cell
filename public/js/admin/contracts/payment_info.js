@@ -17,12 +17,7 @@ $(document).ready(function(){
           }
       },
       messages: {
-          contract_price:{
-              required:  "Enter contract price",
-          },
-          notify_installment_before_days:{
-              required:  "Notify user before how may days from due date.",
-          },
+
       },
       errorPlacement: function (error, element) {
 
@@ -80,8 +75,6 @@ $(document).ready(function(){
             }
           }
 
-
-
       }
   });
 
@@ -115,8 +108,7 @@ $(document).ready(function(){
        required: true,
        maxlength: 10,
        messages: {
-         required: "Please enter due date in dd/mm/yyyy format",
-         maxlength: "Maximum 10 characters allowed",
+
        }
     });
 
@@ -248,11 +240,11 @@ $('#add_installment_button').click(function(){
   var absolute_or_percentage=$('input[name="absolute_or_percentage"]:checked').val();
 
   if(absolute_or_percentage=='percentage'){
-    var label="Percentage";
-    var placeholder="Percentage";
+    var label=translations.contract_manage_module.labels.percentage;
+    var placeholder=translations.contract_manage_module.placeholders.percentage;
   }else{
-    var label="Amount";
-    var placeholder="Amount";
+    var label=translations.contract_manage_module.labels.amount;
+    var placeholder=translations.contract_manage_module.placeholders.amount;
   }
 
 var row=`<div class="row" id="row`+random_string+`">

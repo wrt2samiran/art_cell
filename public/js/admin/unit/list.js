@@ -29,7 +29,7 @@ var units_table=$('#units_table').DataTable({
 function delete_user(url){
 swal({
 title: "Are you sure?",
-text: "Once deleted, you will not be able to recover this user!",
+text: "Once deleted, you will not be able to recover this unit!",
 icon: "warning",
 buttons: true,
 dangerMode: true,
@@ -54,6 +54,13 @@ if (willDelete) {
        var status=jqXHR.status;
        if(status=='404'){
         toastr.error('Invalid URL', 'Error', {timeOut: 5000});
+       }else if(status=='400'){
+            if(response.message){
+               toastr.error(response.message, 'Error', {timeOut: 5000});
+             }else{
+               toastr.error('Server error', 'Error', {timeOut: 5000});
+             }
+           
        }else{
          toastr.error('Internal server error.', 'Error', {timeOut: 5000});
        }
@@ -84,7 +91,7 @@ if (confirm) {
     success: function (data) {
       units_table.ajax.reload(null, false);
       $.LoadingOverlay("hide");
-      toastr.success('Status successfully updated.', 'Success', {timeOut: 5000});
+      toastr.success('Unit successfully updated.', 'Success', {timeOut: 5000});
 
     },
     error: function(jqXHR, textStatus, errorThrown) {

@@ -251,7 +251,7 @@ class PropertyController extends Controller
 
         event(new PropertyCreated($property));
 
-    	return redirect()->route('admin.properties.list')->with('success','Property successfully created');
+    	return redirect()->route('admin.properties.list')->with('success',__('property_manage_module.create_success_message'));
 
     }
 
@@ -486,7 +486,7 @@ class PropertyController extends Controller
         }
 
         
-        return redirect()->route('admin.properties.list')->with('success','Property successfully updated.');
+        return redirect()->route('admin.properties.list')->with('success',__('property_manage_module.edit_success_message'));
 
     }
 

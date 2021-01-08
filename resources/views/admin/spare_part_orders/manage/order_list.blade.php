@@ -9,12 +9,12 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Manage Spare Part Orders</h1>
+                <h1>{{__('manage_order_module.manage_spare_part_order_title')}}</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item active">Spare Part Orders</li>
+                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
+                  <li class="breadcrumb-item active">{{__('general_sentence.breadcrumbs.spare_part_orders')}}</li>
                 </ol>
               </div>
             </div>
@@ -28,7 +28,7 @@
                         <div class="card">
 				            <div class="card-header">
                                 <div class="d-flex justify-content-between" >
-                                    <div><span>Order List</span></div>
+                                    <div><span>{{__('manage_order_module.order_list')}}</span></div>
                                     <div>
                                     </div>
                                 </div>
@@ -52,12 +52,12 @@
                                 <table class="table table-bordered" id="manage_spare_parts_ordered_table">
                                     <thead>
                                         <tr>
-                                            <th>Order Id</th>
-                                            <th>Order By</th>
-                                            <th>Total Spare Parts</th>
-                                            <th>Total Price</th>
-                                            <th>Current Status</th>
-                                            <th style="width: 10%">Details</th>
+                                            <th>{{__('manage_order_module.labels.order_id')}}</th>
+                                            <th>{{__('manage_order_module.labels.order_by')}}</th>
+                                            <th>{{__('manage_order_module.labels.total_spare_parts')}}</th>
+                                            <th>{{__('manage_order_module.labels.total_price')}}</th>
+                                            <th>{{__('manage_order_module.labels.current_status')}}</th>
+                                            <th style="width: 10%">{{__('manage_order_module.labels.details')}}</th>
                                         </tr>
                                     </thead>
                                 </table>

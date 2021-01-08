@@ -7,23 +7,14 @@ use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
-use App\Models\UnitMaster;
-use App\Http\Requests\Admin\Unit\{CreateUnitRequest,UpdateUnitRequest};
+use App\Models\{UnitMaster,SparePart};
+
 
 class UnitController extends Controller
 {
 
     private $view_path='admin.unit';
-
-    /*****************************************************/
-    # MessageController
-    # Function name : List
-    # Author        :
-    # Created Date  : 25-11-2020
-    # Purpose       : Show Shared Service List
-    # Params        : Request $request
-    /*****************************************************/
-    
+    private $data=[];
 
     public function list(Request $request){
         $this->data['page_title']='Unit List';
@@ -32,13 +23,18 @@ class UnitController extends Controller
             $sqlUnitMaster=UnitMaster::select('unit_masters.*');
             return Datatables::of($sqlUnitMaster)
             ->editColumn('created_at', function ($sqlUnitMaster) {
-                return $sqlUnitMaster->created_at ? with(new Carbon($sqlUnitMaster->created_at))->format('m/d/Y') : '';
+                return $sqlUnitMaster->created_at ? with(new Carbon($sqlUnitMaster->created_at))->format('d/m/Y') : '';
             })
             
             ->filterColumn('created_at', function ($query, $keyword) {
-                $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
+                $query->whereRaw("DATE_FORMAT(created_at,'%d/%m/%Y') like ?", ["%$keyword%"]);
             })
-            
+            ->filterColumn('unit_name', function ($query, $keyword) {
+                $query->whereTranslationLike('unit_name', "%{$keyword}%");
+            })
+            ->orderColumn('unit_name', function ($query, $order) {
+                 $query->orderByTranslation('unit_name',$order);
+            })
             ->addColumn('is_active',function($sqlUnitMaster){
 
                 if($sqlUnitMaster->is_active){
@@ -80,72 +76,41 @@ class UnitController extends Controller
         return view($this->view_path.'.list',$this->data);
     }
 
-   
 
-    /********************************************************************************/
-    # Function to store user data                                                    #
-    # Function name    : store                                                       #
-    # Created Date     : 25-11-2020                                                  #
-    # Modified date    : 25-11-2020                                                  #
-    # Purpose          : store user data                                             #
-    # Param            : CreateUnitRequest $request                                  #
 
     public function add(Request $request){
 
-        $data['page_title']     = 'Add Unit';
+        $this->data['page_title']     = 'Create Unit';
         $logedin_user=auth()->guard('admin')->user();
     
-        try
+        if($request->isMethod('POST'))
         {
-        	if ($request->isMethod('POST'))
-        	{
-				$validationCondition = array(
-                    'unit_name' => 'required|min:2|max:255|unique:'.(new UnitMaster)->getTable().',unit_name',      
-				);
-				$validationMessages = array(
-					'unit_name.required'                => 'Please enter name',
-					'unit_name.min'                     => 'Name should be should be at least 2 characters',
-                    'unit_name.max'                     => 'Name should not be more than 255 characters',
+            $request->validate([
+                'en_unit_name'=>'required|min:2|max:100',
+                'ar_unit_name'=>'required|min:2|max:100',
+            ]);
 
-				);
+        $unit_data = [
+            'en' => [
+               'unit_name'=>$request->en_unit_name,
+            ],
+            'ar' => [
+               'unit_name'=>$request->ar_unit_name,
+            ],
+            'created_by'=>$logedin_user->id,
+            'updated_by'=>$logedin_user->id
+        ];
 
-				$Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);
-				if ($Validator->fails()) {
-					return redirect()->route('admin.unit.add')->withErrors($Validator)->withInput();
-				} else {
-                    
-                    $new = new UnitMaster;
-                    $new->unit_name             = trim($request->unit_name, ' ');
-                    $new->created_by            = auth()->guard('admin')->id();
-                    $new->updated_by            = auth()->guard('admin')->id();
-                    $save = $new->save();
-                
-					if ($save) {						
-						$request->session()->flash('alert-success', 'Unit has been added successfully');
-						return redirect()->route('admin.unit.list');
-					} else {
-						$request->session()->flash('alert-danger', 'An error occurred while adding the unit');
-						return redirect()->back();
-					}
-				}
-            }
-			return view('admin.unit.create', $data);
-		} catch (Exception $e) {
-			return redirect()->route('admin.unit.list')->with('error', $e->getMessage());
-		}
+        UnitMaster::create($unit_data);
+        return redirect()->route('admin.unit.list')->with('success','Unit successfully created.');
 
-
+        }else{
+           return view($this->view_path.'.create', $this->data); 
+        }
     }
 
     
-    
-    /************************************************************************/
-    # Function to load user edit page                            #
-    # Function name    : edit                                                #
-    # Created Date     : 25-11-2020                                          #
-    # Modified date    : 25-11-2020                                          #
-    # Purpose          : to load user edit page                  #
-    # Param            : id                                                  #
+
     public function edit($id){
         $unit=UnitMaster::findOrFail($id);
         
@@ -155,33 +120,27 @@ class UnitController extends Controller
         return view($this->view_path.'.edit',$this->data);
     }
 
-    /************************************************************************************/
-    # Function to update user data                                           #
-    # Function name    : update                                                          #
-    # Created Date     : 25-11-2020                                                      #
-    # Modified date    : 25-11-2020                                                      #
-    # Purpose          : to update user data                                 #
-    # Param            : UpdateLabourRequest $request,id                                   #
-    public function update(Request $request,$id){
 
+    public function update(Request $request,$id){
+        $logedin_user=auth()->guard('admin')->user();
         $unit=UnitMaster::findOrFail($id);
-        $unit->unit_name     = trim($request->unit_name, ' ');
-        $unit->updated_by     = auth()->guard('admin')->id();
-        $save = $unit->save(); 
+        $unit_data = [
+            'en' => [
+               'unit_name'=>$request->en_unit_name,
+            ],
+            'ar' => [
+               'unit_name'=>$request->ar_unit_name,
+            ],
+            'updated_by'=>$logedin_user->id
+        ];
+
+        $unit->update($unit_data);
 
         return redirect()->route('admin.unit.list')->with('success','Unit successfully updated.');
 
     }
 
     
-    /*****************************************************/
-    # MessageController
-    # Function name : change_status
-    # Author        :
-    # Created Date  : 09-10-2020
-    # Purpose       : Change Message status
-    # Params        : Request $request
-    /*****************************************************/
     public function change_status($id = null)
     {
         $unit=UnitMaster::findOrFail($id);
@@ -195,28 +154,18 @@ class UnitController extends Controller
         return response()->json(['message'=>'Unit successfully '.$message.'.']);
     }
 
-    /************************************************************************/
-    # Function to delete user                                                #
-    # Function name    : delete                                              #
-    # Created Date     : 25-11-2020                                          #
-    # Modified date    : 25-11-2020                                          #
-    # Purpose          : to delete user                                      #
-    # Param            : id                                                  #
+
     public function delete($id){
         $unit=UnitMaster::findOrFail($id);
         
+        $spare_part_exist=SparePart::where('unit_master_id',$id)->first();
+        if($spare_part_exist){
+            return response()->json(['message'=>'You can not delete this unit because there are spare parts containing this unit'],400);
+        }
         $unit->delete();
         return response()->json(['message'=>'Unit successfully deleted.']);
 
     }
-    
-    /************************************************************************/
-    # Function to show/load details page for user                            #
-    # Function name    : show                                                #
-    # Created Date     : 25-11-2020                                          #
-    # Modified date    : 25-11-2020                                          #
-    # Purpose          : show/load details page for user                     #
-    # Param            : id                                                  #
 
     public function show($id){
         $user=UnitMaster::findOrFail($id);
@@ -224,6 +173,23 @@ class UnitController extends Controller
         $this->data['user']=$user;
         return view($this->view_path.'.show',$this->data);
 
+    }
+
+
+    public function ajax_check_unit_name_unique(Request $request,$unit_master_id=null){
+
+        if($unit_master_id){
+             $unit= UnitMaster::where('id','!=',$unit_master_id)
+             ->whereTranslation('unit_name',$request->unit_name,$request->locale)->first();
+        }else{
+             $unit= UnitMaster::whereTranslation('unit_name',$request->unit_name,$request->locale)->first();
+        }
+     
+        if($unit){
+            echo "false";
+        }else{
+            echo "true";
+        }
     }
 
     

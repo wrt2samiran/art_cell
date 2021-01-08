@@ -42,11 +42,11 @@ class SparePartsController extends Controller
                 $disabled=(!$current_user->hasAllPermission(['spare-part-status-change']))?'disabled':'';
                 if($spareParts->is_active=='1'){
                    $message='deactivate';
-                   return '<a title="Click to deactivate the Spare Parts" href="javascript:change_status('."'".route('admin.spare_parts.change_status',$spareParts->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm '.$disabled.'">Active</a>';
+                   return '<a title="Click to deactivate the Spare Parts" href="javascript:change_status('."'".route('admin.spare_parts.change_status',$spareParts->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm '.$disabled.'">'.__('general_sentence.active').'</a>';
                     
                 }else{
                    $message='activate';
-                   return '<a title="Click to activate the Spare Parts" href="javascript:change_status('."'".route('admin.spare_parts.change_status',$spareParts->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm '.$disabled.'">Inactive</a>';
+                   return '<a title="Click to activate the Spare Parts" href="javascript:change_status('."'".route('admin.spare_parts.change_status',$spareParts->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm '.$disabled.'">'.__('general_sentence.inactive').'</a>';
                 }
             })
             ->addColumn('action',function($spareParts){
@@ -128,7 +128,7 @@ class SparePartsController extends Controller
 
             SparePartImage::insert($image_data);
         }
-        return redirect()->route('admin.spare_parts.list')->with('success','Spare part successfully created.');
+        return redirect()->route('admin.spare_parts.list')->with('success',__('spare_part_manage_module.create_success_message'));
 
     }
 
@@ -218,7 +218,7 @@ class SparePartsController extends Controller
             SparePartImage::insert($image_data);
         }
 
-        return redirect()->route('admin.spare_parts.list')->with('success','Spare part successfully updated.');
+        return redirect()->route('admin.spare_parts.list')->with('success',__('spare_part_manage_module.edit_success_message'));
 
     }
 

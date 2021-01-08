@@ -41,14 +41,14 @@ class SharedServiceController extends Controller
                 if($sharedService->is_sharing){
                     return "<div><span>".$sharedService->currency.number_format($sharedService->price, 2, '.', '')."</span> for ".$sharedService->number_of_days." days</div><div>+ ".$sharedService->currency.number_format($sharedService->extra_price_per_day, 2, '.', '')."/day</div>";
                 }else{
-                    return '<span class="text-muted">Not Available</span>';
+                    return '<span class="text-muted">'.__('general_sentence.not_available').'</span>';
                 }
             })
             ->editColumn('selling_price', function ($sharedService) {
                 if($sharedService->is_selling){
                     return "<div><span>".$sharedService->currency.number_format($sharedService->selling_price, 2, '.', '')."</span></div>";
                 }else{
-                    return '<span class="text-muted">Not Available</span>';
+                    return '<span class="text-muted">'.__('general_sentence.not_available').'</span>';
                 }
             })
             ->orderColumn('price', function ($query, $order) {
@@ -65,11 +65,11 @@ class SharedServiceController extends Controller
                 $disabled=(!$current_user->hasAllPermission(['shared-service-status-change']))?'disabled':'';
                 if($sharedService->is_active=='1'){
                    $message='deactivate';
-                   return '<a title="Click to deactivate the shared service" href="javascript:change_status('."'".route('admin.shared_services.change_status',$sharedService->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm '.$disabled.' ">Active</a>';
+                   return '<a title="Click to deactivate the shared service" href="javascript:change_status('."'".route('admin.shared_services.change_status',$sharedService->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm '.$disabled.' ">'.__('general_sentence.active').'</a>';
                     
                 }else{
                    $message='activate';
-                   return '<a title="Click to activate the shared service" href="javascript:change_status('."'".route('admin.shared_services.change_status',$sharedService->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm '.$disabled.' ">Inactive</a>';
+                   return '<a title="Click to activate the shared service" href="javascript:change_status('."'".route('admin.shared_services.change_status',$sharedService->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm '.$disabled.' ">'.__('general_sentence.inactive').'</a>';
                 }
             })
             ->addColumn('action',function($sharedService){
@@ -152,7 +152,7 @@ class SharedServiceController extends Controller
 
             SharedServiceImage::insert($image_data);
         }
-        return redirect()->route('admin.shared_services.list')->with('success','Shared service successfully created.');
+        return redirect()->route('admin.shared_services.list')->with('success',__('shared_service_manage_module.create_success_message'));
 
     }
 
@@ -243,7 +243,7 @@ class SharedServiceController extends Controller
             SharedServiceImage::insert($image_data);
         }
 
-        return redirect()->route('admin.shared_services.list')->with('success','Shared service successfully updated.');
+        return redirect()->route('admin.shared_services.list')->with('success',__('shared_service_manage_module.edit_success_message'));
 
     }
 

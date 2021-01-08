@@ -469,7 +469,7 @@ class SparePartOrderController extends Controller
         ]);
 
 
-        return redirect()->back()->with('success','Order status successfully updated.');
+       return redirect()->back()->with('success',__('manage_order_module.update_order_status_message'));
     }
 
     /************************************************************************/

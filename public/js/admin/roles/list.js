@@ -8,6 +8,7 @@
             url: $('#roles_data_url').val(),
             data: function (d) {
                 d.user_type_id = $('#user_type_id').val();
+                d.status = $('#status').val();
             }
         },
         columns: [
@@ -40,8 +41,8 @@
   title: translations.group_manage_module.warning_title,
   text: translations.group_manage_module.delete_warning,
   icon: "warning",
-buttons: [translations.general_sentence.button_and_links.ok,translations.general_sentence.button_and_links.cancel],
-  dangerMode: true,
+  buttons: [translations.general_sentence.button_and_links.cancel,translations.general_sentence.button_and_links.ok],
+  dangerMode: false,
   })
   .then((willDelete) => {
     if (willDelete) {
@@ -89,8 +90,8 @@ buttons: [translations.general_sentence.button_and_links.ok,translations.general
   title: translations.group_manage_module.warning_title,
   text: translations.group_manage_module.change_status_warning,
   icon: "warning",
-  buttons: [translations.general_sentence.button_and_links.ok,translations.general_sentence.button_and_links.cancel],
-  dangerMode: true,
+  buttons: [translations.general_sentence.button_and_links.cancel,translations.general_sentence.button_and_links.ok],
+  dangerMode: false,
   })
   .then((confirm) => {
     if (confirm) {
@@ -125,7 +126,7 @@ buttons: [translations.general_sentence.button_and_links.ok,translations.general
 
 
 
-$('.user_type-filter').select2({
+$('#user_type_id').select2({
   theme: 'bootstrap4',
   placeholder:translations.group_manage_module.placeholders.filter_by_user_type,
   language: current_locale,
@@ -146,4 +147,32 @@ $('#user_type_id').on('change', function(e) {
 
 $('#user_type-filter-clear').on('click',function(){
   $('#user_type_id').val("").change();
+});
+
+
+
+
+
+
+$('#status').select2({
+  theme: 'bootstrap4',
+  placeholder:translations.group_manage_module.placeholders.filter_by_status,
+  language: current_locale,
+});
+
+
+$('#status').on('change', function(e) {
+    if(this.value!=''){
+      $('#status-filter-clear').show();
+    }else{
+      $('#status-filter-clear').hide();
+    }
+    
+    $.LoadingOverlay("show");
+    roles_table.draw();
+});
+
+
+$('#status-filter-clear').on('click',function(){
+  $('#status').val("").change();
 });

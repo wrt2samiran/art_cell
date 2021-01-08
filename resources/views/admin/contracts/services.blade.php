@@ -7,14 +7,14 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Contract Management</h1>
+            <h1>{{__('contract_manage_module.module_title')}}</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.contracts.list')}}">Contracts</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.contracts.list')}}">{{__('general_sentence.breadcrumbs.contracts')}}</a></li>
               <li class="breadcrumb-item active">
-                {{($contract->creation_complete)?'Edit':'Create'}}
+                {{($contract->creation_complete)?__('general_sentence.breadcrumbs.edit'):__('general_sentence.breadcrumbs.create')}}
               </li>
             </ol>
           </div>
@@ -28,7 +28,13 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">{{($contract->creation_complete)?'Edit':'Create'}} Contract</h3>
+                <h3 class="card-title">
+                  @if($contract->creation_complete)
+                  {{__('contract_manage_module.edit_contract')}}
+                  @else
+                  {{__('contract_manage_module.create_contract')}}
+                  @endif
+                </h3>
               </div>
               <div class="card-body">
 
@@ -55,7 +61,7 @@
                         <div class="card">
                           <div  id="headingOne">
                               <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                View Added Services
+                                {{__('contract_manage_module.view_added_services')}}
                               </button>
                           </div>
 
@@ -65,11 +71,11 @@
                                     <thead>
                                         <tr>
                                             <th>Id</th>
-                                            <th>Service</th>
-                                            <th>Service Type</th>
-                                            <th>Price ({{Helper::getSiteCurrency()}})</th>
-                                            <th>Status</th>
-                                            <th>Action</th>
+                                            <th>{{__('contract_manage_module.labels.service')}}</th>
+                                            <th>{{__('contract_manage_module.labels.service_type')}}</th>
+                                            <th>{{__('contract_manage_module.labels.service_price')}} ({{Helper::getSiteCurrency()}})</th>
+                                            <th>{{__('contract_manage_module.labels.status')}}</th>
+                                            <th>{{__('contract_manage_module.labels.action')}}</th>
                                         </tr>
                                     </thead>
                                 </table>
@@ -84,7 +90,6 @@
                         @include('admin.contracts.partials.service_add_form')
                       @endif
                       
-
                     </div>
                   </div>
               </div>
