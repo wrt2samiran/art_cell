@@ -46,5 +46,33 @@ class TaskDetails extends Model
     {
         return $this->hasMany(TaskDetailsFeedbackFiles::class);
     }
+
+    public function get_slot_name(){
+        if($this->work_order_slot->daily_slot=='1'){
+            return 'First Slot';
+        }elseif($this->work_order_slot->daily_slot=='2'){
+            return 'Second Slot';
+        }elseif ($this->work_order_slot->daily_slot=='3') {
+            return 'Third Slot';
+        }elseif ($this->work_order_slot->daily_slot=='4') {
+            return 'Fourth Slot';
+        }elseif ($this->work_order_slot->daily_slot=='5') {
+            return 'Fifth Slot';
+        }elseif($this->work_order_slot->daily_slot=='6'){
+            return 'Sixth Slot';
+        }elseif ($this->work_order_slot->daily_slot=='7') {
+            return 'Seventh Slot';
+        }elseif ($this->work_order_slot->daily_slot=='8') {
+            return 'Eighth Slot';
+        }elseif ($this->work_order_slot->daily_slot=='9') {
+            return 'Nineth Slot';
+        }elseif ($this->work_order_slot->daily_slot=='10') {
+            return 'Tenth Slot';
+        }else{
+            return 'No Slot';
+        }
+
+        
+    }
     
 }

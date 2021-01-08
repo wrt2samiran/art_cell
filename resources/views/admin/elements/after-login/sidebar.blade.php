@@ -455,7 +455,7 @@
                     class="nav-link {{(request()->is('admin/work-order-management/*','admin/work-order-management'))?'active':''}}">
                         <i class="nav-icon fas fa-quote-right"></i>
                         @if($admin->role->user_type->slug=='labour')
-                            <p>{{__('nav_link_text.task-management')}}</p>
+                            <p>{{__('nav_link_text.my-tasks')}}</p>
                         @else
                             <p>{{__('nav_link_text.work-order-management')}}</p>
                         @endif
@@ -505,20 +505,7 @@
                         </li>
                         @endif
 
-                        <!-- @if(auth()->guard('admin')->user()->hasAllPermission(['leave-management']))
-                        <li class="nav-item ">
-                            <a href="{{route('admin.leaveList')}}"
-                            class="nav-link {{(request()->is('admin/leave_management/*','admin/leave_management'))?'active':''}}">
-                                <i class="nav-icon fa fa-user"></i>
-                                <p>
-                                     {{__('nav_link_text.users')}}
-                                </p>
-                            </a>
-                        </li>
-                        @endif -->
-                        
                     </ul>
-                   
                     
                 </li>
                 @endif

@@ -561,6 +561,36 @@ class DashboardController extends Controller
         return view('admin.dashboard.service_provider.index',$this->data);
     }
     public function labour_dashboard($request,$current_user){
+
+        $this->data['total_pending_tasks']=TaskDetails::where('user_id', $current_user->id)->where('is_deleted', 'N')->whereStatus('0')
+        ->count();
+
+        $this->data['total_overdue_tasks']=TaskDetails::where('user_id', $current_user->id)->where('is_deleted', 'N')->whereStatus('1')
+        ->count();
+        $this->data['total_completed_tasks']=TaskDetails::where('user_id', $current_user->id)->where('is_deleted', 'N')->whereIN('status', ['2','4'])
+        ->count();
+
+        $task_details_list=TaskDetails::select(DB::raw('count(*) as total_tasks,  DATE_FORMAT(created_at, "%m-%Y") as month_year'))->where("created_at",">", Carbon::now()->subMonths(6))->where('user_id', $current_user->id)->where('is_deleted', 'N')->groupBy('month_year')->pluck('total_tasks','month_year')->toArray();
+
+        
+        for ($i = 0; $i < 12; $i++) {
+
+            $month_year=date('m-Y', strtotime("-$i month"));
+            $last_six_month_task_assigned_array[]=$month_year;
+
+            
+
+            $last_six_month_tasks_assigned[]=(array_key_exists($month_year,$task_details_list))?$task_details_list[$month_year]:0;
+        }
+
+        $task_details_reschedule_list=TaskDetails::with('service', 'task',  'task.property')->where('user_id', $current_user->id)->where('is_deleted', 'N')->where('status', '3')->orderBy('id', 'desc')->take(5)->get();
+
+        $this->data['task_details_upcoming_list']=TaskDetails::with('service', 'task',  'task.property', 'work_order_slot')->where('user_id', $current_user->id)->where('is_deleted', 'N')->where('status', '0')->orderBy('id', 'desc')->take(10)->get();
+
+        $this->data['last_six_month_task_assigned_array']=$last_six_month_task_assigned_array;
+        $this->data['last_six_month_tasks_assigned']=$last_six_month_tasks_assigned;
+        $this->data['task_details_reschedule_list'] = $task_details_reschedule_list;
+
         return view('admin.dashboard.labour.index',$this->data);
     }
     public function default_dashboard($request,$current_user){

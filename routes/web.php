@@ -460,7 +460,7 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::post('/assign-labour-other-maintanence-task', 'WorkOrderManagementController@taskOtherMaintanenceAssign')->name('taskOtherMaintanenceAssign');  
                 Route::get('/labour_task_details/{id}', 'WorkOrderManagementController@labourTaskDetails')->name('labourTaskDetails');
                 Route::post('/reschedule-labour-task', 'WorkOrderManagementController@labourTaskReschedule')->name('labourTaskReschedule');
-                
+               
 
                 Route::any('/{id}/delete', 'WorkOrderManagementController@delete')->name('delete');
                 Route::post('/task-feedback', 'WorkOrderManagementController@taskFeedback')->name('taskFeedback'); 
@@ -469,7 +469,7 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::any('/{id}/delete-labour-task', 'WorkOrderManagementController@deleteLabourTask')->name('deleteLabourTask');
                 
                 Route::get('/{id}/change-status', 'WorkOrderManagementController@change_status')->name('change_status');
-                Route::post('/labour-task-rating', 'WorkOrderManagementController@labourTaskRating')->name('labourTaskRating'); 
+                Route::post('/labour-task-rating-review', 'WorkOrderManagementController@labourTaskReviewRating')->name('labourTaskReviewRating'); 
                 
                 //Route::get('/{id}/reschedule-task', 'WorkOrderManagementController@rescheduleTask')->name('rescheduleTask');
 

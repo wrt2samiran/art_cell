@@ -1599,24 +1599,12 @@ class WorkOrderManagementController extends Controller
 
             ->addColumn('status',function($labour_task_list){
             
-                if($labour_task_list->status=='1'){
-                   //$message='deactivate';
-                   return '<span class="btn btn-block btn-outline-denger btn-sm">Overdue</a>';
-                    
-                }else if($labour_task_list->status=='0'){
-                   $message='complete';
-                   if($labour_task_list->user_feedback==''){
-                        return '<span class="btn btn-block btn-outline-warning btn-sm">Pending</a>';
-                   }
-                   else{
-                        return '<a title="Click to Complete the daily task" href="javascript:change_status('."'".route('admin.work-order-management.change_status',$labour_task_list->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm">Pending</a>';
-                   }
-                   
-                   
+                if($labour_task_list->status=='0'){
+                    return '<span class="btn btn-block btn-outline-warning btn-sm">Pending</a>';
                 }
                 else if($labour_task_list->status=='1')
                 {
-                    return '<span class="btn btn-block btn-outline-denger btn-sm">Overdue</a>';
+                    return '<span class="btn btn-block btn-outline-secondary btn-sm">Overdue</a>';
                 }
                 else if($labour_task_list->status=='2')
                 {
@@ -1625,6 +1613,10 @@ class WorkOrderManagementController extends Controller
                 else if($labour_task_list->status=='3')
                 {
                     return '<span class="btn btn-block btn-info btn-sm">Requested for Reschedule</a>';
+                }
+                else if($labour_task_list->status=='4')
+                {
+                    return '<span class="btn btn-block btn-danger btn-sm">Completed with Warning</a>';
                 }
 
 
@@ -1638,7 +1630,15 @@ class WorkOrderManagementController extends Controller
                 if(\Auth::guard('admin')->user()->role_id==4){
                     $details_url = route('admin.work-order-management.labourTaskDetails',$labour_task_list->id);
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Daily Task List" id="details_task" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
+
+                    if($labour_task_list->rating==0 and ($labour_task_list->status=='4' || $labour_task_list->status=='2'))
+                    {
+                        $action_buttons=$action_buttons."&nbsp;&nbsp;<a title='Review and Rating' id='review_rating' 
+                    href='javascript:reviewRating(".$labour_task_list->id.")'><i class='fas fa-star-half-alt'></i></a>";
+                    }
                  }
+
+
                  if($labour_task_list->status=='3' and $labour_task_list->rescheduled=='N')
                  {
                      $allRestrictedDate=  $this->getAllRestricedDates($labour_task_list->user_id);
@@ -2402,7 +2402,7 @@ class WorkOrderManagementController extends Controller
                     ]);
 
                // $request->session()->flash('success', 'Task has been added successfully');
-                return redirect()->route('admin.work-order-management.taskLabourList', $taskDetails->task_id)->with('success','Task Rescheduled successfully');               
+                return redirect()->route('admin.work-order-management.taskLabourList', $taskDetails->task_id)->with('success-message','Task Rescheduled successfully');               
             }
 
         } catch (Exception $e) {
@@ -2413,7 +2413,7 @@ class WorkOrderManagementController extends Controller
     
     /*****************************************************/
     # WorkOrderManagementController
-    # Function name : labourTaskRating
+    # Function name : labourTaskReviewRating
     # Author        :
     # Created Date  : 02-12-2020
     # Purpose       : Set Supervisor Feedback Rating for Labour Task
@@ -2422,18 +2422,19 @@ class WorkOrderManagementController extends Controller
 
    
 
-    public function labourTaskRating(Request $request)
+    public function labourTaskReviewRating(Request $request)
     {
+        //dd($request->all());
         $logedInUser = \Auth::guard('admin')->user()->id;
-         
-        
-        $sqlTaskDetails= TaskDetails::whereId($request->task_details_id)->first();
+        $sqlTaskDetails= TaskDetails::whereId($request->taskdetails_id)->first();
         
         $sqlTaskDetails->update([
-            'rating'=> $request->ratingValue,
+            'review'=> $request->labour_task_review,
+            'rating'=> $request->rating,
             'updated_by' => $logedInUser
             ]);
 
-        return response()->json(['status'=>true,],200);
+        //return response()->json(['status'=>true,],200);
+        return redirect()->route('admin.work-order-management.taskLabourList', $sqlTaskDetails->task_id)->with('success-message','Review and Rating submited successfully');  
     }
 }
