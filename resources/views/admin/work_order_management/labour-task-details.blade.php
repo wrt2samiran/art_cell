@@ -207,7 +207,11 @@
                  </tbody>
                     <tfoot>
                       <tr>
-                        <td colspan="2"><a class="btn btn-primary" href="{{route('admin.work-order-management.taskLabourList', $task_data->task->id)}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
+                        @if(Auth::guard('admin')->user()->role->slug=='labour')
+                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.work-order-management.list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
+                        @else
+                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.work-order-management.taskLabourList', $task_data->task->id)}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
+                        @endif  
                       </tr>
                     </tfoot>
                   </table>

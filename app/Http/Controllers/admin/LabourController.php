@@ -609,7 +609,7 @@ class LabourController extends Controller
                     else
                     {
                         empty($arr_days);
-                        return redirect()->route('admin.createLeave')->with('error','Already Leave adde for this user on '.$checkLeave->leave_date);
+                        return redirect()->route('admin.leave_management.createLeave')->with('error','Already Leave adde for this user on '.$checkLeave->leave_date);
                     }
                 }
                 

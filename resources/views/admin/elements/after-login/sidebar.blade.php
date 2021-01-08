@@ -144,6 +144,7 @@
                                 <p>{{__('nav_link_text.unit_management')}}</p>
                             </a>
                         </li> 
+                        @endif
 
                         @if(auth()->guard('admin')->user()->hasAllPermission(['manage-skills']))
                         <li class="nav-item">
@@ -152,9 +153,6 @@
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>{{__('nav_link_text.skills')}}</p>
                             </a>
-                        </li>
-                        @endif       
-
                         </li>   
                         @endif     
 

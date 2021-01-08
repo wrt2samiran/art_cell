@@ -76,10 +76,10 @@
                                         <tr>
                                             <th>Id</th>
                                             <th>Property</th>
-                                            <th>Address</th>
+                                            <th width="15%">Address</th>
                                             <th>Service</th>
                                             <th>Task Title</th>
-                                            <th>Task Finish Date And Time (Assigned)</th>
+                                            <th>Task Finish Date And Time (Scheduled)</th>
                                             <th>Slot</th>
                                             <!-- <th width="25%">Task Details</th> -->
                                             <th>Feedback Date And Time</th>

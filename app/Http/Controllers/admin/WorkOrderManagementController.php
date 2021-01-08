@@ -1232,23 +1232,82 @@ class WorkOrderManagementController extends Controller
                             // echo 'percentPerSubTask ::'.$percentPerSubTask = (100/count($sqlSubTaskCount));
                             // echo 'totalPercentPerSubTask ::'.$totalPercentPerSubTask = $sqlTask->task_complete_percent+$percentPerSubTask;
                             // exit;
-                             $percentPerSubTask = $sqlTask->task_complete_percent+(100/count($sqlSubTaskCount));
+                            $percentPerSubTask = $sqlTask->task_complete_percent+(100/count($sqlSubTaskCount));
 
-                            $sqlTask->update([
-                                'task_complete_percent'=>$percentPerSubTask,
-                                'updated_by'=>$logedInUser
-                            ]);
+                            if($percentPerSubTask==100)
+                            {
+                                $sqlTask->update([
+                                    'task_complete_percent'=>$percentPerSubTask,
+                                    'status'=>2,
+                                    'updated_by'=>$logedInUser
+                                ]);
+                            }
+                            else
+                            {
+                                $sqlTask->update([
+                                    'task_complete_percent'=>$percentPerSubTask,
+                                    'updated_by'=>$logedInUser
+                                ]);
+                            }
+                            
 
 
-                            // $sqlTaskCount = TaskLists::whereWorkOrderId($sqlTaskData->work_order_id)->whereIsDeleted('N')->get();
-                            // if($sqlTaskCount)
-                            // {
-                            //     $percentPerTask = ($sqlWorkOrder->work_order_complete_percent+(100/count($sqlTaskCount)));
-                            //     $sqlWorkOrder->update([
-                            //         'work_order_complete_percent'=>$percentPerTask,
-                            //         'updated_by'=>$logedInUser
-                            //     ]);
-                            // }
+                            if($sqlTaskData->work_order_slot_id==0)
+                            {
+                                $sqlTaskCount = TaskLists::whereWorkOrderId($sqlTask->work_order_id)->whereIsDeleted('N')->get();
+                                if($sqlTaskCount)
+                                {
+                                    $percentPerTask = ($sqlWorkOrder->work_order_complete_percent+(100/count($sqlTaskCount)));
+
+                                    if($percentPerTask==100)
+                                    {
+                                        $sqlWorkOrder->update([
+                                            'work_order_complete_percent'=>$percentPerTask,
+                                            'status' => 2,
+                                            'updated_by'=>$logedInUser
+                                        ]);
+                                    }
+                                    else
+                                    {
+                                        $sqlWorkOrder->update([
+                                            'work_order_complete_percent'=>$percentPerTask,
+                                            'updated_by'=>$logedInUser
+                                        ]);
+                                    }
+                                    
+
+
+                                }
+                            }
+                            else
+                            {
+                                $sqlWorkOrderSlotCount = WorkOrderSlot::whereWorkOrderId($sqlTask->work_order_id)->get();
+                                if($sqlWorkOrderSlotCount)
+                                {
+                                    
+                                    $percentPerSlot = ($sqlWorkOrder->work_order_complete_percent+(100/count($sqlWorkOrderSlotCount)));
+                                    
+                                    if($percentPerSubTask==100)
+                                    {
+                                        $sqlWorkOrder->update([
+                                            'work_order_complete_percent'=>$percentPerSlot,
+                                            'status' => 2,
+                                            'updated_by'=>$logedInUser
+                                        ]); 
+                                    }
+
+                                    else
+                                    {
+                                        $sqlWorkOrder->update([
+                                            'work_order_complete_percent'=>$percentPerSlot,
+                                            'updated_by'=>$logedInUser
+                                        ]);   
+                                    }   
+                             
+
+                                }
+                            }
+                            
 
                         } 
 
@@ -1337,24 +1396,40 @@ class WorkOrderManagementController extends Controller
                 $query->whereRaw("DATE_FORMAT(task_finish_date_time,'%d/%m/%Y') like ?", ["%$keyword%"]);
             })
             ->addColumn('status',function($task_list){
-                if($task_list->status=='1'){
-                   //$message='deactivate';
-                   return '<span class="btn btn-block btn-outline-denger btn-sm">Overdue</a>';
+                // if($task_list->status=='1'){
+                //    //$message='deactivate';
+                //    return '<span class="btn btn-block btn-outline-denger btn-sm">Overdue</a>';
                     
-                }else if($task_list->status=='0'){
-                   $message='complete';
-                   if($task_list->user_feedback==''){
-                        return '<span class="btn btn-block btn-outline-warning btn-sm">Pending</a>';
-                   }
-                   else{
-                        return '<a title="Click to Complete the daily task" href="javascript:change_status('."'".route('admin.work-order-management.change_status',$task_list->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm">Pending</a>';
-                   }
+                // }else if($task_list->status=='0'){
+                //    $message='complete';
+                //    if($task_list->user_feedback==''){
+                //         return '<span class="btn btn-block btn-outline-warning btn-sm">Pending</a>';
+                //    }
+                //    else{
+                //         return '<a title="Click to Complete the daily task" href="javascript:change_status('."'".route('admin.work-order-management.change_status',$task_list->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm">Pending</a>';
+                //    }
                    
                    
+                // }
+                // else if($task_list->status=='1')
+                // {
+                //     return '<span class="btn btn-block btn-outline-denger btn-sm">Overdue</a>';
+                // }
+                // else if($task_list->status=='2')
+                // {
+                //     return '<span class="btn btn-block btn-outline-success btn-sm">Completed</a>';
+                // }
+                // else if($task_list->status=='3')
+                // {
+                //     return '<span class="btn btn-block btn-info btn-sm">Requested for Reschedule</a>';
+                // }
+
+                if($task_list->status=='0'){
+                    return '<span class="btn btn-block btn-outline-warning btn-sm">Pending</a>';
                 }
                 else if($task_list->status=='1')
                 {
-                    return '<span class="btn btn-block btn-outline-denger btn-sm">Overdue</a>';
+                    return '<span class="btn btn-block btn-outline-secondary btn-sm">Overdue</a>';
                 }
                 else if($task_list->status=='2')
                 {
@@ -1363,6 +1438,10 @@ class WorkOrderManagementController extends Controller
                 else if($task_list->status=='3')
                 {
                     return '<span class="btn btn-block btn-info btn-sm">Requested for Reschedule</a>';
+                }
+                else if($task_list->status=='4')
+                {
+                    return '<span class="btn btn-block btn-danger btn-sm">Completed with Warning</a>';
                 }
             })
 

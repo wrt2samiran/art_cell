@@ -124,7 +124,7 @@
 		                </h3>
 		              </div>
 		              <div>
-		                <a href="{{route('admin.work-order-management.list')}}">View All</a>
+		                <a href="#">View All</a>
 		              </div>
 		            </div>
 		          </div>
@@ -146,7 +146,7 @@
                       </h3>
                     </div>
                     <div>
-                      <a href="{{route('admin.work-order-management.list')}}">View All</a>
+                      <a href="#">View All</a>
                     </div>
                   </div>
                 </div>
@@ -174,7 +174,7 @@
                           </tr>
                           @empty
                           <tr>
-                             <td colspan="5">No complaints</td> 
+                             <td colspan="5">No Reschedule Request</td> 
                           </tr>
                           @endforelse
                       </tbody>
