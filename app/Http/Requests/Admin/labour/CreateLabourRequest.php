@@ -27,6 +27,8 @@ class CreateLabourRequest extends FormRequest
             'country_id'=>'required',
             'state_id'=>'required',
             'city_id'=>'required',
+            'start_time' => 'required',
+            'end_time' => 'required',
             //'skills'=>'required',
         ];
     }
@@ -50,6 +52,8 @@ class CreateLabourRequest extends FormRequest
             'country_id'=>'Please select Country',
             'state_id'=>'Please select State',
             'city_id'=>'Please select City',
+            'start_time' => 'Please enter Start Time',
+            'end_time' => 'Please enter End Time',
            //'skills'=>'Please select Skill',
         ];
     }

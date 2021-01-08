@@ -20,7 +20,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
-use App\Models\{User,Role,LabourLeave,LeaveDates,Country,State,City,Skills,UserSkills};
+use App\Models\{User,Role,LabourLeave,LeaveDates,Country,State,City,Skills,UserSkills,LabourWeeklyOff};
 use Carbon\Carbon;
 use App\Events\User\UserCreated;
 use App\Http\Requests\Admin\labour\{CreateLabourRequest,UpdateLabourRequest,CreateLabourLeaveRequest,UpdateLabourLeaveRequest};
@@ -166,10 +166,12 @@ class LabourController extends Controller
             'email'=>strtolower($request->email),
             'password'=>$request->password,
             'phone'=>$request->phone,
-            'weekly_off'=>$request->weekly_off,
+            //'weekly_off'=>$request->weekly_off,
             'country_id'=>$request->country_id,
             'state_id'=>$request->state_id,
             'city_id'=>$request->city_id,
+            'start_time' =>$request->start_time,
+            'end_time' =>$request->end_time,
             'role_id'=>5,
             'status'=>'A',
             'created_by'=>auth()->guard('admin')->id(),
@@ -178,9 +180,20 @@ class LabourController extends Controller
 
         foreach ($request->skills as $skill_data) {
                   
-                $addTaskDetails = UserSkills::create([
+                $addSkillDetails = UserSkills::create([
                     'user_id'    => $user->id,
                     'skill_id'   => $skill_data,
+                    'created_by' => auth()->guard('admin')->id(),
+                ]);
+
+        }
+
+
+        foreach ($request->weekly_off as $weekly_off_data) {
+                  
+                $addWeeklyOff = LabourWeeklyOff::create([
+                    'user_id'    => $user->id,
+                    'day_name'   => $weekly_off_data,
                     'created_by' => auth()->guard('admin')->id(),
                 ]);
 
@@ -204,6 +217,7 @@ class LabourController extends Controller
 
     public function show($id){
         $user=User::with('user_skills', 'user_skills.skill', 'country', 'state', 'city')->findOrFail($id);
+        $this->data['weekly_off_list']= LabourWeeklyOff::whereStatus('1')->whereNull('deleted_at')->whereUserId($id)->get();
         $this->data['page_title']='Labour Details';
         $this->data['user']=$user;
         return view($this->view_path.'.show',$this->data);
@@ -245,6 +259,7 @@ class LabourController extends Controller
         $this->data['skill_list']= Skills::whereStatus('1')->where('is_deleted', 'N')->whereRoleId(5)->get();  
         $this->data['user_skill_list']= $user_skill_list;
         $this->data['roles']=$roles;
+        $this->data['weekly_off_list']= LabourWeeklyOff::whereStatus('1')->whereNull('deleted_at')->whereUserId($id)->pluck('day_name')->toArray();  
         return view($this->view_path.'.edit',$this->data);
     }
 
@@ -257,6 +272,7 @@ class LabourController extends Controller
     # Param            : UpdateLabourRequest $request,id                                   #
     public function update(UpdateLabourRequest $request,$id){
 
+       // dd($request->all());
         $user=User::findOrFail($id);
         //policy is defined in App\Policies\UserPolicy
         //$this->authorize('update',$user);
@@ -266,10 +282,12 @@ class LabourController extends Controller
             'name'=>$request->first_name.' '.$request->last_name,
             'email'=>strtolower($request->email),
             'phone'=>$request->phone,
-            'weekly_off'=>$request->weekly_off,
+            //'weekly_off'=>$request->weekly_off,
             'country_id'=>$request->country_id,
             'state_id'=>$request->state_id,
             'city_id'=>$request->city_id,
+            'start_time' =>$request->start_time,
+            'end_time' =>$request->end_time,
             'updated_by'=>auth()->guard('admin')->id()
         ];
 
@@ -283,9 +301,21 @@ class LabourController extends Controller
 
         foreach ($request->skills as $skill_data) {
                   
-                $addTaskDetails = UserSkills::create([
+                $addSkills = UserSkills::create([
                     'user_id'    => $user->id,
                     'skill_id'   => $skill_data,
+                    'created_by' => auth()->guard('admin')->id(),
+                ]);
+
+        }
+
+        $deleteUserWeeklyOff = LabourWeeklyOff::whereUserId($id)->delete();
+
+        foreach ($request->weekly_off as $weekly_off_data) {
+                  
+                $addWeeklyOff = LabourWeeklyOff::create([
+                    'user_id'    => $user->id,
+                    'day_name'   => $weekly_off_data,
                     'created_by' => auth()->guard('admin')->id(),
                 ]);
 
@@ -383,7 +413,7 @@ class LabourController extends Controller
 
         if($request->ajax()){
 
-            $leaveData=LabourLeave::with(['userDetails'])
+            $leaveData=LabourLeave::with(['users'])
             ->whereNull('deleted_at')
             ->whereCreatedBy($current_user->id)
             ->where(function($q)use ($current_user){
@@ -392,6 +422,7 @@ class LabourController extends Controller
                     $q->whereCreatedBy($current_user->id);
                 }
             })
+            ->whereHas('users')
             ->when($request->role_id,function($query) use($request){
                 $query->where('role_id',$request->role_id);
             })
@@ -418,21 +449,35 @@ class LabourController extends Controller
             ->addColumn('status',function($leaveData)use ($current_user){
 
                 //$disabled=(!$current_user->hasAllPermission(['user-status-change']))?'disabled':'';
-
-                if($leaveData->status=='Approved'){
-                   $message='deactivate';
-                   return '<a title="Click to deactivate the user" href="javascript:change_leave_status('."'".route('admin.labour.change_leave_status',$leaveData->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm" >Approved</a>';
-                    
-                }else{
-                   $message='activate';
-                   return '<a title="Click to activate the user" href="javascript:change_leave_status('."'".route('admin.labour.change_leave_status',$leaveData->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm">Waiting for Approval</a>';
+                $date_now = date("Y-m-d");
+               
+                if ($date_now < $leaveData->leave_start) {
+                    if($leaveData->status=='Approved'){
+                       $message='deactivate';
+                       return '<a title="Click to deactivate the user" href="javascript:change_leave_status('."'".route('admin.leave_management.change_leave_status',$leaveData->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm" >Approved</a>';
+                        
+                    }else{
+                       $message='activate';
+                       return '<a title="Click to activate the user" href="javascript:change_leave_status('."'".route('admin.leave_management.change_leave_status',$leaveData->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-danger btn-sm">Waiting for Approval</a>';
+                    }
+                }
+                else
+                {
+                    if($leaveData->status=='Approved'){
+                       $message='deactivate';
+                       return '<a title="Click to deactivate the user" href="javascript:not_acceable()" class="btn btn-block btn-outline-success btn-sm" >Approved</a>';
+                        
+                    }else{
+                       $message='activate';
+                       return '<a title="Click to activate the user" href="javascript:not_acceable()" class="btn btn-block btn-outline-danger btn-sm">Waiting for Approval</a>';
+                    }
                 }
             })
 
             ->addColumn('action',function($leaveData) use ($current_user){
-                $delete_url=route('admin.labour.deleteLeave',$leaveData->id);
-                $details_url=route('admin.labour.showLeave',$leaveData->id);
-                $edit_url=route('admin.labour.editLeave',$leaveData->id);
+                $delete_url=route('admin.leave_management.deleteLeave',$leaveData->id);
+                $details_url=route('admin.leave_management.showLeave',$leaveData->id);
+                $edit_url=route('admin.leave_management.editLeave',$leaveData->id);
                 $action_buttons='';
                 
                //need to check permissions later
@@ -471,6 +516,7 @@ class LabourController extends Controller
         //$user=User::findOrFail($id);
 
         $leaveData=LabourLeave::with(['userDetails', 'leave_dates'])->whereId($id)->first();
+
         $this->data['page_title']='Labour Leave Details';
         $this->data['leaveData']=$leaveData;
         return view($this->view_path.'.show-leave',$this->data);
@@ -563,7 +609,7 @@ class LabourController extends Controller
                     else
                     {
                         empty($arr_days);
-                        return redirect()->route('admin.createLeave')->with('error','Already Leave adde for this user on '.$checkLeave->leave_date);
+                        return redirect()->route('admin.leave_management.createLeave')->with('error','Already Leave adde for this user on '.$checkLeave->leave_date);
                     }
                 }
                 
@@ -592,7 +638,7 @@ class LabourController extends Controller
         
        
 
-        return redirect()->route('admin.leaveList')->with('success','Labour Leave successfully created.');
+        return redirect()->route('admin.leave_management.leaveList')->with('success','Labour Leave successfully created.');
 
 
     }
@@ -691,7 +737,7 @@ class LabourController extends Controller
             else
             {
                 empty($arr_days);
-                return redirect()->route('admin.createLeave')->with('error','Already Leave adde for this user on '.$checkLeave->leave_date);
+                return redirect()->route('admin.leave_management.editLeave', $id)->with('error','Already Leave adde for this user on '.$checkLeave->leave_date);
             }
         }
         
@@ -723,7 +769,7 @@ class LabourController extends Controller
 
         //event(new ServiceProviderCreated($user,$request->password));
 
-        return redirect()->route('admin.leaveList')->with('success','labour successfully updated.');
+        return redirect()->route('admin.leave_management.leaveList')->with('success','labour successfully updated.');
 
     }
 

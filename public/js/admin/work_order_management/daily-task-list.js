@@ -335,7 +335,7 @@ $("#admin_other_maintanence_labour_task_add_form").validate({
             
             { data: 'service.service_name', name: 'service.service_name', searchable: false, sortable : false },
             { data: 'task.task_title', name: 'task.task_title'},
-            { data: 'task_date', name: 'task_date' },
+            { data: 'task_date', name: 'task_date', searchable: false, sortable : false },
             {
                data: 'work_order_slot.daily_slot', 
               render: function(data){
@@ -374,7 +374,7 @@ $("#admin_other_maintanence_labour_task_add_form").validate({
             }, searchable: false, sortable : false},
             
             // { data: 'task.task_desc', name: 'task.task_desc' },
-            { data: 'task_finish_date_time', name: 'task_finish_date_time' },
+            { data: 'task_finish_date_time', name: 'task_finish_date_time', searchable: false, sortable : false},
             { data: 'late_feedback', 
               render: function(data){
                 if(data == 'N'){

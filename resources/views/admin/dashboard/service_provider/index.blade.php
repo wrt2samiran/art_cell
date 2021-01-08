@@ -188,7 +188,7 @@
               </div>
             </div>
             <div class="col-md-6">
-                            <div class="card">
+              <div class="card">
                 <div class="card-header border-0">
                   <div class="d-flex justify-content-between">
                     <div>

@@ -144,6 +144,7 @@
                                 <p>{{__('nav_link_text.unit_management')}}</p>
                             </a>
                         </li> 
+                        @endif
 
                         @if(auth()->guard('admin')->user()->hasAllPermission(['manage-skills']))
                         <li class="nav-item">
@@ -152,9 +153,6 @@
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>{{__('nav_link_text.skills')}}</p>
                             </a>
-                        </li>
-                        @endif       
-
                         </li>   
                         @endif     
 
@@ -465,7 +463,7 @@
                     class="nav-link {{(request()->is('admin/work-order-management/*','admin/work-order-management'))?'active':''}}">
                         <i class="nav-icon fas fa-quote-right"></i>
                         @if($admin->role->user_type->slug=='labour')
-                            <p>{{__('nav_link_text.task-management')}}</p>
+                            <p>{{__('nav_link_text.my-tasks')}}</p>
                         @else
                             <p>{{__('nav_link_text.work-order-management')}}</p>
                         @endif
@@ -507,16 +505,15 @@
                         @endif
                         @if(auth()->guard('admin')->user()->hasAllPermission(['leave-list']))
                         <li class="nav-item">
-                            <a href="{{ route('admin.leaveList') }}" class="nav-link {{(request()->is('admin/labour/leave-list','admin/labour/leave-list', 'admin/labour/show-leave/*','admin/labour/show-leave'))?'active':''}}"
+                            <a href="{{ route('admin.leave_management.leaveList') }}" class="nav-link {{(request()->is('admin/leave-list','admin/leave-list', 'admin/show-leave/*','admin/show-leave'))?'active':''}}"
                                >
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>{{__('nav_link_text.labour_leave_management')}}</p>
                             </a>
                         </li>
                         @endif
-                        
+
                     </ul>
-                   
                     
                 </li>
                 @endif

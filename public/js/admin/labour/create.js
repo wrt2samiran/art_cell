@@ -52,6 +52,12 @@ $("#labour_create_form").validate({
         skills:{
             required: true,
         },
+        start_time:{
+            required: true, 
+        },
+        end_time:{
+            required: true, 
+        },
         
     },
     messages: {
@@ -93,8 +99,11 @@ $("#labour_create_form").validate({
         city_id:{
             required: "Please select City",
         },
-        skills: {
-            required:  "Please select Labour",
+        start_time:{
+            required: "Please enter Start Time", 
+        },
+        end_time:{
+            required: "Please enter End Time", 
         },
         
     },

@@ -43,5 +43,10 @@ class Property extends Model
         return $this->belongsTo(State::class, 'state_id', 'id');
     }
 
+    public function work_order(){
+        return $this->belongsTo(WorkOrderLists::class, 'id', 'property_id');
+    }
+    
+
    
 }

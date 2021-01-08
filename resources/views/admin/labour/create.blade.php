@@ -135,6 +135,7 @@
                                 @endforelse     
                                                          
                               </select>
+                              <input type="checkbox" id="skill_all" value="Select All">Select All
                             @if($errors->has('skills'))
                             <span class="text-danger">{{$errors->first('skills')}}</span>
                             @endif
@@ -142,9 +143,8 @@
 
 
                           <div class="form-group">
-                            <label for="weekly_off">Select Weekly Off Day</label>
-                             <select class="form-control " id="weekly_off" name="weekly_off" style="width: 100%;">
-                               <option value="">Select Working Day</option>
+                            <label for="weekly_off_add">Select Weekly Off Day</label>
+                             <select class="form-control " name="weekly_off[]" id="weekly_off" style="width: 100%;" multiple class="chosen-select" style="width: 100%;">
                                <option value="monday">Monday</option>
                                <option value="tuesday">Tuesday</option>
                                <option value="wednesday">Wednesday</option>
@@ -153,16 +153,17 @@
                                <option value="saturday">Saturday</option>
                                <option value="sunday">Sunday</option>
                              </select>
+                             <input type="checkbox" id="weekly_off_all" value="Select All">Select All
                          </div>
                          
-                          <!-- <div class="form-group">
+                          <div class="form-group">
                             <label for="start_time">Select Start time:</label>
                             <input class="form-control" type="time" id="start_time" name="start_time">
                           </div>
                           <div class="form-group">
                             <label for="end_time">Select End time:</label>
                             <input class="form-control" type="time" id="end_time" name="end_time">
-                          </div> -->
+                          </div>
                         
                         </div>
                         <!--  this the url for remote validattion rule for user email -->
@@ -231,11 +232,29 @@
         });
     }
 
-    $('#skills').multiselect({
-    columns: 1,
-    placeholder: 'Select Labour',
-    search: true,
-    selectAll: true
+    $('#skills').chosen();
+    $("#skill_all").click(function(){
+
+        if($("#skill_all").is(':checked')){
+            $(this).parent().find('option').prop("selected", "selected");
+            $("#skills").trigger("chosen:updated");
+        } else {
+            $(this).parent().find('option').prop("selected", "");
+            $("#skills").trigger("chosen:updated");
+        }
+    });
+
+    
+    $('#weekly_off').chosen();
+    $("#weekly_off_all").click(function(){
+
+        if($("#weekly_off_all").is(':checked')){
+            $(this).parent().find('option').prop("selected", "selected");
+            $("#weekly_off").trigger("chosen:updated");
+        } else {
+            $(this).parent().find('option').prop("selected", "");
+            $("#weekly_off").trigger("chosen:updated");
+        }
     });
 </script>
 <script type="text/javascript" src="{{asset('js/admin/labour/create.js')}}"></script>

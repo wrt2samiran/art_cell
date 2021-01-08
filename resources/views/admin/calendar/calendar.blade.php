@@ -155,7 +155,7 @@
                 <section class="content">
                   <div class="">
                     <div class="row">
-                      <div class="col-md-12">
+                      <div class="col-md-9">
                         <div class="sticky-top mb-3">
                           <div class="card">
                             <div class="card-header">
@@ -177,7 +177,7 @@
                         </div>
                       </div>
                       <!-- /.col -->                      
-                      <div class="col-md-12">
+                      <div class="col-md-9">
                         <div class="card card-primary">
                           <div class="card-body p-0">
                             <!-- THE CALENDAR -->
@@ -196,7 +196,7 @@
 
                 
 
-                <div class="modal fade" id="showWorkOrderListModal" role="dialog">
+                <div class="modal fade" id="showWorkOrderListModal" role="dialog" style="padding-right: 100px !important;">
                   <div class="modal-dialog">
                     <div class="modal-content" style=" width: 1000px; margin: auto;">
                       <div class="modal-header">
@@ -471,7 +471,7 @@ $list = json_encode($filtered);
                       id             : '',
                       allDay         : false,
                       
-                      description: 'Task Title : <?=$work_order_data->task_title?><br>Property Name : <?=$work_order_data->property->property_name?><br>Service : <?=$work_order_data->service->service_name?><br>Service Type : <?=$work_order_data->contract_services->service_type?><br>Country : <?=$work_order_data->property->country->name?><br>State : <?=$work_order_data->property->state->name?><br>City : <?=$work_order_data->property->city->name?><br>Task Start Date : <?=$work_order_data->start_date?>'
+                      description: 'Task Title : <?=@$work_order_data->task_title?><br>Property Name : <?=@$work_order_data->property->property_name?><br>Service : <?=@$work_order_data->service->service_name?><br>Service Type : <?=@$work_order_data->contract_services->service_type?><br>Country : <?=@$work_order_data->property->country->name?><br>State : <?=@$work_order_data->property->state->name?><br>City : <?=@$work_order_data->property->city->name?><br>Task Start Date : <?=@$work_order_data->start_date?>'
                     },
 
 
@@ -483,7 +483,7 @@ $list = json_encode($filtered);
         var tooltip = new Tooltip(info.el, {
           title: info.event.extendedProps.description,
           placement: 'top',
-          trigger: 'hover',
+          trigger: 'cick',
           html: true,
           container: 'body'
         });
@@ -560,12 +560,7 @@ $list = json_encode($filtered);
 
 
 
-// $(document).on('click', 'td.fc-today,td.fc-future', function() {
-//   <?php if(\Auth::guard('admin')->user()->role_id==4){ ?>
-//       $('#addTaskModal').modal('show');
-//   <?php } ?>
 
-//  });
 
 function checKClickedDate(clicked_date){
 
@@ -579,12 +574,13 @@ function checKClickedDate(clicked_date){
       }
       workorder_list +=  '<tr><th><strong>Property Name</strong></th><th><strong>Contract</strong></th><th><strong>Work Order Title</strong></th><th><strong>Service Provider</strong></th><th><strong>Service</strong></th><th><strong>Maintenance Type</strong></th><th><strong>Date</strong></th><th><strong>Status</strong></th><th><strong>Action</strong></th></tr>';
           <?php foreach($work_order_list as $work_order_data){
-                  $details_url = route('admin.work-order-management.show',$work_order_data->id);
+                  $details_url = route('admin.work-order-management.show',@$work_order_data->id);
+                  $complain_url = route('admin.complaints.create','workorder_id='.@$work_order_data->id);
           ?>
             workDate = '<?php echo date("Y-m-d", strtotime($work_order_data->start_date)); ?>';
             if(clicked_date==workDate){
                   total++;
-                  workorder_list += '<tr><th><?php echo $work_order_data->property->property_name;?> </th><th><?php echo $work_order_data->contract->title. ' ('.$work_order_data->contract->code.')'; ?></th><th><?php echo $work_order_data->task_title; ?></th><th><?php echo $work_order_data->service_provider->name; ?></th><th><?php echo $work_order_data->service->service_name;?></th><th><?php echo $work_order_data->contract_services->service_type;?></th><th><?php echo date("d/m/Y H:i a", strtotime($work_order_data->start_date)); ?></th><th><?php if($work_order_data->status==0) echo  '<div class="external-event bg-warning ui-draggable ui-draggable-handle" style="position: relative; background-color: #ffc107 !important">Pending</div>'; elseif($work_order_data->status==1) echo '<div class="external-event btn-secondary ui-draggable ui-draggable-handle" style="position: relative; background-color: #5a6268 !important">Overdue</div>'; elseif($work_order_data->status==2) echo '<div class="external-event bg-success ui-draggable ui-draggable-handle" style="position: relative; background-color: #3ea846 !important">Completed</div>'; elseif($work_order_data->status==4) echo '<div class="external-event bg-danger ui-draggable ui-draggable-handle" style="position: relative; background-color: #dc3d45!important">Warning</div>'  ?></th><th><a href="#" title="Complain">Complain</a> &nbsp &nbsp <?php if($work_order_data->status==2){?><a target="_blank" href="<?php echo $details_url;?>"  title="Rating and view"><i class="fas fa-star-half-alt"></i></a><?php } else{?><a target="_blank" href="<?php echo $details_url;?>"  title="View"> <i class="far fa-eye"></i></a><?php } ?></br><?php if($work_order_data->warning>0){ echo $work_order_data->warning. ' Warning'; }?></th></tr>';
+                  workorder_list += '<tr><th><?php echo @$work_order_data->property->property_name;?> </th><th><?php echo @$work_order_data->contract->title. ' ('.@$work_order_data->contract->code.')'; ?></th><th><?php echo @$work_order_data->task_title; ?></th><th><?php echo @$work_order_data->service_provider->name; ?></th><th><?php echo @$work_order_data->service->service_name;?></th><th><?php echo @$work_order_data->contract_services->service_type;?></th><th><?php echo date("d/m/Y H:i a", strtotime(@$work_order_data->start_date)); ?></th><th><?php if(@$work_order_data->status==0) echo  '<div class="external-event bg-warning ui-draggable ui-draggable-handle" style="position: relative; background-color: #ffc107 !important">Pending</div>'; elseif(@$work_order_data->status==1) echo '<div class="external-event btn-secondary ui-draggable ui-draggable-handle" style="position: relative; background-color: #5a6268 !important">Overdue</div>'; elseif(@$work_order_data->status==2) echo '<div class="external-event bg-success ui-draggable ui-draggable-handle" style="position: relative; background-color: #3ea846 !important">Completed</div>'; elseif(@$work_order_data->status==4) echo '<div class="external-event bg-danger ui-draggable ui-draggable-handle" style="position: relative; background-color: #dc3d45!important">&nbsp; &nbsp; Warning</div>'  ?></th><th><a target="_blank" href="<?php echo $complain_url;?>" title="Complain">Complain</a> &nbsp &nbsp <?php if(@$work_order_data->status==2){?><a target="_blank" href="<?php echo @$details_url;?>"  title="Rating and view">&nbsp; &nbsp; Rating and view</a><?php } else{?><a target="_blank" href="<?php echo @$details_url;?>"  title="View"> &nbsp; &nbsp; View</a><?php } ?></br><?php if(@$work_order_data->warning>0){ echo ' <div class="external-event bg-danger ui-draggable ui-draggable-handle" style="position: relative; background-color: #dc3d45!important">&nbsp; &nbsp; '. @$work_order_data->warning. ' Warning</div>'; }?></th></tr>';
                   } 
          <?php  } ?>
 
@@ -779,7 +775,6 @@ function getServiceProviderLIst(){
 
  var work_order_id =  $('#work_order_id').val();
 
-  alert(work_order_id)
 
       $.ajax({
    
@@ -845,6 +840,10 @@ function getServiceProviderLIst(){
   
  
 }
+
+$(document).ready(function(){
+    $('[rel=tooltip]').tooltip({ trigger: "click" });
+});
 
 </script>
 @if(Session::has('welcome_msg'))        

@@ -49,5 +49,5 @@ return array (
   'notifications'=>'Notifications',
   'unit_management' => 'Unit Management',
   'skills' => 'Skills',
-  'task-management' => 'Task Management'
+  'my-tasks' => 'My Tasks'
 );

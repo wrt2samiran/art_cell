@@ -14,7 +14,7 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.leaveList')}}">Labour Leave</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.leave_management.leaveList')}}">Labour Leave</a></li>
               <li class="breadcrumb-item active">Edit</li>
             </ol>
           </div>
@@ -47,7 +47,7 @@
                   @endif
                   <div class="row justify-content-center">
                     <div class="col-md-10 col-sm-12">
-                      <form  method="post" id="labour_edit_form" action="{{route('admin.updateLeave',$leaveData->id)}}" method="post">
+                      <form  method="post" id="labour_edit_form" action="{{route('admin.leave_management.updateLeave',$leaveData->id)}}" method="post">
                         @csrf
                         @method('PUT')
                         <div>
@@ -83,7 +83,7 @@
                           </div>
                         <!--  this the url for remote validattion rule for user email -->
                           <div class="form-group">
-                             <a href="{{route('admin.labour.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
+                             <a href="{{route('admin.leave_management.leaveList')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
                              <button type="submit" class="btn btn-success">Submit</button> 
                           </div>
                         </div>

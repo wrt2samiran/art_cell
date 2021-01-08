@@ -182,7 +182,7 @@
                         </div>
                       </div>
                       <!-- /.col -->                      
-                      <div class="col-md-12">
+                      <div class="col-md-9">
                         <div class="card card-primary">
                           <div class="card-body p-0">
                             <!-- THE CALENDAR -->
@@ -202,9 +202,9 @@
                 
                 <!-- *********Showing the Day wise Labour Task (Sub-Task) List********** -->
 
-                <div class="modal fade" id="showTaskListModal" role="dialog">
+                <div class="modal fade" id="showTaskListModal" role="dialog" style="padding-right: 100px !important;">
                   <div class="modal-dialog">
-                    <div class="modal-content" style=" width: 750px; margin: auto;">
+                    <div class="modal-content" style=" width: 1000px; margin: auto;">
                       <div class="modal-header">
                         <h4 class="modal-title">Day Task List</h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -220,44 +220,7 @@
                   </div>
                 </div>
 
-                <!-- *********Showing the Day wise Labour Task (Sub-Task) List End********** -->
-
-                <!-- *********Showing Labour Task (Sub-Task) Details********************* -->
-
-                <!-- <div class="modal fade" id="showTaskListModal" role="dialog">
-                  <div class="modal-dialog">
-                    <div class="modal-content" style=" width: 750px; margin: auto;">
-                      <div class="modal-header">
-                        <h4 class="modal-title">Task Details</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                      </div>
-                      <div class="modal-body">
-                        <div class="card-body">
-                          <table class="table table-bordered" id="task_labour_list_management_table">
-                          </table>                                   
-                        </div>s
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                      </div>
-                    </div>                 
-                  </div>
-                </div> -->
-
-                <!-- *********Showing Labour Task (Sub-Task) Details End********************* -->
-
-
-
-<?php 
-// if($request->un_assigned=='')
-// {
-//   $list = json_encode($task_details_list);
-//   $filtered = array();
-//   $list = json_encode($filtered);
-// }
-
-  //dd($task_details_list);
-?>
+     
 
 @endsection
 
@@ -275,7 +238,6 @@
 <script>
 
   $("#property_all").click(function(){
-      //alert('test');
        if($("#property_all").hasClass('property_selected') ){
             $(this).parent().find('option').prop("selected", "");
             $("#property_all").removeClass('property_selected');
@@ -291,7 +253,6 @@
   });
 
   $("#work_order_all").click(function(){
-      //alert('test');
        if($("#work_order_all").hasClass('work_order_selected') ){
             $(this).parent().find('option').prop("selected", "");
             $("#work_order_all").removeClass('work_order_selected');
@@ -307,7 +268,6 @@
   });
 
   $("#task_id_all").click(function(){
-      //alert('test');
        if($("#task_id_all").hasClass('task_selected') ){
             $(this).parent().find('option').prop("selected", "");
             $("#task_id_all").removeClass('task_selected');
@@ -323,14 +283,6 @@
   });
 
 
-   // $(document).ready(function() {
-   //          $('#property_id, #maintenance_type').multiselect({
-   //          enableClickableOptGroups: true,
-   //          enableCollapsibleOptGroups: true
-   //      });
-
-   //          $('#property_id').addAttr('selected').prop('selected', true);
-   //      });
 
   $(function () {
 
@@ -436,7 +388,7 @@
                     id             : '<?=$task_data->id?>',
                     allDay         : false,
                     
-                    description: 'Task Title : <?=$task_data->task->task_title?><br>Property Name : <?=$task_data->task->property->property_name?><br>Service : <?=$task_data->task->service->service_name?><br>Service Type : <?=$task_data->task->contract_services->service_type?><br>Country : <?=$task_data->task->property->country->name?><br>State : <?=$task_data->task->property->state->name?><br>City : <?=$task_data->task->property->city->name?><br>Task Date : <?=$task_data->task_date?>'
+                    description: 'Task Title : <?=@$task_data->task->task_title?><br>Property Name : <?=@$task_data->task->property->property_name?><br>Service : <?=@$task_data->task->service->service_name?><br>Service Type : <?=@$task_data->task->contract_services->service_type?><br>Country : <?=@$task_data->task->property->country->name?><br>State : <?=@$task_data->task->property->state->name?><br>City : <?=@$task_data->task->property->city->name?><br>Task Date : <?=@$task_data->task_date?>'
                   },
 
         <?php } } else{
@@ -473,7 +425,7 @@
                     id             : '<?=$work_order_data->id?>',
                     allDay         : false,
                     
-                    description: 'Work Order Title : <?=$work_order_data->task_title?><br>Property Name : <?=$work_order_data->property->property_name?><br>Service : <?=$work_order_data->service->service_name?><br>Service Type : <?=$work_order_data->contract_services->service_type?><br>Country : <?=$work_order_data->property->country->name?><br>State : <?=$work_order_data->property->state->name?><br>City : <?=$work_order_data->property->city->name?><br>Task Date : <?=$work_order_data->start_date?>'
+                    description: 'Work Order Title : <?=@$work_order_data->task_title?><br>Property Name : <?=@$work_order_data->property->property_name?><br>Service : <?=@$work_order_data->service->service_name?><br>Service Type : <?=@$work_order_data->contract_services->service_type?><br>Country : <?=@$work_order_data->property->country->name?><br>State : <?=@$work_order_data->property->state->name?><br>City : <?=@$work_order_data->property->city->name?><br>Task Date : <?=@$work_order_data->start_date?>'
                   },
           <?php  } }?>        
       ],
@@ -483,7 +435,7 @@
         var tooltip = new Tooltip(info.el, {
           title: info.event.extendedProps.description,
           placement: 'top',
-          trigger: 'hover',
+          trigger: 'click',
           html: true,
           container: 'body'
         });
@@ -565,7 +517,6 @@
 
 
 $(document).on('click', 'td', function() {
-  //alert(date.getDate());
   <?php if(\Auth::guard('admin')->user()->role_id==4){ ?>
       //$('#addTaskModal').modal('show');
       
@@ -587,22 +538,23 @@ function checKClickedDate(clicked_date){
       }
       task_list +=  '<tr><th><strong>Task Title</strong></th><th><strong>Property Name</strong></th><th><strong>Service</strong></th><th><strong>Service Type</strong></th><th><strong>Task Date</strong></th><th><strong>Status</strong></th><th><strong>Action</strong></th></tr>';
           <?php if($request->un_assigned=='') { foreach($task_details_list as $task_data){
-                  $details_url = route('admin.work-order-management.labourTaskDetails',$task_data->id);
+                  $details_url = route('admin.work-order-management.labourTaskDetails',@$task_data->id);
+                  $complain_url = route('admin.complaints.create','workorder_id='.@$task_data->task->work_order_id);
           ?>
             taskDate = '<?php echo date("Y-m-d", strtotime($task_data->task_date)); ?>';
             if(clicked_date==taskDate){
                   total++;
-                  task_list += '<tr><th><?php echo $task_data->task->task_title; ?></th><th><?php echo $task_data->task->property->property_name;?> </th><th><?php echo $task_data->task->service->service_name;?></th><th><?php echo $task_data->task->contract_services->service_type;?></th><th><?php echo date("d/m/Y H:i a", strtotime($task_data->task_date)); ?></th><th><?php if($task_data->status==0) echo  '<div class="external-event bg-warning ui-draggable ui-draggable-handle" style="position: relative; background-color: #ffc107 !important">Pending</div>'; elseif($task_data->status==1) echo '<div class="external-event btn-secondary ui-draggable ui-draggable-handle" style="position: relative; background-color: #5a6268 !important">Overdue</div>'; elseif($task_data->status==2) echo '<div class="external-event bg-success ui-draggable ui-draggable-handle" style="position: relative; background-color: #3ea846 !important">Completed</div>'; elseif($task_data->status==4) echo '<div class="external-event bg-danger ui-draggable ui-draggable-handle" style="position: relative; background-color: #dc3d45!important">Warning</div>'  ?></th><th><a href="#" title="Complain">Complain</a> &nbsp &nbsp <?php if($task_data->status==2){?><a target="_blank" href="<?php echo $details_url;?>"  title="Rating and view"><i class="fas fa-star-half-alt"></i></a><?php } else{?><a target="_blank" href="<?php echo $details_url;?>"  title="View"> <i class="far fa-eye"></i></a><?php }?></th></tr>';
+                  task_list += '<tr><th><?php echo $task_data->task->task_title; ?></th><th><?php echo @$task_data->task->property->property_name;?> </th><th><?php echo @$task_data->task->service->service_name;?></th><th><?php echo @$task_data->task->contract_services->service_type;?></th><th><?php echo date("d/m/Y H:i a", strtotime(@$task_data->task_date)); ?></th><th><?php if(@$task_data->status==0) echo  '<div class="external-event bg-warning ui-draggable ui-draggable-handle" style="position: relative; background-color: #ffc107 !important">Pending</div>'; elseif(@$task_data->status==1) echo '<div class="external-event btn-secondary ui-draggable ui-draggable-handle" style="position: relative; background-color: #5a6268 !important">Overdue</div>'; elseif(@$task_data->status==2) echo '<div class="external-event bg-success ui-draggable ui-draggable-handle" style="position: relative; background-color: #3ea846 !important">Completed</div>'; elseif(@$task_data->status==4) echo '<div class="external-event bg-danger ui-draggable ui-draggable-handle" style="position: relative; background-color: #dc3d45!important">Warning</div>'  ?></th><th><a target="_blank" href="<?php echo $complain_url;?>" title="Complain">Complain</a> &nbsp &nbsp <?php if(@$task_data->status==2){?><a target="_blank" href="<?php echo @$details_url;?>"  title="Rating and view">&nbsp; &nbsp; Rating and view</a><?php } else{?><a target="_blank" href="<?php echo @$details_url;?>"  title="View"> &nbsp; &nbsp; View</a><?php }?></th></tr>';
                   } 
          <?php  } } else { foreach($workOrder as $work_order_data){
 
             $details_url = route('admin.work-order-management.show',$work_order_data->id);
           ?>
 
-              taskDate = '<?php echo date("Y-m-d", strtotime($work_order_data->start_date)); ?>';
+              taskDate = '<?php echo date("Y-m-d", strtotime(@$work_order_data->start_date)); ?>';
               if(clicked_date==taskDate){
                     total++;
-                    task_list += '<tr><th><?php echo $work_order_data->task_title; ?></th><th><?php echo $work_order_data->property->property_name;?> </th><th><?php echo $work_order_data->service->service_name;?></th><th><?php echo $work_order_data->contract_services->service_type;?></th><th><?php echo date("d/m/Y H:i a", strtotime($work_order_data->start_date)); ?></th><th><?php if($work_order_data->status==0) echo '<div class="external-event bg-warning ui-draggable ui-draggable-handle" style="position: relative; background-color: #ffc107 !important">Pending</div>'; elseif($work_order_data->status==1) echo '<div class="external-event btn-secondary ui-draggable ui-draggable-handle" style="position: relative; background-color: #5a6268 !important">Overdue</div>'; elseif($work_order_data->status==2) echo '<div class="external-event bg-success ui-draggable ui-draggable-handle" style="position: relative; background-color: #3ea846 !important">Completed</div>'; elseif($work_order_data->status==4) echo '<div class="external-event bg-danger ui-draggable ui-draggable-handle" style="position: relative; background-color: #dc3d45!important">Warning</div>'  ?></th><th><a href="#" title="Complain">Complain</a> &nbsp &nbsp <?php if($work_order_data->status==2){?><a target="_blank" href="<?php echo $details_url;?>"  title="Rating and view"><i class="fas fa-star-half-alt"></i></a><?php } else{?><a target="_blank" href="<?php echo $details_url;?>"  title="View"> <i class="far fa-eye"></i></a><?php }?></th></tr>';
+                    task_list += '<tr><th><?php echo $work_order_data->task_title; ?></th><th><?php echo @$work_order_data->property->property_name;?> </th><th><?php echo @$work_order_data->service->service_name;?></th><th><?php echo @$work_order_data->contract_services->service_type;?></th><th><?php echo date("d/m/Y H:i a", strtotime(@$work_order_data->start_date)); ?></th><th><?php if(@$work_order_data->status==0) echo '<div class="external-event bg-warning ui-draggable ui-draggable-handle" style="position: relative; background-color: #ffc107 !important">Pending</div>'; elseif(@$work_order_data->status==1) echo '<div class="external-event btn-secondary ui-draggable ui-draggable-handle" style="position: relative; background-color: #5a6268 !important">Overdue</div>'; elseif(@$work_order_data->status==2) echo '<div class="external-event bg-success ui-draggable ui-draggable-handle" style="position: relative; background-color: #3ea846 !important">Completed</div>'; elseif(@$work_order_data->status==4) echo '<div class="external-event bg-danger ui-draggable ui-draggable-handle" style="position: relative; background-color: #dc3d45!important">Warning</div>'  ?></th><th><a target="_blank" href="<?php echo $complain_url;?>" title="Complain">Complain</a> &nbsp &nbsp <?php if(@$work_order_data->status==2){?><a target="_blank" href="<?php echo @$details_url;?>"  title="Rating and view">&nbsp; &nbsp;Rating and view</a><?php } else{?><a target="_blank" href="<?php echo @$details_url;?>"  title="View">&nbsp; &nbsp; View</a><?php }?></th></tr>';
                     } 
 
          <?php } }?> 
@@ -619,7 +571,6 @@ function checKClickedDate(clicked_date){
 
 function onTaskChange(task_details_id, start_date, end_date){
 
-  //alert(end_date);
   let modified_start_date = JSON.stringify(start_date);
   modified_start_date = modified_start_date.slice(1,11);
 
@@ -802,18 +753,15 @@ function getLabourList(){
     });
 }
 
+$(document).ready(function(){
+    $('[rel=tooltip]').tooltip({ trigger: "click" });
+});
     
 
 </script>
 
 
-@if(Session::has('welcome_msg'))        
-<!-- <script>
-$(function() {
-$('#addTaskModal').modal('show');
-});
-</script> -->
-@endif
+
 
 <script type="text/javascript" src="{{asset('js/admin/service_management/list.js')}}"></script>
 <script type="text/javascript">

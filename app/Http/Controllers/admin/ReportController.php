@@ -8,6 +8,7 @@ use App\Models\{Contract,Property,WorkOrderLists,User,Service,TaskLists,TaskDeta
 use App\Exports\Reports\Admin\{CompletedMaintenanceSchedule,WorkOrder,CompletedWorkOrderPerMonth,WorkOrderRequestedVsCompleted,UpcomingScheduleMaintenance,UpcomingSchedulePerWeek,ContractStatus,MaintenanceBacklog};
 
 use App\Exports\Reports\Customer\{WorkOrderReport,MaintenanceScheduleReport};
+use App\Exports\Reports\Service_provider\{WorkOrderTaskReport, WorkOrderTaskDetailsReport};
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 use DB;
@@ -694,7 +695,98 @@ class ReportController extends Controller
     	return view('admin.report.customer.index',$this->data);
     }
     public function service_provider_report($request,$current_user){
-    	return view('admin.report.service_provider.index',$this->data);
+
+        //$this->data['workorder']=WorkOrderLists::with('tasks')->whereUserId($current_user->id)->orderBy('id','desc')->get();
+
+        // $this->data['properties']=Property::whereHas('owner_details')
+        // ->where(function($q)use($current_user){
+        //     $q->where('property_owner',$current_user->id)->orWhere('property_manager',$current_user->id);
+        // })
+        // ->orderBy('id','desc')->get();
+
+        if($request->isMethod('post')){
+
+           // dd($request->all());
+            $from_date=Carbon::createFromFormat('d/m/Y', $request->from_date)->format('Y-m-d');
+            $to_date=Carbon::createFromFormat('d/m/Y', $request->to_date)->format('Y-m-d');
+            if($request->report_on=='work_order'){
+
+                if($request->task_type=='main_task')
+                {
+                    $task_list=TaskLists::with('task_details', 'work_order', 'property', 'service', 'contract_services', 'contract', 'userDetails')
+                    ->when($request->work_order_id,function($q)use($request){
+                        $q->whereIn('work_order_id',$request->work_order_id);
+
+                    })
+                    ->when($request->task_id,function($q)use($request){
+                        $q->whereIn('id',$request->task_id);
+
+                    })
+                    ->when($request->service_id,function($q)use($request){
+                        $q->whereIn('service_id',$request->service_id);
+
+                    })
+                    ->where(function($q)use($request,$from_date,$to_date){
+                        $q->whereDate('created_at','>=',$from_date)->whereDate('created_at','<=',$to_date);
+                    })
+                    
+                    ->orderBy('id','desc')->get();
+                    return Excel::download(new WorkOrderTaskReport($task_list),'work-order-task-report.csv', \Maatwebsite\Excel\Excel::CSV,[
+                        'Content-Type' => 'text/csv',
+                    ]);
+                }
+                else
+                {
+
+
+                    $task_details_list=TaskDetails::with('task', 'task.work_order', 'task.property', 'task.service', 'task.contract_services', 'task.contract', 'userDetails')
+                   
+                    ->when($request->task_id,function($q)use($request){
+                        $q->whereIn('task_id',$request->task_id);
+
+                    })
+                    ->when($request->service_id,function($q)use($request){
+                        $q->whereIn('service_id',$request->service_id);
+
+                    })
+                    ->when($request->task_status,function($q)use($request){
+                        $q->whereIn('status',$request->task_status);
+
+                    })
+                    ->when($request->labour_id,function($q)use($request){
+                        $q->whereIn('user_id',$request->labour_id);
+
+                    })
+                    ->where(function($q)use($request,$from_date,$to_date){
+                        $q->whereDate('task_date','>=',$from_date)->whereDate('task_date','<=',$to_date);
+                    })
+                    
+                    ->orderBy('id','desc')->get();
+                    return Excel::download(new WorkOrderTaskDetailsReport($task_details_list),'work-order-task-details-report.csv', \Maatwebsite\Excel\Excel::CSV,[
+                        'Content-Type' => 'text/csv',
+                    ]);
+                }
+                
+
+
+            }elseif ($request->report_on=='maintenance_schedule') {
+              
+
+                $service_dates=ContractServiceDate::whereHas('contract')
+                
+                ->get();
+
+
+                return Excel::download(new MaintenanceScheduleReport($service_dates),'schedule-maintenance-report.csv', \Maatwebsite\Excel\Excel::CSV,[
+                    'Content-Type' => 'text/csv',
+                ]);
+
+
+
+            } 
+
+        }
+    	return view('admin.report.service_provider.index');
     }
     public function labour_report($request,$current_user){
         return view('admin.report.labour.index',$this->data);
@@ -702,4 +794,182 @@ class ReportController extends Controller
     public function default_report($request,$current_user){
        return view('admin.dashboard.default',$this->data); 
     }
+
+
+    
+    /*****************************************************/
+    # ReportController
+    # Function name : getAssignedProperty
+    # Author        :
+    # Created Date  : 06-01-2021
+    # Purpose       : Get Assigned Property List with Service Porvider
+    # Params        : Request $request
+    /*****************************************************/
+
+
+    public function getAssignedProperty(Request $request)
+    {
+        $current_user=auth()->guard('admin')->user();
+
+            if($request->report_on!='')
+            {
+               
+            $property_list = Property::with('work_order')->whereIsActive('1')
+                ->where(function($q) use($current_user){
+                       
+                        $q->whereHas('work_order',function($q1){
+                            $q1->where('is_deleted', 'N');
+                            
+                        });
+
+                        $q->whereHas('work_order',function($q1) use($current_user){
+                            $q1->where('user_id', $current_user->id);
+                            
+                        });
+                          
+                    })->orderBy('id', 'Desc')->get();
+
+                return response()->json(['status'=>true, 'property_list'=>$property_list,],200);
+            }
+       
+            else
+            {
+                return response()->json(['status'=>false],200);
+            }
+        
+    }
+
+    
+    /*****************************************************/
+    # ReportController
+    # Function name : getWorkOderList
+    # Author        :
+    # Created Date  : 05-01-2021
+    # Purpose       : Get Service Porvider wise Work Order or Maintenance List
+    # Params        : Request $request
+    /*****************************************************/
+
+
+    public function getWorkOderList(Request $request)
+    {
+        $current_user=auth()->guard('admin')->user();
+
+            
+        $allWorkOrders = WorkOrderLists::with('contract_services')->whereUserId($current_user->id)
+            ->where(function($q) use($request){
+                
+                $q->whereIn('property_id', $request->property_id);
+                                 
+            })
+            ->orderBy('id','desc')->get();
+
+        return response()->json(['status'=>true, 'allWorkOrders'=>$allWorkOrders,],200);
+            
+    }
+
+    /*****************************************************/
+    # ReportController
+    # Function name : getTaskList
+    # Author        :
+    # Created Date  : 05-01-2021
+    # Purpose       : Get Work Order wise Work Order List
+    # Params        : Request $request
+    /*****************************************************/
+
+
+    public function getTaskList(Request $request)
+    {
+        $current_user=auth()->guard('admin')->user();
+
+            if($request->work_order_id!='')
+            {
+                $allTasks = TaskLists::whereIn('work_order_id',$request->work_order_id)->orderBy('id','desc')->get();
+                   
+                return response()->json(['status'=>true, 'allTasks'=>$allTasks,],200);
+            }
+       
+            else
+            {
+                return response()->json(['status'=>false],200);
+            }
+        
+    }
+
+    
+
+    /*****************************************************/
+    # ReportController
+    # Function name : getServices
+    # Author        :
+    # Created Date  : 05-01-2021
+    # Purpose       : Get Task wise Service List
+    # Params        : Request $request
+    /*****************************************************/
+
+
+    public function getServices(Request $request)
+    {
+        $current_user=auth()->guard('admin')->user();
+
+            if($request->task_id!='')
+            {
+                $allServices = TaskLists::with('service')->whereIn('id', $request->task_id)->groupBy('service_id')->get();
+                   
+                return response()->json(['status'=>true, 'allServices'=>$allServices,],200);
+            }
+       
+            else
+            {
+                return response()->json(['status'=>false],200);
+            }
+        
+    }
+
+    
+    /*****************************************************/
+    # ReportController
+    # Function name : getLabourList
+    # Author        :
+    # Created Date  : 06-01-2021
+    # Purpose       : Get Task wise Labour List
+    # Params        : Request $request
+    /*****************************************************/
+
+
+    public function getLabourList(Request $request)
+    {
+        $current_user=auth()->guard('admin')->user();
+        if($request->task_type=='labour_task')
+        {
+            if($request->task_id!='')
+            {
+
+                $allAssignedLabours = User::with('task_details')->whereStatus('A')
+                ->where(function($q) use($current_user, $request){
+                       
+                        $q->whereHas('task_details',function($q1) use($request){
+                            $q1->where('is_deleted', 'N');
+                            $q1->whereIn('task_id', $request->task_id);
+                            
+                        });
+
+                    })->orderBy('id', 'Desc')->get();
+
+                   
+                return response()->json(['status'=>true, 'allAssignedLabours'=>$allAssignedLabours,],200);
+            }
+       
+            else
+            {
+                return response()->json(['status'=>false],200);
+            }
+        
+        }
+
+        else
+        {
+            return response()->json(['status'=>false],200);
+        }
+    }    
+
 }

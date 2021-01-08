@@ -14,7 +14,7 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.list')}}">Laboure</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.labour.list')}}">Laboure</a></li>
               <li class="breadcrumb-item active">Details</li>
             </ol>
           </div>
@@ -77,7 +77,17 @@
                         </tr>
                         <tr>
                           <td >Weekly Off Day</td>
-                          <td >{{ucfirst($user->weekly_off)}}</td>
+                          <td >
+                          <table>
+                            <tr>
+                              @forelse(@$weekly_off_list as $offDay)
+                                <td>{{ucfirst($offDay->day_name)}}</td>
+                              @empty
+                                <td>No Skill Found</td>
+                              @endforelse
+                            </tr>
+                          </table>
+                        </td>
                         </tr>
                         
                         
@@ -95,7 +105,7 @@
                       </tbody>
                       <tfoot>
                         <tr>
-                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
+                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.labour.list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
                         </tr>
                       </tfoot>
                   </table>

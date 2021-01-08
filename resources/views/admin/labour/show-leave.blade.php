@@ -14,7 +14,7 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.leaveList')}}">Laboure Leave Management</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.leave_management.leaveList')}}">Laboure Leave Management</a></li>
               <li class="breadcrumb-item active">Details</li>
             </ol>
           </div>

@@ -257,13 +257,7 @@ class CalendarController extends Controller
             $taskList = TaskLists::with(['contract', 'task_details', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->whereWorkOrderId($workOrder[0]->id)->get();
 
             $this->data['work_order_list'] = $workOrder;
-            //$sqlService=ServiceAllocationManagement::with('service')->with('contract')->whereStatus('A')->where('work_status', '<>','2')->whereServiceProviderId($logedInUser)->get();
-
-           // $labour_list= User::whereStatus('A')->whereRoleId('5')->whereCreatedBy($logedInUser)->get();
-            //$this->data['service_list'] = $sqlService;
-            //$this->data['labour_list']  = $labour_list;
-
-            //dd($workOrder[0]->property);
+            
             $propertyList = array();
             foreach ($workOrder as $key => $value) {
                 $propertyList[]=$value->property_id;
