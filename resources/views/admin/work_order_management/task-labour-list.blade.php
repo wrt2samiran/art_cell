@@ -107,25 +107,23 @@
                 </tbody>
               </table>
                   
-                  
+            <table class="table table-bordered" id="task_labour_list_management_table">
+              <tr>
+                  <th>Id</th>
+                  <th>Labour Title</th>
+                  <th>Task Finish Date And Time (Assigned)</th>
+                  <th>Task Slot</th>
+                  <th>Task Mode</th>
+                  <th>Labour Feedback</th>
+                  <th>Feedback Date And Time</th>
+                  <th>Status</th>
+                  <th>Action</th>
+              </tr>
+
+            </table>
 
                   
             
-            <table class="table table-bordered" id="task_labour_list_management_table">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Labour Title</th>
-                        <th>Task Finish Date And Time (Assigned)</th>
-                        <th>Task Slot</th>
-                        <th>Task Mode</th>
-                        <th>Labour Feedback</th>
-                        <th>Feedback Date And Time</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-            </table>
             
                 
                 <div>

@@ -317,6 +317,7 @@ $("#admin_other_maintanence_labour_task_add_form").validate({
           url:baseUrl+'/admin/work-order-management',
           data: function (d) {
             d.status = $('#status').val();
+            d.daterange = $('#daterange').val();
           }
         },
 
@@ -406,6 +407,32 @@ $("#admin_other_maintanence_labour_task_add_form").validate({
       theme: 'bootstrap4',
       placeholder:'Filter by Status'
     });
+
+    $('#contract_duration').daterangepicker({
+      autoUpdateInput: false,
+      timePicker: false,
+      timePicker24Hour: true,
+      timePickerIncrement: 1,
+      startDate: moment().startOf('hour'),
+      //endDate: moment().startOf('hour').add(24, 'hour'),
+      locale: {
+          format: 'YYYY-MM-DD'
+      }
+    }, dateRangeCallback);
+
+
+    function dateRangeCallback(start_date, end_date){
+      $('#daterange').val(start_date.format('YYYY-MM-DD') + '_' + end_date.format('YYYY-MM-DD'));
+        
+      //$.LoadingOverlay("show");
+        labour_task_management_table.draw();
+        
+
+      
+      $('#contract_duration').val(start_date.format('YYYY-MM-DD') + '-' + end_date.format('YYYY-MM-DD'));
+      
+    }
+
 
  //function to delete labour task
  function delete_task(url){

@@ -45,6 +45,7 @@
                                 @endif
 
                                 <div class="card">
+                                  <div class="col-md-4">
                                     <div class="card-body">
                                         <!-- <div class="form-group">
                                             <label>
@@ -68,7 +69,18 @@
                                               </select>
                                             </label>
                                         </div>
+                                        <div class="input-group">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-clock-o"></i>
+                                            </div>
+                                            <input class="form-control" type="text" name="contract_duration" id="contract_duration" placeholder="Search By Date">
+
+                                            <input type="hidden" name="daterange" id="daterange" placeholder="Search By Date">
+                                            
+                                        </div>
+
                                     </div>
+                                  </div>
                                 </div>
 
                                 <table class="table table-bordered" id="labour_task_management_table">
@@ -99,7 +111,7 @@
                   <div class="modal-dialog">
                   
                     <!-- Modal content-->
-                    <div class="modal-content">
+                    <div class="modal-content" style=" width: 750px; margin: auto;">
                       <div class="modal-header">
                         
                         <h4 class="modal-title">Add Feedback</h4>

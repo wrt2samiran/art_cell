@@ -507,16 +507,16 @@ class WorkOrderManagementController extends Controller
             ->addColumn('status',function($workOrder){
                 if($workOrder->status=='0'){
                    $message='Pending';
-                    return '<a href="" class="btn btn-block btn-outline-warning btn-sm">Pending</a>';
+                    return '<a href="javascript:void(0)" class="btn btn-block btn-outline-warning btn-sm">Pending</a>';
                     
                 }elseif($workOrder->status=='1'){
                    $message='Overdue';
-                   return '<a  href="" class="btn btn-block btn-outline-success btn-sm">Overdue</a>';
+                   return '<a  href="javascript:void(0)" class="btn btn-block btn-outline-success btn-sm">Overdue</a>';
                    
                 }
                 else{
                     $message='Completed';
-                    return '<a href="" class="btn btn-block btn-outline-success btn-sm">Completed</a>';
+                    return '<a href="javascript:void(0)" class="btn btn-block btn-outline-success btn-sm">Completed</a>';
                 }
             })
             ->addColumn('action',function($workOrder)use ($logedInUser, $logedInUserRole){
@@ -1223,7 +1223,7 @@ class WorkOrderManagementController extends Controller
                         //     $sqlWorkOrder->work_order_complete_percent = ($sqlWorkOrder->work_order_complete_percent+(100/count($workOrderTaskList)));
                         // }
 
-                        $sqlSubTaskCount = TaskDetails::whereTaskId($sqlTaskData->task_id)->where('status','<>',3)->whereIsDeleted('N')->get();
+                        $sqlSubTaskCount = TaskDetails::whereTaskId($sqlTaskData->task_id)->where('status','<>','3')->whereIsDeleted('N')->get();
                         
 
                         if($sqlSubTaskCount)
@@ -1236,9 +1236,10 @@ class WorkOrderManagementController extends Controller
 
                             if($percentPerSubTask==100)
                             {
+
                                 $sqlTask->update([
                                     'task_complete_percent'=>$percentPerSubTask,
-                                    'status'=>2,
+                                    'status'=>'2',
                                     'updated_by'=>$logedInUser
                                 ]);
                             }
@@ -1259,11 +1260,22 @@ class WorkOrderManagementController extends Controller
                                 {
                                     $percentPerTask = ($sqlWorkOrder->work_order_complete_percent+(100/count($sqlTaskCount)));
 
+                                    if($request->status==4)
+                                    {
+                                        $totalWarning = $sqlWorkOrder->warning+1;
+                                    }
+                                    else
+                                    {
+                                        $totalWarning = $sqlWorkOrder->warning;
+                                    }
+                                    
+
                                     if($percentPerTask==100)
                                     {
                                         $sqlWorkOrder->update([
                                             'work_order_complete_percent'=>$percentPerTask,
-                                            'status' => 2,
+                                            'status' => '2',
+                                            'warning'=> $totalWarning,
                                             'updated_by'=>$logedInUser
                                         ]);
                                     }
@@ -1271,6 +1283,7 @@ class WorkOrderManagementController extends Controller
                                     {
                                         $sqlWorkOrder->update([
                                             'work_order_complete_percent'=>$percentPerTask,
+                                            'warning'=> $totalWarning,
                                             'updated_by'=>$logedInUser
                                         ]);
                                     }
@@ -1284,14 +1297,24 @@ class WorkOrderManagementController extends Controller
                                 $sqlWorkOrderSlotCount = WorkOrderSlot::whereWorkOrderId($sqlTask->work_order_id)->get();
                                 if($sqlWorkOrderSlotCount)
                                 {
-                                    
+                                 
+                                    if($request->status==4)
+                                    {
+                                        $totalWarning = $sqlWorkOrder->warning+1;
+                                    }
+                                    else
+                                    {
+                                        $totalWarning = $sqlWorkOrder->warning;
+                                    }
+
                                     $percentPerSlot = ($sqlWorkOrder->work_order_complete_percent+(100/count($sqlWorkOrderSlotCount)));
                                     
                                     if($percentPerSubTask==100)
                                     {
                                         $sqlWorkOrder->update([
                                             'work_order_complete_percent'=>$percentPerSlot,
-                                            'status' => 2,
+                                            'warning'=> $totalWarning,
+                                            'status' => '2',
                                             'updated_by'=>$logedInUser
                                         ]); 
                                     }
@@ -1300,6 +1323,7 @@ class WorkOrderManagementController extends Controller
                                     {
                                         $sqlWorkOrder->update([
                                             'work_order_complete_percent'=>$percentPerSlot,
+                                            'warning'=> $totalWarning,
                                             'updated_by'=>$logedInUser
                                         ]);   
                                     }   
@@ -1358,7 +1382,7 @@ class WorkOrderManagementController extends Controller
     
     public function labourTaskList(Request $request, $id){
 
-        //dd($request->all());
+        
         $this->data['page_title']='Labour Task List';
         $logedInUser = \Auth::guard('admin')->user()->id;
         $logedInUserRole = \Auth::guard('admin')->user()->role_id;
@@ -1384,6 +1408,9 @@ class WorkOrderManagementController extends Controller
                 return $task_list->task_finish_date_time ? with(new Carbon($task_list->task_finish_date_time))->format('d/m/Y H:i a') : '';
             })
             
+            ->filterColumn('task_title', function ($query, $keyword) {
+                $query->where("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
+            })
             
             ->filterColumn('created_at', function ($query, $keyword) {
                 $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
@@ -1526,18 +1553,34 @@ class WorkOrderManagementController extends Controller
                     } 
                     return $action_buttons;
                 }
-
+                
                 if(\Auth::guard('admin')->user()->role_id==4){
                     $details_url = route('admin.work-order-management.taskLabourList',$task_list->id);
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Daily Task List" id="details_task" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
                  }
                 
             })
+
+
             ->filter(function ($task_list) use ($request) {
-                        if ($request->get('status')) {
+                        if ($request->get('status')!='') {
                             $task_list->where('status', $request->get('status'));
                         }
-            })            
+
+                        if ($request->get('daterange')) {  
+                        $daterange_arr=explode('_',$request->daterange);
+                        $start_date = $daterange_arr[0];
+                        $end_date   = $daterange_arr[1];
+                        $task_list->where(function($q) use ($start_date,$end_date){
+                                $q->where(function($q) use ($start_date,$end_date){
+                                  $q->whereDate('task_date','>=',$start_date)->whereDate('task_date','<=',$start_date);
+                                });
+                                
+                            });
+                        }
+            }) 
+
+                    
 
             ->rawColumns(['action','status'])
             ->make(true);
@@ -1795,7 +1838,7 @@ class WorkOrderManagementController extends Controller
 
         $this->data['page_title']     = 'Assign Task';
         
-        $logedInUser = \Auth::guard('admin')->user()->id;
+        $logedInUser = \Auth::guard('admin')->user();
         
         try
         {
@@ -1872,7 +1915,26 @@ class WorkOrderManagementController extends Controller
                             'created_by'            => auth()->guard('admin')->id(),
                         ]);
                         $counter++;
-                    }    
+
+                        $notification_message=$logedInUser->name.' assigned a new task to you.';
+                        $redirect_path=route('admin.work-order-management.labourTaskDetails',['id'=>$addTaskDetails->id],false);
+
+                        $notification_data[]=[
+                            'notificable_id'=>$addTask->id,
+                            'notificable_type'=>'App\Models\TaskDetails',
+                            'user_id'=>$labourUser,
+                            'message'=>$notification_message,
+                            'redirect_path'=>$redirect_path,
+                            'created_at'=>Carbon::now(),
+                            'updated_at'=>Carbon::now()
+                        ];
+                        
+                        
+                    }  
+
+                    if(count($notification_data)){
+                            Notification::insert($notification_data);
+                        }  
                 }    
 
 
@@ -2036,10 +2098,8 @@ class WorkOrderManagementController extends Controller
     /*****************************************************/
     public function taskMaintanenceAssign(Request $request) {
 
-
-        //dd($request->all());
         
-
+        $logedInUser = \Auth::guard('admin')->user();
         $this->data['page_title']     = 'Assign Task';
         
 
@@ -2127,7 +2187,27 @@ class WorkOrderManagementController extends Controller
                          $sqlContractServiceDate->update([
                                 'task_assigned'=>'Y',
                             ]);
+
+                        $notification_message=$logedInUser->name.' assigned a new task to you.';
+                        $redirect_path=route('admin.work-order-management.labourTaskDetails',['id'=>$addTaskDetails->id],false);
+
+                        $notification_data[]=[
+                            'notificable_id'=>$addTask->id,
+                            'notificable_type'=>'App\Models\TaskDetails',
+                            'user_id'=>$maintainUser,
+                            'message'=>$notification_message,
+                            'redirect_path'=>$redirect_path,
+                            'created_at'=>Carbon::now(),
+                            'updated_at'=>Carbon::now()
+                        ];
+
                     }
+
+
+
+                        if(count($notification_data)){
+                            Notification::insert($notification_data);
+                        }
 
                 }
           
@@ -2159,6 +2239,9 @@ class WorkOrderManagementController extends Controller
                    // }
 
                 }
+
+                
+
                
                 // TaskDetails::insert($task_details_data_array);
                 $request->session()->flash('success', 'Task has been added successfully');
@@ -2279,7 +2362,7 @@ class WorkOrderManagementController extends Controller
     public function taskOtherMaintanenceAssign(Request $request) {
 
 
-       // dd($request->all());
+        $logedInUser = \Auth::guard('admin')->user();
         $this->data['page_title']     = 'Assign Task';
         
 
@@ -2366,9 +2449,26 @@ class WorkOrderManagementController extends Controller
                         //         ]);
                         //     }
                         // }
+
+
+                        $notification_message=$logedInUser->name.' assigned a new task to you.';
+                        $redirect_path=route('admin.work-order-management.labourTaskDetails',['id'=>$addTaskDetails->id],false);
+
+                        $notification_data[]=[
+                            'notificable_id'=>$addTask->id,
+                            'notificable_type'=>'App\Models\TaskDetails',
+                            'user_id'=>$maintainUser,
+                            'message'=>$notification_message,
+                            'redirect_path'=>$redirect_path,
+                            'created_at'=>Carbon::now(),
+                            'updated_at'=>Carbon::now()
+                        ];
                         
                     }
 
+                    if(count($notification_data)){
+                        Notification::insert($notification_data);
+                    }  
                 }
 
                 $sqlWorkContractServiceDatesCheck = ContractServiceDate::whereContractServiceId($sqlWorkorder->contract_service_id)->whereTaskAssigned('N')->get();

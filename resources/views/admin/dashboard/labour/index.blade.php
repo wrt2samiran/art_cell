@@ -18,7 +18,7 @@
               <div class="icon">
                 <i class="fas fa-exclamation-circle"></i>
               </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="{{route('admin.work-order-management.list')}}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
         
@@ -35,7 +35,7 @@
 	              <div class="icon">
 	                <i class="far fa-clock"></i>
 	              </div>
-	              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+	              <a href="{{route('admin.work-order-management.list')}}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
 	            </div>
 	        </div>
 	        <div class="col-lg-4 col-6">
@@ -49,7 +49,7 @@
 		          <div class="icon">
 		            <i class="fas fa-handshake"></i>
 		          </div>
-		          <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+		          <a href="{{route('admin.work-order-management.list')}}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
 		        </div>
 		    </div>
 		</div>
@@ -65,12 +65,50 @@
                        Upcoming Task Lists
                       </h3>
                     </div>
-                    <div>
-                     <!--  <a href="{{route('admin.complaints.list')}}">View All</a> -->
+                    <div class="container-fluid">
+                      <div class="row">
+                        <div class="col-md-4">
+                          <select id="task_title" style="width: 100%;">
+                            <option value="">Filter By Task</option>
+                            <option value="all" selected>All Tasks</option>
+                            @forelse($tasks as $task_data)
+                            <option value="{{$task_data->task_id}}">{{$task_data->task->task_title}}</option>
+                            @empty
+
+                            @endforelse
+                          </select>
+                        </div>
+
+                        <div class="col-md-4">
+                          <select id="task_property" style="width: 100%;">
+                            <option value="">Filter By Property</option>
+                            <option value="all" selected>All Properties</option>
+                            @forelse($task_properties as $task_property)
+                            <option value="{{$task_property->id}}">
+                              {{$task_property->code}} ({{$task_property->property_name}})
+                            </option>
+                            @empty
+                            @endforelse
+                          </select>
+                        </div>
+                        <div class="col-md-4">
+                          <select id="task_service" style="width: 100%;">
+                            <option value="">Filter By Service</option>
+                            <option value="all" selected>All Service</option>
+                            @forelse($work_order_services as $service_data)
+                            <option value="{{$service_data->id}}">
+                             {{$service_data->service_name}}
+                            </option>
+                            @empty
+                            @endforelse
+                          </select>
+                        </div>
+                        
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div class="card-body p-0">
+                <div class="card-body p-0" id="task_data">
                   <div class="table-responsive">
                       <table class="table m-0">
                       <thead>
@@ -94,7 +132,7 @@
                              <td>{{@$task_upcoming->service->service_name}}</td>
                              <td>{{@$task_upcoming->created_at->format('d/m/Y')}}</td>
                              <td>{{@$task_upcoming->get_slot_name()}}</td>
-							 <td>{{@$task_upcoming->created_at->format('d/m/Y')}}</td>                             
+							               <td>{{@$task_upcoming->created_at->format('d/m/Y')}}</td>                             
                           </tr>
                           @empty
                           <tr>
@@ -145,12 +183,44 @@
                         Latest Reschedule Request
                       </h3>
                     </div>
+
+                    <div class="container-fluid">
+                      <div class="row">
+                        <div class="col-md-4">
+                          <select id="task_title_reschedule" style="width: 100%;">
+                            <option value="">Filter By Task</option>
+                            <option value="all" selected>All Tasks</option>
+                            @forelse($tasks_resschedule as $task_data)
+                            <option value="{{$task_data->task_id}}">{{$task_data->task->task_title}}</option>
+                            @empty
+
+                            @endforelse
+                          </select>
+                        </div>
+
+                        <div class="col-md-4">
+                          <select id="task_property_reschedule" style="width: 100%;">
+                            <option value="">Filter By Property</option>
+                            <option value="all" selected>All Properties</option>
+                            @forelse($task_properties as $task_property)
+                            <option value="{{$task_property->id}}">
+                              {{$task_property->code}} ({{$task_property->property_name}})
+                            </option>
+                            @empty
+                            @endforelse
+                          </select>
+                        </div>
+                        
+                        
+                      </div>
+                    </div>
+
                     <div>
                       <a href="#">View All</a>
                     </div>
                   </div>
                 </div>
-                <div class="card-body p-0">
+                <div class="card-body p-0" id="reschedule_task_data">
                   <div class="table-responsive">
                       <table class="table m-0">
                       <thead>
@@ -249,6 +319,194 @@
         /**************/
 
   });
+
+
+
+   /*****************/
+
+  /*Task filter */
+
+  $('#task_title').on('change',function(){
+   filter_task();
+  });
+ 
+  $('#task_service').on('change',function(){
+   filter_task();
+  });
+
+  $('#task_property').on('change',function(){
+   filter_task();
+  });
+
+  function filter_task(){
+
+    $.LoadingOverlay("show");
+    $.ajax({
+      url: '{{route("admin.dashboard")}}',
+      type: "POST",
+      data:{
+        task_filter: true,
+        task_id: $('#task_title').val(),
+        property_id: $('#task_property').val(),
+        task_service_id: $('#task_service').val(),
+        "_token": $('meta[name="csrf-token"]').attr('content')
+      },
+      success: function (data) {
+        
+        $.LoadingOverlay("hide");
+
+        $('#task_data').html(data.html);
+        
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+         $.LoadingOverlay("hide");
+         var response=jqXHR.responseJSON;
+         var status=jqXHR.status;
+         if(status=='404'){
+          toastr.error('Invalid URL', 'Error', {timeOut: 5000});
+         }else{
+           toastr.error('Internal server error.', 'Error', {timeOut: 5000});
+         }
+      }
+    });
+
+
+  }
+
+
+$('#task_title').select2({
+    theme: 'bootstrap4',
+    placeholder:'Filter By Task Title',
+    "language": {
+       "noResults": function(){
+           return "No Task";
+       }
+    },
+    escapeMarkup: function(markup) {
+      return markup;
+    },
+});
+
+
+$('#task_service').select2({
+    theme: 'bootstrap4',
+    placeholder:'Filter By Service',
+    "language": {
+       "noResults": function(){
+           return "No Service";
+       }
+    },
+    escapeMarkup: function(markup) {
+      return markup;
+    },
+});
+
+$('#task_property').select2({
+    theme: 'bootstrap4',
+    placeholder:'Filter By Property',
+    "language": {
+       "noResults": function(){
+           return "No Property";
+       }
+    },
+    escapeMarkup: function(markup) {
+      return markup;
+    },
+});
+  /*****************/
+
+
+
+/*****************/
+
+  /* Reschedule Task filter */
+
+  $('#task_title_reschedule').on('change',function(){
+   filter_task();
+  });
+ 
+
+  $('#task_property_reschedule').on('change',function(){
+   filter_task();
+  });
+
+  function filter_task(){
+
+    $.LoadingOverlay("show");
+    $.ajax({
+      url: '{{route("admin.dashboard")}}',
+      type: "POST",
+      data:{
+        task_reschedule_filter: true,
+        task_id: $('#task_title_reschedule').val(),
+        property_id: $('#task_property_reschedule').val(),
+        task_service_id: $('#task_service').val(),
+        "_token": $('meta[name="csrf-token"]').attr('content')
+      },
+      success: function (data) {
+        
+        $.LoadingOverlay("hide");
+
+        $('#reschedule_task_data').html(data.html);
+        
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+         $.LoadingOverlay("hide");
+         var response=jqXHR.responseJSON;
+         var status=jqXHR.status;
+         if(status=='404'){
+          toastr.error('Invalid URL', 'Error', {timeOut: 5000});
+         }else{
+           toastr.error('Internal server error.', 'Error', {timeOut: 5000});
+         }
+      }
+    });
+
+
+  }
+
+
+$('#task_title_reschedule').select2({
+    theme: 'bootstrap4',
+    placeholder:'Filter By Task Title',
+    "language": {
+       "noResults": function(){
+           return "No Task";
+       }
+    },
+    escapeMarkup: function(markup) {
+      return markup;
+    },
+});
+
+
+$('#task_property_reschedule').select2({
+    theme: 'bootstrap4',
+    placeholder:'Filter By Service',
+    "language": {
+       "noResults": function(){
+           return "No Service";
+       }
+    },
+    escapeMarkup: function(markup) {
+      return markup;
+    },
+});
+
+$('#task_property').select2({
+    theme: 'bootstrap4',
+    placeholder:'Filter By Property',
+    "language": {
+       "noResults": function(){
+           return "No Property";
+       }
+    },
+    escapeMarkup: function(markup) {
+      return markup;
+    },
+});
+  /*****************/
+
 </script>
 
 @endpush

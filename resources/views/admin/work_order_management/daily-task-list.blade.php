@@ -267,7 +267,7 @@
                                 <select class="form-control" multiple="multiple" searchable="Search for..."  name="user_id[]" id="user_id" onchange="checkOnDemandFree()" >
                                    
                                    @forelse($labour_list as $labour_data)
-                                         <option value="{{@$labour_data->id}}" >{{@$labour_data->name}}</option>
+                                         <option value="{{@$labour_data->id}}" >{{@$labour_data->name}}( Woring Hour : {{@$labour_data->start_time}} to {{@$labour_data->end_time}})</option>
                                     @empty
                                     <option value="">No Labour Found</option>
                                     @endforelse     
@@ -295,7 +295,7 @@
                               <div class="form-group required">
                                 <label for="finish_time">Task Finish Time<span class="error">*</span></label>
                                     
-                                    <input type="text" class="form-control clockpicker" readonly="" value="" name="assigned_finish_time" id="assigned_finish_time" onchange="checkOnDemandFree()">
+                                    <input type="text" class="form-control clockpicker" readonly="" name="assigned_finish_time" id="assigned_finish_time" value="00:00" onchange="checkOnDemandFree()">
                                   </label>
                               </div> 
 
@@ -386,7 +386,7 @@
                                           <select class="form-control" multiple="multiple" searchable="Search for..."  name="maintanence_user_id[]" id="maintanence_user_id" onchange="checkMaintanenceDaily()">
                                              
                                              @forelse($labour_list as $labour_data)
-                                                   <option value="{{@$labour_data->id}}" >{{@$labour_data->name}}</option>
+                                                   <option value="{{@$labour_data->id}}" >{{@$labour_data->name}}( Woring Hour : {{@$labour_data->start_time}} to {{@$labour_data->end_time}})</option>
                                               @empty
                                               <option value="">No Labour Found</option>
                                               @endforelse     
@@ -459,7 +459,7 @@
                                         <label for="service_id" style="margin-bottom: 15px;">
                                           @if(array_key_exists($slotValue->daily_slot, $arraySlot)){{$arraySlot[$slotValue->daily_slot]}}@endif
                                           
-                                          <input type="text" class="form-control clockpicker" readonly="" value="" name="slot_time[]" id="slot_id_{{$i}}" onchange="checkMaintanenceDaily()">
+                                          <input type="text" class="form-control clockpicker" readonly="" value="00:00" name="slot_time[]" id="slot_id_{{$i}}" onchange="checkMaintanenceDaily()">
                                         </label> 
                                         </div>
                                         @php $i++; @endphp 
@@ -548,7 +548,7 @@
                                       <select class="form-control" multiple="multiple" searchable="Search for..."  name="maintanence_other_user_id[]" id="maintanence_other_user_id" onchange="checkMaintanenceOther()">
                                          
                                          @forelse($labour_list as $labour_data)
-                                               <option value="{{@$labour_data->id}}" >{{@$labour_data->name}}</option>
+                                               <option value="{{@$labour_data->id}}" >{{@$labour_data->name}}( Woring Hour : {{@$labour_data->start_time}} to {{@$labour_data->end_time}})</option>
                                           @empty
                                           <option value="">No Labour Found</option>
                                           @endforelse     
@@ -584,7 +584,7 @@
                                   <div class="form-group required">
                                     <label for="finish_time">Task Finish Time<span class="error">*</span></label>
                                         
-                                        <input type="text" readonly="" class="form-control clockpicker" value="" name="assigned_finish_time_maintain" id="assigned_finish_time_maintain" onchange="checkMaintanenceOther()">
+                                        <input type="text" readonly="" class="form-control clockpicker" value="00:00" name="assigned_finish_time_maintain" id="assigned_finish_time_maintain" onchange="checkMaintanenceOther()">
 
                                       </label>
                                   </div>  
@@ -953,7 +953,7 @@ $( document ).ready(function() {
       e.preventDefault();
       swal({
         title: "Are you sure?",
-        text: "Once Assigned, you will not be able to modify this task!",
+       // text: "Once Assigned, you will not be able to modify this task!",
         icon: "warning",
         buttons: true,
         dangerMode: true,
@@ -971,7 +971,7 @@ $( document ).ready(function() {
       e.preventDefault();
       swal({
         title: "Are you sure?",
-        text: "Once Assigned, you will not be able to modify this task!",
+        //text: "Once Assigned, you will not be able to modify this task!",
         icon: "warning",
         buttons: true,
         dangerMode: true,
@@ -989,7 +989,7 @@ $( document ).ready(function() {
       e.preventDefault();
       swal({
         title: "Are you sure?",
-        text: "Once Assigned, you will not be able to modify this task!",
+        //text: "Once Assigned, you will not be able to modify this task!",
         icon: "warning",
         buttons: true,
         dangerMode: true,

@@ -181,8 +181,9 @@
                   </tr>
                   @if($task_data->status=='2' || $task_data->status=='4')
                     <tr>
-                      <td>Rating</td>
+                      <td>Review & Rating</td>
                       <td>
+                          {{$task_data->review}}
                           <section class='rating-widget'>
   
                             <!-- Rating Stars Box -->
