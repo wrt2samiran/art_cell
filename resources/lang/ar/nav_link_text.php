@@ -51,5 +51,6 @@ return array (
   'unit_management' => 'إدارة الوحدة',
   'skills' => 'مهارات',
   'my-tasks' => 'مهامي',
+  'emergency-service-management' => 'إدارة خدمة الطوارئ',
 
 );

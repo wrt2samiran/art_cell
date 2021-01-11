@@ -5,7 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\Models\{User,Country,State,City,WorkOrderLists,TaskLists, TaskDetails, ServiceAllocationManagement, Property, Contract, ContractService, ContractServiceDate, WorkOrderSlot, ContractServiceRecurrence, TaskDetailsFeedbackFiles, Notification, LabourLeave, LeaveDates};
+use App\Models\{User,Country,State,City,WorkOrderLists,TaskLists, TaskDetails, ServiceAllocationManagement, Property, Contract, ContractService, ContractServiceDate,Service};
 use Auth, Validator, Helper, File, Image;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
@@ -13,23 +13,23 @@ use App\Mail\Admin\LabourFeedback\LabourFeedbackMailToServiceProvider;
 use Mail;
 use DB;
 
-class WorkOrderManagementController extends Controller
+class EmergencyServiceManagementController extends Controller
 {
 
-    private $view_path='admin.work_order_management';
+    private $view_path='admin.emergency_service_management';
 
     
     /*****************************************************/
-    # WorkOrderManagementController
-    # Function name : workOrderCreate
+    # EmergencyServiceManagementController
+    # Function name : emergencyServiceCreate
     # Author        :
-    # Created Date  : 14-10-2020
-    # Purpose       : Adding new work order by property owner or property manager
+    # Created Date  : 12-01-2021
+    # Purpose       : Adding new emergency service by property owner or property manager
     # Params        : Request $request
     /*****************************************************/
-    public function workOrderCreate(Request $request) {
+    public function emergencyServiceCreate(Request $request) {
 
-        $this->data['page_title']     = 'Create Work Order';
+        $this->data['page_title']     = 'Create Emergency Service';
         $logedInUserRole = \Auth::guard('admin')->user()->role_id;
         $logedInUser = \Auth::guard('admin')->user()->id;
     
@@ -68,73 +68,47 @@ class WorkOrderManagementController extends Controller
                     
                 } else {
                     
-                    // $rangeDate = (explode("-",$request->date_range));     
-                    // $start_date = \Carbon\Carbon::parse($rangeDate['0']);
-                    // $end_date = \Carbon\Carbon::parse($rangeDate['1']);
 
                     $start_date = Carbon::createFromFormat('d/m/Y', $request->date_range)->format('Y-m-d');
-                    //$end_date = Carbon::createFromFormat('d/m/Y', $request->date_range)->format('Y-m-d');
 
                     $date_from = strtotime($start_date);
-                    //$date_to = strtotime($end_date);
 
                     $sqlContract = Contract::findOrFail($request->contract_id);
-                    $sqlContractService = ContractService::where('contract_id', $request->contract_id)->whereId($request->service_id)->first();
-                    $sqlSlot = ContractServiceRecurrence::whereContractServiceId($sqlContractService->id)->first();
+                    $sqlContractService = ContractService::where('contract_id', $request->contract_id)->first();
 
                     $task=WorkOrderLists::create([
                         'contract_id'=>$request->contract_id,
                         'property_id'=>$request->property_id,
-                        'service_id' => $sqlContractService->service_id,
+                        'service_id' => $request->service_id,
                         'contract_service_id' => $sqlContractService->id,
-                        // 'country_id' =>$request->country_id,
-                        // 'state_id' =>$request->state_id,
-                        // 'city_id' =>$request->city_id,
+                        'emergency_service' => 'Y',
                         'user_id'=>$sqlContract->service_provider_id,
                         'task_title'=>$request->task_title,
                         'task_desc' => $request->task_desc,
                         'start_date'=>date("Y-m-d", strtotime($start_date)),
-                        //'end_date'=>date("Y-m-d", strtotime($end_date)),
                         'created_by'=>$logedInUser,
                         'updated_by'=>$logedInUser
                     ]);
 
+                   
                     
-                    // if($sqlSlot and count($sqlSlot)>0)
-                    // {
-                    //     for ($i=0; $i <count($sqlSlot) ; $i++) { 
-                    //         if(array_key_exists($i, $allSlot))
+                    // if ($sqlContractService) {
+                    //      if($sqlContractService->service_type=='General' || $sqlContractService->service_type=='Free')  
                     //         {
-                    //             $daily_slot_value = $allSlot[$i];
+                    //             $sqlContractService->number_of_times_already_used = '1';
+                    //             $sqlContractService->updated_by = $logedInUser;
+                    //             $sqlContractService->save();
                     //         }
-                    //         $slot_array[]=[
-                    //             'work_order_id'            => $request->service_id,
-                    //             'contract_service_date_id' => $request->task_id,
-                    //             'daily_slot'               => $daily_slot_value,
-                    //             'created_by'               => auth()->guard('admin')->id(),
-                    //         ];
-                    //     }
+                    //       else
+                    //         {
+                    //             $sqlContractService->number_of_times_already_used = ($sqlContractService->number_of_times_already_used+1);
+                    //             $sqlContractService->updated_by = $logedInUser;
+                    //             $sqlContractService->save();
+                    //         }   
                     // }
 
-
-                    
-                    if ($sqlContractService) {
-                         if($sqlContractService->service_type=='General' || $sqlContractService->service_type=='Free')  
-                            {
-                                $sqlContractService->number_of_times_already_used = '1';
-                                $sqlContractService->updated_by = $logedInUser;
-                                $sqlContractService->save();
-                            }
-                          else
-                            {
-                                $sqlContractService->number_of_times_already_used = ($sqlContractService->number_of_times_already_used+1);
-                                $sqlContractService->updated_by = $logedInUser;
-                                $sqlContractService->save();
-                            }   
-                    }
-
                         //$request->session()->flash('alert-success', 'Task has been added successfully');
-                        return redirect()->route('admin.work-order-management.list')->with('success','Work Order successfully created');
+                        return redirect()->route('admin.emergency-service-management.list')->with('success','Emergency Service successfully created');
                 }
             }
 
@@ -157,6 +131,9 @@ class WorkOrderManagementController extends Controller
                     });
                 })
                 ->select('contracts.*')->get();
+
+                
+                $this->data['all_service_list']=Service::whereIsActive('1')->whereNull('deleted_at')->orderBy('id','ASC')->get();
             }
             else
             {
@@ -165,293 +142,18 @@ class WorkOrderManagementController extends Controller
             //dd($this->data['contract_list']);
             return view($this->view_path.'.add',$this->data);
         } catch (Exception $e) {
-            return redirect()->route('admin.work-order-management.calendar')->with('error', $e->getMessage());
+            return redirect()->route('admin.emergency-service-management.list')->with('error', $e->getMessage());
         }
         
     }
 
-    /*****************************************************/
-    # WorkOrderManagementController
-    # Function name : getContractData
-    # Author        :
-    # Created Date  : 14-10-2020
-    # Purpose       : Get Task Related Data List
-    # Params        : Request $request
-    /*****************************************************/
-
-   
-
-    public function getContractData(Request $request)
-    {
-        $logedInUser = \Auth::guard('admin')->user()->id;
-         $validator = Validator::make($request->all(), [ 
-            'contract_id' => 'required',
-            ]);
-
-           if ($validator->fails()) { 
-              return response()->json(['success' =>false,'message'=>$validator->errors()->first()], 200);
-            }
-        
-
-        $sqlProperty = Contract::with('property')->whereId($request->contract_id)->whereIsActive('1')->whereNull('deleted_at')->first();
-
-        $sqlService = ContractService::with('service')->whereContractId($request->contract_id)->where('service_type','<>', 'Maintenance')->get();
-        // $restContractService = array();
-        // foreach ($sqlService as $key => $serviceValue) {
-        //     if(($serviceValue->service_type=='General' || $serviceValue->service_type=='Free') and ($serviceValue->number_of_times_already_used=='NULL' || $serviceValue->number_of_times_already_used == ''))
-        //     {
-        //         $restContractService[] = $serviceValue->id;
-        //     }
-        //     elseif($serviceValue->service_type=='Maintenance')
-        //     {
-        //         $sqlTaskData = TaskLists::whereContractId($serviceValue->contract_id)->whereServiceId($serviceValue->service_id)->whereNull('deleted_at')->first();
-        //         if($sqlTaskData)
-        //         {
-        //            // if(strtotime($sqlTaskData->start_date) < strtotime('-"'.$serviceValue->interval_days.'" days')) {
-        //             $addedOn = new \DateTime($sqlTaskData->start_date);
-        //             $now = new \DateTime();
-
-        //             if($addedOn->diff($now)->days > $serviceValue->interval_days) {
-                        
-                      
-        //                 $restContractService[] = $serviceValue->id;
-        //             }
-        //         }
-        //         else
-        //         {
-        //             $restContractService[] = $serviceValue->id;
-        //         }
-                
-
-        //         //where('start_date', '<=', Carbon::now()->subDays($serviceValue->interval_days)->toDateTimeString())
-        //     }
-        //     elseif($serviceValue->service_type=='On Demand' and ($serviceValue->number_of_times_already_used=='NULL' || $serviceValue->number_of_times_already_used < $serviceValue->number_of_time_can_used))
-        //     {
-        //         $restContractService[] = $serviceValue->id;
-        //     }
-        // }
-
-        // $sqlServiceFinal = ContractService::with('service')->whereContractId($request->contract_id)->whereIn('id', $restContractService)->get();
-
-        $sqlCity    = City::whereId($sqlProperty->property->city_id)->whereIsActive('1')->first();
-        $sqlState   = State::whereIsActive('1')->where('id', $sqlProperty->property->state_id)->first();
-        $sqlCountry = Country::whereIsActive('1')->where('id', $sqlProperty->property->country_id)->first();
-        
-        return response()->json(['status'=>true, 'sqlProperty'=>$sqlProperty, 'sqlCity'=>$sqlCity, 'sqlState'=>$sqlState, 'sqlCountry'=>$sqlCountry, 'sqlService'=>$sqlService],200);
-    }
-
-    
-    
 
     /*****************************************************/
-    # WorkOrderManagementController
-    # Function name : getContractServiceStatus
-    # Author        :
-    # Created Date  : 05-11-2020
-    # Purpose       : Checking whether a service is available to create a new task or not
-    # Params        : Request $request
-    /*****************************************************/
-
-   
-
-    public function getContractServiceStatus(Request $request)
-    {
-        $logedInUser = \Auth::guard('admin')->user()->id;
-         $validator = Validator::make($request->all(), [ 
-            'service_id'  => 'required',
-            'contract_id' => 'required'
-            ]);
-
-           if ($validator->fails()) { 
-              return response()->json(['success' =>false,'message'=>$validator->errors()->first()], 200);
-            }
-        
-        $sqlService = ContractService::with('service')->whereContractId($request->contract_id)->whereId($request->service_id)->first();
-        if($sqlService){
-
-           
-
-            if(($sqlService->service_type=='General' || $sqlService->service_type=='Free') and $sqlService->number_of_times_already_used==''){
-                $service_status = 'Available';
-            }
-            elseif(($sqlService->service_type=='General' || $sqlService->service_type=='Free') and $sqlService->number_of_times_already_used>=1){
-                $service_status = 'Not Available';
-            }
-            
-
-            elseif($sqlService->service_type=='On Demand' and $sqlService->number_of_times_already_used < $sqlService->number_of_time_can_used){
-                $service_status = 'Available';
-            }
-            elseif($sqlService->service_type=='On Demand' and $sqlService->number_of_times_already_used >= $sqlService->number_of_time_can_used){
-                $service_status = 'Not Available';
-            }
-
-            elseif($sqlService->service_type=='Maintenance' and $sqlService->number_of_times_already_used=='NULL'){
-                $service_status = 'Available';
-            }
-            elseif($sqlService->service_type=='Maintenance' and $sqlService->number_of_times_already_used!='NULL'){
-                
-                    if($sqlService->number_of_times_already_used < $sqlService->frequency_number)
-                    {
-                        $sqlTask = TaskLists::whereContractId($request->contract_id)->whereContractServiceId($sqlService->id)->whereServiceId($request->service_id)->whereIsDeleted('N')->whereNull('deleted_at')->latest()->first();
-
-                        if($sqlTask)
-                        {
-
-                            $addedOn = new \DateTime($sqlTask->start_date);
-                            $now = new \DateTime();
-
-                            if($addedOn->diff($now)->days > $sqlService->interval_days) {
-                              $service_status = 'Available';
-                            }
-                        
-                            else
-                            {
-                                $service_status = 'Out of period';
-                            }
-                        }
-                        else
-                        {
-                            $service_status = 'Available';
-                        }
-                        
-                    }
-                    else{
-                        $service_status = 'Not Available';
-                    }
-                    
-            }
-
-        }
-
-        return response()->json(['status'=>true, 'service_status'=>$service_status],200);
-    }
-
-
-    /*****************************************************/
-    # WorkOrderManagementController
-    # Function name : Calendar
-    # Author        :
-    # Created Date  : 16-10-2020
-    # Purpose       : Showing Task Calendar
-    # Params        : Request $request
-    /*****************************************************/
-       
-    public function calendar(Request $request, $id){
-        //dd($request->all());
-        $this->data['page_title']='Task calendar';
-        $logedInUser = \Auth::guard('admin')->user()->id;
-
-        if($request->ajax()){
-
-            $task_list=TaskLists::orderBy('id','Desc');
-            return Datatables::of($task_list)
-            ->editColumn('created_at', function ($task_list) {
-                return $task_list->created_at ? with(new Carbon($task_list->created_at))->format('m/d/Y') : '';
-            })
-            
-            ->filterColumn('created_at', function ($query, $keyword) {
-                $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
-            })
-            ->addColumn('status',function($task_list){
-                if($task_list->status=='1'){
-                   //$message='deactivate';
-                   return '<span class="btn btn-block btn-outline-success btn-sm">Overdue</a>';
-                    
-                }else if($task_list->status=='0'){
-                  // $message='activate';
-                   return '<span class="btn btn-block btn-outline-success btn-sm">Pending</a>';
-                }
-                else
-                {
-                    return '<span class="btn btn-block btn-outline-success btn-sm">Completed</a>';
-                }
-            })
-            ->addColumn('action',function($task_list){
-                $delete_url=route('admin.work-order-management.delete',$task_list->id);
-                $details_url=route('admin.work-order-management.show',$task_list->id);
-                $add_url=route('admin.work-order-management.calendar',$task_list->id);
-
-                return '<a title="View Task Details" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>&nbsp;&nbsp;<a title="Add Task" href="'.$add_url.'"><i class="fas fa-plus text-success"></i></a>&nbsp;&nbsp;<a title="Delete city" href="javascript:delete_city('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
-                
-            })
-            ->rawColumns(['action','status'])
-            ->make(true);
-        }
-
-        $service_data=ServiceAllocationManagement::with('service')->whereStatus('A')->where('work_status', '<>','2')->whereServiceProviderId($logedInUser)->whereId($id)->first();
-
-        $sqlProperty = DB::table('service_allocation_management')
-        ->join('contracts', 'contracts.id', '=', 'service_allocation_management.contract_id')
-        ->join('properties', 'properties.id', '=', 'contracts.property_id')
-        ->where('service_allocation_management.service_provider_id', $logedInUser)
-        ->where('service_allocation_management.id', $id)
-        ->first();
-
-        $sqlCity    = City::whereIsActive('1')->where('id', $sqlProperty->city_id)->first();
-        $sqlState   = State::whereIsActive('1')->where('id', $sqlCity->state_id)->first();
-        $sqlCountry = Country::whereIsActive('1')->where('id', $sqlState->country_id)->first();
-
-        $labour_list= User::whereStatus('A')->whereRoleId('5')->whereCreatedBy($logedInUser)->get();
-
-
-        $this->data['service_data']          = $service_data;
-        $this->data['task_id']               = $id;
-        $this->data['property_data']         = $sqlProperty;
-        $this->data['city_data']             = $sqlCity;
-        $this->data['state_data']            = $sqlState;
-        $this->data['country_data']          = $sqlCountry;
-        $this->data['service_allocation_id'] = $id;
-
-        $this->data['labour_list']           = $labour_list;
-
-        if ($request->has('search')) {
-            
-            $sqlCalendar = TaskLists::where(function ($q) use ($request) {
-                
-                if ($request->has('user_labour_id')) {
-                   
-                    $q->where(function ($que) use ($request) {
-                        $que->where('user_id', $request->user_labour_id);
-                       
-                     });                   
-
-                    }
-
-                if ($request->task_status!='') {
-                   
-                    if($request->task_status ==3)
-                    {
-                        $request->task_status = '0';
-                    }
-                    
-                    $q->where(function ($que) use ($request) {
-                        $que->where('status', $request->task_status);
-                       
-                     });                   
-
-                    }    
-
-            })->get();
-
-        } else {
-            $sqlTask=TaskLists::whereServiceAllocationId($id)->orderBy('id','Desc')->get();
-        }
-
-        $this->data['tasks_list']  = $sqlTask;
-        $this->data['request'] = $request;
-
-        return view($this->view_path.'.calendar',$this->data);
-    }
-
-
-
-    /*****************************************************/
-    # WorkOrderManagementController
+    # EmergencyServiceManagementController
     # Function name : List
     # Author        :
     # Created Date  : 20-10-2020
-    # Purpose       : Showing Task List
+    # Purpose       : Showing Emergency Service List
     # Params        : Request $request
     /*****************************************************/
     
@@ -459,15 +161,12 @@ class WorkOrderManagementController extends Controller
     public function list(Request $request){
 
 
-        $this->data['page_title']='Work Order Management List';
+        $this->data['page_title']='Emergency Service Management List';
         $logedInUser = \Auth::guard('admin')->user()->id;
         $logedInUserRole = \Auth::guard('admin')->user();
-        if($logedInUserRole ->role->user_type->slug!='labour')
-        {
+      
         if($request->ajax()){
             
-           // $tasks=WorkOrderLists::with('property')->with('service')->with('country')->with('state')->with('city')->where('created_by', $logedInUser)->orWhere('user_id', $logedInUser)->orderBy('id','Desc');
-
             $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'property.country', 'property.state', 'property.city'])
                 
                 ->where(function($q) use ($logedInUser, $logedInUserRole){
@@ -490,8 +189,7 @@ class WorkOrderManagementController extends Controller
                 ->when($request->contract_status_id,function($query) use($request){
                     $query->where('contract_status_id',$request->contract_status_id);
                 })
-
-                ->select('work_order_lists.*')->orderBy('id', 'Desc');
+                ->select('work_order_lists.*')->where('emergency_service', 'Y')->orderBy('id', 'Desc');
 
             
             return Datatables::of($workOrder)
@@ -505,24 +203,6 @@ class WorkOrderManagementController extends Controller
             ->filterColumn('created_at', function ($query, $keyword) {
                 $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
             })
-
-            ->filter(function ($query) use ($request) {
-                        if ($request->get('status')!='') {
-                            $query->where('status', $request->get('status'));
-                        }
-
-                        if ($request->get('daterange')) {  
-                        $daterange_arr=explode('_',$request->daterange);
-                        $start_date = $daterange_arr[0];
-                        $end_date   = $daterange_arr[1];
-                        $query->where(function($q) use ($start_date,$end_date){
-                                $q->where(function($q) use ($start_date,$end_date){
-                                  $q->whereDate('start_date','>=',$start_date)->whereDate('start_date','<=',$start_date);
-                                });
-                                
-                            });
-                        }
-            }) 
             ->addColumn('status',function($workOrder){
                 if($workOrder->status=='0'){
                    $message='Pending';
@@ -554,22 +234,21 @@ class WorkOrderManagementController extends Controller
                  }
 
                 else{
-                    $details_url = route('admin.work-order-management.show',$workOrder->id);
+                    $details_url = route('admin.emergency-service-management.show',$workOrder->id);
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Show Work Order" id="details_task" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
                 } 
 
                 $checkAssignedOrNot = TaskLists::whereWorkOrderId($workOrder->id)->first();
-                $checkWorkOrderSlot = WorkOrderSlot::whereWorkOrderId($workOrder->id)->first();
                // echo 'service_type'. $workOrder->contract_services->service_type;
                 //exit;
 
 
-                if( \Auth::guard('admin')->user()->hasAllPermission(['work-order-edit']) and !$checkAssignedOrNot and !$checkWorkOrderSlot and $workOrder->contract_services->service_type != 'Maintenance'){   
+                if( !$checkAssignedOrNot ){   
 
-                    $edit_url=route('admin.work-order-management.edit',$workOrder->id);
+                    $edit_url=route('admin.emergency-service-management.edit',$workOrder->id);
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Work Order" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
 
-                    $delete_url=route('admin.work-order-management.delete',$workOrder->id);
+                    $delete_url=route('admin.emergency-service-management.delete',$workOrder->id);
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete Work Order" href="javascript:delete_task('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
                 }
 
@@ -597,11 +276,7 @@ class WorkOrderManagementController extends Controller
 
 
         return view($this->view_path.'.list',$this->data);
-        }
-        else
-        {
-         return $this->labourTaskList($request, $logedInUser);
-        }
+      
     }
 
    
@@ -891,16 +566,8 @@ class WorkOrderManagementController extends Controller
 
     public function show(Request $request, $id){
         $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'property.country', 'property.state', 'property.city', 'tasks'])->whereId($id)->first();
-        $checkSlot = WorkOrderSlot::with('contract_service_dates')->whereWorkOrderId($id)->whereBookedStatus('N')->get();
-                $slot_data = $checkSlot;
+       
 
-        $checkDate = WorkOrderSlot::with('contract_service_dates')->whereWorkOrderId($id)->whereBookedStatus('N')->groupBy('contract_service_date_id')->get();
-
-        $checkallDate = WorkOrderSlot::with('contract_service_dates')->whereWorkOrderId($id)->groupBy('contract_service_date_id')->get(); 
-        $this->data['all_available_dates'] = $checkallDate;
-
-        $checkAllSlot = WorkOrderSlot::with('contract_service_dates')->whereWorkOrderId($id)->get();
-        $this->data['all_slot_data'] = $checkAllSlot;
 
         $logedInUser = \Auth::guard('admin')->user()->id;
         //dd($workOrder);
@@ -909,187 +576,13 @@ class WorkOrderManagementController extends Controller
             $taskId[]=$value->id;
         }
 
-        //dd($taskId);
-        // if($request->ajax()){
-            
-        //    // $tasks=WorkOrderLists::with('property')->with('service')->with('country')->with('state')->with('city')->where('created_by', $logedInUser)->orWhere('user_id', $logedInUser)->orderBy('id','Desc');
-
-        //     $workOrder=WorkOrderLists::with(['contract','userDetails', 'tasks', 'tasks.task_details', 'tasks.task_details.userDetails'])->whereId($id)
-        //     ->where(function($q) use ($logedInUser){
-              
-        //             // if logged in user is the service_provider of the contract 
-        //             $q->WhereHas('property',function($q1) use ($logedInUser){
-        //                 $q1->where('property_owner',$logedInUser)
-        //                 ->orWhere('property_manager',$logedInUser);
-        //             });
-        //         })
-              
-        //         ->select('work_order_lists.*')->orderBy('id', 'Desc');
-
-            
-        //     return Datatables::of($workOrder)
-        //     ->editColumn('created_at', function ($workOrder) {
-        //         return $workOrder->created_at ? with(new Carbon($workOrder->created_at))->format('d/m/Y') : '';
-        //     })
-        //     ->editColumn('start_date', function ($workOrder) {
-        //         return $workOrder->start_date ? with(new Carbon($workOrder->start_date))->format('d/m/Y') : '';
-        //     })
-            
-        //     ->filterColumn('created_at', function ($query, $keyword) {
-        //         $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
-        //     })
-        //     ->addColumn('status',function($workOrder){
-        //         if($workOrder->status=='0'){
-        //            $message='Pending';
-        //             return '<a href="" class="btn btn-block btn-outline-warning btn-sm">Pending</a>';
-                    
-        //         }elseif($workOrder->status=='1'){
-        //            $message='Overdue';
-        //            return '<a  href="" class="btn btn-block btn-outline-success btn-sm">Overdue</a>';
-                   
-        //         }
-        //         else{
-        //             $message='Completed';
-        //             return '<a href="" class="btn btn-block btn-outline-success btn-sm">Completed</a>';
-        //         }
-        //     })
-        //     ->addColumn('action',function($workOrder) use($logedInUser){
-        //         $action_buttons='';
-               
-             
-        //         if($logedInUser==$workOrder->user_id){
-        //              $add_url=route('admin.work-order-management.labourTaskList',$workOrder->id);
-
-        //              $action_buttons =$action_buttons.'<a title="Labour Task List" href="'.$add_url.'"><i class="fas fa-plus text-success"></i></a>';
-        //         }
-                
-
-        //         else{
-        //                 $details_url = route('admin.work-order-management.show',$workOrder->id);
-        //                 $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Show Work Order" id="details_task" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
-        //             } 
-
-        //         $checkAssignedOrNot = TaskLists::whereWorkOrderId($workOrder->id)->first();
-        //         $checkWorkOrderSlot = WorkOrderSlot::whereWorkOrderId($workOrder->id)->first();
-        //        // echo 'service_type'. $workOrder->contract_services->service_type;
-        //         //exit;
-        //         if( \Auth::guard('admin')->user()->hasAllPermission(['work-order-edit']) and !$checkAssignedOrNot and !$checkWorkOrderSlot and $workOrder->contract_services->service_type != 'Maintenance'){   
-
-        //             $edit_url=route('admin.work-order-management.edit',$workOrder->id);
-        //             $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Work Order" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
-
-        //             $delete_url=route('admin.work-order-management.delete',$workOrder->id);
-        //             $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete Work Order" href="javascript:delete_task('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
-        //         }
-
-        //         if($action_buttons==''){
-        //             $action_buttons=$action_buttons.'<span class="text-muted">No access</span>';
-        //         } 
-        //         return $action_buttons;
-
-        //     })
-        //     ->rawColumns(['action','status'])
-        //     ->make(true);
-        // }
-
-        if($request->ajax()){
-            // if($logedInUserRole!=5){
-            //     $task_detail_list=TaskDetails::with('task')->with('service')->with('userDetails')->where('task_id', $id)->orderBy('id','Desc');
-            // }
-            // else{
-            $labour_task_list=TaskDetails::with('task')->with('userDetails')->with('work_order_slot')->whereIn('task_id', $taskId)->whereNotNull('user_feedback')->whereStatus('4')->orderBy('id','Desc');
-            // }
-            return Datatables::of($labour_task_list)
-            ->editColumn('created_at', function ($labour_task_list) {
-                return $labour_task_list->created_at ? with(new Carbon($labour_task_list->created_at))->format('m/d/Y') : '';
-            })
-            ->editColumn('task_date', function ($task_list) {
-                return $task_list->task_date ? with(new Carbon($task_list->task_date))->format('d/m/Y H:i a') : '';
-            })
-            ->editColumn('task_finish_date_time', function ($task_list) {
-                return $task_list->task_finish_date_time ? with(new Carbon($task_list->task_finish_date_time))->format('d/m/Y H:i a') : '';
-            })
-            
-            ->filterColumn('created_at', function ($query, $keyword) {
-                $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
-            })
-            ->filterColumn('task_date', function ($query, $keyword) {
-                $query->whereRaw("DATE_FORMAT(task_date,'%d/%m/%Y') like ?", ["%$keyword%"]);
-            })
-            ->filterColumn('task_finish_date_time', function ($query, $keyword) {
-                $query->whereRaw("DATE_FORMAT(task_finish_date_time,'%d/%m/%Y') like ?", ["%$keyword%"]);
-            })
-
-            ->addColumn('status',function($labour_task_list){
-            
-                if($labour_task_list->status=='1'){
-                   //$message='deactivate';
-                   return '<span class="btn btn-block btn-outline-denger btn-sm">Overdue</a>';
-                    
-                }else if($labour_task_list->status=='0'){
-                   $message='complete';
-                   if($labour_task_list->user_feedback==''){
-                        return '<span class="btn btn-block btn-outline-warning btn-sm">Pending</a>';
-                   }
-                   else{
-                        return '<a title="Click to Complete the daily task" href="javascript:change_status('."'".route('admin.work-order-management.change_status',$labour_task_list->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm">Pending</a>';
-                   }
-                   
-                   
-                }
-                else if($labour_task_list->status=='1')
-                {
-                    return '<span class="btn btn-block btn-outline-denger btn-sm">Overdue</a>';
-                }
-                else if($labour_task_list->status=='2')
-                {
-                    return '<span class="btn btn-block btn-outline-success btn-sm">Completed</a>';
-                }
-                else if($labour_task_list->status=='3')
-                {
-                    return '<span class="btn btn-block btn-info btn-sm">Requested for Reschedule</a>';
-                }
-
-
-            })
-            ->addColumn('action',function($labour_task_list){
-                $logedInUser = \Auth::guard('admin')->user()->id;
-                $today = date('Y-m-d');
-                $action_buttons='';
-            
-
-                //if(\Auth::guard('admin')->user()->role_id==4){
-                    $details_url = route('admin.work-order-management.labourTaskDetails',$labour_task_list->id);
-                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Daily Task List" id="details_task" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
-                 // }
-                 // if($labour_task_list->status=='3' and $labour_task_list->rescheduled=='N')
-                 // {
-                 //     $allRestrictedDate=  $this->getAllRestricedDates($labour_task_list->user_id);
-
-                 //    //$details_url = route('admin.work-order-management.rescheduleTask',$labour_task_list->id);
-                 //    $action_buttons=$action_buttons."&nbsp;&nbsp;<a title='Reschedule Task' id='details_task' 
-                 //    href='javascript:rescheduleTask(".$labour_task_list->id.", ".json_encode($allRestrictedDate).", ".json_encode($labour_task_list->task_description).")'><i class='far fa-calendar-alt'></i></a>";
-                 // }
-
-                 if($action_buttons=='')
-                 {
-                    $action_buttons=$action_buttons.'<span class="text-muted">No access</span>';
-                 } 
-                 return $action_buttons;
-                
-            })
-
-            ->rawColumns(['action','status'])
-            ->make(true);
-        }
-        
+      
+       
       
         $this->data['request'] = $request;
 
 
-        $this->data['available_dates'] = $checkDate;
-        $this->data['slot_data'] = $slot_data;
-        $this->data['page_title']='Work Order Details';
+        $this->data['page_title']='Emergency Work Order Details';
         $this->data['work_order_list']=$workOrder;
 
         return view($this->view_path.'.show',$this->data);

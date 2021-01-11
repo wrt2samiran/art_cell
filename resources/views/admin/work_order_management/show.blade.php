@@ -141,6 +141,33 @@
                           <td>Completed</td> 
                           <td ><div class="progress"><div class="progress-bar bg-success progress-bar-striped" role="progressbar" aria-valuenow="{{$work_order_list->work_order_complete_percent}}" aria-valuemin="0" aria-valuemax="100" style="width: {{$work_order_list->work_order_complete_percent}}%">{{$work_order_list->work_order_complete_percent}}% </div></div></td>
                         </tr>
+
+                        @if($work_order_list->status=='2')
+                          <tr>
+                            <td>Review & Rating</td>
+                            <td>
+                                {{$work_order_list->review}}
+                                <section class='rating-widget'>
+        
+                                  <!-- Rating Stars Box -->
+                                  <div class='rating-stars text-left'>
+                                    <ul id='stars'>
+                                      @php 
+                                        $starTitleArray = array(1=>"Poor",2=>"Fair",3=>"Good", 4=>"Excellent", 5=>"WOW!!!");
+                                      @endphp
+                                      @for( $star =1; $star<=5; $star++)
+                                      <li class='star @if($work_order_list->rating>0 and $work_order_list->rating>=$star){{ "selected" }} @endif' title='@if(array_key_exists($star, $starTitleArray)){{ $starTitleArray[$star] }} @endif' data-value='{{$star}}'>
+                                        <i class='fa fa-star fa-fw'></i>
+                                      </li>
+                                      @endfor 
+                                     
+                                    </ul>
+                                  </div>
+                                
+                                </section>
+                            </td>
+                          </tr>
+                        @endif
                        
                         <tr>
                           <td>Status</td>

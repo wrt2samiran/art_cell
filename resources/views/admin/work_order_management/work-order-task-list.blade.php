@@ -44,44 +44,38 @@
                                     </div>
                                 @endif
 
-                                <div class="card">
-                                  <div class="col-md-4">
-                                    <div class="card-body">
-                                        <!-- <div class="form-group">
-                                            <label>
-                                              <select id='status' name="status" class="form-control status-filter" style="width: 200px">
+                              
+
+                                <div class="filter-area ">
+                                    <div class="row">
+                                        <div class="col-md-4" id="status-filter-container1">
+                                            <select id='status' name="status" class="form-control status-filter" style="width: 200px">
                                                   <option value="">--Filter By Status--</option>
                                                   <option value="0">Pending</option>
                                                   <option value="1">Overdue</option>
                                                   <option value="2">Completed</option>
                                                   <option value="3">Rescheduled</option>
                                               </select>
-                                            </label>
-                                        </div> -->
-                                        <div class="form-group">
-                                            <label>
-                                              <select id='status' name="status" class="form-control status-filter" style="width: 200px">
-                                                  <option value="">--Filter By Status--</option>
-                                                  <option value="0">Pending</option>
-                                                  <option value="1">Overdue</option>
-                                                  <option value="2">Completed</option>
-                                                  <option value="3">Rescheduled</option>
-                                              </select>
-                                            </label>
+
+                                           
                                         </div>
-                                        <div class="input-group">
-                                            <div class="input-group-addon">
-                                                <i class="fa fa-clock-o"></i>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                
+                                                <div class="input-group">
+                                                    <div class="input-group-addon">
+                                                        <i class="fa fa-clock-o"></i>
+                                                    </div>
+                                                    <input class="form-control" type="text" name="contract_duration" id="contract_duration" placeholder="Search By Date">
+
+                                                    <input type="hidden" name="daterange" id="daterange" placeholder="Search By Date">
+                                                </div>
                                             </div>
-                                            <input class="form-control" type="text" name="contract_duration" id="contract_duration" placeholder="Search By Date">
 
-                                            <input type="hidden" name="daterange" id="daterange" placeholder="Search By Date">
-                                            
                                         </div>
-
                                     </div>
-                                  </div>
                                 </div>
+
 
                                 <table class="table table-bordered" id="labour_task_management_table">
                                     <thead>

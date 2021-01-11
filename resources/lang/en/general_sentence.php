@@ -77,7 +77,8 @@ return [
     'edit'=>'Edit',
     'create'=>'Create',
     'details'=>'Details',
-    'sms_templates'=>'Sms Templates'
+    'sms_templates'=>'Sms Templates',
+    'emergency_service' => 'Emergency Service',
   ],
   'button_and_links'=>[
     'view_all'=>'View All',

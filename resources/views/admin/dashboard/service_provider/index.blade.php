@@ -35,7 +35,7 @@
 	              <div class="icon">
 	                <i class="fa fa-user"></i>
 	              </div>
-	              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+	              <a href="{{route('admin.contracts.list')}}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
 	            </div>
 	        </div>
 	        <div class="col-lg-4 col-6">
@@ -141,7 +141,7 @@
                                   <th>Service Provider</th>
                                   <th>Property</th>
                                   <th>Task Title</th>
-                                  <th>Task Complete(%)</th>
+                                  <th>Complete(%)</th>
                                   <!-- <th>Status</th> -->
                               </tr>
                           </thead>
@@ -153,7 +153,9 @@
                                  <td>{{@$task->contract->service_provider->name}}</td>
                                  <td>{{@$task->property->property_name}}</td>
                                  <td>{{@$task->task_title}}</td>
-                                 <td>@if(@$task->task_complete_percent>0){{@$task->task_complete_percent}}@else{{'Not Started Yet'}}@endif</td>
+                                 
+
+                                 <td ><div class="progress"><div class="progress-bar bg-success progress-bar-striped" role="progressbar" aria-valuenow="{{$task->work_order_complete_percent}}" aria-valuemin="0" aria-valuemax="100" style="width: {{$task->task_complete_percent}}%">{{$task->task_complete_percent}}% </div></div></td>
                                  <!-- <td>
                                   {{$task->get_status_name()}}
                                  </td> -->
@@ -308,11 +310,11 @@
                           @forelse($work_orders as $work_order)
                           <tr>
                              <!-- <td>{{$work_order->id}}</td> --> 
-                             <td>{{$work_order->contract->code}}</td> 
-                             <td>{{$work_order->task_title}}</td>
-                             <td>{{$work_order->contract_services->service_type}}</td>
-                             <td>{{$work_order->service->service_name}}</td>
-                             <td>{{$work_order->created_at->format('d/m/Y')}}</td>
+                             <td>{{@$work_order->contract->code}}</td> 
+                             <td>{{@$work_order->task_title}}</td>
+                             <td>{{@$work_order->contract_services->service_type}}</td>
+                             <td>{{@$work_order->service->service_name}}</td>
+                             <td>{{@$work_order->created_at->format('d/m/Y')}}</td>
                           </tr>
                           @empty
                           <tr>

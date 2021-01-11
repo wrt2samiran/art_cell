@@ -50,5 +50,6 @@ return array (
   'notifications'=>'Notifications',
   'unit_management' => 'Unit Management',
   'skills' => 'Skills',
-  'my-tasks' => 'My Tasks'
+  'my-tasks' => 'My Tasks',
+  'emergency-service-management' => 'Emergency Service Management',
 );
