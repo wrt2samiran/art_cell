@@ -21,6 +21,7 @@ return [
 		'email'=>'Email',
 		'password'=>'Password',
 		'contact_number'=>'Contact Number',
+		'secondary_contact_number'=>'Secondary Contact Number',
 		'group'=>'Group',
 		'status'=>'Status',
 		'created_at'=>'Created At',
@@ -33,7 +34,9 @@ return [
 		'email'=>'Email',
 		'password'=>'Password',
 		'contact_number'=>'Contact Number',
+		'secondary_contact_number'=>'Secondary Contact Number',
 		'group'=>'Group',
-		'filter_by_group'=>'Filter By Group'
+		'filter_by_group'=>'Filter By Group',
+		'filter_by_status'=>'Filter By Status'
 	]
 ];

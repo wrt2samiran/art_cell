@@ -74,6 +74,7 @@ class ProfileController extends Controller
             'name'=>$request->first_name.' '.$request->last_name,
             'email'=>$request->email,
             'phone'=>$request->phone,
+            'secondary_contact_number'=>$request->secondary_contact_number,
             'profile_pic'=>$image_name,
             'updated_by'=>auth()->guard('admin')->id()
         ]);

@@ -28,6 +28,7 @@ return [
 		'group_name'=>'Group Name',
 		'description'=>'Description',
 		'user_type'=>'Group User Type',
-		'filter_by_user_type'=>'Filter By User type'
+		'filter_by_user_type'=>'Filter By User type',
+		'filter_by_status'=>'Filter By Status'
 	]
 ];

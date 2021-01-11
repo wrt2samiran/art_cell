@@ -28,6 +28,7 @@ return [
 		'group_name'=>'أسم المجموعة',
 		'description'=>'وصف',
 		'user_type'=>'نوع مستخدم المجموعة',
-		'filter_by_user_type'=>'تصفية حسب نوع المستخدم'
+		'filter_by_user_type'=>'تصفية حسب نوع المستخدم',
+		'filter_by_status'=>'تصفية حسب الحالة'
 	]
 ];

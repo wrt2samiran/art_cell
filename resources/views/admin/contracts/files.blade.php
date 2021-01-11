@@ -8,13 +8,13 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Contract Management</h1>
+            <h1>{{__('contract_manage_module.module_title')}}</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.contracts.list')}}">Contracts</a></li>
-              <li class="breadcrumb-item active">{{($contract->creation_complete)?'Edit':'Create'}}</li>
+              <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.contracts.list')}}">{{__('general_sentence.breadcrumbs.contracts')}}</a></li>
+              <li class="breadcrumb-item active">{{($contract->creation_complete)?__('general_sentence.breadcrumbs.edit'):__('general_sentence.breadcrumbs.create')}}</li>
             </ol>
           </div>
         </div>
@@ -27,7 +27,13 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">{{($contract->creation_complete)?'Edit':'Create'}} Contract</h3>
+                <h3 class="card-title">
+                  @if($contract->creation_complete)
+                  {{__('contract_manage_module.edit_contract')}}
+                  @else
+                  {{__('contract_manage_module.create_contract')}}
+                  @endif
+                  
               </div>
               <div class="card-body">
 
@@ -56,9 +62,9 @@
                         <input type="hidden" value="{{$max_filesize}}"  id="max_filesize">
                         <div>
                           <div class="form-group required">
-                            <label>Attach Files</label>
+                            <label>{{__('contract_manage_module.labels.attach_files')}}</label>
                             <div>
-                              <button type="button" id="add_new_file" class="btn btn-outline-success"><i class="fa fa-plus"></i>&nbsp;Add File</button>
+                              <button type="button" id="add_new_file" class="btn btn-outline-success"><i class="fa fa-plus"></i>&nbsp;{{__('general_sentence.button_and_links.add_file')}}</button>
                             </div>
                           </div>
                           <div id="files_container">
@@ -66,14 +72,18 @@
                               @foreach($files as $file)
                                 <div class="row mt-1 files_row">
                                   <div class="col-md-6">
-                                    <input placeholder="Title" class="form-control file_title_list"  id="title_{{$file->id}}" value="{{$file->title}}" name="title[]" type="text">
+                                    <input placeholder="{{__('contract_manage_module.placeholders.image_title')}}" class="form-control file_title_list"  id="title_{{$file->id}}" value="{{$file->title}}" name="title[]" type="text">
                                   </div>
                                   <div class="col-md-5">
                                     <input data-is_required="no" placeholder="File" class="form-control file_list"  id="contract_files_{{$file->id}}" name="contract_files[]" type="file" aria-describedby="imageHelp{{$file->id}}">
                                     <small class="form-text text-muted">
-                                      Upload PDF/DOC/JPEG/PNG/TEXT files of max. {{$max_filesize}}mb
+                                      @if(App::getLocale()=='ar')
+                                      تحميل ملفات PDF / DOC / JPEG / PNG / TEXT بحد أقصى. {{$max_filesize}}Mb
+                                      @else
+                                      Upload PDF/DOC/JPEG/PNG/TEXT files of max. {{$max_filesize}}Mb
+                                      @endif
                                     </small>
-                                    <small id="imageHelp{{$file->id}}" class="form-text text-muted"><b>Leave blank if you do not want to update image.(<a href="{{route('admin.contracts.download_attachment',$file->id)}}">download file</a>)</b></small>
+                                    <small id="imageHelp{{$file->id}}" class="form-text text-muted"><b>{{__('contract_manage_module.image_update_help_text')}}(<a href="{{route('admin.contracts.download_attachment',$file->id)}}">{{__('contract_manage_module.download_file')}}</a>)</b></small>
                                   </div>
                                   <div class="col-md-1">
                                     <button type="button" data-delete_url="{{route('admin.contracts.delete_attachment_through_ajax',$file->id)}}" class="btn btn-danger files_row_del_btn"><i class="fa fa-trash" aria-hidden="true"></i></button>
@@ -86,8 +96,8 @@
                         </div>
                         <hr class="mt-3 mb-3">
                         <div>
-                           <a href="{{route('admin.contracts.payment_info',$contract->id)}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Previous</a>
-                           <button type="submit" class="btn btn-success">Submit</button> 
+                           <a href="{{route('admin.contracts.payment_info',$contract->id)}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;{{__('general_sentence.button_and_links.previous')}}</a>
+                           <button type="submit" class="btn btn-success">{{__('general_sentence.button_and_links.submit')}}</button> 
                         </div>
                       </form>
                     </div>

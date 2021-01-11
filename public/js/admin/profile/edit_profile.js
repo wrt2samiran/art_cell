@@ -36,6 +36,11 @@ $("#admin_edit_profile_form").validate({
             maxlength: 20,
             number:true  
         },
+        secondary_contact_number:{
+            minlength: 8,
+            maxlength: 20,
+            number:true  
+        },
     },
     messages: {
         first_name: {

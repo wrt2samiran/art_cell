@@ -52,7 +52,7 @@
                               <select class="form-control " id="contract_id" name="contract_id" style="width: 100%;">
                                 <option value="">Select contract</option>
                                 @forelse($contracts as $contract)
-                                   <option data-work_orders="{{json_encode($contract->work_orders)}}" value="{{$contract->id}}" >{{$contract->title}}({{$contract->code}})</option>
+                                   <option data-work_orders="{{json_encode($contract->work_orders)}}" value="{{$contract->id}}" {{($work_order_contract && $work_order_contract->id==$contract->id)?'selected':''}} >{{$contract->title}}({{$contract->code}})</option>
                                 @empty
                                 <option value="">No Contract Found</option>
                                 @endforelse
@@ -72,15 +72,11 @@
                           </div>
                           <div class="form-group required">
                             <label for="subject">Subject <span class="error">*</span></label>
-
                             <input type="text" class="form-control" value="{{old('subject')?old('subject'):''}}" name="subject" id="subject"  placeholder="Subject">
                             @if($errors->has('subject'))
                             <span class="text-danger">{{$errors->first('subject')}}</span>
                             @endif
                           </div>
-
-
-
                           <div class="form-group required">
                             <label for="details">Details <span class="error">*</span></label>
                             <textarea class="form-control" name="details" id="details"  placeholder="Details">{!!old('details')?old('details'):''!!}</textarea>
@@ -112,5 +108,46 @@
 @endsection
 
 @push('custom-scripts')
+
+<script type="text/javascript">
+
+$(function() {
+      var contract_id=$('#contract_id').find(":selected").val();
+  if(contract_id){
+     var work_orders=$('#contract_id').find(":selected").data("work_orders");
+     var work_order_id="{{($work_order)?$work_order->id:''}}";
+      if(work_orders.length>0){
+        var options=`<option value="">Select Order Order</option>`;
+        for (var i = 0; i <work_orders.length; i++) {
+          var is_selected=(work_order_id==work_orders[i].id)?'selected':'';
+          options+=`<option  value="`+work_orders[i].id+`" `+is_selected+`>`+work_orders[i].task_title+`(WO ID-`+work_orders[i].id+`)`+`</option>`;
+        }
+        $('#work_order_id').html(options);
+      }else{
+        var options=`<option value="">Select Order Order</option>`;
+        $('#work_order_id').html(options);
+      }
+
+      $('#work_order_select_container').show();
+      $('#work_order_id').select2({
+        theme: 'bootstrap4',
+        placeholder:'Select work order',
+        "language": {
+           "noResults": function(){
+               return "No Work Order Found";
+           }
+        }
+      });
+  }
+});
+
+
+  
+  
+
+
+</script>
+
+
 <script type="text/javascript" src="{{asset('js/admin/complaints/create.js')}}"></script>
 @endpush

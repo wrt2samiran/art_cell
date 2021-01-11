@@ -1,4 +1,4 @@
-//initializing galleries datatable
+
     var spare_parts_table=$('#spare_parts_table').DataTable({
         "responsive": true,
         "autoWidth": false,
@@ -15,23 +15,26 @@
             { data: 'created_at', name: 'created_at' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
-         order: [ [0, 'asc'] ],
+        order: [ [0, 'asc'] ],
         columnDefs: [
         {   "targets": [0],
             "visible": false,
             "searchable": false
-        }]
+        }],
+        "language": {
+            "url": (current_locale=="ar")?"//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Arabic.json":"//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/English.json"
+        }
 
     });
 
  //function to delete country
  function delete_shared_service(url){
   swal({
-  title: "Are you sure?",
-  text: "Once deleted, you will not be able to recover this Spare Part!",
+  title: translations.spare_part_manage_module.warning_title,
+  text: translations.spare_part_manage_module.delete_warning,
   icon: "warning",
-  buttons: true,
-  dangerMode: true,
+  buttons: [translations.general_sentence.button_and_links.cancel,translations.general_sentence.button_and_links.ok],
+  dangerMode: false,
   })
   .then((willDelete) => {
     if (willDelete) {
@@ -45,7 +48,7 @@
         success: function (data) {
           $.LoadingOverlay("hide");
           spare_parts_table.ajax.reload(null, false);
-          toastr.success('Spare Part successfully deleted.', 'Success', {timeOut: 5000});
+          toastr.success(translations.spare_part_manage_module.delete_success_message, 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");
@@ -70,11 +73,11 @@
 //function to change status of gallery
  function change_status(url,activate_or_deactivate){
   swal({
-  title: "Are you sure?",
-  text: "You want to "+activate_or_deactivate+" the spare part.",
+  title: translations.spare_part_manage_module.warning_title,
+  text: translations.spare_part_manage_module.delete_warning,
   icon: "warning",
-  buttons: true,
-  dangerMode: true,
+  buttons: [translations.general_sentence.button_and_links.cancel,translations.general_sentence.button_and_links.ok],
+  dangerMode: false,
   })
   .then((confirm) => {
     if (confirm) {
@@ -86,7 +89,7 @@
         success: function (data) {
           $.LoadingOverlay("hide");
           spare_parts_table.ajax.reload(null, false);
-          toastr.success('Status successfully updated.', 'Success', {timeOut: 5000});
+          toastr.success(translations.spare_part_manage_module.change_status_success_message, 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");

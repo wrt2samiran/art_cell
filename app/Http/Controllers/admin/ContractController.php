@@ -457,7 +457,7 @@ class ContractController extends Controller
 
         }
 
-        return redirect()->back()->with('success','Service added');
+        return redirect()->back()->with('success',__('contract_manage_module.service_added_success_message'));
     }
 
 
@@ -639,7 +639,7 @@ class ContractController extends Controller
         }
 
         return redirect()->route('admin.contracts.services',$contract_id)
-                ->with('success','Service updated.');
+                ->with('success',__('contract_manage_module.service_update_success_message'));
     }
 
     public function service_delete($contract_id,$service_id){
@@ -787,7 +787,7 @@ class ContractController extends Controller
         }else{
             ContractInstallment::where('contract_id',$contract->id)->delete();
         }
-        return redirect()->route('admin.contracts.files',$contract->id)->with('success','Payment info updated.');
+        return redirect()->route('admin.contracts.files',$contract->id)->with('success',__('contract_manage_module.payment_info_success_message'));
 
     }
 
@@ -882,7 +882,7 @@ class ContractController extends Controller
         
         //update contract status creation_complete to true
         if($contract->creation_complete){
-            return redirect()->route('admin.contracts.list')->with('success','Contract successfully updated.');
+            return redirect()->route('admin.contracts.list')->with('success',__('contract_manage_module.edit_success_message'));
         }else{
             $contract->update([
                 'creation_complete'=>true
@@ -903,7 +903,7 @@ class ContractController extends Controller
 
             event(new ContractCreated($contract));
 
-            return redirect()->route('admin.contracts.list')->with('success','Contract successfully created.');
+            return redirect()->route('admin.contracts.list')->with('success',__('contract_manage_module.create_success_message'));
         }
         
 

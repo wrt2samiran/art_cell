@@ -66,6 +66,15 @@
                                            </select>
                                            <div class="cursor-poiner" title="Click to clear filter" style="display: none;" id="role-filter-clear"><span class="badge badge-danger">{{__('user_manage_module.clear_filter')}} <i class="fas fa-times"></i></span></div>
                                         </div>
+                                        <div class="col-sm-4" id="status-wise-filter-container">
+                                            <select class="form-control status-filter"  name="status" id="status">
+                                                <option value="">{{__('user_manage_module.placeholders.filter_by_status')}}</option>
+                                                <option value="active">Active</option>
+                                                <option value="inactive">Inactive</option>
+                                               
+                                           </select>
+                                           <a href="javascript::void(0)" title="{{__('user_manage_module.clear_filter')}}" style="display: none;" id="status-filter-clear"><span class="badge badge-danger">{{__('user_manage_module.clear_filter')}} <i class="fas fa-times"></i></span></a>
+                                        </div>
                                     </div>
                                 </div>
                                 <hr class="mt-3 mb-3"/>

@@ -9,6 +9,8 @@ use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
 use App\Models\{Quotation,Status,Service,PropertyType,QuotationService,State,City};
 use App\Http\Requests\Admin\SubmitQuotationRequest;
+use App\Mail\Quotation\{CreationMailToAdmin,CreationMailToCustomer};
+use Mail,Helper;
 class QuotationController extends Controller
 {
     private $view_path='frontend.quotations';
@@ -104,6 +106,21 @@ class QuotationController extends Controller
             if(count($quotation_service_data_array)){
                 QuotationService::insert($quotation_service_data_array);
             }
+        }
+
+
+
+        $data=[
+            'customer_name'=>$request->first_name.' '.$request->last_name,
+            'from_name'=>env('MAIL_FROM_NAME','SMMS'),
+            'from_email'=>env('MAIL_FROM_ADDRESS'),
+            'subject'=>'Quotation Added'
+        ];
+
+        $admin_email=Helper::get_admin_contact_mail();
+        Mail::to($admin_email)->send(new CreationMailToAdmin($data)); 
+        if($request->email){
+            Mail::to(strtolower(trim($request->email, ' ')))->send(new CreationMailToCustomer($data)); 
         }
 
         return redirect()->back()->with('quotation_success','Quotation successfully submitted');

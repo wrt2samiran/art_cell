@@ -40,6 +40,7 @@ return array (
   'translation_management' => 'إدارة الترجمة',
   'user_management' => 'إدارةالمستخدم',
   'email_templete' => 'إدارة قالب البريد الإلكتروني',
+  'sms_templates' => 'إدارة قالب SMS',
   'reports'=>'التقارير',
   'calendar' => 'التقويم',
   'labour_management' => 'إدارة العمل',

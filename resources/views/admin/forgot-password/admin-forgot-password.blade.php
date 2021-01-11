@@ -5,7 +5,7 @@
     <div class="login-box">
 
         <div class="login-logo">
-            <a href="../../index2.html"><b>Forgot</b>Password</a>
+            <a href="#"><b>Forgot</b>Password</a>
         </div>
         <!-- /.login-logo -->
         <div class="card">

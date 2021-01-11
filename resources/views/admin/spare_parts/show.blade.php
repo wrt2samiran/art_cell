@@ -9,13 +9,13 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Spare Parts Management</h1>
+            <h1>{{__('spare_part_manage_module.module_title')}}</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.spare_parts.list')}}">Spare Parts</a></li>
-              <li class="breadcrumb-item active">Details</li>
+              <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.spare_parts.list')}}">{{__('general_sentence.breadcrumbs.spare_parts')}}</a></li>
+              <li class="breadcrumb-item active">{{__('general_sentence.breadcrumbs.details')}}</li>
             </ol>
           </div>
         </div>
@@ -28,41 +28,41 @@
             <!-- Default box -->
             <div class="card card-success">
                 <div class="card-header">
-                  Spare Parts Deatils
+                  {{__('spare_part_manage_module.spare_part_details')}}
                 </div> 
               <div class="card-body"> 
                  <table class="table table-bordered table-hover" id="spare-parts-details-table">
                       <tbody>
                         <tr>
-                          <td>Spare Parts Name</td>
+                          <td>{{__('spare_part_manage_module.labels.spare_part_name')}}</td>
                           <td>{{$spareParts->name}}</td>
                         </tr>
                         <tr>
-                          <td>Unit</td>
+                          <td>{{__('spare_part_manage_module.labels.unit')}}</td>
                           <td >{{$spareParts->unitmaster->unit_name}}</td>
                         </tr>
                         <tr>
-                          <td>Manufacturer</td>
+                          <td>{{__('spare_part_manage_module.labels.manufacturer')}}</td>
                           <td >{{$spareParts->manufacturer}}</td>
                         </tr>
                         <tr>
-                          <td>Description</td>
+                          <td>{{__('spare_part_manage_module.labels.description')}}</td>
                           <td>{!!$spareParts->description!!}</td>
                         </tr>
 
                         
                         <tr>
-                          <td>Price</td>
+                          <td>{{__('spare_part_manage_module.labels.price')}}</td>
                           <td >{{$spareParts->currency}} {{$spareParts->price}}</td>
                         </tr>
                         <tr>
-                          <td>Status</td>
+                          <td>{{__('spare_part_manage_module.labels.status')}}</td>
                           <td>
-                            <button role="button" class="btn btn-{{($spareParts->is_active=='1')?'success':'danger'}}">{{($spareParts->is_active=='1')?'Active':'Inactive'}}</button>
+                            <button role="button" class="btn btn-{{($spareParts->is_active=='1')?'success':'danger'}}">{{($spareParts->is_active=='1')?__('general_sentence.active'):__('general_sentence.inactive')}}</button>
                           </td>
                         </tr>
                         <tr>
-                          <td>Images</td>
+                          <td>{{__('spare_part_manage_module.uploaded_images_text')}}</td>
                           <td>
                               <div class="card card-body">
                                      <div class="row">
@@ -77,7 +77,7 @@
          
                                       @else
                                        <div class="col-md-12">
-                                         <p>No images</p>
+                                         <p>{{__('spare_part_manage_module.no_images_text')}}</p>
                                        </div>
                                       @endif
                                        
@@ -89,7 +89,7 @@
                       </tbody>
                       <tfoot>
                         <tr>
-                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.spare_parts.list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
+                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.spare_parts.list')}}"><i class="fas fa-backward"></i>&nbsp;{{__('general_sentence.button_and_links.back')}}</a></td>
                         </tr>
                       </tfoot>
                   </table>

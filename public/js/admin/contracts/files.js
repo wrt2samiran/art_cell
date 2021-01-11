@@ -63,12 +63,14 @@ $(document).ready(function(){
 $("#add_new_file").on("click", function () {
     var max_filesize=$('#max_filesize').val();
     let random_string = String(Math.random(10)).substring(2,14); 
+    var help_text=(current_locale=="ar")?"تحميل ملفات PDF / DOC / JPEG / PNG / TEXT بحد أقصى. "+max_filesize+"Mb":"Upload PDF/DOC/JPEG/PNG/TEXT files of max. "+max_filesize+"Mb";
+
     var row=`<div class="row mt-1 files_row">`;
-    row += `<div class="col-md-6"><input placeholder="Title" class="form-control file_title_list"  id="title_`+random_string+`" name="title[]" type="text"></div>`;
+    row += `<div class="col-md-6"><input placeholder="`+translations.contract_manage_module.placeholders.image_title+`" class="form-control file_title_list"  id="title_`+random_string+`" name="title[]" type="text"></div>`;
     row += `<div class="col-md-5">
     <input placeholder="File" required data-is_required="yes" class="form-control file_list"  id="contract_files_`+random_string+`" name="contract_files[]" type="file">
       <small class="form-text text-muted">
-        Upload PDF/DOC/JPEG/PNG/TEXT files of max. `+max_filesize+`mb
+        `+help_text+`
       </small>
     </div>`;
     row += `<div class="col-md-1"><button data-delete_url="" type="button" class="btn btn-danger files_row_del_btn"><i class="fa fa-trash" aria-hidden="true"></i></button></div>`;
@@ -79,8 +81,7 @@ $("#add_new_file").on("click", function () {
        required: true,
        maxlength: 100,
        messages: {
-         required: "Enter title",
-         maxlength: "Maximum 100 characters allowed",
+
        }
     });
 
@@ -107,11 +108,11 @@ $(document).on('click', '.files_row_del_btn', function(){
     if(delete_url){
 
       swal({
-      title: "Are you sure?",
-      text: "Once deleted, you will not be able to recover this file!",
+      title: translations.contract_manage_module.warning_title,
+      text: translations.contract_manage_module.file_delete_warning,
       icon: "warning",
-      buttons: true,
-      dangerMode: true,
+      buttons: [translations.general_sentence.button_and_links.cancel,translations.general_sentence.button_and_links.ok],
+      dangerMode: false,
       })
       .then((willDelete) => {
         if (willDelete) {
@@ -124,7 +125,7 @@ $(document).on('click', '.files_row_del_btn', function(){
             success: function (data) {
               element_to_remove.remove();
               $.LoadingOverlay("hide");
-              toastr.success('File successfully deleted.', 'Success', {timeOut: 5000});
+              toastr.success(translations.contract_manage_module.file_delete_success_message, 'Success', {timeOut: 5000});
             },
             error: function(jqXHR, textStatus, errorThrown) {
                $.LoadingOverlay("hide");
@@ -158,11 +159,11 @@ $(document).on('click', '.files_row_del_btn', function(){
 
  function delete_attach_file(url,file_id){
   swal({
-  title: "Are you sure?",
-  text: "Once deleted, you will not be able to recover this file!",
-  icon: "warning",
-  buttons: true,
-  dangerMode: true,
+    title: translations.contract_manage_module.warning_title,
+    text: translations.contract_manage_module.file_delete_warning,
+    icon: "warning",
+    buttons: [translations.general_sentence.button_and_links.cancel,translations.general_sentence.button_and_links.ok],
+    dangerMode: false
   })
   .then((willDelete) => {
     if (willDelete) {
@@ -182,7 +183,7 @@ $(document).on('click', '.files_row_del_btn', function(){
           }
        
           $.LoadingOverlay("hide");
-          toastr.success('File successfully deleted.', 'Success', {timeOut: 5000});
+          toastr.success(translations.contract_manage_module.file_delete_success_message, 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");
@@ -242,11 +243,13 @@ $(document).on('change', '.file_list', function() {
 
         var error_message='';
         if(file_size_error==true && file_type_error==true){
-            error_message="Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files of max size "+max_filesize_mb+"mb";
+
+           error_message=(current_locale=="ar")?"يرجى تحميل ملفات PDF / DOC / JPG / JPEG / PNG / TEXT فقط ذات الحجم الأقصى "+max_filesize_mb+"Mb":"Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files of max size "+max_filesize_mb+"Mb";
+
         }else if(file_size_error==true && file_type_error==false){
-            error_message="File size should not be more than "+max_filesize_mb+" mb";
+            error_message=(current_locale=="ar")?"يجب ألا يزيد حجم الملف عن "+max_filesize_mb+"Mb":"File size should not be more than "+max_filesize_mb+"Mb";
         }else{
-            error_message="Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files";
+            error_message=(current_locale=="ar")?"يرجى تحميل ملفات PDF / DOC / JPG / JPEG / PNG / TEXT فقط":"Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files";
         }
         swal(error_message);
     }

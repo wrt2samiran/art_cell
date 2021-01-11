@@ -21,6 +21,7 @@ return [
 		'email'=>'البريد الإلكتروني',
 		'password'=>'كلمه السر',
 		'contact_number'=>'رقم الاتصال',
+		'secondary_contact_number'=>'رقم الاتصال الثانوي',
 		'group'=>'مجموعة',
 		'status'=>'الحالة',
 		'created_at'=>'أنشئت في',
@@ -33,7 +34,9 @@ return [
 		'email'=>'البريد الإلكتروني',
 		'password'=>'كلمه السر',
 		'contact_number'=>'رقم الاتصال',
+		'secondary_contact_number'=>'رقم الاتصال الثانوي',
 		'group'=>'مجموعة',
-		'filter_by_group'=>'تصفية حسب المجموعة'
+		'filter_by_group'=>'تصفية حسب المجموعة',
+		'filter_by_status'=>'تصفية حسب الحالة'
 	]
 ];

@@ -24,6 +24,7 @@ class CreateUserRequest extends FormRequest
             'email'=>'required|email|max:100|unique:users',
             'password'=>'required|min:6|max:100',
             'phone'=>'required|regex:/[0-9]{8,20}/',
+            'secondary_contact_number'=>'nullable|regex:/[0-9]{8,20}/',
             'role_id'=>'required'
         ];
     }
@@ -44,6 +45,7 @@ class CreateUserRequest extends FormRequest
             'password.max'=>'Password should not be more then 100 characters',
             'phone.required' => 'Phone/Contact number is required',
             'phone.regex'=>'Phone/Contact number should be a valid number of size 8 to 20 characters',
+            'secondary_contact_number.regex'=>'Phone/Contact number should be a valid number of size 8 to 20 characters',
             'role_id.required'=>'Select a group'
         ];
     }

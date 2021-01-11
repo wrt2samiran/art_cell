@@ -35,35 +35,7 @@ $("#admin_property_edit_form").validate({
 
     },
     messages: {
-        property_name: {
-            required:  "Property name is required",
-            minlength: "Property name should have 2 characters",
-            maxlength: "Property name should not be more then 100 characters",
-        },
-        property_type_id:{
-            required:  "Select property type",
-        },
-        description: {
-            required:  "Description is required",
-            maxlength: "Description should not be more then 1000 characters",
-        },
-        no_of_active_units:{
-             required:  "Please enter number of active units of the property",
-        },
-        no_of_inactive_units:{
-             required:  "Please enter number of inactive units of the property",
-        },
-        city_id: {
-            required:  "Please select city from dropdown list",
-        },
-        address: {
-            required:  "Address is required",
-            maxlength: "Address should not be more then 255 characters",
-        },
-        location:{
-            required:  "Location is required",
-            maxlength: "Location should not be more then 255 characters",
-        },
+
 
     },
     errorPlacement: function (error, element) {
@@ -84,22 +56,30 @@ $("#admin_property_edit_form").validate({
 
 $('#city_id').select2({
     theme: 'bootstrap4',
-    placeholder:'Select city'
+    placeholder:translations.property_manage_module.placeholders.city,
+    language: current_locale,
 });
 
 $('#property_type_id').select2({
     theme: 'bootstrap4',
-    placeholder:'Select property type'
+    placeholder:translations.property_manage_module.placeholders.property_type,
+    language: current_locale,
 });
 
 
 
 $('#property_owner').select2({
     theme: 'bootstrap4',
-    placeholder:'Select property owner',
+    placeholder:translations.property_manage_module.placeholders.property_owner,
     "language": {
+        locale: current_locale,
        "noResults": function(){
-           return "No Property Owner Found <a href='"+$('#property_owner_create_url').val()+"' target='_blank' class='btn btn-success'>Create New One</a>";
+           if(current_locale=='ar'){
+            return "لم يتم العثور على مالك عقار";
+           }else{
+             return "No Property Owner Found";
+           }
+          
        }
     },
     escapeMarkup: function(markup) {
@@ -109,10 +89,16 @@ $('#property_owner').select2({
 
 $('#property_manager').select2({
     theme: 'bootstrap4',
-    placeholder:'Select property manager',
+    placeholder:translations.property_manage_module.placeholders.property_manager,
     "language": {
+         locale: current_locale,
         "noResults": function(){
-            return "No Property Manager Found <a href='"+$('#property_manager_create_url').val()+"' target='_blank' class='btn btn-success'>Create New One</a>";
+            if(current_locale=='ar'){
+                return "لم يتم العثور على مدير عقارات ";
+            }else{
+                return "No Property Manager Found ";
+            }
+            
         }
     },
     escapeMarkup: function(markup) {
@@ -123,14 +109,14 @@ $('#property_manager').select2({
 
 
 
+
   $('.file_title_list').each(function(i, obj) {
 
     $(this).rules("add", {
        required: true,
        maxlength: 100,
        messages: {
-         required: "Enter title",
-         maxlength: "Maximum 100 characters allowed",
+
        }
     });
 
@@ -140,24 +126,25 @@ $('#property_manager').select2({
 $("#add_new_file").on("click", function () {
     var max_filesize=$('#max_filesize').val();
     let random_string = String(Math.random(10)).substring(2,14); 
+    var help_text=(current_locale=="ar")?"تحميل ملفات PDF / DOC / JPEG / PNG / TEXT بحد أقصى. "+max_filesize+"Mb":"Upload PDF/DOC/JPEG/PNG/TEXT files of max. "+max_filesize+"Mb";
+
     var row=`<div class="row mt-1 files_row">`;
-    row += `<div class="col-md-6"><input placeholder="Title" class="form-control file_title_list"  id="title_`+random_string+`" name="title[]" type="text"></div>`;
+    row += `<div class="col-md-6"><input placeholder="`+translations.property_manage_module.placeholders.image_title+`" class="form-control file_title_list"  id="title_`+random_string+`" name="title[]" type="text"></div>`;
     row += `<div class="col-md-5">
-    <input placeholder="File" required  class="form-control file_list"  id="property_files_`+random_string+`" name="property_files[]" type="file">
+    <input placeholder="File" required class="form-control file_list"  id="property_files_`+random_string+`" name="property_files[]" type="file">
       <small class="form-text text-muted">
-        Upload PDF/DOC/JPEG/PNG/TEXT files of max. `+max_filesize+`mb
+        `+help_text+`
       </small>
     </div>`;
     row += `<div class="col-md-1"><button data-delete_url="" type="button" class="btn btn-danger files_row_del_btn"><i class="fa fa-trash" aria-hidden="true"></i></button></div>`;
-    row +=`<input type="hidden" name="file_id[]" value=""></div>`;
+    row +=`</div>`;
     $("#files_container").append(row);
 
     $('#title_'+random_string).rules("add", {
        required: true,
        maxlength: 100,
        messages: {
-         required: "Enter title",
-         maxlength: "Maximum 100 characters allowed",
+
        }
     });
 
@@ -172,11 +159,11 @@ $(document).on('click', '.files_row_del_btn', function(){
     if(delete_url){
 
       swal({
-      title: "Are you sure?",
-      text: "Once deleted, you will not be able to recover this file!",
+      title: translations.property_manage_module.warning_title,
+      text: translations.property_manage_module.file_delete_warning,
       icon: "warning",
-      buttons: true,
-      dangerMode: true,
+      buttons: [translations.general_sentence.button_and_links.cancel,translations.general_sentence.button_and_links.ok],
+      dangerMode: false,
       })
       .then((willDelete) => {
         if (willDelete) {
@@ -189,7 +176,7 @@ $(document).on('click', '.files_row_del_btn', function(){
             success: function (data) {
               element_to_remove.remove();
               $.LoadingOverlay("hide");
-              toastr.success('File successfully deleted.', 'Success', {timeOut: 5000});
+              toastr.success(translations.property_manage_module.file_delete_success_message, 'Success', {timeOut: 5000});
             },
             error: function(jqXHR, textStatus, errorThrown) {
                $.LoadingOverlay("hide");
@@ -223,11 +210,11 @@ $(document).on('click', '.files_row_del_btn', function(){
 
  function delete_attach_file(url,file_id){
   swal({
-  title: "Are you sure?",
-  text: "Once deleted, you will not be able to recover this file!",
-  icon: "warning",
-  buttons: true,
-  dangerMode: true,
+    title: translations.property_manage_module.warning_title,
+    text: translations.property_manage_module.file_delete_warning,
+    icon: "warning",
+    buttons: [translations.general_sentence.button_and_links.cancel,translations.general_sentence.button_and_links.ok],
+    dangerMode: false,
   })
   .then((willDelete) => {
     if (willDelete) {
@@ -247,7 +234,7 @@ $(document).on('click', '.files_row_del_btn', function(){
           }
        
           $.LoadingOverlay("hide");
-          toastr.success('File successfully deleted.', 'Success', {timeOut: 5000});
+          toastr.success(translations.property_manage_module.file_delete_success_message, 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");
@@ -304,11 +291,13 @@ $(document).on('change', '.file_list', function() {
         reset($('#'+$(this).attr("id")));
         var error_message='';
         if(file_size_error==true && file_type_error==true){
-            error_message="Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files of max size "+max_filesize_mb+"mb";
+
+           error_message=(current_locale=="ar")?"يرجى تحميل ملفات PDF / DOC / JPG / JPEG / PNG / TEXT فقط ذات الحجم الأقصى "+max_filesize_mb+"Mb":"Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files of max size "+max_filesize_mb+"Mb";
+
         }else if(file_size_error==true && file_type_error==false){
-            error_message="File size should not be more than "+max_filesize_mb+" mb";
+            error_message=(current_locale=="ar")?"يجب ألا يزيد حجم الملف عن "+max_filesize_mb+"Mb":"File size should not be more than "+max_filesize_mb+"Mb";
         }else{
-            error_message="Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files";
+            error_message=(current_locale=="ar")?"يرجى تحميل ملفات PDF / DOC / JPG / JPEG / PNG / TEXT فقط":"Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files";
         }
         swal(error_message);
     }

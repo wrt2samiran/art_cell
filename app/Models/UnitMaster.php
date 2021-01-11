@@ -3,22 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
-class UnitMaster extends Model
+use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
+use Astrotomic\Translatable\Translatable;
+class UnitMaster extends Model implements TranslatableContract
 {
-    use Notifiable;
     use SoftDeletes;
-
+    use Translatable;
     protected $table = 'unit_masters';
-    public $timestamps = false;
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'first_name','created_by','updated_by','is_active','deleted_by'
-    ];
+    public $translatedAttributes = ['unit_name'];
+    protected $guarded=[];
 }

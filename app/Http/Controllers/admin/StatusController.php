@@ -10,7 +10,7 @@ use App\Models\{Status};
 use Carbon\Carbon;
 class StatusController extends Controller
 {
- private $view_path='admin.statuses';
+    private $view_path='admin.statuses';
     private $data=[];
 
     public function list(Request $request){

@@ -50,17 +50,40 @@
                       <form  method="post" id="unit_edit_form" action="{{route('admin.unit.update',$unit->id)}}">
                         @csrf
                         @method('PUT')
-                        <div>
-                          <div class="form-group required">
-                            <label for="unit_name">Unit Name <span class="error">*</span></label>
-                            <input type="text" class="form-control" value="{{old('unit_name')?old('unit_name'):$unit->unit_name}}" name="unit_name" id="unit_name"  placeholder="First Name">
-                            @if($errors->has('unit_name'))
-                            <span class="text-danger">{{$errors->first('unit_name')}}</span>
-                            @endif
+                        <ul class="nav nav-tabs" role="tablist">
+                          <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#english" role="tab">English</a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#arabic" role="tab">Arabic</a>
+                          </li>
+                        </ul><!-- Tab panes -->
+                        <div class="tab-content tab-validate pt-3">
+                          <div class="tab-pane active" id="english" role="tabpanel">
+                            <div>
+                              <div class="form-group required">
+                                <label for="en_unit_name">Unit Name (EN)<span class="error">*</span></label>
+                                <input type="text" class="form-control" value="{{old('en_unit_name')?old('en_unit_name'):(($unit->translate('en'))?$unit->translate('en')->unit_name:'')}}" name="en_unit_name" id="en_unit_name"  placeholder="Unit Name in English">
+                                @if($errors->has('en_unit_name'))
+                                <span class="text-danger">{{$errors->first('en_unit_name')}}</span>
+                                @endif
+                              </div>
+                            </div>
                           </div>
-                          
+                          <div class="tab-pane" id="arabic" role="tabpanel">
+                            <div>
+                              <div class="form-group required">
+                                <label for="ar_unit_name">Unit Name (AR)<span class="error">*</span></label>
+                                <input type="text" class="form-control" value="{{old('ar_unit_name')?old('ar_unit_name'):(($unit->translate('ar'))?$unit->translate('ar')->unit_name:'')}}" name="ar_unit_name" id="ar_unit_name"  placeholder="Unit Name in Arabic">
+                                @if($errors->has('ar_unit_name'))
+                                <span class="text-danger">{{$errors->first('ar_unit_name')}}</span>
+                                @endif
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                       
+                        <!--  this the url for remote validation rule for unit name -->
+                        <input type="hidden" id="ajax_check_unit_name_unique_url" value="{{route('admin.unit.ajax_check_unit_name_unique',$unit->id)}}">
                         <div>
                            <a href="{{route('admin.unit.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
                            <button type="submit" class="btn btn-success">Submit</button> 

@@ -9,6 +9,44 @@ return [
   'for'=>'For',
   'days'=>'Days',
   'day'=>'Day',
+  'maintenance'=>'Maintenance',
+  'on_demand'=>'On Demand',
+  'free'=>'Free',
+  'daily'=>'Daily',
+  'weekly'=>'Weekly',
+  'monthly'=>'Monthly',
+  'yearly'=>'Yearly',
+  'first'=>'First',
+  'second'=>'Secound',
+  'third'=>'Third',
+  'fourth'=>'Fourth',
+  'days'=>'Day(s)',
+  'weeks'=>'Week(s)',
+  'months'=>'Month(s)',
+  'years'=>'Year(s)',
+  'week_days'=>[
+      'Sunday'=>'Sunday',
+      'Monday'=>'Monday',
+      'Tuesday'=>'Tuesday',
+      'Wednesday'=>'Wednesday',
+      'Thurseday'=>'Thurseday',
+      'Friday'=>'Friday',
+      'Saturday'=>'Saturday'
+  ],
+  'months_array'=>[
+      'January'=>'January',
+      'February'=>'February',
+      'March'=>'March',
+      'April'=>'April',
+      'May'=>'May',
+      'June'=>'June',
+      'July'=>'July',
+      'August'=>'August',
+      'September'=>'September',
+      'October'=>'October',
+      'November'=>'November',
+      'December'=>'December'
+  ],
   'breadcrumbs'=>[
     'dashboard'=>'Dashboard',
     'country'=>'Country',
@@ -39,6 +77,7 @@ return [
     'edit'=>'Edit',
     'create'=>'Create',
     'details'=>'Details',
+    'sms_templates'=>'Sms Templates'
   ],
   'button_and_links'=>[
     'view_all'=>'View All',
@@ -72,6 +111,12 @@ return [
     'create_contract'=>'Create Contract',
     'create_complaint'=>'Create Complaint',
     'download_report'=>'Download Report',
+    'add_service'=>'Add Service',
+    'update_service'=>'Update Service',
+    'add_file'=>'Add Files',
+    'save_and_next'=>'Save & Next',
+    'next'=>'Next',
+    'previous'=>'Previous'
 
   ]
     

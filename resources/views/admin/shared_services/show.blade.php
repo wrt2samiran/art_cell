@@ -47,10 +47,10 @@
                           <td >
 
                             @if($sharedServices->is_sharing)
-                            <div><span>{{$sharedServices->currency}} {{number_format($sharedServices->price, 2, '.', '')}}</span> for {{$sharedServices->number_of_days}} days</div>
-                            <div>+{{$sharedServices->currency}}{{number_format($sharedServices->extra_price_per_day, 2, '.', '')}}/day</div>
+                            <div><span>{{$sharedServices->currency}} {{number_format($sharedServices->price, 2, '.', '')}}</span> {{__('general_sentence.for')}} {{$sharedServices->number_of_days}} {{__('general_sentence.days')}}</div>
+                            <div>+{{$sharedServices->currency}}{{number_format($sharedServices->extra_price_per_day, 2, '.', '')}}/{{__('general_sentence.day')}}</div>
                             @else 
-                            <span class="text-muted">Not Available</span>
+                            <span class="text-muted">{{__('general_sentence.not_available')}}</span>
                             @endif
                           </td>
                         </tr>
@@ -60,14 +60,14 @@
                             @if($sharedServices->is_selling)
                             <div><span>{{$sharedServices->currency}}{{number_format($sharedServices->selling_price, 2, '.', '')}}</span></div>
                             @else 
-                            <span class="text-muted">Not Available</span>
+                            <span class="text-muted">{{__('general_sentence.not_available')}}</span>
                             @endif
                           </td>
                         </tr>
                         <tr>
                           <td>{{__('shared_service_manage_module.labels.status')}}</td>
                           <td>
-                            <button role="button" class="btn btn-{{($sharedServices->is_active=='1')?'success':'danger'}}">{{($sharedServices->is_active=='1')?'Active':'Inactive'}}</button>
+                            <button role="button" class="btn btn-{{($sharedServices->is_active=='1')?'success':'danger'}}">{{($sharedServices->is_active=='1')?__('general_sentence.active'):__('general_sentence.inactive')}}</button>
                           </td>
                         </tr>
                         <tr>

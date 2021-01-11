@@ -90,6 +90,16 @@
                             @endif
                           </div>
                           <div class="form-group required">
+                            <label for="secondary_contact_number">{{__('user_manage_module.labels.secondary_contact_number')}} </label>
+                            <input type="text" class="form-control" value="{{old('secondary_contact_number')?old('secondary_contact_number'):$user->secondary_contact_number}}" name="secondary_contact_number" id="secondary_contact_number"  placeholder="{{__('user_manage_module.placeholders.secondary_contact_number')}}">
+                            @if($errors->has('secondary_contact_number'))
+                            <span class="text-danger">{{$errors->first('secondary_contact_number')}}</span>
+                            @endif
+                          </div>
+
+
+                          
+                          <div class="form-group required">
                              <label for="parent_role">{{__('user_manage_module.labels.group')}}<span class="error">*</span></label>
                               <select class="form-control " id="role_id" name="role_id" style="width: 100%;">
                                 <option value="">{{__('user_manage_module.placeholders.group')}}</option>

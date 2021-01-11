@@ -50,6 +50,12 @@
                           <td >{{$user->phone}}</td>
                         </tr>
                         <tr>
+                          <td >{{__('user_manage_module.labels.secondary_contact_number')}}</td>
+                          <td >{{$user->secondary_contact_number?$user->secondary_contact_number:'Not Available'}}</td>
+                        </tr>
+
+
+                        <tr>
                           <td >{{__('user_manage_module.labels.group')}}</td>
                           <td >{{$user->role->role_name}}</td>
                         </tr>

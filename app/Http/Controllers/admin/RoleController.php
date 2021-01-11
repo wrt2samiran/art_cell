@@ -53,6 +53,14 @@ class RoleController extends Controller
             ->when($request->user_type_id,function($query) use($request){
                 $query->where('user_type_id',$request->user_type_id);
             })
+            ->when($request->status,function($query) use($request){
+                if($request->status=='active'){
+                    $query->where('status','A');
+                }elseif ($request->status=='inactive') {
+                    $query->where('status','I');
+                }
+                
+            })
             ->select('roles.*');
             return Datatables::of($roles)
             ->editColumn('created_at', function ($role) {

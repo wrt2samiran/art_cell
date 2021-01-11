@@ -19,6 +19,7 @@
             { data: 'title', name: 'title'},
             { data: 'start_date', name: 'start_date'},
             { data: 'end_date', name: 'end_date'},
+            { data: 'service_provider.name', name: 'service_provider.name'},
             { data: 'creation_complete', name: 'creation_complete'},
             { data: 'contract_status.status_name', name: 'contract_status.status_name',orderable: false, searchable: false},
             {data: 'action', name: 'action', orderable: false, searchable: false}
@@ -31,7 +32,10 @@
         }],
         "drawCallback": function( settings ) {
           $.LoadingOverlay("hide");
-      }
+        },
+        "language": {
+            "url": (current_locale=="ar")?"//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Arabic.json":"//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/English.json"
+        }
 
 
     });
@@ -39,11 +43,11 @@
  //function to delete contract
  function delete_contract(url){
   swal({
-  title: "Are you sure?",
-  text: "Once deleted, you will not be able to recover this contract!",
+  title: translations.contract_manage_module.warning_title,
+  text: translations.contract_manage_module.delete_warning,
   icon: "warning",
-  buttons: true,
-  dangerMode: true,
+  buttons: [translations.general_sentence.button_and_links.cancel,translations.general_sentence.button_and_links.ok],
+  dangerMode: false,
   })
   .then((willDelete) => {
     if (willDelete) {
@@ -56,7 +60,7 @@
         success: function (data) {
           contract_table.ajax.reload(null, false);
           $.LoadingOverlay("hide");
-          toastr.success('Contract successfully deleted.', 'Success', {timeOut: 5000});
+          toastr.success(translations.contract_manage_module.delete_success_message, 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");
@@ -76,10 +80,15 @@
 
  }
 
- $('.status-filter').select2({
+
+
+$('#contract_status_id').select2({
   theme: 'bootstrap4',
-  placeholder:'Filter by Status type'
+  placeholder:translations.contract_manage_module.placeholders.filter_by_status,
+  language: current_locale,
 });
+
+
 $('#contract_status_id').on('change', function(e) {
   if(this.value!=''){
     $('#status-filter-clear').show();

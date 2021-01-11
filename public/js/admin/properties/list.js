@@ -28,18 +28,21 @@
         }],
         "drawCallback": function( settings ) {
           $.LoadingOverlay("hide");
-      }
+        },
+        "language": {
+            "url": (current_locale=="ar")?"//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Arabic.json":"//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/English.json"
+        }
 
     });
 
  //function to delete property
  function delete_property(url){
   swal({
-  title: "Are you sure?",
-  text: "Once deleted, you will not be able to recover this property!",
+  title: translations.property_manage_module.warning_title,
+  text: translations.property_manage_module.delete_warning,
   icon: "warning",
-  buttons: true,
-  dangerMode: true,
+  buttons: [translations.general_sentence.button_and_links.cancel,translations.general_sentence.button_and_links.ok],
+  dangerMode: false,
   })
   .then((willDelete) => {
     if (willDelete) {
@@ -52,7 +55,7 @@
         success: function (data) {
           property_table.ajax.reload(null, false);
           $.LoadingOverlay("hide");
-          toastr.success('Property successfully deleted.', 'Success', {timeOut: 5000});
+          toastr.success(translations.property_manage_module.delete_success_message, 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");
@@ -75,11 +78,11 @@
 //function to change status of gallery
  function change_status(url,activate_or_deactivate){
   swal({
-  title: "Are you sure?",
-  text: "You want to "+activate_or_deactivate+" the property.",
+  title: translations.property_manage_module.warning_title,
+  text: translations.property_manage_module.delete_warning,
   icon: "warning",
-  buttons: true,
-  dangerMode: true,
+  buttons: [translations.general_sentence.button_and_links.cancel,translations.general_sentence.button_and_links.ok],
+  dangerMode: false,
   })
   .then((confirm) => {
     if (confirm) {
@@ -91,7 +94,7 @@
         success: function (data) {
           property_table.ajax.reload(null, false);
           $.LoadingOverlay("hide");
-          toastr.success('Status successfully updated.', 'Success', {timeOut: 5000});
+          toastr.success(translations.property_manage_module.change_status_success_message, 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");
@@ -114,9 +117,10 @@
 
  }
 
- $('.city-name').select2({
+ $('#city_id').select2({
   theme: 'bootstrap4',
-  placeholder:'Filter by City'
+  placeholder:translations.property_manage_module.placeholders.filter_by_city,
+  language: current_locale,
 });
 $('#city_id').on('change', function(e) {
   if(this.value!=''){
@@ -132,10 +136,7 @@ $('#city-name-clear').on('click',function(){
   $('#city_id').val("").change();
 });
 
-$('.property-name').select2({
-  theme: 'bootstrap4',
-  placeholder:'Filter by City'
-});
+
 $('#property_name').on('change', function(e) {
   if(this.value!=''){
     $('#property-name-clear').show();

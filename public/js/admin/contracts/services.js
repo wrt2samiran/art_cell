@@ -1,22 +1,16 @@
-$('#service').select2({
-    theme: 'bootstrap4',
-    placeholder:'Select service',
-    "language": {
-       "noResults": function(){
-           return "No Service Found";
-       }
-    },
-    escapeMarkup: function(markup) {
-      return markup;
-    },
-});
 
 $('#service_type').select2({
     theme: 'bootstrap4',
-    placeholder:'Select service type',
+    placeholder:translations.contract_manage_module.placeholders.service_type,
     "language": {
+        locale: current_locale,
        "noResults": function(){
-           return "No Service Type Found";
+           if(current_locale=='ar'){
+             return "لم يتم العثور على نوع الخدمة";
+           }else{
+              return "No Service Type Found";
+           }
+          
        }
     },
     escapeMarkup: function(markup) {
@@ -24,18 +18,33 @@ $('#service_type').select2({
     },
 });
 
-$('#frequency_type').select2({
+
+
+
+$('#service').select2({
     theme: 'bootstrap4',
-    placeholder:'Select frequency type',
+    placeholder:translations.contract_manage_module.placeholders.service,
     "language": {
+        locale: current_locale,
        "noResults": function(){
-           return "No frequency type found";
+           if(current_locale=='ar'){
+             return "لا توجد خدمة";
+           }else{
+              return "No Service Found";
+           }
+          
        }
     },
     escapeMarkup: function(markup) {
       return markup;
     },
 });
+
+
+
+
+
+
 
 
 $("#add_service_form").validate({
@@ -147,18 +156,14 @@ $("#add_service_form").validate({
         }
     },
     messages: {
-        service:{
-            required:  "Select service",
-        },
-        service_type:{
-            required:  "Select service type",
-        },
-        start_date:{
-            required:  "Start date is required",
-        },
         end_date:{
-          required:  "End date is required",
-          endDateShouldBeGreatherThanStartDate : "End date should be greater than start date"
+          endDateShouldBeGreatherThanStartDate : function(){
+            if(current_locale=='ar'){
+              return "يجب أن يكون تاريخ الانتهاء أكبر من تاريخ البدء";
+            }else{
+              return "End date should be greater than start date";
+            }
+          }
         }
     },
     errorPlacement: function (error, element) {
@@ -298,18 +303,14 @@ $("#update_service_form").validate({
         }
     },
     messages: {
-        service:{
-            required:  "Select service",
-        },
-        service_type:{
-            required:  "Select service type",
-        },
-        start_date:{
-            required:  "Start date is required",
-        },
         end_date:{
-          required:  "End date is required",
-          endDateShouldBeGreatherThanStartDate : "End date should be greater than start date"
+          endDateShouldBeGreatherThanStartDate :function(){
+            if(current_locale=='ar'){
+              return "يجب أن يكون تاريخ الانتهاء أكبر من تاريخ البدء";
+            }else{
+              return "End date should be greater than start date";
+            }
+          } 
         }
     },
     errorPlacement: function (error, element) {
@@ -502,7 +503,10 @@ var contract_services_table=$('#contract_services_table').DataTable({
     {   "targets": [0],
         "visible": false,
         "searchable": false
-    }]
+    }],
+    "language": {
+        "url": (current_locale=="ar")?"//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Arabic.json":"//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/English.json"
+    }
 
 });
 
@@ -510,11 +514,11 @@ var contract_services_table=$('#contract_services_table').DataTable({
 
 function delete_service(url){
   swal({
-  title: "Are you sure?",
-  text: "Once deleted, you will not be able to recover this contract service!",
-  icon: "warning",
-  buttons: true,
-  dangerMode: true,
+      title: translations.contract_manage_module.warning_title,
+      text: translations.contract_manage_module.service_delete_warning,
+      icon: "warning",
+      buttons: [translations.general_sentence.button_and_links.cancel,translations.general_sentence.button_and_links.ok],
+      dangerMode: false,
   })
   .then((willDelete) => {
     if (willDelete) {
@@ -526,7 +530,7 @@ function delete_service(url){
         success: function (data) {
           contract_services_table.ajax.reload(null, false);
           $.LoadingOverlay("hide");
-          toastr.success('Contract service successfully deleted.', 'Success', {timeOut: 5000});
+          toastr.success(translations.contract_manage_module.service_delete_success_message, 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");
@@ -555,11 +559,11 @@ function delete_service(url){
 
  function toggle_enable_disable(url,enable_or_diable){
   swal({
-  title: "Are you sure?",
-  text: "You want to "+enable_or_diable+" the service.",
-  icon: "warning",
-  buttons: true,
-  dangerMode: true,
+      title: translations.contract_manage_module.warning_title,
+      text: translations.contract_manage_module.change_status_warning,
+      icon: "warning",
+      buttons: [translations.general_sentence.button_and_links.cancel,translations.general_sentence.button_and_links.ok],
+      dangerMode: false,
   })
   .then((confirm) => {
     if (confirm) {
@@ -571,7 +575,7 @@ function delete_service(url){
         success: function (data) {
           contract_services_table.ajax.reload(null, false);
           $.LoadingOverlay("hide");
-          toastr.success('Status successfully updated.', 'Success', {timeOut: 5000});
+          toastr.success(translations.contract_manage_module.change_status_success_message, 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");

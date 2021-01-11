@@ -9,7 +9,7 @@
      
       <table width="650" border="0" cellspacing="0" cellpadding="0" style="margin: 0 auto 20px; border-collapse:collapse;">         
         <tr>
-            <td align="left" valign="top" style="font-family: Arial; font-size: 14px; line-height: 20px; font-weight:bold; text-transform: uppercase; background:#6e923d; padding: 15px 10px; border:1px solid #666;"><img src="https://via.placeholder.com/150" alt="" style="height: 50px;"></td>
+            <td align="left" valign="top" style="font-family: Arial; font-size: 14px; line-height: 20px; font-weight:bold; text-transform: uppercase; background:#6e923d; padding: 15px 10px; border:1px solid #666;"><img src="{{asset('assets/dist/img/OSOOL_logo.png')}}" alt="" style="height: 50px;"></td>
          </tr>
 
           @yield('body')

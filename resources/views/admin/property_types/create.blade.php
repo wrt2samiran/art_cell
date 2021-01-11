@@ -101,7 +101,7 @@
 
                         </div>
 
-                        <!--  this the url for remote validattion rule for role name -->
+                        <!--  this the url for remote validation rule for type name -->
                         <input type="hidden" id="ajax_check_type_name_unique_url" value="{{route('admin.property_types.ajax_check_type_name_unique')}}">
                         <div>
                            <a href="{{route('admin.property_types.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>

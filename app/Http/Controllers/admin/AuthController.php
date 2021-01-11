@@ -176,22 +176,28 @@ class   AuthController extends Controller
                         return Redirect::route('admin.forgot.password')->withErrors($Validator);
                     } else {
                         $email = $request->email;
-                        $emailExists = User::where('email', $email)->count();
-                        if ($emailExists > 0) // if this is a valid email
+                        $user = User::where('email', $email)->first();
+                        if ($user) // if this is a valid email
                         {
-                            $user = User::where('email', $email)->first(); //Fetching Specific user Data
-                            $encryptUserId = encrypt($user->id, Config::get('Constant.ENC_KEY')); // Encrypted user id using helper
+      
+                            $encryptUserId = encrypt($user->id, Config::get('constant.ENC_KEY')); // Encrypted user id using helper
                             $recoveryLink = route('admin.reset.password' ,['encryptCode'=>$encryptUserId ]); //making recovery link
 
                             // setting mail configuration
                             $toUser = $email;
                             $fromUser = env('MAIL_FROM_ADDRESS'); // getting data form .env file
-                            $subject = 'Password Recovery : Bernays ';
-                            $mailData = array('recoverLink' => $recoveryLink);
+                            $subject = 'Password Recovery';
+                           
+                            $slug = 'forget-password-mail';
+                            $variable_value=[
+                                '##USERNAME##'=>$user->name,
+                                '##PASSWORD_RESET_LINK##'=>$recoveryLink
+                            ]; 
+                            $content=\Helper::emailTemplateMail($slug,$variable_value);
 
                             // Send mail
-                            Mail::send('email.forgot-password', $mailData, function ($sent) use ($toUser, $fromUser, $subject) {
-                                $sent->from($fromUser)->subject($subject);
+                            Mail::send('emails.forgot_password',['mail_content'=>$content], function ($sent) use ($toUser, $fromUser, $subject) {
+                                $sent->from($fromUser,env('APP_NAME'))->subject($subject);
                                 $sent->to($toUser);
                             });
                             if (Mail::failures()) // if mail sending failed
@@ -254,7 +260,7 @@ class   AuthController extends Controller
                         return Redirect::Route('admin.reset.password', ['encryptCode' => $encryptString])->withErrors($Validator);
                     } else {
 
-                        $userId = decrypt($encryptString, Config::get('Constant.ENC_KEY')); // get user-id After Decrypt with salt key.
+                        $userId = decrypt($encryptString, Config::get('constant.ENC_KEY')); // get user-id After Decrypt with salt key.
 
                         $user = User::findOrFail($userId);
 
@@ -277,9 +283,6 @@ class   AuthController extends Controller
         }
     }
 
-    public function test(){
-       $response= $this->compareWithCurrentTime('2020-08-18 11:00:24');
-       dd($response);
-    }
+
 
 }

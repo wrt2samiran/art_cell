@@ -38,8 +38,8 @@
   title: translations.shared_service_manage_module.warning_title,
   text: translations.shared_service_manage_module.delete_warning,
   icon: "warning",
-buttons: [translations.general_sentence.button_and_links.ok,translations.general_sentence.button_and_links.cancel],
-  dangerMode: true,
+  buttons: [translations.general_sentence.button_and_links.cancel,translations.general_sentence.button_and_links.ok],
+  dangerMode: false,
   })
   .then((willDelete) => {
     if (willDelete) {
@@ -81,8 +81,8 @@ buttons: [translations.general_sentence.button_and_links.ok,translations.general
   title: translations.shared_service_manage_module.warning_title,
   text: translations.shared_service_manage_module.change_status_warning,
   icon: "warning",
-buttons: [translations.general_sentence.button_and_links.ok,translations.general_sentence.button_and_links.cancel],
-  dangerMode: true,
+  buttons: [translations.general_sentence.button_and_links.cancel,translations.general_sentence.button_and_links.ok],
+  dangerMode: false,
   })
   .then((confirm) => {
     if (confirm) {
