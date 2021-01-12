@@ -517,12 +517,30 @@ class WorkOrderManagementController extends Controller
                         $end_date   = $daterange_arr[1];
                         $query->where(function($q) use ($start_date,$end_date){
                                 $q->where(function($q) use ($start_date,$end_date){
-                                  $q->whereDate('start_date','>=',$start_date)->whereDate('start_date','<=',$start_date);
+                                  $q->whereDate('start_date','>=',$start_date)->whereDate('start_date','<=',$end_date);
                                 });
                                 
                             });
                         }
             }) 
+            ->addColumn('service_type',function($workOrder){
+                if($workOrder->emergency_service=='Y'){
+                    return 'Emergency Service';
+                    
+                }
+                else{
+                    if($workOrder->contract_services->service_type=='On Demand')
+                    {
+                        return $workOrder->contract_services->service_type.' (Used :'.$workOrder->contract_services->number_of_times_already_used.' Out of : '.$workOrder->contract_services->number_of_time_can_used.')';
+                    }
+                    else
+                    {
+                        return $workOrder->contract_services->service_type;
+                    }
+                    
+                }
+            })
+            
             ->addColumn('status',function($workOrder){
                 if($workOrder->status=='0'){
                    $message='Pending';

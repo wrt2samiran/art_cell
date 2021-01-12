@@ -5,7 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\Models\{User,Country,State,City,WorkOrderLists,TaskLists, TaskDetails, ServiceAllocationManagement, Property, Contract, ContractService, ContractServiceDate,Service};
+use App\Models\{User,Country,State,City,WorkOrderLists,TaskLists, TaskDetails, Property, Contract, ContractService, ContractServiceDate,Service,Notification};
 use Auth, Validator, Helper, File, Image;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
@@ -31,7 +31,7 @@ class EmergencyServiceManagementController extends Controller
 
         $this->data['page_title']     = 'Create Emergency Service';
         $logedInUserRole = \Auth::guard('admin')->user()->role_id;
-        $logedInUser = \Auth::guard('admin')->user()->id;
+        $logedInUser = \Auth::guard('admin')->user();
     
         try
         {
@@ -80,54 +80,53 @@ class EmergencyServiceManagementController extends Controller
                         'contract_id'=>$request->contract_id,
                         'property_id'=>$request->property_id,
                         'service_id' => $request->service_id,
-                        'contract_service_id' => $sqlContractService->id,
+                        'contract_service_id' => $sqlContractService->id ? $sqlContractService->id:'0',
                         'emergency_service' => 'Y',
                         'user_id'=>$sqlContract->service_provider_id,
                         'task_title'=>$request->task_title,
                         'task_desc' => $request->task_desc,
                         'start_date'=>date("Y-m-d", strtotime($start_date)),
-                        'created_by'=>$logedInUser,
-                        'updated_by'=>$logedInUser
+                        'created_by'=>$logedInUser->id,
                     ]);
 
-                   
-                    
-                    // if ($sqlContractService) {
-                    //      if($sqlContractService->service_type=='General' || $sqlContractService->service_type=='Free')  
-                    //         {
-                    //             $sqlContractService->number_of_times_already_used = '1';
-                    //             $sqlContractService->updated_by = $logedInUser;
-                    //             $sqlContractService->save();
-                    //         }
-                    //       else
-                    //         {
-                    //             $sqlContractService->number_of_times_already_used = ($sqlContractService->number_of_times_already_used+1);
-                    //             $sqlContractService->updated_by = $logedInUser;
-                    //             $sqlContractService->save();
-                    //         }   
-                    // }
+                    $notification_message=$logedInUser->name.' assigned you an Emergency Work Order.';
+                    $redirect_path=route('admin.emergency-service-management.show',['id'=>$task->id],false);
 
-                        //$request->session()->flash('alert-success', 'Task has been added successfully');
-                        return redirect()->route('admin.emergency-service-management.list')->with('success','Emergency Service successfully created');
+                        $notification_data[]=[
+                            'notificable_id'=>$task->id,
+                            'notificable_type'=>'App\Models\WorkOrderLists',
+                            'user_id'=>$sqlContract->service_provider_id,
+                            'message'=>$notification_message,
+                            'redirect_path'=>$redirect_path,
+                            'created_at'=>Carbon::now(),
+                        ];
+
+                        if(count($notification_data)){
+                            Notification::insert($notification_data);
+                        }
+
+
+                    return redirect()->route('admin.emergency-service-management.list')->with('success','Emergency Service successfully created');
                 }
             }
 
             if($logedInUserRole==2)
             {
                 //$this->data['contract_list']=Contract::whereIsActive('1')->whereNull('deleted_at')->whereCustomerId($logedInUser)->orderBy('id','ASC')->get();
+                $logedInUserId = $logedInUser->id;
                 $this->data['contract_list']=Contract::with(['property','service_provider','services','contract_status'])
                 ->whereHas('property')
                 ->whereHas('service_provider')
                 ->whereHas('services')
                 ->whereHas('contract_status')
-                ->where(function($q) use ($logedInUser){
+                ->where(function($q) use ($logedInUserId){
               
                     // if logged in user is the service_provider of the contract 
-                    $q->where('service_provider_id',$logedInUser)
+                    $q->where('service_provider_id',$logedInUserId)
                     //OR if logged in user is the property_owner or added as property manager of the property related to this contract 
-                    ->orWhereHas('property',function($q1) use ($logedInUser){
-                        $q1->where('property_owner',$logedInUser)
-                        ->orWhere('property_manager',$logedInUser);
+                    ->orWhereHas('property',function($q1) use ($logedInUserId){
+                        $q1->where('property_owner',$logedInUserId)
+                        ->orWhere('property_manager',$logedInUserId);
                     });
                 })
                 ->select('contracts.*')->get();
@@ -203,6 +202,42 @@ class EmergencyServiceManagementController extends Controller
             ->filterColumn('created_at', function ($query, $keyword) {
                 $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
             })
+
+            ->filter(function ($query) use ($request) {
+                        if ($request->get('status')!='') {
+                            $query->where('status', $request->get('status'));
+                        }
+
+                        if ($request->get('daterange')) {  
+                        $daterange_arr=explode('_',$request->daterange);
+                        $start_date = $daterange_arr[0];
+                        $end_date   = $daterange_arr[1];
+                        $query->where(function($q) use ($start_date,$end_date){
+                                $q->where(function($q) use ($start_date,$end_date){
+                                  $q->whereDate('start_date','>=',$start_date)->whereDate('start_date','<=',$end_date);
+                                });
+                                
+                            });
+                        }
+            }) 
+            ->addColumn('service_type',function($workOrder){
+                if($workOrder->emergency_service=='Y'){
+                    return 'Emergency Service';
+                    
+                }
+                else{
+                    if($workOrder->contract_services->service_type=='On Demand')
+                    {
+                        return $workOrder->contract_services->service_type.' (Used :'.$workOrder->contract_services->number_of_times_already_used.' Out of : '.$workOrder->contract_services->number_of_time_can_used.')';
+                    }
+                    else
+                    {
+                        return $workOrder->contract_services->service_type;
+                    }
+                    
+                }
+            })
+
             ->addColumn('status',function($workOrder){
                 if($workOrder->status=='0'){
                    $message='Pending';
@@ -218,38 +253,29 @@ class EmergencyServiceManagementController extends Controller
                     return '<a href="javascript:void(0)" class="btn btn-block btn-outline-success btn-sm">Completed</a>';
                 }
             })
+
             ->addColumn('action',function($workOrder)use ($logedInUser, $logedInUserRole){
                 $action_buttons='';
-               
-             
-                if($logedInUser==$workOrder->user_id){
-                     $add_url=route('admin.work-order-management.labourTaskList',$workOrder->id);
-
-                     $action_buttons =$action_buttons.'<a title="Labour Task List" href="'.$add_url.'"><i class="fas fa-plus text-success"></i></a>';
-                }
-                
-                if($logedInUserRole->role->user_type->slug=='labour'){    
-                    $details_url = route('admin.work-order-management.dailyTask',$workOrder->id);
-                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Daily Task List" id="details_task" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
-                 }
-
-                else{
+              
                     $details_url = route('admin.emergency-service-management.show',$workOrder->id);
-                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Show Work Order" id="details_task" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
-                } 
-
+                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Show Emergency Service" id="details_task" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
+                
                 $checkAssignedOrNot = TaskLists::whereWorkOrderId($workOrder->id)->first();
                // echo 'service_type'. $workOrder->contract_services->service_type;
                 //exit;
 
 
                 if( !$checkAssignedOrNot ){   
+                    if($logedInUserRole ->role->user_type->slug=='property-owner' || $logedInUserRole ->role->user_type->slug=='property-manager')
+                        {
 
-                    $edit_url=route('admin.emergency-service-management.edit',$workOrder->id);
-                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Work Order" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
+                            $edit_url=route('admin.emergency-service-management.edit',$workOrder->id);
+                            $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Emergency Service" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
 
-                    $delete_url=route('admin.emergency-service-management.delete',$workOrder->id);
-                    $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete Work Order" href="javascript:delete_task('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
+                            $delete_url=route('admin.emergency-service-management.delete',$workOrder->id);
+                            $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete Emergency Service" href="javascript:delete_task('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
+                        }
+                    
                 }
 
                 if($logedInUserRole ->role->user_type->slug=='property-owner' || $logedInUserRole ->role->user_type->slug=='property-manager')
@@ -290,8 +316,8 @@ class EmergencyServiceManagementController extends Controller
     # Params        : Request $request
     /*****************************************************/
     public function edit($id) {
-        $this->data['page_title']     = 'Edit Task';
-        $this->data['panel_title']    = 'Edit Task';
+        $this->data['page_title']     = 'Edit Emergency Service';
+        $this->data['panel_title']    = 'Edit Emergency Service';
 
         $logedInUserRole = \Auth::guard('admin')->user()->role_id;
         $logedInUser = \Auth::guard('admin')->user()->id;
@@ -328,6 +354,8 @@ class EmergencyServiceManagementController extends Controller
 
             $this->data['property_list']=Property::with('parent_user')->whereIsActive('1')->whereNull('deleted_at')->orderBy('id','ASC')->get();
 
+            $this->data['all_service_list']=Service::whereIsActive('1')->whereNull('deleted_at')->orderBy('id','ASC')->get();
+
             $sqlService = ContractService::with('service')->whereContractId($details->contract->id)->where('service_type','<>', 'Maintenance')->get();
 
             return view($this->view_path.'.edit',$this->data)->with(['details' => $details, 'sqlService' => $sqlService]);
@@ -347,7 +375,7 @@ class EmergencyServiceManagementController extends Controller
         
 
         $logedInUserRole = \Auth::guard('admin')->user()->role_id;
-        $logedInUser = \Auth::guard('admin')->user()->id;
+        $logedInUser = \Auth::guard('admin')->user();
 
         try
         {           
@@ -389,44 +417,8 @@ class EmergencyServiceManagementController extends Controller
                     return redirect()->back()->withErrors($Validator)->withInput();
                 } else {
 
-                    $sqlContractService = ContractService::where('contract_id', $request->contract_id)->whereServiceId($request->service_id)->first();
+                    $sqlContractService = ContractService::where('contract_id', $request->contract_id)->first();
 
-                    $checkContractService = ContractService::whereId($details->contract_service_id)->first();
-                    if($checkContractService->contract_id != $request->contract_id || $checkContractService->service_id != $request->service_id)
-                    {
-                        if($sqlContractService->service_type=='General' || $sqlContractService->service_type=='Free')  
-                            {
-                                $sqlContractService->number_of_times_already_used = '1';
-                                $sqlContractService->updated_by = $logedInUser;
-                                $sqlContractService->save();
-                            }
-                          else
-                            {
-                                $sqlContractService->number_of_times_already_used = ($sqlContractService->number_of_times_already_used+1);
-                                $sqlContractService->updated_by = $logedInUser;
-                                $sqlContractService->save();
-                            }  
-
-
-                           if($checkContractService->service_type=='General' || $checkContractService->service_type=='Free')
-                                {
-                                    $checkContractService->number_of_times_already_used = 'Null';
-                                }
-                                else
-                                {
-                                    if($checkContractService->number_of_times_already_used>1)
-                                    {
-                                        $checkContractService->number_of_times_already_used = ($checkContractService->number_of_times_already_used-1);
-                                    }
-                                    else
-                                    {
-                                        $checkContractService->number_of_times_already_used = 'Null';   
-                                    }
-                                    
-                                }
-
-                                $contractUpdate = $checkContractService->save(); 
-                    }
                     $sqlContract = Contract::findOrFail($request->contract_id);
                     
 
@@ -434,17 +426,33 @@ class EmergencyServiceManagementController extends Controller
                         'contract_id'=>$request->contract_id,
                         'property_id'=>$request->property_id,
                         'service_id' => $request->service_id,
-                        'contract_service_id' => $sqlContractService->id,
+                        'contract_service_id' => $sqlContractService->id ? $sqlContractService->id:'0',
                         
                         'user_id'=>$sqlContract->service_provider_id,
                         'task_title'=>$request->task_title,
                         'task_desc' => $request->task_desc,
                         'start_date'=>date("Y-m-d", strtotime($start_date)),
-                        'updated_by'=>$logedInUser
+                        'updated_by'=>$logedInUser->id,
                     ]);
 
+                    $notification_message=$logedInUser->name.' modified the Emergency Work Order which had been assigned to previously.';
+                    $redirect_path=route('admin.emergency-service-management.show',['id'=>$id],false);
+
+                        $notification_data[]=[
+                            'notificable_id'=>$details->id,
+                            'notificable_type'=>'App\Models\WorkOrderLists',
+                            'user_id'=>$sqlContract->service_provider_id,
+                            'message'=>$notification_message,
+                            'redirect_path'=>$redirect_path,
+                            'created_at'=>Carbon::now(),
+                        ];
+
+                        if(count($notification_data)){
+                            Notification::insert($notification_data);
+                        }
+
                     //$request->session()->flash('alert-success', 'Task updated successfully');
-                    return redirect()->route('admin.work-order-management.list')->with('success','Work Order successfully updated');
+                    return redirect()->route('admin.emergency-service-management.list')->with('success','Emergency Service successfully updated');
 
                 }
            
@@ -452,7 +460,7 @@ class EmergencyServiceManagementController extends Controller
             
             
         } catch (Exception $e) {
-            return redirect()->route('admin.service_management.calendar')->with('error', $e->getMessage());
+            return redirect()->route('admin.emergency-service-management.edit', $id)->with('error', $e->getMessage());
         }
     }
 
@@ -567,25 +575,32 @@ class EmergencyServiceManagementController extends Controller
     public function show(Request $request, $id){
         $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'property.country', 'property.state', 'property.city', 'tasks'])->whereId($id)->first();
        
+        if($workOrder)
+        {
+             $logedInUser = \Auth::guard('admin')->user()->id;
+            //dd($workOrder);
+            $taskId = array();
+            foreach ($workOrder->tasks as $key => $value) {
+                $taskId[]=$value->id;
+            }
+
+          
+           
+          
+            $this->data['request'] = $request;
 
 
-        $logedInUser = \Auth::guard('admin')->user()->id;
-        //dd($workOrder);
-        $taskId = array();
-        foreach ($workOrder->tasks as $key => $value) {
-            $taskId[]=$value->id;
+            $this->data['page_title']='Emergency Work Order Details';
+            $this->data['work_order_list']=$workOrder;
+
+            return view($this->view_path.'.show',$this->data);
+        }
+        else
+        {
+            return view($this->view_path.'.list');
         }
 
-      
        
-      
-        $this->data['request'] = $request;
-
-
-        $this->data['page_title']='Emergency Work Order Details';
-        $this->data['work_order_list']=$workOrder;
-
-        return view($this->view_path.'.show',$this->data);
     }
     
 

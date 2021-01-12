@@ -9,13 +9,13 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Work Order Management</h1>
+            <h1>{{__('emergency_service_manage_module.module_title')}}</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.work-order-management.list')}}">Work Order</a></li>
-              <li class="breadcrumb-item active">Edit</li>
+              <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.emergency-service-management.list')}}">{{__('general_sentence.breadcrumbs.emergency_service')}}</a></li>
+              <li class="breadcrumb-item active">{{__('general_sentence.breadcrumbs.edit')}}</li>
             </ol>
           </div>
         </div>
@@ -28,7 +28,7 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Edit Work Order</h3>
+                <h3 class="card-title">{{__('emergency_service_manage_module.edit_emergency_service')}}</h3>
               </div>
               <div class="card-body">
                   @if(Session::has('success'))
@@ -47,20 +47,20 @@
                   <div class="row justify-content-center">
                     <div class="col-md-10 col-sm-12">
                      
-                      <form  method="post" id="admin_task_add_form" action="{{route('admin.work-order-management.update', $details->id)}}" method="post" enctype="multipart/form-data">
+                      <form  method="post" id="admin_task_add_form" action="{{route('admin.emergency-service-management.update', $details->id)}}" method="post" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                             <div>  
                               </div>
                               <div class="form-group required">
-                                <label for="service_id">Contract Title <span class="error">*</span></label>
+                                <label for="service_id">{{__('emergency_service_manage_module.labels.contract_title')}}<span class="error">*</span></label>
                                 <select class="form-control parent_role_select2"  style="width: 100%;" name="contract_id" id="contract_id" 
                                   onchange="onContractChange(this.value)">
-                                   <option value="">Select Contract</option>
+                                   <option value="">{{__('emergency_service_manage_module.placeholders.select_contract')}}</option>
                                    @forelse($contract_list as $contract_data)
                                          <option value="{{$contract_data->id}}" {{$details->contract_id == $contract_data->id? 'selected':''}}>{{@$contract_data->title}} ({{@$contract_data->code}})</option>
                                     @empty
-                                    <option value="">No Contract Found</option>
+                                    <option value="">{{__('emergency_service_manage_module.no_contract_found')}}</option>
                                     @endforelse                             
                                   </select>
                                 @if($errors->has('contract_id'))
@@ -70,7 +70,7 @@
                               
                               <?php //echo $details->contract_service_id;?>
                               <div class="form-group required">
-                                <label for="property_id">Property <span class="error">*</span></label>
+                                <label for="property_id">{{__('emergency_service_manage_module.labels.property')}} <span class="error">*</span></label>
                                 <select class="form-control parent_role_select2" style="width: 100%;" name="property_id" id="property_id" >
                                     
                                     <option value="{{$details->property_id}}">{{$details->property->property_name}} </option>
@@ -82,11 +82,11 @@
                               </div>
 
                               <div class="form-group required">
-                                <label for="service_id">Service <span class="error">*</span></label>
-                                <select class="form-control parent_role_select2"  style="width: 100%;" name="service_id" id="service_id" onchange="onServiceSelect(this.value)">
+                                <label for="service_id">{{__('emergency_service_manage_module.labels.service')}} <span class="error">*</span></label>
+                                <select class="form-control parent_role_select2"  style="width: 100%;" name="service_id" id="service_id">
                                    <option value="">Select Service</option>
-                                    @forelse($sqlService as $service_data)
-                                         <option value="{{$service_data->service->id}}" {{$details->contract_service_id == $service_data->id? 'selected':''}}>{{@$service_data->service->service_name}} ({{@$service_data->service_type}})</option>
+                                    @forelse($all_service_list as $service_data)
+                                         <option value="{{$service_data->id}}" {{$details->contract_service_id == $service_data->id? 'selected':''}}>{{@$service_data->service_name}} </option>
                                     @empty
                                          <option value="">No Service Found</option>
                                     @endforelse                           
@@ -97,7 +97,7 @@
                               </div>
 
                               <div class="form-group required">
-                                <label for="country_id">Country <span class="error">*</span></label>
+                                <label for="country_id">{{__('emergency_service_manage_module.labels.country')}} <span class="error">*</span></label>
                                   <select class="form-control parent_role_select2" style="width: 100%;" name="country_id" id="country_id">
                                        
                                         <option value="{{$details->property->country->id}}" >{{$details->property->country->name}} </option>
@@ -108,7 +108,7 @@
                               </div>
 
                               <div class="form-group required">
-                                <label for="country_id">State <span class="error">*</span></label>
+                                <label for="country_id">{{__('emergency_service_manage_module.labels.state')}} <span class="error">*</span></label>
                                  <select name="state_id" id="state_id" class="form-control">
                                         <option value="{{$details->property->state->id}}" >{{$details->property->state->name}} </option>
                                  </select>
@@ -118,7 +118,7 @@
                               </div>
 
                               <div class="form-group required">
-                                <label for="name">City Name <span class="error">*</span></label>
+                                <label for="name">{{__('emergency_service_manage_module.labels.city_name')}} <span class="error">*</span></label>
                                 <select name="city_id" id="city_id" class="form-control">
                                         <option value="{{$details->property->city->id}}" >{{$details->property->city->name}} </option>
                                 </select>
@@ -128,7 +128,7 @@
                               </div>
                               
                               <div class="form-group">
-                                <label>Work Date <span class="error">*</span></label>
+                                <label>{{__('emergency_service_manage_module.labels.task_date')}}  <span class="error">*</span></label>
 
                                 <div class="input-group">
                                   <div class="input-group-prepend">
@@ -141,7 +141,7 @@
                                 <!-- /.input group -->
                               </div>
                               <div class="form-group required">
-                                <label for="service_id">Work Title <span class="error">*</span></label>
+                                <label for="service_id">{{__('emergency_service_manage_module.labels.work_title')}}<span class="error">*</span></label>
                                 <input type="text" class="form-control" id="task_title" name="task_title" value="{{$details->task_title}}">
                                  @if($errors->has('task_title'))
                                   <span class="text-danger">{{$errors->first('task_title')}}</span>
@@ -149,12 +149,12 @@
                               </div>
 
                               <div class="form-group">
-                                <label for="service_id">Work Description</label>
+                                <label for="service_id">{{__('emergency_service_manage_module.labels.work_description')}}</label>
                                 <textarea class="form-control" name="task_desc" id="task_desc">{{$details->task_desc}}</textarea>
                               </div>                                            
                             <div>
-                               <a href="{{route('admin.work-order-management.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
-                               <button type="submit" class="btn btn-success">Submit</button> 
+                               <a href="{{route('admin.emergency-service-management.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;{{__('general_sentence.button_and_links.back')}}</a>
+                               <button type="submit" class="btn btn-success">{{__('general_sentence.button_and_links.submit')}}</button> 
                             </div>
                       </form>
                     </div>
@@ -269,44 +269,6 @@ $( document ).ready(function() {
         });
   }
 
-  function onServiceSelect(service_id){
-    var contract_id = $('#contract_id option:selected').val();
-
-     $.ajax({
-       
-        url: "{{route('admin.work-order-management.getContractServiceStatus')}}",
-        type:'get',
-        dataType: "json",
-        data:{service_id:service_id,contract_id:contract_id,_token:"{{ csrf_token() }}"}
-        }).done(function(response) {
-           
-           console.log(response.status);
-           console.log(response.service_status);
-            if(response.status){
-              console.log(response.sqlProperty);
-              console.log(response.sqlService);
-
-              if(response.service_status=='Out of period' || response.service_status=='Not Available'){
-                  swal({
-                  title: response.service_status,
-                  text: "This service is "+response.service_status+ " to add for a new task! Please contact with Admin.",
-                  icon: "warning",
-                  dangerMode: true,
-                  showCancelButton: false,
-                  })
-                
-                    $('#service_id').val('');
-                    $('.disable-button').prop("disabled", true); // Submit button is now disabled.
-                  
-              }
-              else{
-                $('.disable-button').prop("disabled", false); // Submit button is now enabled.
-              }
-            
-            }
-        });
-  } 
-
 </script>
-<script type="text/javascript" src="{{asset('js/admin/work_order_management/create.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/admin/emergency_service_management/create.js')}}"></script>
 @endpush

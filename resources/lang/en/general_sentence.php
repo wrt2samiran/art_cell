@@ -76,6 +76,7 @@ return [
     'settings'=>'Settings',
     'edit'=>'Edit',
     'create'=>'Create',
+    'add' => 'Add',
     'details'=>'Details',
     'sms_templates'=>'Sms Templates',
     'emergency_service' => 'Emergency Service',

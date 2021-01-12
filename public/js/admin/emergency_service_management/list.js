@@ -4,24 +4,18 @@
         "autoWidth": false,
         processing: true,
         serverSide: true,
-        ajax: baseUrl+'/admin/emergency-service-management',
+        ajax: {
+          url:baseUrl+'/admin/emergency-service-management',
+          data: function (d) {
+            d.status = $('#status').val();
+            d.daterange = $('#daterange').val();
+          }
+        },
         columns: [
             { data: 'id', name: 'id' },
             { data: 'contract.code', name: 'contract.code'},
             { data: 'task_title', name: 'task_title'},
-            { data: 'contract_services', 
-              render:function (data) {
-                  if(data.service_type=='On Demand'){
-                    return data.service_type+' (Used :'+data.number_of_times_already_used+' Out of : '+data.number_of_time_can_used+')';
-                  }
-                  else
-                  {
-                     return data.service_type
-                  }
-              }, searchable: false, sortable : false
-            },
-
-
+            { data: 'service_type', name: 'service_type', searchable: false, sortable : false},
             { data: 'property.property_name', name: 'property.property_name' },
             { data: 'service.service_name', name: 'service.service_name', searchable: false, sortable : false },
             
@@ -69,7 +63,7 @@
  function delete_task(url){
   swal({
   title: "Are you sure?",
-  text: "Once deleted, you will not be able to recover this task!",
+  text: "Once deleted, you will not be able to recover this work order!",
   icon: "warning",
   buttons: true,
   dangerMode: true,
@@ -146,6 +140,43 @@
 
 
  }
+
+
+
+ $('#status').change(function(){
+        work_order_management_table.draw();
+    });
+
+ $('.status-filter').select2({
+      theme: 'bootstrap4',
+      placeholder:'Filter by Status'
+    });
+
+    $('#contract_duration').daterangepicker({
+      autoUpdateInput: false,
+      timePicker: false,
+      timePicker24Hour: true,
+      timePickerIncrement: 1,
+      startDate: moment().startOf('hour'),
+      //endDate: moment().startOf('hour').add(24, 'hour'),
+      locale: {
+          format: 'YYYY-MM-DD'
+      }
+    }, dateRangeCallback);
+
+
+    function dateRangeCallback(start_date, end_date){
+      $('#daterange').val(start_date.format('YYYY-MM-DD') + '_' + end_date.format('YYYY-MM-DD'));
+        
+      //$.LoadingOverlay("show");
+        work_order_management_table.draw();
+        
+
+      
+      $('#contract_duration').val(start_date.format('YYYY-MM-DD') + '-' + end_date.format('YYYY-MM-DD'));
+      
+    }
+
 
  $("document").ready(function(){
     setTimeout(function(){

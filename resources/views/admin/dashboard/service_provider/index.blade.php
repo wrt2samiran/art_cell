@@ -78,6 +78,91 @@
 
             <!-- /.col -->
         </div>
+
+        <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-header border-0">
+                  <div class="d-flex justify-content-between">
+                    <div>
+                      <h3 class="card-title">
+                        <i class="far fas fa-quote-right"></i>
+                        Latest Work Orders
+                      </h3>
+                    </div>
+                    <div class="container-fluid">
+
+                        <div class="row">
+                          <div class="col-md-4">
+                            <select id="work_order_contract" style="width:100%">
+                              <option value="">Filter By Contract</option>
+                              <option value="all" selected>All Contract</option>
+                               @forelse($work_order_contracts as $work_order_contract)
+                                <option value="{{$work_order_contract->id}}"> {{$work_order_contract->code}}</option>
+                               @empty
+
+                              @endforelse
+                            </select>
+                          </div>  
+                          <div class="col-md-4">
+                            <select id="work_order_service" style="width:100%">
+                              <option value="">Filter By Service</option>
+                              <option value="all" selected>All Service</option>
+                              @forelse($work_order_services as $service)
+                                <option value="{{$service->id}}"> {{$service->service_name}}</option>
+                              @empty
+
+                              @endforelse
+                            </select>
+                          </div>
+                          <div class="col-md-4" style="text-align: right;">
+                            <a href="{{route('admin.work-order-management.list')}}">View All</a>
+                          </div>
+                        </div>
+
+                      </div>
+                      
+                    
+                  </div>
+                </div>
+                <div class="card-body p-0" id="work_order_data">
+                  <div class="table-responsive">
+                      <table class="table m-0">
+                      <thead>
+                          <tr>
+                              <!-- <th>ID</th> -->
+                              <th>Contract Code</th>
+                              <th>Work Order Titile</th>
+                              <th>Type</th>
+                              <th>Service</th>
+                              <th>Created At</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          @forelse($work_orders as $work_order)
+                          <tr>
+                             <!-- <td>{{$work_order->id}}</td> --> 
+                             <td>{{@$work_order->contract->code}}</td> 
+                             <td>{{@$work_order->task_title}}</td>
+                             <td>{{@$work_order->contract_services->service_type}}</td>
+                             <td>{{@$work_order->service->service_name}}</td>
+                             <td>{{@$work_order->created_at->format('d/m/Y')}}</td>
+                          </tr>
+                          @empty
+                          <tr>
+                             <td colspan="5">No Workorder</td> 
+                          </tr>
+                          @endforelse
+                      </tbody>
+                  </table>
+                  </div>
+
+                </div>
+                <!-- /.card-body -->
+              </div>
+            </div>
+            <!-- /.col -->
+        </div>
         <div class="row">
             <div class="col-md-12">
               <div class="card">
@@ -177,8 +262,10 @@
    
             <!-- /.col -->
         </div>
+
+
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
               <div class="card">
                 <div class="card-header border-0">
                   <div class="d-flex justify-content-between">
@@ -188,35 +275,39 @@
                         Complaints
                       </h3>
                     </div>
-                    <div class="row">
+                    <div class="container-fluid">
 
-                        <div class="col">
-                          <select id="complaint_contract">
-                            <option value="">Filter By Contract</option>
-                            <option value="all" selected>All Contract</option>
-                            @forelse($complaint_contracts as $complaint_contract)
-                            <option value="{{$complaint_contract->id}}"> {{$complaint_contract->code}}</option>
-                            @empty
+                        <div class="row">
+                          <div class="col-md-4">
+                            <select id="complaint_contract" style="width:100%">
+                              <option value="">Filter By Contract</option>
+                              <option value="all" selected>All Contract</option>
+                              @forelse($complaint_contracts as $complaint_contract)
+                              <option value="{{$complaint_contract->id}}"> {{$complaint_contract->code}}</option>
+                              @empty
 
-                            @endforelse
-                          </select>
+                              @endforelse
+                            </select>
+                          </div>  
+                          <div class="col-md-4">
+                            <select id="complaint_status" style="width:100%">
+                              <option value="">Filter By Status</option>
+                              <option value="all" selected>All Status</option>
+                              @forelse($complaint_statuses as $complaint_status)
+                              <option value="{{$complaint_status->id}}">{{$complaint_status->status_name}}</option>
+                              @empty
+
+                              @endforelse
+                            </select>
+                          </div>
+                          <div class="col-md-4" style="text-align: right;">
+                            <a href="{{route('admin.complaints.list')}}">View All</a>
+                          </div>
                         </div>
-                        <div class="col">
-                          <select id="complaint_status">
-                            <option value="">Filter By Status</option>
-                            <option value="all" selected>All Status</option>
-                            @forelse($complaint_statuses as $complaint_status)
-                            <option value="{{$complaint_status->id}}">{{$complaint_status->status_name}}</option>
-                            @empty
 
-                            @endforelse
-                          </select>
-                        </div>
                       </div>
                       
-                    <div>
-                      <a href="{{route('admin.complaints.list')}}">View All</a>
-                    </div>
+                    
                   </div>
                 </div>
                 <div class="card-body p-0" id="complaints_data">
@@ -253,85 +344,23 @@
                 <!-- /.card-body -->
               </div>
             </div>
-            <div class="col-md-6">
-              <div class="card">
-                <div class="card-header border-0">
-                  <div class="d-flex justify-content-between">
-                    <div>
-                      <h3 class="card-title">
-                        <i class="far fas fa-quote-right"></i>
-                        Latest Work Orders
-                      </h3>
-                    </div>
-                    <div class="row">
-
-                        <div class="col">
-                          <select id="work_order_contract">
-                            <option value="">Filter By Contract</option>
-                            <option value="all" selected>All Contract</option>
-                            @forelse($work_order_contracts as $work_order_contract)
-                            <option value="{{$work_order_contract->id}}"> {{$work_order_contract->code}}</option>
-                            @empty
-
-                            @endforelse
-                          </select>
-                        </div>
-                        <div class="col">
-                          <select id="work_order_service">
-                            <option value="">Filter By Service</option>
-                            <option value="all" selected>All Service</option>
-                            @forelse($work_order_services as $service)
-                            <option value="{{$service->id}}"> {{$service->service_name}}</option>
-                            @empty
-
-                            @endforelse
-                          </select>
-                        </div>
-                      </div>
-                    <div>
-                      <a href="{{route('admin.work-order-management.list')}}">View All</a>
-                    </div>
-                  </div>
-                </div>
-                <div class="card-body p-0" id="work_order_data">
-                  <div class="table-responsive">
-                      <table class="table m-0">
-                      <thead>
-                          <tr>
-                              <!-- <th>ID</th> -->
-                              <th>Contract Code</th>
-                              <th>Work Order Titile</th>
-                              <th>Type</th>
-                              <th>Service</th>
-                              <th>Created At</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          @forelse($work_orders as $work_order)
-                          <tr>
-                             <!-- <td>{{$work_order->id}}</td> --> 
-                             <td>{{@$work_order->contract->code}}</td> 
-                             <td>{{@$work_order->task_title}}</td>
-                             <td>{{@$work_order->contract_services->service_type}}</td>
-                             <td>{{@$work_order->service->service_name}}</td>
-                             <td>{{@$work_order->created_at->format('d/m/Y')}}</td>
-                          </tr>
-                          @empty
-                          <tr>
-                             <td colspan="5">No complaints</td> 
-                          </tr>
-                          @endforelse
-                      </tbody>
-                  </table>
-                  </div>
-
-                </div>
-                <!-- /.card-body -->
-              </div>
-            </div>
             <!-- /.col -->
         </div>
-       
+
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
       </div><!-- /.container-fluid -->
     </section>
 

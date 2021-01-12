@@ -7,7 +7,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Report Management</h1>
+            <h1>{{__('service_provider_report_module.module_title')}}</h1>
           </div>
           <div class="col-sm-6">
 
@@ -44,7 +44,7 @@
                         @csrf
                           <div>
                           <div class="form-group required">
-                             <label for="report_on">Report On <span class="error">*</span></label>
+                             <label for="report_on">{{__('service_provider_report_module.report_on')}}  <span class="error">*</span></label>
                               <select class="form-control " id="report_on" name="report_on" style="width: 100%;" onchange="getAssignedProperty(this.value);">
                                 <option value=""> Select Type </option>
                                 <option value="work_order">Work Orders</option>
@@ -53,13 +53,13 @@
                           </div>
 
                           <div class="form-group required">
-                             <label for="contract_id">Propperty<span class="error">*</span></label>
+                             <label for="contract_id">{{__('service_provider_report_module.property')}}<span class="error">*</span></label>
                               <select class="form-control contract" multiple="multiple" size="1" searchable="Search for..." id="property_id" name="property_id[]" style="width: 100%;" onchange="getWorkOderList()">
                               </select>
                           </div>
 
                           <div class="form-group required">
-                             <label for="contract_id">Work Orders <span class="error">*</span></label>
+                             <label for="contract_id">{{__('service_provider_report_module.work_orders')}} <span class="error">*</span></label>
                               <select class="form-control contract" multiple="multiple" size="1" searchable="Search for..." id="work_order_id" name="work_order_id[]" style="width: 100%;" onchange="getTaskList()">
                               </select>
                           </div>
@@ -67,21 +67,21 @@
                         
 
                           <div class="form-group required">
-                             <label for="service_status">Task List <span class="error">*</span></label>
+                             <label for="service_status">{{__('service_provider_report_module.task_list')}} <span class="error">*</span></label>
                               <select class="form-control" multiple="multiple" size="1" searchable="Search for..." name="task_id[]" id="task_id" style="width: 100%;" onchange="getServices();">
                                
                               </select>
                           </div>
                           
                           <div class="form-group required">
-                             <label for="service_status">Services <span class="error">*</span></label>
+                             <label for="service_status">{{__('service_provider_report_module.service')}} <span class="error">*</span></label>
                               <select class="form-control" multiple="multiple" size="1" searchable="Search for..." name="service_id[]" id="service_id" style="width: 100%;">
                                
                               </select>
                           </div>
 
                           <div class="form-group required">
-                             <label for="service_status">Task Type <span class="error">*</span></label>
+                             <label for="service_status">{{__('service_provider_report_module.task_type')}} <span class="error">*</span></label>
                               <select class="form-control" Placeholder="Select Task Type" name="task_type" id="task_type" style="width: 100%;" onchange="getLabour()">
                                 <option value="">Select Task Type</option>
                                 <option value="labour_task">Labour Task</option>
@@ -90,14 +90,14 @@
                           </div>
 
                           <div class="form-group required assigned_labour_id" style="display: none;">
-                             <label for="service_status">Assigned Labour List <span class="error">*</span></label>
+                             <label for="service_status">{{__('service_provider_report_module.assigned_labour_list')}} <span class="error">*</span></label>
                               <select class="form-control" multiple="multiple" size="1" searchable="Search for..." name="labour_id[]" id="labour_id" style="width: 100%;">
                                
                               </select>
                           </div>
 
                           <div class="form-group required">
-                             <label for="service_status">Task Status <span class="error">*</span></label>
+                             <label for="service_status">{{__('service_provider_report_module.task_status')}} <span class="error">*</span></label>
                               <select class="form-control" Placeholder="Select Task Status" multiple="multiple" size="1" searchable="Search for..."  name="task_status[]" id="task_status" style="width: 100%;">
                                 <option value="0">Pending</option>
                                 <option value="1">Over Due</option>
@@ -106,19 +106,19 @@
                           </div>
                             
                           <div class=" form-group required">
-                           <label for="from_date">Date (From) <span class="error">*</span></label>
+                           <label for="from_date">{{__('service_provider_report_module.date_form')}} <span class="error">*</span></label>
                            <input type="text" readonly="readonly" autocomplete="off" id="from_date" class="form-control" name="from_date">
                           </div>
               
                           <div class="form-group required">
-                             <label for="to_date">Date (To) <span class="error">*</span></label>
+                             <label for="to_date">{{__('service_provider_report_module.date_to')}} <span class="error">*</span></label>
                              <input type="text"  readonly="readonly" autocomplete="off" class="form-control" id="to_date" name="to_date">
                           </div>
 
                         </div>
                         <div>
                            
-                          <button type="submit" class="btn btn-success">Generate Report</button> 
+                          <button type="submit" class="btn btn-success">{{__('service_provider_report_module.generate_report')}}</button> 
                         </div>
                       </form>
                     </div>

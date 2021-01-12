@@ -3,6 +3,7 @@ return [
 	'module_title'=>'إدارة خدمة الطوارئ',
 	'emergency_service_list'=>'قائمة خدمة الطوارئ',
 	'create_emergency_service'=>'إنشاء خدمة الطوارئ',
+	'edit_emergency_service' => 'تحرير خدمة الطوارئ',
 	'user_details'=>'بيانات المستخدم',
 	'edit_user'=>'تحرير العضو',
 	'clear_filter'=>'مرشح واضح',

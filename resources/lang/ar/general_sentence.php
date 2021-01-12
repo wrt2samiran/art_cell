@@ -104,6 +104,7 @@ return [
     'create_group'=>'إنشاء مجموعة',
     'edit'=>'تعديل',
     'create'=>'خلق',
+    'add' => 'أضف',
     'back'=>'عودة',
     'create_shared_service'=>'إنشاء خدمة مشتركة',
     'create_user'=>'إنشاء مستخدم',
