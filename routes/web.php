@@ -491,13 +491,25 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 
                 Route::get('/{id}/change-status', 'WorkOrderManagementController@change_status')->name('change_status');
                 Route::post('/labour-task-rating-review', 'WorkOrderManagementController@labourTaskReviewRating')->name('labourTaskReviewRating'); 
+                Route::post('/work-order-rating-review', 'WorkOrderManagementController@poPmTaskReviewRating')->name('poPmTaskReviewRating');
                 
-                //Route::get('/{id}/reschedule-task', 'WorkOrderManagementController@rescheduleTask')->name('rescheduleTask');
-
-                
-  
+                //Route::get('/{id}/reschedule-task', 'WorkOrderManagementController@rescheduleTask')->name('rescheduleTask'); 
                 
             });
+
+
+
+            Route::group(['prefix' => 'emergency-service-management', 'as' => 'emergency-service-management.'], function () {
+                Route::get('/', 'EmergencyServiceManagementController@list')->name('list');
+                Route::any('/create','EmergencyServiceManagementController@emergencyServiceCreate')->name('emergencyServiceCreate');
+                Route::put('/{id}', 'EmergencyServiceManagementController@update')->name('update');  
+                Route::get('/{id}', 'EmergencyServiceManagementController@show')->name('show'); 
+                Route::get('/{id}/edit', 'EmergencyServiceManagementController@edit')->name('edit'); 
+                Route::any('/{id}/delete', 'EmergencyServiceManagementController@delete')->name('delete');
+                
+            });
+
+
 
             Route::group(['prefix' => 'calendar', 'as' => 'calendar.'], function () {
                 Route::any('/calendar-data', 'CalendarController@calendardata')->name('calendardata')->middleware('check_permissions:calendar-data');  

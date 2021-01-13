@@ -4,14 +4,7 @@
         "autoWidth": false,
         processing: true,
         serverSide: true,
-        ajax: {
-          url:baseUrl+'/admin/work-order-management',
-          data: function (d) {
-            d.status = $('#status').val();
-            d.daterange = $('#daterange').val();
-          }
-        },
-
+        ajax: baseUrl+'/admin/emergency-service-management',
         columns: [
             { data: 'id', name: 'id' },
             { data: 'contract.code', name: 'contract.code'},
@@ -34,8 +27,7 @@
             
             { data: 'property',
               render: function(data){
-                      return data.country.name+', '+
-                      data.state.name+', '+data.city.name;
+                      return data.country.name +', '+ data.state.name+ ', '+ data.city.name;
                   }, searchable: false, sortable : false
             }, 
             { data: 'start_date', name: 'start_date' },
@@ -61,7 +53,7 @@
                     return '<div class="progress"><div class="progress-bar bg-success progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">0% </div></div>'
                   }  
                 }},
-            { data: 'status', name: 'status', searchable: false, sortable : false },
+            { data: 'status', name: 'ststus', searchable: false, sortable : false },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
          order: [ [0, 'desc'] ],
@@ -154,40 +146,6 @@
 
 
  }
-
- $('#status').change(function(){
-        work_order_management_table.draw();
-    });
-
- $('.status-filter').select2({
-      theme: 'bootstrap4',
-      placeholder:'Filter by Status'
-    });
-
-    $('#contract_duration').daterangepicker({
-      autoUpdateInput: false,
-      timePicker: false,
-      timePicker24Hour: true,
-      timePickerIncrement: 1,
-      startDate: moment().startOf('hour'),
-      //endDate: moment().startOf('hour').add(24, 'hour'),
-      locale: {
-          format: 'YYYY-MM-DD'
-      }
-    }, dateRangeCallback);
-
-
-    function dateRangeCallback(start_date, end_date){
-      $('#daterange').val(start_date.format('YYYY-MM-DD') + '_' + end_date.format('YYYY-MM-DD'));
-        
-      //$.LoadingOverlay("show");
-        work_order_management_table.draw();
-        
-
-      
-      $('#contract_duration').val(start_date.format('YYYY-MM-DD') + '-' + end_date.format('YYYY-MM-DD'));
-      
-    }
 
  $("document").ready(function(){
     setTimeout(function(){

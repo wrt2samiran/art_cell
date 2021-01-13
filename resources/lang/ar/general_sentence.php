@@ -77,7 +77,8 @@ return [
     'edit'=>'تعديل',
     'create'=>'خلق',
     'details'=>'تفاصيل',
-    'sms_templates'=>'Sms Templates'
+    'sms_templates'=>'Sms Templates',
+    'emergency_service'=>'خدمات الطوارئ',
   ],
   'button_and_links'=>[
     'view_all'=>'مشاهدة الكل',

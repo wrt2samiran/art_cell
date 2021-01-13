@@ -470,6 +470,16 @@
                     </a>
                 </li>            
                 @endif
+
+                @if(auth()->guard('admin')->user()->hasAllPermission(['emergency-service-list']))
+                <li class="nav-item ">
+                    <a href="{{route('admin.emergency-service-management.list')}}"
+                    class="nav-link {{(request()->is('admin/emergency-service-management/*','admin/emergency-service-management'))?'active':''}}">
+                        <i class="fas fa-microphone-alt"></i>
+                            <p>{{__('nav_link_text.emergency-service-management')}}</p>
+                    </a>
+                </li>            
+                @endif
                 <!-- @if ($admin->role->user_type->slug =='super-admin' || $admin->role->user_type->slug =='service-provider')
                 <li class="nav-item has-treeview {{(request()->is('admin/labour/*','admin/labour'))?'menu-open':''}}">
                     
