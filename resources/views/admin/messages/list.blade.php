@@ -2,7 +2,6 @@
 
 
 @section('unique-content')
-
     <div class="content-wrapper" style="min-height: 1200.88px;">
         <!-- Content Header (Page header) -->
         <section class="content-header">
@@ -22,6 +21,7 @@
         </section>
         <!-- Main content -->
     <section class="content">
+    <div class="container-fluid">
       <div class="row">
         <div class="col-md-3">
 
@@ -143,6 +143,8 @@
         </div>
         <!-- /.col -->
       </div>
+
+     </div>
       <!-- /.row -->
     </section>
         <!-- /.content -->

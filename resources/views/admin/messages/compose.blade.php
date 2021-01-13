@@ -23,92 +23,94 @@
         </section>
         <!-- Main content -->
     <section class="content">
-      <div class="row">
-        <div class="col-md-3">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-3">
+            
+          @include('admin.messages.partials.left-navbar')
           
-        @include('admin.messages.partials.left-navbar')
-        
-        </div>
-        <!-- /.col -->
-          <div class="col-md-9">
-            <div class="card card-primary card-outline">
+          </div>
+          <!-- /.col -->
+            <div class="col-md-9">
+              <div class="card card-primary card-outline">
 
-              <form method="post" action="{{route('admin.messages.store')}}" id="message_compose_form" enctype="multipart/form-data">
-                @csrf
-                <input type="hidden" name="upload_unique_key" value="{{$upload_unique_key}}">
-              <div class="card-header">
-                <h3 class="card-title">Compose New Message</h3>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <div class="form-group">
-                  <select class="form-control " id="message_to" name="message_to" style="width: 100%;">
-                    <option value="">Select Reciepent</option>
-                    @forelse($users as $user)
-                       <option value="{{$user->id}}" >
-                        {{$user->name}}-{{$user->email}} 
-                        @if($user->role->user_type->slug=='property-owner')
+                <form method="post" action="{{route('admin.messages.store')}}" id="message_compose_form" enctype="multipart/form-data">
+                  @csrf
+                  <input type="hidden" name="upload_unique_key" value="{{$upload_unique_key}}">
+                <div class="card-header">
+                  <h3 class="card-title">Compose New Message</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                  <div class="form-group">
+                    <select class="form-control " id="message_to" name="message_to" style="width: 100%;">
+                      <option value="">Select Reciepent</option>
+                      @forelse($users as $user)
+                         <option value="{{$user->id}}" >
+                          {{$user->name}}-{{$user->email}} 
+                          @if($user->role->user_type->slug=='property-owner')
 
-                          @if($user->created_by_admin)
-                          (property manager)
+                            @if($user->created_by_admin)
+                            (property manager)
+                            @else
+                            ({{$user->role->user_type->name}})
+                            @endif
+                          
                           @else
                           ({{$user->role->user_type->name}})
                           @endif
-                        
-                        @else
-                        ({{$user->role->user_type->name}})
-                        @endif
-                      </option>
-                    @empty
-                    <option value="">No users</option>
-                    @endforelse
-                  </select>
-                  <div id="message_to_error"></div>
-                </div>
-                <div class="form-group">
-                  <input class="form-control" name="subject" placeholder="Subject:">
-                </div>
-                <div class="form-group">
-                    <textarea id="message" name="message" class="form-control" style="height: 300px"></textarea>
-                    <div id="message_error"></div>
-                </div>
-                <div class="form-group">
-                  <div class="btn btn-default btn-file" id="attachment_block">
-                    <i class="fas fa-paperclip"></i> Attachment
-                    <input multiple type="file" id="attachment">
+                        </option>
+                      @empty
+                      <option value="">No users</option>
+                      @endforelse
+                    </select>
+                    <div id="message_to_error"></div>
                   </div>
-
-                  <!-- <p class="help-block">Max. 32MB</p> -->
-
-                  <div class="progress" style="display: none;">
-                    <div class="progress-bar progress-bar-striped bg-info progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" id="progress_bar"></div>
+                  <div class="form-group">
+                    <input class="form-control" name="subject" placeholder="Subject:">
                   </div>
-
-                  <div id="output" class="container-fluid">
-                    
+                  <div class="form-group">
+                      <textarea id="message" name="message" class="form-control" style="height: 300px"></textarea>
+                      <div id="message_error"></div>
                   </div>
-                  <div id="uploaded_files" class="container-fluid">
-                    
-                  </div>
+                  <div class="form-group">
+                    <div class="btn btn-default btn-file" id="attachment_block">
+                      <i class="fas fa-paperclip"></i> Attachment
+                      <input multiple type="file" id="attachment">
+                    </div>
 
+                    <!-- <p class="help-block">Max. 32MB</p> -->
+
+                    <div class="progress" style="display: none;">
+                      <div class="progress-bar progress-bar-striped bg-info progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" id="progress_bar"></div>
+                    </div>
+
+                    <div id="output" class="container-fluid">
+                      
+                    </div>
+                    <div id="uploaded_files" class="container-fluid">
+                      
+                    </div>
+
+                  </div>
                 </div>
+                <!-- /.card-body -->
+                <div class="card-footer">
+                  <div class="float-right">
+                    <button type="submit" class="btn btn-primary"><i class="far fa-envelope"></i> Send</button>
+                  </div>
+                  <a href="{{route('admin.messages.list')}}" class="btn btn-default"><i class="fas fa-times"></i> Discard</a>
+                </div>
+                <!-- /.card-footer -->
+                </form>
+
               </div>
-              <!-- /.card-body -->
-              <div class="card-footer">
-                <div class="float-right">
-                  <button type="submit" class="btn btn-primary"><i class="far fa-envelope"></i> Send</button>
-                </div>
-                <a href="{{route('admin.messages.list')}}" class="btn btn-default"><i class="fas fa-times"></i> Discard</a>
-              </div>
-              <!-- /.card-footer -->
-              </form>
-
+              <!-- /.card -->
             </div>
-            <!-- /.card -->
-          </div>
-        <!-- /.col -->
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
       </div>
-      <!-- /.row -->
     </section>
         <!-- /.content -->
     </div>
