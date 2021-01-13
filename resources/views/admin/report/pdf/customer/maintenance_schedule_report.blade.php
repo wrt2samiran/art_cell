@@ -33,7 +33,7 @@
 
     <td align='left' valign='top' style='font-family: Arial; font-size: 14px; color:#606060; line-height: 20px; padding: 8px; border: 1px solid #ccc;'>
                 
-        <span>{{$service_date->date}}</span>
+        <span>{{Carbon::parse($service_date->date)->format('d/m/Y')}}</span>
     </td>
     <td align='left' valign='top' style='font-family: Arial; font-size: 14px; color:#606060; line-height: 20px; padding: 8px; border: 1px solid #ccc;'>
         <strong>Contract Code</strong><br>

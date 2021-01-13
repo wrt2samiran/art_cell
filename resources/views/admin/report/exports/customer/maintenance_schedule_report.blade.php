@@ -33,7 +33,7 @@
         </tr>
     	@forelse($service_dates as $service_date)
 	    <tr>
-	        <td>{{$service_date->date}}</td>
+	        <td>{{Carbon::parse($service_date->date)->format('d/m/Y')}}</td>
 	        <td>{{$service_date->contract->code}}</td>
 	        <td>{{$service_date->contract->title}}</td>
 
