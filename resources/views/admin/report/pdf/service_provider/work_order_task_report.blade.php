@@ -18,80 +18,66 @@
 </table>
 <table width="100%" style="border-collapse: collapse;">
     <tr>
-     <td align='left' valign='top' style='font-family: Arial; font-size: 14px; font-weight: bold; color:#824d9e; line-height: 20px; padding: 8px; border: 1px solid #ccc;'>Work Order ID</td>
+     <td align='left' valign='top' style='font-family: Arial; font-size: 14px; font-weight: bold; color:#824d9e; line-height: 20px; padding: 8px; border: 1px solid #ccc;'>Task Id</td>   
+     <td align='left' valign='top' style='font-family: Arial; font-size: 14px; font-weight: bold; color:#824d9e; line-height: 20px; padding: 8px; border: 1px solid #ccc;'>Task Details</td>
+     <td align='left' valign='top' style='font-family: Arial; font-size: 14px; font-weight: bold; color:#824d9e; line-height: 20px; padding: 8px; border: 1px solid #ccc;'>Work Order Title</td>
      <td align='left' valign='top' style='font-family: Arial; font-size: 14px; font-weight: bold; color:#824d9e; line-height: 20px; padding: 8px; border: 1px solid #ccc;'>Contract Details</td>
      <td align='left' valign='top' style='font-family: Arial; font-size: 14px; font-weight: bold; color:#824d9e; line-height: 20px; padding: 8px; border: 1px solid #ccc;'>Property Details</td>
-     <td align='left' valign='top' style='font-family: Arial; font-size: 14px; font-weight: bold; color:#824d9e; line-height: 20px; padding: 8px; border: 1px solid #ccc;'>Task Details</td>
      <td align='left' valign='top' style='font-family: Arial; font-size: 14px; font-weight: bold; color:#824d9e; line-height: 20px; padding: 8px; border: 1px solid #ccc;'>Current Status</td>
+     <td align='left' valign='top' style='font-family: Arial; font-size: 14px; font-weight: bold; color:#824d9e; line-height: 20px; padding: 8px; border: 1px solid #ccc;'>Created Date</td>
 
 
     </tr>
 
- @forelse($work_orders as $work_order)
+ @forelse($task_lists as $task_list)
  <tr>
-    <td align='left' valign='top' style='font-family: Arial; font-size: 14px; color:#606060; line-height: 20px; padding: 8px; border: 1px solid #ccc;'>{{$work_order->id}}</td>
+    <td align='left' valign='top' style='font-family: Arial; font-size: 14px; color:#606060; line-height: 20px; padding: 8px; border: 1px solid #ccc;'>{{$task_list->id}}</td>
     <td align='left' valign='top' style='font-family: Arial; font-size: 14px; color:#606060; line-height: 20px; padding: 8px; border: 1px solid #ccc;'>
+       
+        <strong>Task Title</strong><br>
+        <span>{{@$task_list->task_title}}</span>
+        <br>
+        <strong>Task Completed Percent</strong><br>
+        <span>{{@$task_list->task_complete_percent}}%</span>
+        
+     </td>
+
+     <td align='left' valign='top' style='font-family: Arial; font-size: 14px; color:#606060; line-height: 20px; padding: 8px; border: 1px solid #ccc;'>{{@$task_list->work_order->task_title}}</td>
+
+     <td align='left' valign='top' style='font-family: Arial; font-size: 14px; color:#606060; line-height: 20px; padding: 8px; border: 1px solid #ccc;'>
+       
         <strong>Contract Code</strong><br>
-        <span>{{$work_order->contract->code}}</span>
+        <span>{{@$task_list->contract->code}}</span>
         <br>
         <strong>Contract Name</strong><br>
-        <span>{{$work_order->contract->title}}</span>
-        <br>
-        <strong>Service Provider Name</strong><br>
-        <span>{{$work_order->service_provider->name}}</span>
-        <br>
-        <strong>Service Provider Email</strong><br>
-        <span>{{$work_order->service_provider->email}}</span>
+        <span>{{@$task_list->contract->title}}</span>
+        
      </td>
+
 
     <td align='left' valign='top' style='font-family: Arial; font-size: 14px; color:#606060; line-height: 20px; padding: 8px; border: 1px solid #ccc;'>
         <strong>Property Code</strong><br>
-        <span>{{$work_order->property->code}}</span>
+        <span>{{$task_list->property->code}}</span>
         <br>
         <strong>Property Name</strong><br>
-        <span>{{$work_order->property->property_name}}</span>
+        <span>{{$task_list->property->property_name}}</span>
         <br>
         <strong>Property Owner Name</strong><br>
-        <span>{{$work_order->property->owner_details->name}}</span>
+        <span>{{$task_list->property->owner_details->name}}</span>
         <br>
         <strong>Property Owner Email</strong><br>
-        <span>{{$work_order->property->owner_details->email}}</span>
+        <span>{{$task_list->property->owner_details->email}}</span>
         <br>
         <strong>City</strong><br>
-        <span>{{$work_order->property->city->name}}</span>
+        <span>{{$task_list->property->city->name}}</span>
         <br>
         <strong>Location</strong><br>
-        <span>{{$work_order->property->address}}</span>
+        <span>{{$task_list->property->address}}</span>
         
      </td>
-     <td align='left' valign='top' style='font-family: Arial; font-size: 14px; color:#606060; line-height: 20px; padding: 8px; border: 1px solid #ccc;'>
-        <strong>Task Title</strong><br>
-        <span>{{$work_order->task_title}}</span>
-        <br>
-        <strong>Service Name</strong><br>
-        <span>{{$work_order->service->service_name}}</span>
-        <br>
-        <strong>Task Date</strong><br>
-        <span>{{Carbon::parse($work_order->task_date)->format('d/m/Y')}}</span>
-        <br>
-        <strong>Created Date</strong><br>
-        <span>{{Carbon::parse($work_order->created_at)->format('d/m/Y')}}</span>
-       
-     </td>
-     <td align='left' valign='top' style='font-family: Arial; font-size: 14px; color:#606060; line-height: 20px; padding: 8px; border: 1px solid #ccc;'>
-        <strong>Status Name</strong><br>
-        <span>{{$work_order->get_status_name()}}</span>
-        <br>
-        <strong>Completed Date</strong><br>
-        <span>
-        @if($work_order->work_order_complete_date)
-        {{Carbon::parse($work_order->work_order_complete_date)->format('d/m/Y')}}
-        @else
-        N/A
-        @endif
-        </span>
-       
-     </td>
+     
+     <td align='left' valign='top' style='font-family: Arial; font-size: 14px; color:#606060; line-height: 20px; padding: 8px; border: 1px solid #ccc;'>{{@$task_list->get_status_name()}}</td>
+     <td align='left' valign='top' style='font-family: Arial; font-size: 14px; color:#606060; line-height: 20px; padding: 8px; border: 1px solid #ccc;'>{{Carbon::parse(@$task_list->created_at)->format('d/m/Y')}}</td>
 
  </tr>
 @empty

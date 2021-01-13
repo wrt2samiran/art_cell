@@ -48,7 +48,7 @@
                               <select class="form-control " id="report_on" name="report_on" style="width: 100%;" onchange="getAssignedProperty(this.value);">
                                 <option value=""> {{__('service_provider_report_module.select_type')}} </option>
                                 <option value="work_order">Work Orders</option>
-                                <option value="maintenance_schedule">Maintenance Schedule</option>
+                                <!-- <option value="maintenance_schedule">Maintenance Schedule</option> -->
                               </select>
                           </div>
 
@@ -500,53 +500,9 @@ $("#report_form").validate({
     submitHandler: function(form) {
 
         $.LoadingOverlay("show");
-
-        var formData = new FormData(form);
-        $.ajax({
-            type: "POST",
-            data: formData,
-            url: form.action,
-            cache: false,
-            contentType: false,
-            processData: false,
-            responseType: 'blob',
-            success: function(response)
-            {
-                const url = window.URL.createObjectURL(new Blob([response]));
-                const link = document.createElement('a');
-                link.href = url;
-
-                var from_date=form.from_date.value;
-                var to_date=form.to_date.value;
-
-                if(form.report_on.value=='work_order'){
-                   var file_name='work-order-report-from-'+from_date+'-to-'+to_date+'.csv';
-                }else{
-                  var file_name='schedule_maintenance-report-from-'+from_date+'-to-'+to_date+'.csv';
-                }
-               
-
-                link.setAttribute('download',file_name);
-                document.body.appendChild(link);
-                link.click();
-                $.LoadingOverlay("hide");
-                form.reset(); 
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-               $.LoadingOverlay("hide");
-               var response=jqXHR.responseJSON;
-               var status=jqXHR.status;
-               if(status=='404'){
-                toastr.error('Invalid URL', 'Error', {timeOut: 5000});
-               }else{
-                 toastr.error('Internal server error.', 'Error', {timeOut: 5000});
-               }
-           }
-        });
-
-
-
-
+        form.submit();
+        $.LoadingOverlay("hide");
+        form.reset();
 
     }
 });
