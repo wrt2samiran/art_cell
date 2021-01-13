@@ -12,5 +12,7 @@ return [
 	'date_form'=>'Date (From)',
 	'date_to'=>'Date (To) ',
 	'generate_report' => 'Generate Report',
+	'select_type' => 'Select Type',
+	'select_task_type' => 'Select Task Type',
 	
 ];

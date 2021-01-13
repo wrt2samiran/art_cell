@@ -24,6 +24,9 @@ return [
   'weeks'=>'Week(s)',
   'months'=>'Month(s)',
   'years'=>'Year(s)',
+  'search'=> 'Search',
+  'no_data_found'=> 'No Data Found!',
+  'create_task' => 'Create Task',
   'week_days'=>[
       'Sunday'=>'Sunday',
       'Monday'=>'Monday',
@@ -118,7 +121,21 @@ return [
     'add_file'=>'Add Files',
     'save_and_next'=>'Save & Next',
     'next'=>'Next',
-    'previous'=>'Previous'
+    'previous'=>'Previous',
+    'select_all' => 'Select All',
+    'search' => 'Search',
+    'close' => 'Close',
+
+  ],
+  'status_button' =>[
+    'completed' => 'Completed',
+    'pending' => 'Pending',
+    'overdue' => 'Overdue',
+    'warning' => 'Warning',
+    'emergency' => 'Emergency',
+    'complain' => 'Complain',
+    'rating_and_view'=> 'Rating and view',
+    'view' => 'View',
 
   ]
     

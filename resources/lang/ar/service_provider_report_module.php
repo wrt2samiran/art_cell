@@ -12,4 +12,6 @@ return [
 	'date_form'=>'التاريخ من)',
 	'date_to'=>'التاريخ (إلى)',
 	'generate_report' => 'انشاء تقرير',
+	'select_type' => 'اختر صنف',
+	'select_task_type' => 'حدد نوع المهمة',
 ];

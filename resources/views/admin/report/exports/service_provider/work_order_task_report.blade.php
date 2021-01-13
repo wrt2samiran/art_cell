@@ -1,6 +1,20 @@
 <table>
     <thead>
     <tr>
+        <td colspan="17" align="center" style="background-color: #97e6f7;font-size: 18px">
+        <div>Work Order Report<div>
+        </td>
+       </tr>
+    <tr>
+        <td colspan="17" rowspan="2" align="center">
+            <div>Report On : {{Carbon::now()->format('d/m/Y h:i A')}}</div><br>
+            <div>From Date: {{request()->from_date}} - To Date: {{request()->to_date}}</div>
+        </td>
+       </tr>
+       <tr>
+           <td></td>
+       </tr>
+    <tr>
         <th>Task Id</th>
         <th>Task Title</th>
         <th>Work Order Title</th>

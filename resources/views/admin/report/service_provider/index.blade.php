@@ -22,7 +22,7 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Generate Report</h3>
+                <h3 class="card-title">{{__('service_provider_report_module.generate_report')}}</h3>
               </div>
               <div class="card-body">
                   @if(Session::has('success'))
@@ -46,7 +46,7 @@
                           <div class="form-group required">
                              <label for="report_on">{{__('service_provider_report_module.report_on')}}  <span class="error">*</span></label>
                               <select class="form-control " id="report_on" name="report_on" style="width: 100%;" onchange="getAssignedProperty(this.value);">
-                                <option value=""> Select Type </option>
+                                <option value=""> {{__('service_provider_report_module.select_type')}} </option>
                                 <option value="work_order">Work Orders</option>
                                 <option value="maintenance_schedule">Maintenance Schedule</option>
                               </select>
@@ -83,7 +83,7 @@
                           <div class="form-group required">
                              <label for="service_status">{{__('service_provider_report_module.task_type')}} <span class="error">*</span></label>
                               <select class="form-control" Placeholder="Select Task Type" name="task_type" id="task_type" style="width: 100%;" onchange="getLabour()">
-                                <option value="">Select Task Type</option>
+                                <option value="">{{__('service_provider_report_module.select_task_type')}}</option>
                                 <option value="labour_task">Labour Task</option>
                                 <option value="main_task">Main Task</option>
                               </select>
@@ -115,6 +115,19 @@
                              <input type="text"  readonly="readonly" autocomplete="off" class="form-control" id="to_date" name="to_date">
                           </div>
 
+                          <div class="mb-3">
+                              <label >Download As &nbsp;&nbsp;</label>
+                              <div class="form-check-inline">
+                                <label class="form-check-label">
+                                  <input type="radio" value="excel" checked class="form-check-input" name="output_format">Excel
+                                </label>
+                              </div>
+                              <div class="form-check-inline">
+                                <label class="form-check-label">
+                                  <input type="radio" value="pdf" class="form-check-input" name="output_format">PDF
+                                </label>
+                              </div>
+                              
                         </div>
                         <div>
                            
