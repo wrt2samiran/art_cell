@@ -22,85 +22,87 @@
         </section>
         <!-- Main content -->
     <section class="content">
-      <div class="row">
-        <div class="col-md-3">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-3">
 
-        @include('admin.messages.partials.left-navbar')
-        </div>
-        <!-- /.col -->
-        <div class="col-md-9">
-          <div class="card card-primary card-outline">
-            <div class="card-header">
-              <h3 class="card-title">Sent Messages</h3>
-
-              <div class="card-tools">
-
-              </div>
-              <!-- /.card-tools -->
-            </div>
-            <!-- /.card-header -->
-            <div class="card-body p-0">
-              <div class="mailbox-controls">
-               
-                <div class="float-right">
-                  
-                  <div class="btn-group">
-                   
-                  </div>
-                  <!-- /.btn-group -->
-                </div>
-                <!-- /.float-right -->
-              </div>
-              <div class="table-responsive mailbox-messages">
-                <table class="table table-hover">
-                  <tbody>
-                  @forelse($messages as $message)
-                  <tr>
-                    
-                    <td class="mailbox-name"><a href="{{route('admin.messages.details',$message->id)}}">{{$message->to_user->name}}</a></td>
-                    <td class="mailbox-subject">
-                      <a href="{{route('admin.messages.details',$message->id)}}" style="color: black">
-                      <div >
-                        <div style="display: inline-block;"><b>{{Str::limit($message->subject,10,'...')}}- </b></div>
-                        <div style="display: inline-block;">
-                          
-                          {{ Str::limit(strip_tags($message->message), $limit = 50, $end = '...') }}
-                        </div>
-                      </div>
-                      </a>
-                      
-                    </td>
-                    <!-- <td class="mailbox-attachment"></td> -->
-                    <td class="mailbox-date">{{$message->created_at->diffForHumans()}}</td>
-                  </tr>
-                  @empty
-                  <tr>
-                    <td colspan="4">No messages</td>
-                  </tr>
-                  @endforelse
-                  </tbody>
-                </table>
-                <!-- /.table -->
-              </div>
-              <!-- /.mail-box-messages -->
-              <div class="card-footer p-0">
-              <div class="mailbox-controls">
-
-                <div class="float-right">
-                  {{$messages->appends(request()->query())->links()}}
-                </div>
-                <!-- /.float-right -->
-              </div>
-            </div>
-            </div>
-            <!-- /.card-body -->
-
+          @include('admin.messages.partials.left-navbar')
           </div>
-          <!-- /.card -->
+          <!-- /.col -->
+          <div class="col-md-9">
+            <div class="card card-primary card-outline">
+              <div class="card-header">
+                <h3 class="card-title">Sent Messages</h3>
+
+                <div class="card-tools">
+
+                </div>
+                <!-- /.card-tools -->
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <div class="mailbox-controls">
+                 
+                  <div class="float-right">
+                    
+                    <div class="btn-group">
+                     
+                    </div>
+                    <!-- /.btn-group -->
+                  </div>
+                  <!-- /.float-right -->
+                </div>
+                <div class="table-responsive mailbox-messages">
+                  <table class="table table-hover">
+                    <tbody>
+                    @forelse($messages as $message)
+                    <tr>
+                      
+                      <td class="mailbox-name"><a href="{{route('admin.messages.details',$message->id)}}">{{$message->to_user->name}}</a></td>
+                      <td class="mailbox-subject">
+                        <a href="{{route('admin.messages.details',$message->id)}}" style="color: black">
+                        <div >
+                          <div style="display: inline-block;"><b>{{Str::limit($message->subject,10,'...')}}- </b></div>
+                          <div style="display: inline-block;">
+                            
+                            {{ Str::limit(strip_tags($message->message), $limit = 50, $end = '...') }}
+                          </div>
+                        </div>
+                        </a>
+                        
+                      </td>
+                      <!-- <td class="mailbox-attachment"></td> -->
+                      <td class="mailbox-date">{{$message->created_at->diffForHumans()}}</td>
+                    </tr>
+                    @empty
+                    <tr>
+                      <td colspan="4">No messages</td>
+                    </tr>
+                    @endforelse
+                    </tbody>
+                  </table>
+                  <!-- /.table -->
+                </div>
+                <!-- /.mail-box-messages -->
+                <div class="card-footer p-0">
+                <div class="mailbox-controls">
+
+                  <div class="float-right">
+                    {{$messages->appends(request()->query())->links()}}
+                  </div>
+                  <!-- /.float-right -->
+                </div>
+              </div>
+              </div>
+              <!-- /.card-body -->
+
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
         </div>
-        <!-- /.col -->
+        <!-- /.row -->
       </div>
-      <!-- /.row -->
     </section>
         <!-- /.content -->
     </div>
