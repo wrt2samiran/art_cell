@@ -191,11 +191,11 @@ footer .end {
 	<header class="clearfix">
 		<div class="container">
 			<figure>
-				<img class="logo" src="https://www.imtech.co.uk/wp-content/uploads/2019/12/dummy-logo.jpg" alt="">
+				<img width='151' height='70' class="logo" src="{{asset('assets/dist/img/OSOOL_logo.png')}}" alt="">
 			</figure>
 			<div class="company-info">
 				<div>
-					<p>SMMS</p>
+					<p>OSOOL</p>
 					<p>Saudi Arab</p>
 					<p><a href="tel:602-519-0450">(602) 519-0450</a></p>
 					<p><a href="mailto:company@example.com">company@example.com</a></p>

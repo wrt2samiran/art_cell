@@ -1,30 +1,42 @@
 <table>
-    <thead>
-    <tr>
-
-        <th>Month</th>
-        <th>Date-Range</th>
-        <th>Total Completed Work Orders</th>
-        <th>Work Order Id</th>
-        <th>Contract Code</th>
-        <th>Contract Name</th>
-        <th>Property Code</th>
-        <th>Property Name</th>
-        <th>City</th>
-        <th>Location</th>
-        <th>Property Owner Email</th>
-        <th>Property Owner Name</th>
-        <th>Task Title</th>
-        <th>Service Name</th>
-        <th>Work Date</th>
-        <th>Service Provider Email</th>
-        <th>Service Provider Name</th>
-        <th>Current Status</th>
-        <th>Completed Date</th>
-        <th>Created Date</th>
-    </tr>
-    </thead>
     <tbody>
+   <tr>
+    <td colspan="20" align="center" style="background-color: #97e6f7;font-size: 18px">
+    <div>Completed Work Orders/Month Report<div>
+    </td>
+   </tr>
+   <tr>
+    <td colspan="20" rowspan="2" align="center">
+        <div>Report On : {{Carbon::now()->format('d/m/Y h:i A')}}</div><br>
+        <div>From Date: {{request()->from_date}} - To Date: {{request()->to_date}}</div>
+    </td>
+   </tr>
+   <tr>
+       <td></td>
+   </tr>
+
+    <tr>
+        <td>Month</td>
+        <td>Date-Range</td>
+        <td>Total Completed Work Orders</td>
+        <td>Work Order Id</td>
+        <td>Contract Code</td>
+        <td>Contract Name</td>
+        <td>Property Code</td>
+        <td>Property Name</td>
+        <td>City</td>
+        <td>Location</td>
+        <td>Property Owner Email</td>
+        <td>Property Owner Name</td>
+        <td>Task Title</td>
+        <td>Service Name</td>
+        <td>Work Date</td>
+        <td>Service Provider Email</td>
+        <td>Service Provider Name</td>
+        <td>Current Status</td>
+        <td>Completed Date</td>
+        <td>Created Date</td>
+    </tr>
     @foreach($data as $month_year=>$record)
         @if(count($record['work_orders']))
             @foreach($record['work_orders'] as $key=> $work_order)
@@ -36,8 +48,9 @@
                 @endif
                 </td>
                 <td>
+
                 @if($key=='0')
-                {{$record['effective_from']}}-{{$record['effective_to']}}
+                {{Carbon::parse($record['effective_from'])->format('d/m/Y')}}-{{Carbon::parse($record['effective_to'])->format('d/m/Y')}}
                 @endif
                 </td>
                 <td>
@@ -79,7 +92,7 @@
         <tr>
 
             <td>{{$month_year}}</td>
-            <td>{{$record['effective_from']}}-{{$record['effective_to']}}</td>
+            <td>{{Carbon::parse($record['effective_from'])->format('d/m/Y')}}-{{Carbon::parse($record['effective_to'])->format('d/m/Y')}}</td>
             <td>{{$record['total_wo']}}</td>
             @for($a=1;$a<18;$a++)
             <td>N/A</td>

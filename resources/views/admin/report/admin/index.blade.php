@@ -115,6 +115,24 @@
                                <label for="to_date">Date (To) <span class="error">*</span></label>
                                <input type="text"  readonly="readonly" autocomplete="off" class="form-control" id="schedule_compliance_to_date" name="to_date">
                             </div>
+
+                            <div class="mb-3">
+                              <label >Download As &nbsp;&nbsp;</label>
+                              <div class="form-check-inline">
+                                <label class="form-check-label">
+                                  <input type="radio" value="excel" checked class="form-check-input" name="output_format">Excel
+                                </label>
+                              </div>
+                              <div class="form-check-inline">
+                                <label class="form-check-label">
+                                  <input type="radio" value="pdf" class="form-check-input" name="output_format">PDF
+                                </label>
+                              </div>
+                            </div>
+
+    
+
+
                           </div>
                           <div>
                             <button type="submit" class="btn btn-success">Download Report</button>
@@ -156,6 +174,23 @@
                                <label for="to_date">Date (To) <span class="error">*</span></label>
                                <input type="text"  readonly="readonly" autocomplete="off" class="form-control" id="maintenance_backlog_to_date" name="to_date">
                             </div>
+
+                            <div class="mb-3">
+                              <label >Download As &nbsp;&nbsp;</label>
+                              <div class="form-check-inline">
+                                <label class="form-check-label">
+                                  <input type="radio" value="excel" checked class="form-check-input" name="output_format">Excel
+                                </label>
+                              </div>
+                              <div class="form-check-inline">
+                                <label class="form-check-label">
+                                  <input type="radio" value="pdf" class="form-check-input" name="output_format">PDF
+                                </label>
+                              </div>
+                            </div>
+
+
+
                           </div>
                           <div>
                           <button type="submit" class="btn btn-success">Download Report</button>
@@ -209,6 +244,22 @@
                                <label for="to_date">Date (To) <span class="error">*</span></label>
                                <input type="text"  readonly="readonly" autocomplete="off" class="form-control to_date" id="upcoming_weekly_maintenance_to_date" name="to_date">
                             </div>
+                            <div class="mb-3">
+                              <label >Download As &nbsp;&nbsp;</label>
+                              <div class="form-check-inline">
+                                <label class="form-check-label">
+                                  <input type="radio" value="excel" checked class="form-check-input" name="output_format">Excel
+                                </label>
+                              </div>
+                              <div class="form-check-inline">
+                                <label class="form-check-label">
+                                  <input type="radio" value="pdf" class="form-check-input" name="output_format">PDF
+                                </label>
+                              </div>
+                            </div>
+
+
+
                           </div>
                           <div>
                           <button type="submit" class="btn btn-success">Download Report</button>
@@ -233,6 +284,22 @@
                                <label for="to_date">Date (To) <span class="error">*</span></label>
                                <input type="text"  readonly="readonly" autocomplete="off" class="form-control to_date" id="upcoming_schedule_maintenance_to_date" name="to_date">
                             </div>
+
+                            <div class="mb-3">
+                              <label >Download As &nbsp;&nbsp;</label>
+                              <div class="form-check-inline">
+                                <label class="form-check-label">
+                                  <input type="radio" value="excel" checked class="form-check-input" name="output_format">Excel
+                                </label>
+                              </div>
+                              <div class="form-check-inline">
+                                <label class="form-check-label">
+                                  <input type="radio" value="pdf" class="form-check-input" name="output_format">PDF
+                                </label>
+                              </div>
+                            </div>
+
+
                           </div>
                           <div>
                           <button type="submit" class="btn btn-success">Download Report</button>
@@ -264,6 +331,21 @@
                                <label for="to_date">Date (To) <span class="error">*</span></label>
                                <input type="text"  readonly="readonly" autocomplete="off" class="form-control to_date" id="work_order_to_date" name="to_date">
                             </div>
+                            <div class="mb-3">
+                              <label >Download As &nbsp;&nbsp;</label>
+                              <div class="form-check-inline">
+                                <label class="form-check-label">
+                                  <input type="radio" value="excel" checked class="form-check-input" name="output_format">Excel
+                                </label>
+                              </div>
+                              <div class="form-check-inline">
+                                <label class="form-check-label">
+                                  <input type="radio" value="pdf" class="form-check-input" name="output_format">PDF
+                                </label>
+                              </div>
+                            </div>
+
+
                           </div>
                           <div>
                           <button type="submit" class="btn btn-success">Download Report</button>
@@ -288,6 +370,20 @@
                                <label for="to_date">Date (To) <span class="error">*</span></label>
                                <input type="text"  readonly="readonly" autocomplete="off" class="form-control to_date" id="work_order_completed_per_month_to_date" name="to_date">
                             </div>
+                            <div class="mb-3">
+                              <label >Download As &nbsp;&nbsp;</label>
+                              <div class="form-check-inline">
+                                <label class="form-check-label">
+                                  <input type="radio" value="excel" checked class="form-check-input" name="output_format">Excel
+                                </label>
+                              </div>
+                              <div class="form-check-inline">
+                                <label class="form-check-label">
+                                  <input type="radio" value="pdf" class="form-check-input" name="output_format">PDF
+                                </label>
+                              </div>
+                            </div>
+
                           </div>
                           <div>
                           <button type="submit" class="btn btn-success">Download Report</button>
@@ -312,6 +408,19 @@
                                <label for="to_date">Date (To) <span class="error">*</span></label>
                                <input type="text"  readonly="readonly" autocomplete="off" class="form-control to_date" id="work_order_requested_vs_completed_to_date" name="to_date">
                             </div>
+                            <div class="mb-3">
+                              <label >Download As &nbsp;&nbsp;</label>
+                              <div class="form-check-inline">
+                                <label class="form-check-label">
+                                  <input type="radio" value="excel" checked class="form-check-input" name="output_format">Excel
+                                </label>
+                              </div>
+                              <div class="form-check-inline">
+                                <label class="form-check-label">
+                                  <input type="radio" value="pdf" class="form-check-input" name="output_format">PDF
+                                </label>
+                              </div>
+                            </div>
                           </div>
                           <div>
                           <button type="submit" class="btn btn-success">Download Report</button>
@@ -333,6 +442,21 @@
                                <label for="to_date">Date (To) <span class="error">*</span></label>
                                <input type="text"  readonly="readonly" autocomplete="off" class="form-control to_date" id="contract_status_to_date" name="to_date">
                             </div>
+                            <div class="mb-3">
+                              <label >Download As &nbsp;&nbsp;</label>
+                              <div class="form-check-inline">
+                                <label class="form-check-label">
+                                  <input type="radio" value="excel" checked class="form-check-input" name="output_format">Excel
+                                </label>
+                              </div>
+                              <div class="form-check-inline">
+                                <label class="form-check-label">
+                                  <input type="radio" value="pdf" class="form-check-input" name="output_format">PDF
+                                </label>
+                              </div>
+                            </div>
+
+                            
                           </div>
                           <div>
                           <button type="submit" class="btn btn-success">Download Report</button>
@@ -342,7 +466,39 @@
         
 
                         <div class="tab-pane fade" id="financial" role="tabpanel" aria-labelledby="v-pills-financial-tab">
-                        Financial Report ( Coming Soon.......)
+                          <form method="post" action="{{route('admin.reports.payment_report')}}" id="payment_report_form">
+                          @csrf
+                          <div>
+                            <h4><u>Financial Report</u></h4>
+             
+                            <div class=" form-group required">
+                             <label for="from_date">Date (From) <span class="error">*</span></label>
+                             <input type="text" readonly="readonly" autocomplete="off" id="payment_report_from_date" class="form-control from_date" name="from_date">
+                            </div>
+                
+                            <div class="form-group required">
+                               <label for="to_date">Date (To) <span class="error">*</span></label>
+                               <input type="text"  readonly="readonly" autocomplete="off" class="form-control to_date" id="payment_report_to_date" name="to_date">
+                            </div>
+                            <div class="mb-3">
+                              <label >Download As &nbsp;&nbsp;</label>
+                              <div class="form-check-inline">
+                                <label class="form-check-label">
+                                  <input type="radio" value="excel" checked class="form-check-input" name="output_format">Excel
+                                </label>
+                              </div>
+                              <div class="form-check-inline">
+                                <label class="form-check-label">
+                                  <input type="radio" value="pdf" class="form-check-input" name="output_format">PDF
+                                </label>
+                              </div>
+                            </div>
+                            
+                          </div>
+                          <div>
+                          <button type="submit" class="btn btn-success">Download Report</button>
+                          </div>
+                          </form>
                         </div>
                       </div>
                     </div>

@@ -180,7 +180,7 @@ class   AuthController extends Controller
                         if ($user) // if this is a valid email
                         {
       
-                            $encryptUserId = encrypt($user->id, Config::get('constant.ENC_KEY')); // Encrypted user id using helper
+                            $encryptUserId = encrypt($user->id, Config::get('constant.enc_key')); // Encrypted user id using helper
                             $recoveryLink = route('admin.reset.password' ,['encryptCode'=>$encryptUserId ]); //making recovery link
 
                             // setting mail configuration
@@ -260,7 +260,7 @@ class   AuthController extends Controller
                         return Redirect::Route('admin.reset.password', ['encryptCode' => $encryptString])->withErrors($Validator);
                     } else {
 
-                        $userId = decrypt($encryptString, Config::get('constant.ENC_KEY')); // get user-id After Decrypt with salt key.
+                        $userId = decrypt($encryptString, Config::get('constant.enc_key')); // get user-id After Decrypt with salt key.
 
                         $user = User::findOrFail($userId);
 

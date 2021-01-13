@@ -9,6 +9,8 @@ use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
 use App\Models\{Quotation,Status,Service,PropertyType,QuotationService,State};
 use App\Http\Requests\Admin\SubmitQuotationRequest;
+use App\Mail\Quotation\StatusUpdateMailToCustomer;
+use Mail;
 class QuotationController extends Controller
 {
     private $view_path='admin.quotations';
@@ -117,10 +119,31 @@ class QuotationController extends Controller
 
     public function update_status($quotation_id,Request $request){
         $quotation=Quotation::findOrFail($quotation_id);
+        $previous_status_id=$quotation->status_id;
         $quotation->update([
             'status_id'=>$request->status,
             'updated_by'=>auth()->guard('admin')->id()
         ]);
+
+
+
+        if($quotation->email && ($previous_status_id!=$request->status)){
+
+            $data=[
+                'customer_name'=>$quotation->first_name.' '.$quotation->last_name,
+                'status'=>$quotation->status->status_name,
+                'quotation_id'=>$quotation->id,
+                'from_name'=>env('MAIL_FROM_NAME','SMMS'),
+                'from_email'=>env('MAIL_FROM_ADDRESS'),
+                'subject'=>'Quotation Status Updated'
+            ];
+
+            Mail::to(strtolower(trim($quotation->email, ' ')))->send(new StatusUpdateMailToCustomer($data)); 
+        }
+
+
+
+
         return redirect()->back()->with('success','Quotation status successfully updated.');
     }
 }

@@ -4,8 +4,8 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\{Contract,Property,WorkOrderLists,User,Service,TaskLists,TaskDetails,ContractServiceDate};
-use App\Exports\Reports\Admin\{CompletedMaintenanceSchedule,WorkOrder,CompletedWorkOrderPerMonth,WorkOrderRequestedVsCompleted,UpcomingScheduleMaintenance,UpcomingSchedulePerWeek,ContractStatus,MaintenanceBacklog};
+use App\Models\{Contract,Property,WorkOrderLists,User,Service,TaskLists,TaskDetails,ContractServiceDate,Payment};
+use App\Exports\Reports\Admin\{CompletedMaintenanceSchedule,WorkOrder,CompletedWorkOrderPerMonth,WorkOrderRequestedVsCompleted,UpcomingScheduleMaintenance,UpcomingSchedulePerWeek,ContractStatus,MaintenanceBacklog,PaymentReport};
 
 use App\Exports\Reports\Customer\{WorkOrderReport,MaintenanceScheduleReport};
 use App\Exports\Reports\Service_provider\{WorkOrderTaskReport, WorkOrderTaskDetailsReport};
@@ -13,6 +13,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 use DB;
 use Carbon\CarbonPeriod;
+use PDF;
+
 class ReportController extends Controller
 {
     public $data = array();            
@@ -101,7 +103,24 @@ class ReportController extends Controller
         })
         ->get();
 
-        return Excel::download(new CompletedMaintenanceSchedule($service_dates),'completed-schedule-report.csv', \Maatwebsite\Excel\Excel::CSV);
+        if($request->output_format=='excel'){
+            return Excel::download(new CompletedMaintenanceSchedule($service_dates),'completed-schedule-report.xlsx');
+        }elseif ($request->output_format=='pdf') {
+            
+            $pdf = PDF::loadView('admin.report.pdf.admin.completed_maintenance_schedule',[
+                'service_dates'=>$service_dates
+            ]);
+            
+            $file_name='completed-schedule-report.pdf';
+            ob_end_clean(); //without ob_end_clean I got error before loade PDF after download. Got this solution from github
+            return $pdf->download($file_name);
+
+        }else{
+            return redirect()->back()->with('error','No output format selected.');
+        }
+
+
+        
     }
 
 
@@ -162,10 +181,29 @@ class ReportController extends Controller
         ->where(function($q)use($request,$from_date,$to_date){
             $q->where('date','>=',$from_date)->where('date','<=',$to_date);
         })
-
         ->get();
 
-        return Excel::download(new MaintenanceBacklog($service_dates),'maintenance-backlog-report.csv', \Maatwebsite\Excel\Excel::CSV);
+
+        if($request->output_format=='excel'){
+
+            return Excel::download(new MaintenanceBacklog($service_dates),'maintenance-backlog-report.xlsx');
+
+        }elseif ($request->output_format=='pdf') {
+
+            $pdf = PDF::loadView('admin.report.pdf.admin.maintenance_backlog',[
+                'service_dates'=>$service_dates
+            ]);
+            
+            $file_name='maintenance-backlog-report.pdf';
+            ob_end_clean(); //without ob_end_clean I got error before loade PDF after download. Got this solution from github
+            return $pdf->download($file_name);
+            
+        }else{
+            return redirect()->back()->with('error','No output format selected.');
+        }
+
+
+        
     }
 
     public function upcoming_weekly_maintenance_report(Request $request){
@@ -273,9 +311,26 @@ class ReportController extends Controller
 
             $start_date=Carbon::parse($start_date)->addWeek(1)->format('Y-m-d');
         }
-        //dd($upcoming_weekly_services);
+        
+        if($request->output_format=='excel'){
 
-        return Excel::download(new UpcomingSchedulePerWeek($upcoming_weekly_services),'upcoming-weekly-schedule-maintenance-report.csv', \Maatwebsite\Excel\Excel::CSV);
+            return Excel::download(new UpcomingSchedulePerWeek($upcoming_weekly_services),'upcoming-weekly-schedule-maintenance-report.xlsx');
+
+        }elseif ($request->output_format=='pdf') {
+            //dd($upcoming_weekly_services);
+            $pdf = PDF::loadView('admin.report.pdf.admin.upcoming_weekly_schedule_maintenance',[
+                'upcoming_weekly_services'=>$upcoming_weekly_services
+            ]);
+            
+            $file_name='upcoming-weekly-schedule-maintenance-report.pdf';
+            ob_end_clean(); //without ob_end_clean I got error before loade PDF after download. Got this solution from github
+            return $pdf->download($file_name);
+
+            
+        }else{
+            return redirect()->back()->with('error','No output format selected.');
+        }
+        
     }
 
 
@@ -315,7 +370,26 @@ class ReportController extends Controller
             $q->where('date','>=',$from_date)->where('date','<=',$to_date);
         })->get();
 
-        return Excel::download(new UpcomingScheduleMaintenance($upcoming_service_dates),'upcoming-schedule-maintenance-report.csv', \Maatwebsite\Excel\Excel::CSV);
+
+        if($request->output_format=='excel'){
+
+            return Excel::download(new UpcomingScheduleMaintenance($upcoming_service_dates),'upcoming-schedule-maintenance-report.xlsx');
+
+        }elseif ($request->output_format=='pdf') {
+            $pdf = PDF::loadView('admin.report.pdf.admin.upcoming_schedule_maintenance',[
+                'upcoming_service_dates'=>$upcoming_service_dates
+            ]);
+            
+            $file_name='upcoming-schedule-maintenance-report.pdf';
+            ob_end_clean(); //without ob_end_clean I got error before loade PDF after download. Got this solution from github
+            return $pdf->download($file_name);
+            
+        }else{
+            return redirect()->back()->with('error','No output format selected.');
+        }
+
+
+        
     }
     public function work_order_report(Request $request){
 
@@ -358,9 +432,27 @@ class ReportController extends Controller
         })
         ->orderBy('id','desc')->get();
 
-        $file_name=ucfirst($request->work_order_status).'-work-order-report-from-'.$from_date.'-to-'.$to_date.'.csv';
+        $file_name=ucfirst($request->work_order_status).'-work-order-report-from-'.$from_date.'-to-'.$to_date.'.xlsx';
+        
 
-        return Excel::download(new WorkOrder($work_orders),$file_name, \Maatwebsite\Excel\Excel::CSV);
+        if($request->output_format=='excel'){
+
+            return Excel::download(new WorkOrder($work_orders),$file_name);
+
+        }elseif ($request->output_format=='pdf') {
+            $pdf = PDF::loadView('admin.report.pdf.admin.work_order',[
+                'work_orders'=>$work_orders
+            ]);
+            
+            $file_name=ucfirst($request->work_order_status).'-work-order-report-from-'.$from_date.'-to-'.$to_date.'.pdf';
+            ob_end_clean(); //without ob_end_clean I got error before loade PDF after download. Got this solution from github
+            return $pdf->download($file_name);
+            
+        }else{
+            return redirect()->back()->with('error','No output format selected.');
+        }
+
+        
     }
     public function work_order_completed_per_month_report(Request $request){
         
@@ -435,8 +527,30 @@ class ReportController extends Controller
                 'work_orders'=>$work_order_list
             ];
         }
+
+
+        if($request->output_format=='excel'){
+
+            return Excel::download(new CompletedWorkOrderPerMonth($data),'completed-work-order-per-month-report.xlsx');
+
+        }elseif ($request->output_format=='pdf') {
+            
+
+            $pdf = PDF::loadView('admin.report.pdf.admin.completed_wo_per_month',[
+                'data'=>$data
+            ]);
+            
+            $file_name='completed-work-order-per-month-report.pdf';
+            ob_end_clean(); //without ob_end_clean I got error before loade PDF after download. Got this solution from github
+            return $pdf->download($file_name);
+            
+        }else{
+            return redirect()->back()->with('error','No output format selected.');
+        }
+
+
         
-        return Excel::download(new CompletedWorkOrderPerMonth($data),'completed-work-order-per-month-report.csv', \Maatwebsite\Excel\Excel::CSV);
+        
     }
     public function work_order_requested_vs_completed_report(Request $request){
 
@@ -485,7 +599,27 @@ class ReportController extends Controller
             }
         }
 
-        return Excel::download(new WorkOrderRequestedVsCompleted($data),'work_order_requested_vs_completed_report.csv', \Maatwebsite\Excel\Excel::CSV);
+        if($request->output_format=='excel'){
+
+            return Excel::download(new WorkOrderRequestedVsCompleted($data),'work-order-requested-vs-completed-report.xlsx');
+
+        }elseif ($request->output_format=='pdf') {
+         
+            $pdf = PDF::loadView('admin.report.pdf.admin.wo_requested_vs_completed',[
+                'data'=>$data
+            ]);
+            
+            $file_name='work-order-requested-vs-completed-report.pdf';
+            ob_end_clean(); //without ob_end_clean I got error before loade PDF after download. Got this solution from github
+            return $pdf->download($file_name);
+
+
+            
+        }else{
+            return redirect()->back()->with('error','No output format selected.');
+        }
+
+        
     }
     public function contract_status_report(Request $request){
         
@@ -522,11 +656,59 @@ class ReportController extends Controller
         ->get();
 
 
-        return Excel::download(new ContractStatus($contracts),'contract-report.csv', \Maatwebsite\Excel\Excel::CSV,[
-            'Content-Type' => 'text/csv',
-        ]);
-    }
 
+
+        if($request->output_format=='excel'){
+
+            return Excel::download(new ContractStatus($contracts),'contract-report.xlsx');
+
+        }elseif ($request->output_format=='pdf') {
+            $pdf = PDF::loadView('admin.report.pdf.admin.contract_status',[
+                'contracts'=>$contracts
+            ]);
+            
+            $file_name='contract-report.pdf';
+            ob_end_clean(); //without ob_end_clean I got error before loade PDF after download. Got this solution from github
+            return $pdf->download($file_name); 
+            
+        }else{
+            return redirect()->back()->with('error','No output format selected.');
+        }
+
+
+
+
+
+    }
+    public function payment_report(Request $request){
+        
+        $from_date=Carbon::createFromFormat('d/m/Y', $request->from_date)->format('Y-m-d');
+        $to_date=Carbon::createFromFormat('d/m/Y', $request->to_date)->format('Y-m-d');
+
+
+        $payments=Payment::with(['contract'])
+        ->where(function($q)use($request,$from_date,$to_date){
+            $q->whereDate('payment_on','>=',$from_date)->whereDate('payment_on','<=',$to_date);
+        })
+        ->get();
+
+        if($request->output_format=='excel'){
+
+            return Excel::download(new PaymentReport($payments),'financial-report.xlsx');
+
+        }elseif ($request->output_format=='pdf') {
+            $pdf = PDF::loadView('admin.report.pdf.admin.payment_report',[
+                'payments'=>$payments
+            ]);
+            
+            $file_name='financial-report.pdf';
+            ob_end_clean(); //without ob_end_clean I got error before loade PDF after download. Got this solution from github
+            return $pdf->download($file_name); 
+            
+        }else{
+            return redirect()->back()->with('error','No output format selected.');
+        }
+    }
     public function admin_report($request,$current_user){
         $this->data['contracts']=Contract::whereHas('property')
         ->whereHas('property.owner_details')

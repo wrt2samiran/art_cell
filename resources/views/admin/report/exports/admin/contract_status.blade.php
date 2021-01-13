@@ -1,24 +1,38 @@
 <table>
-    <thead>
-    <tr>
 
-        <th>Contract ID</th>
-        <th>Contract Start Date</th>
-        <th>Contract End Date</th>
-        <th>Completed WO</th>
-        <th>Pending WO</th>
-        <th>Property</th>
-        <th>Property Owner</th>
-        <th>Service Provider</th>
-    </tr>
-    </thead>
     <tbody>
+       <tr>
+        <td colspan="8" align="center" style="background-color: #97e6f7;font-size: 18px">
+        <div>Contract Status Report<div>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="8" rowspan="2" align="center">
+            <div>Report On : {{Carbon::now()->format('d/m/Y h:i A')}}</div><br>
+            <div>From Date: {{request()->from_date}} - To Date: {{request()->to_date}}</div>
+        </td>
+       </tr>
+       <tr>
+           <td></td>
+       </tr>
+
+        <tr>
+            <td>Contract ID</td>
+            <td>Contract Start Date</td>
+            <td>Contract End Date</td>
+            <td>Completed WO</td>
+            <td>Pending WO</td>
+            <td>Property</td>
+            <td>Property Owner</td>
+            <td>Service Provider</td>
+        </tr>
+
     	@forelse($contracts as $contract)
     	<tr>
 
     		<td>{{$contract->id}}</td>
-    		<td>{{$contract->start_date}}</td>
-    		<td>{{$contract->end_date}}</td>
+    		<td>{{Carbon::parse($contract->start_date)->format('d/m/Y')}}</td>
+    		<td>{{Carbon::parse($contract->end_date)->format('d/m/Y')}}</td>
             <td>{{$contract->completed_work_orders}}</td>
             <td>{{$contract->pending_work_orders}}</td>
             <td>{{$contract->property->property_name}}</td>
@@ -27,15 +41,7 @@
     	</tr>
     	@empty
         <tr>
-            <td>No Contracts</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td colspan="8">No Contracts</td>
         </tr>
     	@endforelse
     </tbody>
