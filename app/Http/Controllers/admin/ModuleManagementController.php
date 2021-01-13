@@ -50,7 +50,7 @@ class ModuleManagementController extends Controller
         $data = Module::where('is_deleted','N')->get();
         $finalResponse= Datatables::of($data)
             ->addColumn('status', function ($model) {
-                $modulestatuslink= route('admin.module-management.reset-module-status',  encrypt($model->id, Config::get('constant.ENC_KEY')));
+                $modulestatuslink= route('admin.module-management.reset-module-status',  encrypt($model->id, Config::get('constant.enc_key')));
                 
                     if($model->status == 'A'){
                         $statusHtml= '<button type="button" class="btn btn-block btn-success btn-xs changeStatus" data-redirect-url='.$modulestatuslink.' id="status'.$model->id.'">Active</button>';
@@ -62,9 +62,9 @@ class ModuleManagementController extends Controller
             })
             ->addColumn('action', function ($model) {
                
-                    $link1 = route('admin.module-management.edit',  encrypt($model->id, Config::get('constant.ENC_KEY')));
+                    $link1 = route('admin.module-management.edit',  encrypt($model->id, Config::get('constant.enc_key')));
                 
-                    $link2= route('admin.module-management.module-delete',  encrypt($model->id, Config::get('constant.ENC_KEY')));
+                    $link2= route('admin.module-management.module-delete',  encrypt($model->id, Config::get('constant.enc_key')));
                 
                 
                 $actions='<div class="btn-group btn-group-sm ">';
@@ -129,7 +129,7 @@ class ModuleManagementController extends Controller
         $finalResponse= Datatables::of($data)
 
             ->addColumn('status', function ($model) {
-                $functionstatuslink= route('admin.module-management.reset-function-status',  encrypt($model->id, Config::get('constant.ENC_KEY')));
+                $functionstatuslink= route('admin.module-management.reset-function-status',  encrypt($model->id, Config::get('constant.enc_key')));
                 
                     if($model->status == 'A'){
                         $fstatusHtml= '<button type="button" class="btn btn-block btn-success btn-xs fchangeStatus" data-redirect-url='.$functionstatuslink.' id="status'.$model->id.'">Active</button>';
@@ -141,8 +141,8 @@ class ModuleManagementController extends Controller
                    return  $fstatusHtml;
             })
             ->addColumn('action', function ($model) {
-                $link3 = route('admin.module-management.functionality-edit',  encrypt($model->id, Config::get('constant.ENC_KEY')));
-                $link4 = route('admin.module-management.function-delete',  encrypt($model->id, Config::get('constant.ENC_KEY')));
+                $link3 = route('admin.module-management.functionality-edit',  encrypt($model->id, Config::get('constant.enc_key')));
+                $link4 = route('admin.module-management.function-delete',  encrypt($model->id, Config::get('constant.enc_key')));
 
                 $factions='<div class="btn-group btn-group-sm ">';
                 
@@ -179,7 +179,7 @@ class ModuleManagementController extends Controller
     public function functionalityEdit(Request $request, $encryptString){
         $this->data['page_title']='Functionality Edit';
         $this->data['panel_title']='Functionality Edit';
-        $functionId = decrypt($encryptString, Config::get('constant.ENC_KEY')); // get user-id After Decrypt with salt key.
+        $functionId = decrypt($encryptString, Config::get('constant.enc_key')); // get user-id After Decrypt with salt key.
         $details = ModuleFunctionality::with(['moduleData'])->findOrFail($functionId);
         $this->data['allModule']= Module::where('status','=','A')->where('is_deleted','=','N')->get();
         try
@@ -261,7 +261,7 @@ class ModuleManagementController extends Controller
     public function moduleEdit(Request $request, $encryptString) {
         $this->data['page_title']='Module Edit';
         $this->data['panel_title']='Module Edit';
-        $userId = decrypt($encryptString, Config::get('constant.ENC_KEY')); // get user-id After Decrypt with salt key.
+        $userId = decrypt($encryptString, Config::get('constant.enc_key')); // get user-id After Decrypt with salt key.
         $details = Module::findOrFail($userId);
         try
         {
@@ -341,7 +341,7 @@ class ModuleManagementController extends Controller
     public function moduleDelete(Request $request,$encryptString)
     {
 
-        $moduleId = decrypt($encryptString, Config::get('constant.ENC_KEY')); // get user-id After Decrypt with salt key.
+        $moduleId = decrypt($encryptString, Config::get('constant.enc_key')); // get user-id After Decrypt with salt key.
         $details = Module::findOrFail($moduleId);
 
 
@@ -370,7 +370,7 @@ class ModuleManagementController extends Controller
     public function functionaDelete(Request $request,$encryptString)
     {
 
-        $functionmoduleId = decrypt($encryptString, Config::get('constant.ENC_KEY')); // get user-id After Decrypt with salt key.
+        $functionmoduleId = decrypt($encryptString, Config::get('constant.enc_key')); // get user-id After Decrypt with salt key.
         $details = ModuleFunctionality::findOrFail($functionmoduleId);
 
 
@@ -542,7 +542,7 @@ class ModuleManagementController extends Controller
             $response['has_error']=1;
             $response['msg']="Something went wrong.Please try again later.";
     
-            $userId = decrypt($request->encryptCode, Config::get('constant.ENC_KEY')); // get user-id After Decrypt with salt key.
+            $userId = decrypt($request->encryptCode, Config::get('constant.enc_key')); // get user-id After Decrypt with salt key.
     
             $userObj = Module::findOrFail($userId);
             $updateStatus = $userObj->status == 'A' ? 'I' : 'A'; 
@@ -573,7 +573,7 @@ class ModuleManagementController extends Controller
                 $response['has_error']=1;
                 $response['msg']="Something went wrong.Please try again later.";
         
-                $userId = decrypt($request->encryptCode, Config::get('constant.ENC_KEY')); // get user-id After Decrypt with salt key.
+                $userId = decrypt($request->encryptCode, Config::get('constant.enc_key')); // get user-id After Decrypt with salt key.
         
                 $userObj = ModuleFunctionality::findOrFail($userId);
                 $updateStatus = $userObj->status == 'A' ? 'I' : 'A'; 

@@ -133,45 +133,12 @@ $("#schedule_compliance_report_form").validate({
         $(element).removeClass('is-invalid');    
     },
     submitHandler: function(form) {
+
         $.LoadingOverlay("show");
+        form.submit();
+        $.LoadingOverlay("hide");
+        form.reset();
 
-        var formData = new FormData(form);
-        $.ajax({
-            type: "POST",
-            data: formData,
-            url: form.action,
-            cache: false,
-            contentType: false,
-            processData: false,
-            responseType: 'blob',
-            success: function(response)
-            {
-                const url = window.URL.createObjectURL(new Blob([response]));
-                const link = document.createElement('a');
-                link.href = url;
-
-                var from_date=form.from_date.value.replaceAll('/','-');
-                var to_date=form.to_date.value.replaceAll('/','-');
-
-                var file_name='completed-schedule-maintenance-from-'+from_date+'-to-'+to_date+'.csv';
-
-                link.setAttribute('download',file_name);
-                document.body.appendChild(link);
-                link.click();
-                $.LoadingOverlay("hide");
-                form.reset(); 
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-               $.LoadingOverlay("hide");
-               var response=jqXHR.responseJSON;
-               var status=jqXHR.status;
-               if(status=='404'){
-                toastr.error('Invalid URL', 'Error', {timeOut: 5000});
-               }else{
-                 toastr.error('Internal server error.', 'Error', {timeOut: 5000});
-               }
-           }
-        });
     }
 });
 
@@ -236,44 +203,9 @@ $("#maintenance_backlog_report_form").validate({
     },
     submitHandler: function(form) {
         $.LoadingOverlay("show");
-
-        var formData = new FormData(form);
-        $.ajax({
-            type: "POST",
-            data: formData,
-            url: form.action,
-            cache: false,
-            contentType: false,
-            processData: false,
-            responseType: 'blob',
-            success: function(response)
-            {
-                const url = window.URL.createObjectURL(new Blob([response]));
-                const link = document.createElement('a');
-                link.href = url;
-
-                var from_date=form.from_date.value.replaceAll('/','-');
-                var to_date=form.to_date.value.replaceAll('/','-');
-
-                var file_name='maintenance-backlog-report-from-'+from_date+'-to-'+to_date+'.csv';
-
-                link.setAttribute('download',file_name);
-                document.body.appendChild(link);
-                link.click();
-                $.LoadingOverlay("hide");
-                form.reset(); 
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-               $.LoadingOverlay("hide");
-               var response=jqXHR.responseJSON;
-               var status=jqXHR.status;
-               if(status=='404'){
-                toastr.error('Invalid URL', 'Error', {timeOut: 5000});
-               }else{
-                 toastr.error('Internal server error.', 'Error', {timeOut: 5000});
-               }
-           }
-        });
+        form.submit();
+        $.LoadingOverlay("hide");
+        form.reset();
     }
 });
 
@@ -325,45 +257,9 @@ $("#work_order_report_form").validate({
     },
     submitHandler: function(form) {
         $.LoadingOverlay("show");
-
-        var formData = new FormData(form);
-        $.ajax({
-            type: "POST",
-            data: formData,
-            url: form.action,
-            cache: false,
-            contentType: false,
-            processData: false,
-            responseType: 'blob',
-            success: function(response)
-            {
-                const url = window.URL.createObjectURL(new Blob([response]));
-                const link = document.createElement('a');
-                link.href = url;
-
-                var from_date=form.from_date.value.replaceAll('/','-');
-                var to_date=form.to_date.value.replaceAll('/','-');
-
-                var file_name=form.work_order_status.value+'-work-orders-from-'+from_date+'-to-'+to_date+'.csv';
-
-                link.setAttribute('download',file_name);
-                document.body.appendChild(link);
-                link.click();
-                $.LoadingOverlay("hide");
-                form.reset(); 
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-               $.LoadingOverlay("hide");
-               var response=jqXHR.responseJSON;
-               var status=jqXHR.status;
-               if(status=='404'){
-                toastr.error('Invalid URL', 'Error', {timeOut: 5000});
-               }else{
-                 toastr.error('Internal server error.', 'Error', {timeOut: 5000});
-               }
-           }
-        });
-        //form.submit();
+        form.submit();
+        $.LoadingOverlay("hide");
+        form.reset();
     }
 });
 
@@ -412,47 +308,9 @@ $("#work_order_completed_per_month_report_form").validate({
     },
     submitHandler: function(form) {
         $.LoadingOverlay("show");
-
-        var formData = new FormData(form);
-        $.ajax({
-            type: "POST",
-            data: formData,
-            url: form.action,
-            cache: false,
-            contentType: false,
-            processData: false,
-            responseType: 'blob',
-            success: function(response)
-            {
-
-                const url = window.URL.createObjectURL(new Blob([response]));
-                const link = document.createElement('a');
-                link.href = url;
-
-                var from_date=form.from_date.value.replaceAll('/','-');
-                var to_date=form.to_date.value.replaceAll('/','-');
-
-                var file_name='completd-work-orders-per-month-from-'+from_date+'-to-'+to_date+'.csv';
-
-                link.setAttribute('download',file_name);
-                document.body.appendChild(link);
-                link.click();
-                $.LoadingOverlay("hide"); 
-
-                form.reset();
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-               $.LoadingOverlay("hide");
-               var response=jqXHR.responseJSON;
-               var status=jqXHR.status;
-               if(status=='404'){
-                toastr.error('Invalid URL', 'Error', {timeOut: 5000});
-               }else{
-                 toastr.error('Internal server error.', 'Error', {timeOut: 5000});
-               }
-           }
-        });
-        //form.submit();
+        form.submit();
+        $.LoadingOverlay("hide");
+        form.reset();
     }
 });
 
@@ -499,46 +357,9 @@ $("#work_order_requested_vs_completed_report_form").validate({
     },
     submitHandler: function(form) {
         $.LoadingOverlay("show");
-
-        var formData = new FormData(form);
-        $.ajax({
-            type: "POST",
-            data: formData,
-            url: form.action,
-            cache: false,
-            contentType: false,
-            processData: false,
-            responseType: 'blob',
-            success: function(response)
-            {
-                
-                const url = window.URL.createObjectURL(new Blob([response]));
-                const link = document.createElement('a');
-                link.href = url;
-
-                var from_date=form.from_date.value.replaceAll('/','-');
-                var to_date=form.to_date.value.replaceAll('/','-');
-
-                var file_name='work-orders-requested-vs-completd-from-'+from_date+'-to-'+to_date+'.csv';
-
-                link.setAttribute('download',file_name);
-                document.body.appendChild(link);
-                link.click();
-                $.LoadingOverlay("hide"); 
-                form.reset();
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-               $.LoadingOverlay("hide");
-               var response=jqXHR.responseJSON;
-               var status=jqXHR.status;
-               if(status=='404'){
-                toastr.error('Invalid URL', 'Error', {timeOut: 5000});
-               }else{
-                 toastr.error('Internal server error.', 'Error', {timeOut: 5000});
-               }
-           }
-        });
-        //form.submit();
+        form.submit();
+        $.LoadingOverlay("hide");
+        form.reset();
     }
 });
 
@@ -587,46 +408,9 @@ $("#upcoming_schedule_maintenance_report_form").validate({
     },
     submitHandler: function(form) {
         $.LoadingOverlay("show");
-
-        var formData = new FormData(form);
-        $.ajax({
-            type: "POST",
-            data: formData,
-            url: form.action,
-            cache: false,
-            contentType: false,
-            processData: false,
-            responseType: 'blob',
-            success: function(response)
-            {
-                
-                const url = window.URL.createObjectURL(new Blob([response]));
-                const link = document.createElement('a');
-                link.href = url;
-
-                var from_date=form.from_date.value.replaceAll('/','-');
-                var to_date=form.to_date.value.replaceAll('/','-');
-
-                var file_name='upcoming-schedule-maintenance-from-'+from_date+'-to-'+to_date+'.csv';
-
-                link.setAttribute('download',file_name);
-                document.body.appendChild(link);
-                link.click();
-                $.LoadingOverlay("hide"); 
-                form.reset();
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-               $.LoadingOverlay("hide");
-               var response=jqXHR.responseJSON;
-               var status=jqXHR.status;
-               if(status=='404'){
-                toastr.error('Invalid URL', 'Error', {timeOut: 5000});
-               }else{
-                 toastr.error('Internal server error.', 'Error', {timeOut: 5000});
-               }
-           }
-        });
-        //form.submit();
+        form.submit();
+        $.LoadingOverlay("hide");
+        form.reset();
     }
 });
 
@@ -674,46 +458,9 @@ $("#upcoming_weekly_maintenance_report_form").validate({
     },
     submitHandler: function(form) {
         $.LoadingOverlay("show");
-
-        var formData = new FormData(form);
-        $.ajax({
-            type: "POST",
-            data: formData,
-            url: form.action,
-            cache: false,
-            contentType: false,
-            processData: false,
-            responseType: 'blob',
-            success: function(response)
-            {
-                
-                const url = window.URL.createObjectURL(new Blob([response]));
-                const link = document.createElement('a');
-                link.href = url;
-
-                var from_date=form.from_date.value.replaceAll('/','-');
-                var to_date=form.to_date.value.replaceAll('/','-');
-
-                var file_name='upcoming-weekly-schedule-maintenance-from-'+from_date+'-to-'+to_date+'.csv';
-
-                link.setAttribute('download',file_name);
-                document.body.appendChild(link);
-                link.click();
-                $.LoadingOverlay("hide"); 
-                form.reset();
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-               $.LoadingOverlay("hide");
-               var response=jqXHR.responseJSON;
-               var status=jqXHR.status;
-               if(status=='404'){
-                toastr.error('Invalid URL', 'Error', {timeOut: 5000});
-               }else{
-                 toastr.error('Internal server error.', 'Error', {timeOut: 5000});
-               }
-           }
-        });
-        //form.submit();
+        form.submit();
+        $.LoadingOverlay("hide");
+        form.reset();
     }
 });
 
@@ -755,45 +502,50 @@ $("#contract_status_report_form").validate({
     },
     submitHandler: function(form) {
         $.LoadingOverlay("show");
+        form.submit();
+        $.LoadingOverlay("hide");
+        form.reset();
+    }
+});
 
-        var formData = new FormData(form);
-        $.ajax({
-            type: "POST",
-            data: formData,
-            url: form.action,
-            cache: false,
-            contentType: false,
-            processData: false,
-            responseType: 'blob',
-            success: function(response)
-            {
-                
-                const url = window.URL.createObjectURL(new Blob([response]));
-                const link = document.createElement('a');
-                link.href = url;
-
-                var from_date=form.from_date.value.replaceAll('/','-');
-                var to_date=form.to_date.value.replaceAll('/','-');
-
-                var file_name='contract-report-from-'+from_date+'-to-'+to_date+'.csv';
-
-                link.setAttribute('download',file_name);
-                document.body.appendChild(link);
-                link.click();
-                $.LoadingOverlay("hide"); 
-                form.reset();
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-               $.LoadingOverlay("hide");
-               var response=jqXHR.responseJSON;
-               var status=jqXHR.status;
-               if(status=='404'){
-                toastr.error('Invalid URL', 'Error', {timeOut: 5000});
-               }else{
-                 toastr.error('Internal server error.', 'Error', {timeOut: 5000});
-               }
-           }
-        });
-        //form.submit();
+$("#payment_report_form").validate({
+    ignore:[],
+    rules: {
+        from_date:{
+            required: true, 
+            maxlength: 10,
+        },
+        to_date:{
+            required: true,
+            maxlength: 10, 
+            toDateShouldGreatherFromDate:function(){
+                return $('#payment_report_from_date').val();
+            }
+        },
+    },
+    messages: {
+        from_date:{
+            required:  "Enter from date",
+        },
+        to_date:{
+            required:  "Enter to date",
+            toDateShouldGreatherFromDate:'To date should be greater than from date'
+        },
+    },
+    errorPlacement: function (error, element) {
+        error.addClass('invalid-feedback');
+        error.insertAfter(element);
+    },
+    highlight: function (element, errorClass, validClass) {
+        $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+        $(element).removeClass('is-invalid');    
+    },
+    submitHandler: function(form) {
+        $.LoadingOverlay("show");
+        form.submit();
+        $.LoadingOverlay("hide");
+        form.reset();
     }
 });

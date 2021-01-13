@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'SALT_KEY' => 'osool',
-    'ENC_KEY' => 'osool'
+    'salt_key' => 'osool',
+    'enc_key' => 'osool'
 ];

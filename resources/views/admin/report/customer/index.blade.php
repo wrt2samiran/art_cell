@@ -92,7 +92,19 @@
                              <label for="to_date">Date (To) <span class="error">*</span></label>
                              <input type="text"  readonly="readonly" autocomplete="off" class="form-control" id="to_date" name="to_date">
                           </div>
-
+                            <div class="mb-3">
+                              <label >Download As &nbsp;&nbsp;</label>
+                              <div class="form-check-inline">
+                                <label class="form-check-label">
+                                  <input type="radio" value="excel" checked class="form-check-input" name="output_format">Excel
+                                </label>
+                              </div>
+                              <div class="form-check-inline">
+                                <label class="form-check-label">
+                                  <input type="radio" value="pdf" class="form-check-input" name="output_format">PDF
+                                </label>
+                              </div>
+                            </div>
                         </div>
                         <div>
                            
@@ -198,53 +210,9 @@ $("#report_form").validate({
     submitHandler: function(form) {
 
         $.LoadingOverlay("show");
-
-        var formData = new FormData(form);
-        $.ajax({
-            type: "POST",
-            data: formData,
-            url: form.action,
-            cache: false,
-            contentType: false,
-            processData: false,
-            responseType: 'blob',
-            success: function(response)
-            {
-                const url = window.URL.createObjectURL(new Blob([response]));
-                const link = document.createElement('a');
-                link.href = url;
-
-                var from_date=form.from_date.value.replaceAll('/','-');
-                var to_date=form.to_date.value.replaceAll('/','-');
-
-                if(form.report_on.value=='work_order'){
-                   var file_name='work-order-report-from-'+from_date+'-to-'+to_date+'.csv';
-                }else{
-                  var file_name='schedule_maintenance-report-from-'+from_date+'-to-'+to_date+'.csv';
-                }
-               
-
-                link.setAttribute('download',file_name);
-                document.body.appendChild(link);
-                link.click();
-                $.LoadingOverlay("hide");
-                form.reset(); 
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-               $.LoadingOverlay("hide");
-               var response=jqXHR.responseJSON;
-               var status=jqXHR.status;
-               if(status=='404'){
-                toastr.error('Invalid URL', 'Error', {timeOut: 5000});
-               }else{
-                 toastr.error('Internal server error.', 'Error', {timeOut: 5000});
-               }
-           }
-        });
-
-
-
-
+        form.submit();
+        $.LoadingOverlay("hide");
+        form.reset();
 
     }
 });

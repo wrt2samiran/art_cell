@@ -1,30 +1,41 @@
 <table>
-    <thead>
-    <tr>
-        <th></th>
-        <th>Work Order Id</th>
-        <th>Contract Code</th>
-        <th>Contract Name</th>
-        <th>Property Code</th>
-        <th>Property Name</th>
-        <th>City</th>
-        <th>Location</th>
-        <th>Property Owner Email</th>
-        <th>Property Owner Name</th>
-        <th>Task Title</th>
-        <th>Service Name</th>
-        <th>Work Date</th>
-        <th>Service Provider Email</th>
-        <th>Service Provider Name</th>
-        <th>Current Status</th>
-        <th>Completed Date</th>
-        <th>Created Date</th>
-    </tr>
-    </thead>
     <tbody>
+       <tr>
+        <td colspan="17" align="center" style="background-color: #97e6f7;font-size: 18px">
+        <div>Work Order Report<div>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="17" rowspan="2" align="center">
+            <div>Report On : {{Carbon::now()->format('d/m/Y h:i A')}}</div><br>
+            <div>From Date: {{request()->from_date}} - To Date: {{request()->to_date}}</div>
+        </td>
+       </tr>
+       <tr>
+           <td></td>
+       </tr>
+        <tr>
+            <td>Work Order Id</td>
+            <td>Contract Code</td>
+            <td>Contract Name</td>
+            <td>Property Code</td>
+            <td>Property Name</td>
+            <td>City</td>
+            <td>Location</td>
+            <td>Property Owner Email</td>
+            <td>Property Owner Name</td>
+            <td>Task Title</td>
+            <td>Service Name</td>
+            <td>Work Date</td>
+            <td>Service Provider Email</td>
+            <td>Service Provider Name</td>
+            <td>Current Status</td>
+            <td>Completed Date</td>
+            <td>Created Date</td>
+        </tr>
     	@forelse($work_orders as $work_order)
 	    <tr>
-            <td></td>
+
 	        <td>{{$work_order->id}}</td>
 	        <td>{{$work_order->contract->code}}</td>
 	        <td>{{$work_order->contract->title}}</td>
@@ -55,9 +66,9 @@
             </td>
 	    </tr>
     	@empty
-    	<tr>
-    		<td>No Work Orders</td>
-    	</tr>
+        <tr>
+            <td colspan="17" align="center">No Work Orders</td>
+        </tr>
     	@endforelse
     </tbody>
 </table>

@@ -1,28 +1,38 @@
 <table>
-    <thead>
-    <tr>
-        <th></th>
-        <th>Service Date</th>
-        <th>Contract Code</th>
-        <th>Contract Name</th>
-        <th>Property Code</th>
-        <th>Property Name</th>
-        <th>City</th>
-        <th>Location</th>
-        <th>Property Owner Email</th>
-        <th>Property Owner Name</th>
-        <th>Task Title</th>
-        <th>Service Name</th>
-        <th>Service Provider Email</th>
-        <th>Service Provider Name</th>
-        <th>Status</th>
-        <th>Labour Assigned</th>
-    </tr>
-    </thead>
     <tbody>
+      <tr>
+        <td colspan="15" align="center" style="background-color: #97e6f7;font-size: 18px">
+        <div>Maintenance Schedule Report<div>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="15" rowspan="2" align="center">
+            <div>Report On : {{Carbon::now()->format('d/m/Y h:i A')}}</div><br>
+            <div>From Date: {{request()->from_date}} - To Date: {{request()->to_date}}</div>
+        </td>
+       </tr>
+       <tr>
+           <td></td>
+       </tr>
+       <tr>
+            <td>Service Date</td>
+            <td>Contract Code</td>
+            <td>Contract Name</td>
+            <td>Property Code</td>
+            <td>Property Name</td>
+            <td>City</td>
+            <td>Location</td>
+            <td>Property Owner Email</td>
+            <td>Property Owner Name</td>
+            <td>Task Title</td>
+            <td>Service Name</td>
+            <td>Service Provider Email</td>
+            <td>Service Provider Name</td>
+            <td>Status</td>
+            <td>Labour Assigned</td>
+        </tr>
     	@forelse($service_dates as $service_date)
 	    <tr>
-            <td></td>
 	        <td>{{$service_date->date}}</td>
 	        <td>{{$service_date->contract->code}}</td>
 	        <td>{{$service_date->contract->title}}</td>
@@ -40,7 +50,7 @@
             <td>
                 {{$service_date->get_status_name()}}
             </td>
-            <th>
+            <td>
                 @if(count($service_date->task_details_list))
                     @foreach($service_date->task_details_list as $key=>$labour_task)
                         {{($key!='0')?',':''}} {{$labour_task->userDetails->name}}
@@ -48,12 +58,12 @@
                 @else
                 No Labour Assigned
                 @endif
-            </th>
+            </td>
 	    </tr>
     	@empty
-    	<tr>
-    		<td>No Maintenance Schedule</td>
-    	</tr>
+        <tr>
+            <td colspan="15" align="center">No Maintenance Schedule</td>
+        </tr>
     	@endforelse
     </tbody>
 </table>

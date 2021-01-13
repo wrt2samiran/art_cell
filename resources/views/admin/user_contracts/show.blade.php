@@ -31,6 +31,18 @@
                   Contract Details
                 </div> 
               <div class="card-body"> 
+                @if(Session::has('success'))
+                    <div class="alert alert-success alert-dismissable __web-inspector-hide-shortcut__">
+                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                        {{ Session::get('success') }}
+                    </div>
+                @endif
+                @if(Session::has('error'))
+                    <div class="alert alert-danger alert-dismissable">
+                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                        {{ Session::get('error') }}
+                    </div>
+                @endif
                  <table class="table table-bordered table-hover record-details-table" id="contract-details-table">
                       <tbody>
                         <tr>
@@ -158,17 +170,34 @@
                           <td>Location/Landmark</td>
                           <td >{{$contract->property->location}}</td>
                         </tr>
+                        @if(in_array($current_user->role->user_type->slug,['super-admin','property-owner']))
+                          <tr>
+                          <td>Contract Price</td>
+                          <td >
+                            {{$contract->contract_price_currency}}{{number_format($contract->contract_price, 2, '.', '')}}
 
+                            @if(!$contract->in_installment)
+
+                              @if($contract->is_paid)
+                              <span class="text-success">Paid on : {{Carbon::parse($contract->paid_on)->format('d/m/Y')}}</span>
+                              @else
+                                @if($current_user->role->user_type->slug=='property-owner')
+                                  <a href="{{route('admin.pay_contract_amount',$contract->id)}}" class="btn btn-success">Pay</a>
+                                @else
+                                  Not Paid
+                                @endif
+                              
+                              @endif
+
+                            @endif
+
+                          </td>
+                          </tr>
+                        @endif
 
 
                         @if(in_array($current_user->role->user_type->slug,['super-admin','property-owner']) && $contract->in_installment)
 
-                          <tr>
-                          <td>Contract Price</td>
-                          <td >{{$contract->contract_price_currency}}{{number_format($contract->contract_price, 2, '.', '')}}</td>
-                          </tr>
-
-                          @if(count($contract->contract_installments))
                           <tr>
                             <td>Installments</td>
                             <td>
@@ -177,6 +206,7 @@
                                   <tr>
                                     <th>Payment Amount</th>
                                     <th>Due Date</th>
+                                    <th>Payment</th>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -184,14 +214,29 @@
                                   <tr>
                                     <td>{{$installment->currency}} {{number_format($installment->price, 2, '.', '')}}</td>
                                     <td>
-                                      {{Carbon::parse($installment->due_date)->format('d/m/Y')}}</td>
+                                      {{Carbon::parse($installment->due_date)->format('d/m/Y')}}
+                                    </td>
+                                    <td>
+
+                                      @if($installment->is_paid)
+                                      <span class="text-success">Paid on : {{Carbon::parse($installment->paid_on)->format('d/m/Y')}}</span>
+                                      @else
+                                        @if($current_user->role->user_type->slug=='property-owner')
+                                          <a href="{{route('admin.pay_contract_installment',$installment->id)}}" class="btn btn-success">Pay</a>
+                                        @else
+                                          Not Paid
+                                        @endif
+                                      
+                                      @endif
+
+                                    </td>
                                   </tr>
                                   @endforeach
                                 </tbody>
                               </table>
                             </td>
                           </tr>
-                          @endif
+                        
                         @endif
 
                         <tr>

@@ -236,10 +236,20 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             
             /************************************/
 
+            /***contract payment **/
+            Route::get('/contract-installment/{id}/pay', 'PaymentController@pay_contract_installment')->name('pay_contract_installment')->middleware('check_permissions:users-contract-details');
+
+            Route::get('/contract/{id}/pay', 'PaymentController@pay_contract_amount')->name('pay_contract_amount')->middleware('check_permissions:users-contract-details');
+
+            /*********************/
+
             /*Routes for user contracts */
             Route::group(['prefix'=>'user-contracts','as'=>'user_contracts.'],function(){
                 Route::get('/', 'UserContractController@list')->name('list')->middleware('check_permissions:users-contract-list');
                 Route::get('/{id}', 'UserContractController@show')->name('show')->middleware('check_permissions:users-contract-details');
+
+
+
             });
             /************************************/
 
@@ -613,6 +623,10 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::post('/work-order-requested-vs-completed', 'ReportController@work_order_requested_vs_completed_report')->name('work_order_requested_vs_completed_report');
 
                 Route::post('/contract-status','ReportController@contract_status_report')->name('contract_status_report');
+
+                Route::post('/payment-report','ReportController@payment_report')->name('payment_report');
+
+                
 
                 Route::get('/get-property-list', 'ReportController@getAssignedProperty')->name('getAssignedProperty');
 

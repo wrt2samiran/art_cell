@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Exports\Reports\Customer;
+namespace App\Exports\Reports\Admin;
 
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
@@ -15,21 +15,21 @@ use Maatwebsite\Excel\Concerns\RegistersEventListeners;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use Maatwebsite\Excel\Events\AfterSheet;
 
-class WorkOrderReport implements FromView,ShouldAutoSize,WithEvents,WithStyles
+class PaymentReport implements FromView,ShouldAutoSize,WithEvents,WithStyles
 {
-    protected $work_orders;
+    protected $payments;
     use RegistersEventListeners;
 
-    public function __construct($work_orders)
+    public function __construct($payments)
     {
-        $this->work_orders = $work_orders;
+        $this->payments = $payments;
     }
 
     public function view(): View
     {
 
-        return view('admin.report.exports.customer.work_order_report', [
-            'work_orders' => $this->work_orders
+        return view('admin.report.exports.admin.payment_report', [
+            'payments' => $this->payments
         ]);
     }
     public function styles(Worksheet $sheet)
@@ -50,4 +50,5 @@ class WorkOrderReport implements FromView,ShouldAutoSize,WithEvents,WithStyles
 
             //$event->sheet->mergeCells('A1:B1');
     }
+
 }

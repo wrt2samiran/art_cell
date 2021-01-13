@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Carbon\Carbon;
-class ContratCreationMailToPropertyOwner extends Mailable
+class ContractCreationMailToServiceProvider extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -21,11 +21,12 @@ class ContratCreationMailToPropertyOwner extends Mailable
     public function __construct($data)
     {
         $this->data=$data;
-        $slug = 'contract-creation-mail-to-property-owner';
+        $slug = 'contract-creation-mail-to-service-provider';
         $variable_value=[
             '##USERNAME##'=>$data['user']->name,
             '##CONTRACT_CODE##'=>$data['contract']->code,
             '##PROPERTY_NAME##'=>$data['contract']->property->property_name,
+            '##PROPERTY_LOCATION##'=>$data['contract']->property->address,
             '##START_DATE##'=>Carbon::parse($data['contract']->start_date)->format('d/m/Y'),
             '##END_DATE##'=>Carbon::parse($data['contract']->end_date)->format('d/m/Y')
         ]; 
@@ -42,7 +43,7 @@ class ContratCreationMailToPropertyOwner extends Mailable
         return $this->from($this->data['from_email'], $this->data['from_name'])
                     ->replyTo($this->data['from_email'], $this->data['from_name'])
                     ->subject($this->data['subject'])
-                    ->view('emails.admin.contract.creation_mail_to_property_owner',[
+                    ->view('emails.admin.contract.creation_mail_to_service_provider',[
                         'mail_content'=>$this->mail_content
                     ]);
     }

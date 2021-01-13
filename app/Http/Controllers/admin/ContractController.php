@@ -26,7 +26,7 @@ use App\Http\Requests\Admin\Contract\{CreateContractRequest,UpdateContractReques
 use File;
 use Helper;
 use App\Events\Contract\ContractCreated;
-use App\Mail\Admin\Contract\ContratCreationMailToPropertyOwner;
+use App\Mail\Admin\Contract\{ContratCreationMailToPropertyOwner,ContractCreationMailToServiceProvider,ContractCreationMailToAdmin};
 use Mail;
 class ContractController extends Controller
 {
@@ -898,8 +898,21 @@ class ContractController extends Controller
             ];
             Mail::to($contract->property->owner_details->email)->send(new ContratCreationMailToPropertyOwner($data));
             }
- 
 
+            if($contract->service_provider){
+                $data=[
+                'user'=>$contract->service_provider,
+                'contract'=>$contract,
+                'from_name'=>env('MAIL_FROM_NAME','SMMS'),
+                'from_email'=>env('MAIL_FROM_ADDRESS'),
+                'subject'=>'New Contract Created'
+                ];
+                Mail::to($contract->service_provider->email)->send(new ContractCreationMailToServiceProvider($data));
+               
+            }
+
+            $admin_email=Helper::get_admin_contact_mail();
+            Mail::to($admin_email)->send(new ContractCreationMailToAdmin($data)); 
 
             event(new ContractCreated($contract));
 

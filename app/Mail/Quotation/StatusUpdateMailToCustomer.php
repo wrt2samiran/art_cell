@@ -1,16 +1,15 @@
 <?php
 
-namespace App\Mail\Admin\Contract;
+namespace App\Mail\Quotation;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Carbon\Carbon;
-class ContratCreationMailToPropertyOwner extends Mailable
+
+class StatusUpdateMailToCustomer extends Mailable
 {
     use Queueable, SerializesModels;
-
     public $mail_content;
     public $data;
     /**
@@ -21,13 +20,11 @@ class ContratCreationMailToPropertyOwner extends Mailable
     public function __construct($data)
     {
         $this->data=$data;
-        $slug = 'contract-creation-mail-to-property-owner';
+        $slug = 'quotation-status-update-mail-customer';
         $variable_value=[
-            '##USERNAME##'=>$data['user']->name,
-            '##CONTRACT_CODE##'=>$data['contract']->code,
-            '##PROPERTY_NAME##'=>$data['contract']->property->property_name,
-            '##START_DATE##'=>Carbon::parse($data['contract']->start_date)->format('d/m/Y'),
-            '##END_DATE##'=>Carbon::parse($data['contract']->end_date)->format('d/m/Y')
+            '##CUSTOMER_NAME##'=>$data['customer_name'],
+            '##STATUS##'=>$data['status'],
+            '##QUOTATION_ID##'=>$data['quotation_id']
         ]; 
         $this->mail_content=\Helper::emailTemplateMail($slug,$variable_value);
     }
@@ -42,7 +39,7 @@ class ContratCreationMailToPropertyOwner extends Mailable
         return $this->from($this->data['from_email'], $this->data['from_name'])
                     ->replyTo($this->data['from_email'], $this->data['from_name'])
                     ->subject($this->data['subject'])
-                    ->view('emails.admin.contract.creation_mail_to_property_owner',[
+                    ->view('emails.quotation.status_update_mail_to_customer',[
                         'mail_content'=>$this->mail_content
                     ]);
     }
