@@ -107,28 +107,30 @@
                 </tbody>
               </table>
                   
-            <table class="table table-bordered" id="task_labour_list_management_table">
-              <tr>
-                  <th>Id</th>
-                  <th>Labour Title</th>
-                  <th>Task Finish Date And Time (Assigned)</th>
-                  <th>Task Slot</th>
-                  <th>Task Mode</th>
-                  <th>Labour Feedback</th>
-                  <th>Feedback Date And Time</th>
-                  <th>Status</th>
-                  <th>Action</th>
-              </tr>
+           
+                <table class="table table-bordered" id="task_labour_list_management_table">
+                    <thead>
 
-            </table>
+                        <tr>
+                          <th>Id</th>
+                          <th>Labour Title</th>
+                          <th>Task Finish Date And Time (Assigned)</th>
+                          <th>Task Slot</th>
+                          <th>Task Mode</th>
+                          <th>Labour Feedback</th>
+                          <th>Feedback Date And Time</th>
+                          <th>Status</th>
+                          <th>Action @if($task_data->task_complete_percent!=100 and $task_action>0)<input type="checkbox" name="all_labour_task" id="all_labour_task">@endif</th>
+                        </tr>
+                    </thead>
+                </table>
 
                   
             
             
                 
-                <div>
-                  <a href="{{route('admin.work-order-management.labourTaskList', $task_data->work_order_id)}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
-                </div>
+                <!-- Reschedule Labour Task requested by the Labour -->
+
                 <div class="modal fade" id="taskRescheduleModal" role="dialog">
                   <div class="modal-dialog">
                   
@@ -192,6 +194,91 @@
                     </div>
                   </div>
                 </div>
+
+                <!-- Reschedule Labour Task requested by the Labour end -->
+
+
+
+                <!-- Edit Labour Task by the Service provider -->
+
+                <div class="modal fade" id="updateLabourTaskModal" role="dialog">
+                  <div class="modal-dialog">
+                  
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        
+                        <h4 class="modal-title">Edit Labour Task</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                      </div>
+                      <div class="modal-body">
+                        <div class="card-body">
+                            <div class="row justify-content-center">
+                              <div class="col-md-10 col-sm-12">
+                                
+                                <form  id="edit_labour_task" action="{{route('admin.work-order-management.labourTaskUpdate')}}" method="post" enctype="multipart/form-data">
+                                  @csrf
+                                        <div>  
+                                          <input type="hidden" name="update_task_details_id" id="update_task_details_id" />
+                                   
+                                          <div class="form-group">
+
+                                            <div class="form-group required">
+                                               <label for="labour_user">Labour <span class="error">*</span></label>
+                                                <select class="form-control select-labour" id="labour_user" name="labour_user" style="width: 100%;" onchange="updateCheckAvailablity()">
+                                                  @forelse($labour_list as $labour_data)
+                                                       <option value="{{@$labour_data->id}}" >{{@$labour_data->name}}( Woring Hour : {{@$labour_data->start_time}} to {{@$labour_data->end_time}})</option>
+                                                  @empty
+                                                  <option value="">No Labour Found</option>
+                                                  @endforelse 
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group required">
+                                              <label for="task_date">Task Date <span class="error">*</span></label>
+                                              <input type="text" class="form-control" value="{{old('task_date')?old('task_date'):''}}" name="modified_task_date" id="modified_task_date" autocomplete="off"  placeholder="Task Date" onchange="updateCheckAvailablity()">
+                                              @if($errors->has('modified_task_date'))
+                                              <span class="text-danger">{{$errors->first('modified_task_date')}}</span>
+                                              @endif
+                                            </div>
+                                            <div class="form-group required">
+                                              <label for="finish_time">Task Finish Time<span class="error">*</span></label>
+                                                  
+                                                  <input type="text" class="form-control clockpicker" readonly="" value="" name="modified_assigned_finish_time" id="modified_assigned_finish_time" onchange="updateCheckAvailablity()">
+                                                
+                                            </div> 
+                                            <div class="form-group required">
+                                              <label for="task_description">Task Details</label>
+                                              <textarea class="form-control" name="task_description" id="task_description">{{old('task_description')}}</textarea>
+                                               @if($errors->has('task_description'))
+                                                <span class="text-danger">{{$errors->first('task_description')}}</span>
+                                               @endif
+                                            </div>
+                          
+                                            <!-- /.input group -->
+                                          </div>
+                                          
+                                          <div>
+                                             <button type="submit" class="btn btn-success btn-update" disabled="">Submit</button> 
+                                             <div class="live_list" id="live_list" content="width=device-width, initial-scale=1"></div>
+
+                                          </div>
+                                        </div>
+                                </form>
+                              </div>
+                            </div>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Reschedule Labour Task by the Service provider end -->
+
+
 
                 <div class="modal fade" id="reviewRatingModal" role="dialog">
                   <div class="modal-dialog">
@@ -263,6 +350,18 @@
                     </div>
                   </div>
                 </div>
+
+                 <div>
+                    <div>
+                        <a href="{{route('admin.work-order-management.labourTaskList', $task_data->work_order_id)}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
+                    </div>
+                    @if($task_data->task_complete_percent!=100 and $task_action>0)
+                      <div style="text-align: right;">
+                          <button id='delete_selected'>Delete</button>
+                      </div>
+                    @endif    
+                    
+                 </div>
         </section>
     </div>    
               <!-- Labour Feedback END-->  
@@ -277,7 +376,85 @@ $( document ).ready(function() {
            interval: 30,
            scrollbar: true,
        });
+
+      $('#modified_task_date').datepicker({
+         minDate: 1,
+         dateFormat: 'dd/mm/yy',
+      });
 });
+
+
+$("#all_labour_task").click(function(){
+   $("input[type=checkbox]").prop('checked', $(this).prop('checked'));
+
+});
+
+  
+
+  $("#delete_selected").on('click',function(e){
+      e.preventDefault();
+      var checkboxValues = [];
+      $('input[name=labour_task_list]:checked').map(function() {
+            checkboxValues.push($(this).val());
+      });
+      if(checkboxValues.length>0){
+
+        console.log(checkboxValues);
+
+        swal({
+        title: "Are you sure?",
+        //text: "Once Assigned, you will not be able to modify this task!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+        }).then((isConfirm) => {
+          if(isConfirm){
+            $.LoadingOverlay("show");
+            $.ajax({
+        
+                url: "{{route('admin.work-order-management.deleteSubTask')}}",
+                type:'post',
+                dataType: "json",
+                data: {checkboxValues : checkboxValues, _token:"{{ csrf_token() }}"},
+                cache: false,
+                }).done(function(response) {
+                   
+                   console.log(response.status);
+                   if(response.status==true){
+                      if(response.redirect==true)
+                      {
+                        window.location.href = "{{url('/admin/work-order-management')}}";
+                      }
+                      else
+                      {
+                        location.reload();
+                      }
+                      
+                    
+                    }
+
+                    
+                });
+            }
+        });
+
+
+      }
+      else{
+
+         swal({
+        title: "Pleace select labour task first!",
+        //text: "Once Assigned, you will not be able to modify this task!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+        });
+      }
+      
+
+  }); 
+
+
 
 function reviewRating(taskdetails_id)
 {
@@ -410,6 +587,22 @@ function checkOnDemandFree()
         $('.btn-success').prop('disabled', true);
       }
     }
+
+
+function updateCheckAvailablity()
+    {
+        if (($('#labour_user').val().length > 0) && ($('#modified_task_date').val().length  > 0) && ($('#modified_assigned_finish_time').val().length  > 0))
+        {
+          $('.btn-update').prop('disabled', false);
+        }
+
+        else
+        {
+          $('.btn-update').prop('disabled', true);
+        }
+    }
+
+
 </script>
 
 <script type="text/javascript" src="{{asset('js/admin/work_order_management/task-labour-list.js')}}"></script>

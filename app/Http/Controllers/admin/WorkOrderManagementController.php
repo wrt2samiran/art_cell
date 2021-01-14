@@ -1442,10 +1442,10 @@ class WorkOrderManagementController extends Controller
 
         if($request->ajax()){
              if($logedInUserRole==5){
-                 $task_list=TaskDetails::with('task', 'task.property', 'task.property.country', 'task.property.state', 'task.property.city')->with('service')->with('work_order_slot')->with('userDetails')->where('user_id', $id);
+                 $task_list=TaskDetails::with('task', 'task.property', 'task.property.country', 'task.property.state', 'task.property.city')->with('service')->with('work_order_slot')->with('userDetails')->where('user_id', $id)->whereNull('deleted_at');
              }
              else{
-                $task_list=TaskLists::with('service')->where('work_order_id', $id)->where('created_by', $logedInUser);
+                $task_list=TaskLists::with('service')->where('work_order_id', $id)->where('created_by', $logedInUser)->whereNull('deleted_at');
              }
              
             return Datatables::of($task_list)
@@ -1591,13 +1591,13 @@ class WorkOrderManagementController extends Controller
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Show Task" id="details_task" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
                   
 
-                    if($logedInUser==$task_list->created_by and $task_list->task_date>$today){
-                        $edit_url = route('admin.work-order-management.editDailyTask',$task_list->id);
-                        $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Task" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
+                    // if($logedInUser==$task_list->created_by and $task_list->task_date>$today){
+                    //     $edit_url = route('admin.work-order-management.editDailyTask',$task_list->id);
+                    //     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit Task" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
                    
-                        $delete_url=route('admin.work-order-management.deleteLabourTask',$task_list->id);
-                        $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete contract" href="javascript:delete_task('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
-                    }
+                    //     $delete_url=route('admin.work-order-management.deleteLabourTask',$task_list->id);
+                    //     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete contract" href="javascript:delete_task('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
+                    // }
 
                     if($action_buttons==''){
                         $action_buttons=$action_buttons.'<span class="text-muted">No access</span>';
@@ -1640,7 +1640,7 @@ class WorkOrderManagementController extends Controller
 
         
         //$this->data['task_list_data']=TaskLists::with('property')->with('service')->with('country')->with('state')->with('city')->with('userDetails')->findOrFail($id);
-        $workOrderList=WorkOrderLists::with(['contract', 'contract_services', 'contract_service_dates', 'contract_service_recurrence',  'property','service_provider','service', 'property.country', 'property.state', 'property.city'])->whereId($id)->whereIsDeleted('N')->first();
+        $workOrderList=WorkOrderLists::with(['contract', 'contract_services', 'contract_service_dates', 'contract_service_recurrence',  'property','service_provider','service', 'property.country', 'property.state', 'property.city'])->whereId($id)->whereIsDeleted('N')->whereNull('deleted_at')->first();
         //dd($workOrderList->contract_service_dates);
         if($logedInUserRole!=5)
         {
@@ -1803,6 +1803,14 @@ class WorkOrderManagementController extends Controller
                 if(\Auth::guard('admin')->user()->role_id==4){
                     $details_url = route('admin.work-order-management.labourTaskDetails',$labour_task_list->id);
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Daily Task List" id="details_task" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
+                    if($labour_task_list->status=='0' and $labour_task_list->task_date > date('Y-m-d'))
+                    {
+                        $action_buttons = '<input type="checkbox", name="labour_task_list" id="labour_task_list_'.$labour_task_list->id.'" value="'.$labour_task_list->id.'">';
+                       
+                        $action_buttons=$action_buttons."&nbsp;&nbsp;<a title='Update Labour Task' id='update_labour_task' 
+                    href='javascript:updateLabourTask(".$labour_task_list->id.", ".json_encode($labour_task_list->task_description).")'><i class='far fa-calendar-alt'></i></a>";
+                    }
+                    
 
                     if($labour_task_list->rating==0 and ($labour_task_list->status=='4' || $labour_task_list->status=='2'))
                     {
@@ -1835,7 +1843,10 @@ class WorkOrderManagementController extends Controller
         
       
         $this->data['request'] = $request;
+        $this->data['labour_list']= User::whereCreatedBy($logedInUser)->orderBy('name', 'Desc')->get();
         $this->data['task_data'] = TaskLists::with('contract')->with('property')->with('service', 'contract_services')->with('work_order')->whereId($id)->whereIsDeleted('N')->first();
+
+        $this->data['task_action'] = TaskDetails::whereTaskId($id)->whereIsDeleted('N')->whereDate('task_date', '>', date('Y-m-d'))->count();
         //$this->data['work_order_id'] = $id;
        
             return view($this->view_path.'.task-labour-list',$this->data);
@@ -2545,31 +2556,72 @@ class WorkOrderManagementController extends Controller
 
     /*****************************************************/
     # WorkOrderManagementController
-    # Function name : deleteLabourTask
+    # Function name : deleteSubTask
     # Author        :
-    # Created Date  : 02-11-2020
+    # Created Date  : 13-01-2021
     # Purpose       : Delete Labour Daily Task
     # Params        : Request $request
     /*****************************************************/
-    public function deleteLabourTask($id)
+    public function deleteSubTask(Request $request)
     {
+        //dd($request);
+        $logedInUser = \Auth::guard('admin')->user();
+        $checkTaskDetails = TaskDetails::where('id', $request->checkboxValues[0])->first();
+        
+        $sqlTotalTask = TaskDetails::whereIn('id',$request->checkboxValues)->update([
+                        'is_deleted'=>'Y',
+                        'deleted_by' => $logedInUser->id,
+                        'deleted_at' => date('Y-m-d H:i:s'),
+                        'updated_by'=>$logedInUser->id,
+                    ]);
 
-        $checkTaskDetails = TaskDetails::whereId($id)->first();
-        $sqlTotalTask = TaskDetails::whereTaskId($checkTaskDetails->task_id)->get();
-        if(count($sqlTotalTask)==1)
+        $availableSubTask= TaskDetails::whereTaskId($checkTaskDetails->task_id)->whereIsDeleted('N')->whereNull('deleted_at')->get();
+        if(count($availableSubTask)==0)
         {
-            $task = TaskLists::whereId($checkTaskDetails->task_id)->update([
-            'task_assigned'=>'N'
-            ]);
-            $task->save();
-            $task=TaskDetails::whereId($id)->delete();
+
+            $getWorkOrder = TaskLists::whereId($checkTaskDetails->task_id)->whereIsDeleted('N')->whereNull('deleted_at')->first();
+           // dd($getWorkOrder);
+            $task = TaskLists::whereWorkOrderId($getWorkOrder->work_order_id)->whereIsDeleted('N')->whereNull('deleted_at')->get();
+
+            
+                
+                $sqlWorkOrder = WorkOrderLists::whereId($getWorkOrder->work_order_id)->whereIsDeleted('N')->whereNull('deleted_at')->first();
+                if($sqlWorkOrder->start_date<Carbon::now())
+                {
+                    $work_status = '1';
+                }
+                else
+                {
+                   $work_status = '0'; 
+                }
+                $sqlWorkOrder->update([
+                'task_assigned'=>'N',
+                'updated_by' => $logedInUser->id,
+                'status'=> $work_status,
+                ]);
+
+                $getWorkOrder->update([
+                'updated_by' => $logedInUser->id,
+                'is_deleted' => "Y",
+                'deleted_by'=> $logedInUser->id,
+                'deleted_at' => date('Y-m-d H:i:s'),
+                ]);
+
+             return response()->json(['status'=>true, 'redirect'=>true],200);   
+
+                
         }
+
         else
         {
-           $task=TaskDetails::whereId($id)->delete();
+            return response()->json(['status'=>true],200);
         }
-        
-        return response()->json(['message'=>'Labour Task successfully deleted.']);
+
+             
+             //return response()->json(['url'=>url('admin.work-order-management.list')]);
+            // return redirect()->route('admin.work-order-management.list')->with('success-message','Task Rescheduled successfully');
+            
+    
 
     }
 
@@ -2639,6 +2691,104 @@ class WorkOrderManagementController extends Controller
             return redirect()->route('admin.work-order-management.taskLabourList', $taskDetails->task_id)->with('error', $e->getMessage());
         }
     }
+
+
+
+
+    /*****************************************************/
+    # WorkOrderManagementController
+    # Function name : labourTaskUpdate
+    # Author        :
+    # Created Date  : 18-12-2020
+    # Purpose       : Reschedule Task to Labour
+    # Params        : Request $request
+    /*****************************************************/
+    public function labourTaskUpdate(Request $request) {
+
+      //  dd($request->all());
+
+        $this->data['page_title']     = 'Edit Labour Task';
+        $taskDetails = TaskDetails::findOrFail($request->update_task_details_id);
+        
+        $logedInUser = \Auth::guard('admin')->user()->id;
+        $logedInUserName = \Auth::guard('admin')->user()->name;
+
+
+        $var = $request->modified_task_date;
+        $date = str_replace('/', '-', $var);
+        $modifiedDate = date('Y-m-d', strtotime($date));
+
+        try
+        {
+            
+            $validationCondition = array(
+
+                'labour_user' => 'required',
+                'update_task_details_id'  => 'required',
+                'modified_task_date'        => 'required',
+                'modified_assigned_finish_time' => 'required',
+            );
+
+            $validationMessages = array(
+                'labour_user.required' => 'please select Labour',
+                'modified_task_date.required'    => 'Please select Task Date',
+                'modified_assigned_finish_time.required' => 'Please set Task Finish Time',
+            );
+
+            $Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);
+            if ($Validator->fails()) {
+                return redirect()->route('admin.work-order-management.taskLabourList', $taskDetails->task_id)->withErrors($Validator)->withInput();
+                
+            } else {
+
+                    $dateTime = date('o-m-d',strtotime($modifiedDate)).' '. $request->modified_assigned_finish_time;
+              
+                    $addTaskDetails = TaskDetails::create([
+                        'service_id'                 => $taskDetails->service_id, 
+                        'work_order_slot_id'         => $taskDetails->work_order_slot_id,
+                        'task_id'                    => $taskDetails->task_id,
+                        'user_id'                    => $request->labour_user,
+                        //'task_date'                  => date('o-m-d',strtotime($request->task_date)),
+                        'task_date'                  => date('Y-m-d H:i:s', strtotime("$dateTime")),
+                        'task_description'           => $request->task_description,
+                        'created_by'                 => auth()->guard('admin')->id(),
+                    ]);
+
+
+                    $taskDetails->update([
+                        'is_deleted'=>'Y',
+                        'deleted_by' => $logedInUser,
+                        'deleted_at' => date('Y-m-d H:i:s'),
+                        'updated_by'=>$logedInUser,
+                    ]);
+
+
+                    $notification_message=$logedInUserName.' updated a task.';
+                    $redirect_path=route('admin.work-order-management.labourTaskDetails',['id'=>$addTaskDetails->id],false);
+                    $notification_data[]=[
+                            'notificable_id'=>$addTaskDetails->id,
+                            'notificable_type'=>'App\Models\WorkOrderLists',
+                            'user_id'=>$request->labour_user,
+                            'message'=>$notification_message,
+                            'redirect_path'=>$redirect_path,
+                            'created_at'=>Carbon::now(),
+                            'updated_at'=>Carbon::now()
+                        ];
+
+                        if(count($notification_data)){
+                            Notification::insert($notification_data);
+                        }
+
+               // $request->session()->flash('success', 'Task has been added successfully');
+                return redirect()->route('admin.work-order-management.taskLabourList', $taskDetails->task_id)->with('success-message','Task Updated successfully');               
+            }
+
+        } catch (Exception $e) {
+            return redirect()->route('admin.work-order-management.taskLabourList', $taskDetails->task_id)->with('error', $e->getMessage());
+        }
+    }
+
+
 
     
     /*****************************************************/

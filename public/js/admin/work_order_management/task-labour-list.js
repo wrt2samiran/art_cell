@@ -219,7 +219,39 @@
 
     $('#task_description').val(task_description);
 
-}
+ }
+
+
+
+function updateLabourTask(id, task_description)
+ {
+  //alert(id);
+  console.log(id);
+  
+  $('#update_task_details_id').val(id);
+  $('#updateLabourTaskModal').modal('show');
+
+
+
+    // var array = JSON.stringify(allRestrictedDate);
+
+    // $('#task_date').datepicker({
+    //     beforeShowDay: function(date){
+    //         var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
+    //         return [ array.indexOf(string) == -1 ]
+    //     }
+    // });
+
+    $('#update_task_description').val(task_description);
+    
+ }
+
+ $('.select-labour').select2({
+      theme: 'bootstrap4',
+      placeholder:'Filter by Labour'
+    });
+
+
 
 
 //  $(".ui-state-disabled").hover(function() {

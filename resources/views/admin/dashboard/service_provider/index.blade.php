@@ -84,16 +84,17 @@
               <div class="card">
                 <div class="card-header border-0">
                   <div class="d-flex justify-content-between">
-                    <div>
-                      <h3 class="card-title">
-                        <i class="far fas fa-quote-right"></i>
-                        Latest Work Orders
-                      </h3>
-                    </div>
+                    
                     <div class="container-fluid">
 
                         <div class="row">
-                          <div class="col-md-4">
+                          <div class="col-md-3">
+                            <h3 class="card-title">
+                              <i class="far fas fa-quote-right"></i>
+                              Latest Work Orders
+                            </h3>
+                          </div>
+                          <div class="col-md-3">
                             <select id="work_order_contract" style="width:100%">
                               <option value="">Filter By Contract</option>
                               <option value="all" selected>All Contract</option>
@@ -104,7 +105,7 @@
                               @endforelse
                             </select>
                           </div>  
-                          <div class="col-md-4">
+                          <div class="col-md-3">
                             <select id="work_order_service" style="width:100%">
                               <option value="">Filter By Service</option>
                               <option value="all" selected>All Service</option>
@@ -115,7 +116,7 @@
                               @endforelse
                             </select>
                           </div>
-                          <div class="col-md-4" style="text-align: right;">
+                          <div class="col-md-3" style="text-align: right;">
                             <a href="{{route('admin.work-order-management.list')}}">View All</a>
                           </div>
                         </div>
@@ -168,14 +169,15 @@
               <div class="card">
                 <div class="card-header border-0">
                   <div class="d-flex justify-content-between">
-                    <div>
-                      <h3 class="card-title">
-                        
-                        Task Lists
-                      </h3>
-                    </div>
+                    
                     <div class="container-fluid">
                       <div class="row">
+                        <div class="col-md-2">
+                          <h3 class="card-title">
+                            
+                            Task Lists
+                          </h3>
+                        </div>
                         <div class="col-md-4">
                           <select id="task_contract" style="width: 100%;">
                             <option value="">Filter By Contract</option>
@@ -187,7 +189,7 @@
                             @endforelse
                           </select>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                           <select id="task_work_order" style="width: 100%;">
                             <option value="">Filter By Work Order</option>
                             <option value="all" selected>All Work Order</option>
@@ -199,7 +201,7 @@
                             @endforelse
                           </select>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                           <select id="task_property" style="width: 100%;">
                             <option value="">Filter By Property</option>
                             <option value="all" selected>All Properties</option>
@@ -269,16 +271,17 @@
               <div class="card">
                 <div class="card-header border-0">
                   <div class="d-flex justify-content-between">
-                    <div>
-                      <h3 class="card-title">
-                        <i class="far fa-question-circle"></i>
-                        Complaints
-                      </h3>
-                    </div>
+                    
                     <div class="container-fluid">
-
+                        
                         <div class="row">
-                          <div class="col-md-4">
+                          <div class="col-md-3">
+                          <h3 class="card-title">
+                            <i class="far fa-question-circle"></i>
+                            Complaints
+                          </h3>
+                        </div>
+                          <div class="col-md-3">
                             <select id="complaint_contract" style="width:100%">
                               <option value="">Filter By Contract</option>
                               <option value="all" selected>All Contract</option>
@@ -289,7 +292,7 @@
                               @endforelse
                             </select>
                           </div>  
-                          <div class="col-md-4">
+                          <div class="col-md-3">
                             <select id="complaint_status" style="width:100%">
                               <option value="">Filter By Status</option>
                               <option value="all" selected>All Status</option>
@@ -300,7 +303,7 @@
                               @endforelse
                             </select>
                           </div>
-                          <div class="col-md-4" style="text-align: right;">
+                          <div class="col-md-3" style="text-align: right;">
                             <a href="{{route('admin.complaints.list')}}">View All</a>
                           </div>
                         </div>
