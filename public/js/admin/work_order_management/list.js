@@ -151,7 +151,6 @@
 
  $('.status-filter').select2({
       theme: 'bootstrap4',
-      placeholder:'Filter by Status'
     });
 
     $('#contract_duration').daterangepicker({

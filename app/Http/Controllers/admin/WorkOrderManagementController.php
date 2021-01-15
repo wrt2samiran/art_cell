@@ -491,6 +491,29 @@ class WorkOrderManagementController extends Controller
                     $query->where('contract_status_id',$request->contract_status_id);
                 })
 
+
+                ->when($request->status,function($query) use($request){
+                   if($request->get('status')!='emergency')
+                            {
+                                 $query->where('status', $request->get('status'));
+                            }
+                            else
+                            {
+                                 $query->where('emergency_service', 'Y');
+                            }
+                })
+                ->when($request->daterange,function($query) use($request){
+                    $daterange_arr=explode('_',$request->daterange);
+                    $start_date = $daterange_arr[0];
+                    $end_date   = $daterange_arr[1];
+                    $task_list->where(function($q) use ($start_date,$end_date){
+                            $q->where(function($q) use ($start_date,$end_date){
+                              $q->whereDate('task_date','>=',$start_date)->whereDate('task_date','<=',$start_date);
+                            });
+                            
+                        });
+                })
+
                 ->select('work_order_lists.*')->orderBy('id', 'Desc');
 
             
@@ -506,23 +529,7 @@ class WorkOrderManagementController extends Controller
                 $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
             })
 
-            ->filter(function ($query) use ($request) {
-                        if ($request->get('status')!='') {
-                            $query->where('status', $request->get('status'));
-                        }
-
-                        if ($request->get('daterange')) {  
-                        $daterange_arr=explode('_',$request->daterange);
-                        $start_date = $daterange_arr[0];
-                        $end_date   = $daterange_arr[1];
-                        $query->where(function($q) use ($start_date,$end_date){
-                                $q->where(function($q) use ($start_date,$end_date){
-                                  $q->whereDate('start_date','>=',$start_date)->whereDate('start_date','<=',$end_date);
-                                });
-                                
-                            });
-                        }
-            }) 
+            
             ->addColumn('service_type',function($workOrder){
                 if($workOrder->emergency_service=='Y'){
                     return 'Emergency Service';
@@ -1741,13 +1748,15 @@ class WorkOrderManagementController extends Controller
         $this->data['page_title']='Labour Task List';
         $logedInUser = \Auth::guard('admin')->user()->id;
         $logedInUserRole = \Auth::guard('admin')->user()->role_id;
+        $taskData = TaskLists::with('contract')->with('property')->with('service', 'contract_services')->with('work_order')->whereId($id)->whereIsDeleted('N')->first();
+
 
         if($request->ajax()){
             // if($logedInUserRole!=5){
             //     $task_detail_list=TaskDetails::with('task')->with('service')->with('userDetails')->where('task_id', $id)->orderBy('id','Desc');
             // }
             // else{
-            $labour_task_list=TaskDetails::with('task')->with('userDetails')->with('work_order_slot')->whereTaskId($id)->orderBy('id','Desc');
+            $labour_task_list=TaskDetails::with('task')->with('users')->with('work_order_slot')->whereTaskId($id)->orderBy('id','Desc');
             // }
             return Datatables::of($labour_task_list)
             ->editColumn('created_at', function ($labour_task_list) {
@@ -1805,10 +1814,23 @@ class WorkOrderManagementController extends Controller
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Daily Task List" id="details_task" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
                     if($labour_task_list->status=='0' and $labour_task_list->task_date > date('Y-m-d'))
                     {
-                        $action_buttons = '<input type="checkbox", name="labour_task_list" id="labour_task_list_'.$labour_task_list->id.'" value="'.$labour_task_list->id.'">';
+                        if($labour_task_list->task->contract_services->service_type == 'Maintenance')
+                        {
+                            $action_buttons = '<input type="checkbox"  name="labour_task_list_maintain" id="labour_task_list_maintain_'.$labour_task_list->id.'" value="'.$labour_task_list->id.'" >';
+
+                            $action_buttons=$action_buttons."&nbsp;&nbsp;<a title='Update Labour Task' id='update_labour_task' 
+                            href='javascript:updateLabourTaskMaintanence(".$labour_task_list->id.", ".json_encode($labour_task_list->task_description).")'><i class='far fa-calendar-alt'></i></a>";
+                        }
+                        else
+                        {
+                            $action_buttons = '<input type="checkbox" name="labour_task_list" id="labour_task_list_'.$labour_task_list->id.'" value="'.$labour_task_list->id.'">';
+
+                            $action_buttons=$action_buttons."&nbsp;&nbsp;<a title='Update Labour Task' id='update_labour_task' 
+                            href='javascript:updateLabourTask(".$labour_task_list->id.", ".json_encode($labour_task_list->task_description).")'><i class='far fa-calendar-alt'></i></a>";
+                        }
+                        
                        
-                        $action_buttons=$action_buttons."&nbsp;&nbsp;<a title='Update Labour Task' id='update_labour_task' 
-                    href='javascript:updateLabourTask(".$labour_task_list->id.", ".json_encode($labour_task_list->task_description).")'><i class='far fa-calendar-alt'></i></a>";
+                        
                     }
                     
 
@@ -1844,8 +1866,7 @@ class WorkOrderManagementController extends Controller
       
         $this->data['request'] = $request;
         $this->data['labour_list']= User::whereCreatedBy($logedInUser)->orderBy('name', 'Desc')->get();
-        $this->data['task_data'] = TaskLists::with('contract')->with('property')->with('service', 'contract_services')->with('work_order')->whereId($id)->whereIsDeleted('N')->first();
-
+        $this->data['task_data'] = $taskData;
         $this->data['task_action'] = TaskDetails::whereTaskId($id)->whereIsDeleted('N')->whereDate('task_date', '>', date('Y-m-d'))->count();
         //$this->data['work_order_id'] = $id;
        
@@ -2471,31 +2492,35 @@ class WorkOrderManagementController extends Controller
                     'created_by'            => auth()->guard('admin')->id(),
                 ]);
 
-               
+               // dd($request->maintanence_other_user_id);
             
                 foreach ($request->maintanence_other_user_id as $maintainOtherUser) {
+
                     
                     foreach ($request->work_date_other as $workDateValue) {
 
-                        $sqlWorkContractServiceDates = ContractServiceDate::whereContractServiceId($sqlWorkorder->contract_service_id)->whereTaskAssigned('N')->whereDate('date',$workDateValue)->first();
+                        $sqlWorkContractServiceDates = ContractServiceDate::whereContractServiceId($sqlWorkorder->contract_service_id)->whereDate('date',$workDateValue)->first();
                       //  $dateTime = date('o-m-d',strtotime($workDateValue)).' '. $request->assigned_finish_time_maintain;
-                        $dateTime = date('o-m-d',$workDateValue).' '. $request->assigned_finish_time_maintain;
+                        $dateTime = date('o-m-d', strtotime($workDateValue)).' '. $request->assigned_finish_time_maintain;
+
 
                         $addTaskDetails = TaskDetails::create([
                             'service_id'            => $sqlWorkorder->service_id,
                             'task_id'               => $addTask->id,
                             'user_id'               => $maintainOtherUser,
+                            'contract_service_date_id' => $sqlWorkContractServiceDates->id,
                             'task_date'             => $dateTime,
                             'task_description'      => $request->task_description,
                             'created_by'            => auth()->guard('admin')->id(),
                         ]);
-                        // if(count($sqlWorkOrderSlot)<1)
-                        // {
+                      //  if(count($sqlWorkOrderSlot)<1)
+                        if($sqlWorkContractServiceDates)
+                        {
                             $sqlWorkContractServiceDates->update([
                                 'task_assigned'=>'Y',
                                 //'updated_by'=>auth()->guard('admin')->id()
                             ]);
-                       // }
+                        }
                         // else
                         // {
                         //     $sqlWorkOrderSlotNotBooked = WorkOrderSlot::whereWorkOrderId($request->work_order_id)->whereBookedStatus('N')->get();
@@ -2519,7 +2544,7 @@ class WorkOrderManagementController extends Controller
                         $notification_data[]=[
                             'notificable_id'=>$addTask->id,
                             'notificable_type'=>'App\Models\TaskDetails',
-                            'user_id'=>$maintainUser,
+                            'user_id'=>$maintainOtherUser,
                             'message'=>$notification_message,
                             'redirect_path'=>$redirect_path,
                             'created_at'=>Carbon::now(),
@@ -2625,6 +2650,109 @@ class WorkOrderManagementController extends Controller
 
     }
 
+
+
+    /*****************************************************/
+    # WorkOrderManagementController
+    # Function name : deleteMaintanenceSubTask
+    # Author        :
+    # Created Date  : 13-01-2021
+    # Purpose       : Delete Labour Daily Task
+    # Params        : Request $request
+    /*****************************************************/
+    public function deleteMaintanenceSubTask(Request $request)
+    {
+        //dd($request);
+        $logedInUser = \Auth::guard('admin')->user();
+        $checkTaskDetails = TaskDetails::where('id', $request->checkboxValues[0])->first();
+        
+        $sqlTotalTask = TaskDetails::whereIn('id',$request->checkboxValues)->update([
+                        'is_deleted'=>'Y',
+                        'deleted_by' => $logedInUser->id,
+                        'deleted_at' => date('Y-m-d H:i:s'),
+                        'updated_by'=>$logedInUser->id,
+                    ]);
+
+        if($checkTaskDetails->work_order_slot_id>0)
+        {
+            $availableSubTaskSlot= TaskDetails::whereWorkOrderSlotId($checkTaskDetails->work_order_slot_id)->whereIsDeleted('N')->whereNull('deleted_at')->get();
+
+            if(count($availableSubTaskSlot)==0)
+            {
+                $updateWorkOrderSlot = WorkOrderSlot::whereId($checkTaskDetails->work_order_slot_id)->update([
+                        'booked_status'=>'N',
+                        'updated_at' => date('Y-m-d H:i:s'),
+                        'updated_by'=>$logedInUser->id,
+                    ]);
+            }
+        }
+        elseif($checkTaskDetails->contract_service_date_id>0)
+        {
+            $availableSubTaskContractService= TaskDetails::whereContractServiceDateId($checkTaskDetails->contract_service_date_id)->whereIsDeleted('N')->whereNull('deleted_at')->get();
+
+            if(count($availableSubTaskContractService)==0)
+            {
+                $updateWorkOrderSlot = ContractServiceDate::whereId($checkTaskDetails->contract_service_date_id)->update([
+                        'task_assigned'=>'N',
+                        'updated_at' => date('Y-m-d H:i:s'),
+                    ]);
+            }
+        }
+
+        $availableSubTask= TaskDetails::whereTaskId($checkTaskDetails->task_id)->whereIsDeleted('N')->whereNull('deleted_at')->get();
+        if(count($availableSubTask)==0)
+        {
+
+            $getSubTask = TaskLists::whereId($checkTaskDetails->task_id)->whereIsDeleted('N')->whereNull('deleted_at')->first();
+           // dd($getWorkOrder);
+            $sqlWorkOrder = TaskLists::whereId($getSubTask->work_order_id)->whereIsDeleted('N')->whereNull('deleted_at')->get();
+
+            $getSubTask->update([
+                'updated_by' => $logedInUser->id,
+                'is_deleted' => "Y",
+                'deleted_by'=> $logedInUser->id,
+                'deleted_at' => date('Y-m-d H:i:s'),
+                ]);
+            
+            if(count($sqlWorkOrder)==0)
+            {
+                $sqlWorkOrder = WorkOrderLists::whereId($getSubTask->work_order_id)->whereIsDeleted('N')->whereNull('deleted_at')->first();
+                if($sqlWorkOrder->start_date<Carbon::now())
+                {
+                    $work_status = '1';
+                }
+                else
+                {
+                   $work_status = '0'; 
+                }
+                $sqlWorkOrder->update([
+                'task_assigned'=>'N',
+                'updated_by' => $logedInUser->id,
+                'status'=> $work_status,
+                ]);
+            }    
+                               
+
+             return response()->json(['status'=>true, 'redirect'=>true],200);   
+
+                
+        }
+
+        else
+        {
+            return response()->json(['status'=>true],200);
+        }
+
+             
+             //return response()->json(['url'=>url('admin.work-order-management.list')]);
+            // return redirect()->route('admin.work-order-management.list')->with('success-message','Task Rescheduled successfully');
+            
+    
+
+    }
+
+
+
     /*****************************************************/
     # WorkOrderManagementController
     # Function name : labourTaskReschedule
@@ -2700,7 +2828,7 @@ class WorkOrderManagementController extends Controller
     # Function name : labourTaskUpdate
     # Author        :
     # Created Date  : 18-12-2020
-    # Purpose       : Reschedule Task to Labour
+    # Purpose       : Update Task for Labour
     # Params        : Request $request
     /*****************************************************/
     public function labourTaskUpdate(Request $request) {
@@ -2749,7 +2877,7 @@ class WorkOrderManagementController extends Controller
                         'task_id'                    => $taskDetails->task_id,
                         'user_id'                    => $request->labour_user,
                         //'task_date'                  => date('o-m-d',strtotime($request->task_date)),
-                        'task_date'                  => date('Y-m-d H:i:s', strtotime("$dateTime")),
+                        'task_date'                  => date('Y-m-d H:i:s', strtotime($dateTime)),
                         'task_description'           => $request->task_description,
                         'created_by'                 => auth()->guard('admin')->id(),
                     ]);
@@ -2788,6 +2916,102 @@ class WorkOrderManagementController extends Controller
         }
     }
 
+
+    
+
+    /*****************************************************/
+    # WorkOrderManagementController
+    # Function name : labourTaskUpdateMaintanence
+    # Author        :
+    # Created Date  : 18-12-2020
+    # Purpose       : Update Task for Labour for Maintanence
+    # Params        : Request $request
+    /*****************************************************/
+    public function labourTaskUpdateMaintanence(Request $request) {
+
+      //  dd($request->all());
+
+        $this->data['page_title']     = 'Edit Labour Task';
+        $taskDetails = TaskDetails::findOrFail($request->update_task_details_id_maintain);
+
+        $taskDate = date('Y-m-d', strtotime($taskDetails->task_date));
+        
+        $logedInUser = \Auth::guard('admin')->user()->id;
+        $logedInUserName = \Auth::guard('admin')->user()->name;
+
+
+        // $var = $request->modified_task_date;
+        // $date = str_replace('/', '-', $var);
+        // $modifiedDate = date('Y-m-d', strtotime($date));
+
+        try
+        {
+            
+            $validationCondition = array(
+
+                'labour_user_maintain' => 'required',
+                'update_task_details_id_maintain'  => 'required',
+                'modified_assigned_finish_time_maintain' => 'required',
+            );
+
+            $validationMessages = array(
+                'labour_user_maintain.required' => 'please select Labour',
+                'modified_assigned_finish_time_maintain.required' => 'Please set Task Finish Time',
+            );
+
+            $Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);
+            if ($Validator->fails()) {
+                return redirect()->route('admin.work-order-management.taskLabourList', $taskDetails->task_id)->withErrors($Validator)->withInput();
+                
+            } else {
+
+                   $dateTime = date('Y-m-d', strtotime($taskDetails->task_date)).' '. $request->modified_assigned_finish_time_maintain;
+               
+                    $addTaskDetails = TaskDetails::create([
+                        'service_id'                 => $taskDetails->service_id, 
+                        'work_order_slot_id'         => $taskDetails->work_order_slot_id,
+                        'contract_service_date_id'   => $taskDetails->contract_service_date_id,
+                        'task_id'                    => $taskDetails->task_id,
+                        'user_id'                    => $request->labour_user_maintain,
+                        //'task_date'                  => date('o-m-d',strtotime($request->task_date)),
+                        'task_date'                  => $dateTime,
+                        'task_description'           => $request->task_description_maintain,
+                        'created_by'                 => auth()->guard('admin')->id(),
+                    ]);
+
+
+                    $taskDetails->update([
+                        'is_deleted'=>'Y',
+                        'deleted_by' => $logedInUser,
+                        'deleted_at' => date('Y-m-d H:i:s'),
+                        'updated_by'=>$logedInUser,
+                    ]);
+
+
+                    $notification_message=$logedInUserName.' updated a task.';
+                    $redirect_path=route('admin.work-order-management.labourTaskDetails',['id'=>$addTaskDetails->id],false);
+                    $notification_data[]=[
+                            'notificable_id'=>$addTaskDetails->id,
+                            'notificable_type'=>'App\Models\WorkOrderLists',
+                            'user_id'=>$request->labour_user_maintain,
+                            'message'=>$notification_message,
+                            'redirect_path'=>$redirect_path,
+                            'created_at'=>Carbon::now(),
+                            'updated_at'=>Carbon::now()
+                        ];
+
+                        if(count($notification_data)){
+                            Notification::insert($notification_data);
+                        }
+
+               // $request->session()->flash('success', 'Task has been added successfully');
+                return redirect()->route('admin.work-order-management.taskLabourList', $taskDetails->task_id)->with('success-message','Task Updated successfully');               
+            }
+
+        } catch (Exception $e) {
+            return redirect()->route('admin.work-order-management.taskLabourList', $taskDetails->task_id)->with('error', $e->getMessage());
+        }
+    }
 
 
     

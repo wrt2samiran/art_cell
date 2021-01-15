@@ -27,6 +27,10 @@ class TaskDetails extends Model
  	public function userDetails() {
         return $this->belongsTo('\App\Models\User',  'user_id','id');
     }
+    public function users() {
+        return $this->belongsTo('\App\Models\User',  'user_id','id');
+    }
+    
     public function task() {
         return $this->belongsTo('\App\Models\TaskLists',  'task_id','id');
     }

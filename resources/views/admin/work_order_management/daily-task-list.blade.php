@@ -9,12 +9,12 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Work Details And Task List</h1>
+                <h1>{{__('work_order_module.work_details_and_task_list')}}</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item active">Work Details And Task List</li>
+                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
+                  <li class="breadcrumb-item active">{{__('work_order_module.work_details_and_task_list')}}</li>
                 </ol>
               </div>
             </div>
@@ -40,57 +40,57 @@
                 <tbody>
                   <?php //dd($service_allocation_data);?>
                   <tr>
-                    <td >Contract Code</td>
+                    <td >{{__('work_order_module.work_order_task_column_name.contract_code')}}</td>
                     <td >{{$work_order_list->contract->code}}</td>
                   </tr>
                   <tr>
-                    <td >Work Order Title</td>
+                    <td >{{__('work_order_module.work_order_task_column_name.task_title')}}</td>
                     <td >{{$work_order_list->task_title}}</td>
                   </tr>
                   <tr>
-                    <td >Property Name</td>
+                    <td >{{__('work_order_module.work_order_task_column_name.property_name')}}</td>
                     <td >{{$work_order_list->property->property_name}}</td>
                   </tr>
                   <tr>
-                    <td >Service</td>
+                    <td >{{__('work_order_module.work_order_task_column_name.service')}}</td>
                     <td >{{$work_order_list->service->service_name}}</td>
                   </tr>
                   <tr>
-                    <td >Service Type</td>
+                    <td >{{__('work_order_module.work_order_task_column_name.service_type')}}</td>
                     <td >{{$work_order_list->contract_services->service_type}}</td>
                   </tr>
 
                   <tr>
-                    <td>Country</td>
+                    <td>{{__('general_sentence.breadcrumbs.country')}}</td>
                     <td >{{$work_order_list->property->country->name}}</td>
                   </tr>
                   <tr>
-                    <td>State</td>
+                    <td>{{__('general_sentence.breadcrumbs.state')}}</td>
                     <td >{{$work_order_list->property->state->name}}</td>
                   </tr>
                   <tr>
-                    <td>City</td>
+                    <td>{{__('general_sentence.breadcrumbs.city')}}</td>
                     <td >{{$work_order_list->property->city->name}}</td>
                   </tr>
                   <tr>
-                    <td>Work Order Details</td>
+                    <td>{{__('work_order_module.work_order_task_column_name.work_order_details')}}</td>
                     <td >{!! $work_order_list->task_desc!!}</td>
                   </tr>
                   <tr>
-                    <td >Service Provider</td>
+                    <td >{{__('work_order_module.work_order_task_column_name.service_provider')}}</td>
                     <td >{{$work_order_list->userDetails->name}}</td>
                   </tr>
                   <tr>
-                    <td> Date of Service</td> 
+                    <td> {{__('work_order_module.work_order_task_column_name.date_of_service')}}</td> 
                     <td >
                       @if(@$work_order_list->contract_services->service_type=='Maintenance'  and @$work_order_list->contract_service_recurrence->interval_type != 'daily') 
                         <table class="table table-bordered" >
                             <tr> 
                                   <tr>
-                                    <td scope="col" style="text-align:center;" colspan="6"><strong>Date</strong> </td>
+                                    <td scope="col" style="text-align:center;" colspan="{{count(@$work_order_list->contract_service_dates)}}"><strong>Date</strong> </td>
                                   </tr>
                                  @foreach(@$work_order_list->contract_service_dates as $valueDate)
-                                    <td>
+                                    <td scope="row"  @if(@$valueDate->task_assigned=='Y') style="color: red" @endif>
                                      {{Carbon\Carbon::createFromFormat('Y-m-d', @$valueDate->date)->format('d/m/Y')}}                             
                                     </td>
                                  @endforeach 
@@ -187,7 +187,7 @@
                     <a class="btn btn-success" style="text-align: right;" onclick="assignLabourTask()" href="javascript:void(0)">
                    @endif
                       
-                   Assign Labour Task
+                   {{__('general_sentence.button_and_links.assign_labour_task')}}
                   </a>
                 </div>
               </div>
@@ -198,11 +198,11 @@
                 <thead>
                     <tr>
                         <th>Id</th>
-                        <th>Task Title</th>
-                        <th>Created At</th>
-                        <th>Completed (%)</th>
-                        <th>Status</th>
-                        <th>Action</th>
+                        <th>{{__('work_order_module.work_order_task_column_name.task_title')}}</th>
+                        <th>{{__('work_order_module.work_order_task_column_name.service_provider')}}</th>
+                        <th>{{__('work_order_module.work_order_task_column_name.completed')}}</th>
+                        <th>{{__('work_order_module.status')}}</th>
+                        <th>{{__('work_order_module.action')}}</th>
                     </tr>
                 </thead>
             </table>

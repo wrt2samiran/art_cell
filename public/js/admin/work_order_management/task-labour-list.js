@@ -10,7 +10,7 @@
 
         columns: [
             { data: 'id', name: 'id' },          
-            { data: 'user_details.name', name: 'user_details.name' },
+            { data: 'users.name', name: 'users.name' },
             { data: 'task_date', name: 'task_date' },
             
             {
@@ -63,7 +63,7 @@
             
             { data: 'user_feedback', name: 'user_feedback' },
             { data: 'task_finish_date_time', name: 'task_finish_date_time' },
-            { data: 'status', name: 'ststus' },
+            { data: 'status', name: 'status' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
          order: [ [0, 'asc'] ],
@@ -231,17 +231,6 @@ function updateLabourTask(id, task_description)
   $('#update_task_details_id').val(id);
   $('#updateLabourTaskModal').modal('show');
 
-
-
-    // var array = JSON.stringify(allRestrictedDate);
-
-    // $('#task_date').datepicker({
-    //     beforeShowDay: function(date){
-    //         var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
-    //         return [ array.indexOf(string) == -1 ]
-    //     }
-    // });
-
     $('#update_task_description').val(task_description);
     
  }
@@ -251,6 +240,20 @@ function updateLabourTask(id, task_description)
       placeholder:'Filter by Labour'
     });
 
+
+
+
+function updateLabourTaskMaintanence(id, task_description)
+ {
+  //alert(id);
+  console.log(id);
+  
+  $('#update_task_details_id_maintain').val(id);
+  $('#updateLabourMaintanenceTaskModal').modal('show');
+
+    $('#update_task_description_maintain').val(task_description);
+    
+ }
 
 
 

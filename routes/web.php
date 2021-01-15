@@ -488,7 +488,11 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::get('/daily-task-show/{id}', 'WorkOrderManagementController@dailyTaskShow')->name('dailyTaskShow');
                 Route::any('/{id}/edit-daily-task', 'WorkOrderManagementController@editDailyTask')->name('editDailyTask'); 
                 Route::post('/delete-labour-task', 'WorkOrderManagementController@deleteSubTask')->name('deleteSubTask');
+                Route::post('/delete-labour-task-maintanence', 'WorkOrderManagementController@deleteMaintanenceSubTask')->name('deleteMaintanenceSubTask');
+                
                 Route::post('/update-labour-task', 'WorkOrderManagementController@labourTaskUpdate')->name('labourTaskUpdate');
+                Route::post('/update-labour-task-maintanence', 'WorkOrderManagementController@labourTaskUpdateMaintanence')->name('labourTaskUpdateMaintanence');
+                
                 
                 Route::get('/{id}/change-status', 'WorkOrderManagementController@change_status')->name('change_status');
                 Route::post('/labour-task-rating-review', 'WorkOrderManagementController@labourTaskReviewRating')->name('labourTaskReviewRating'); 

@@ -37,7 +37,9 @@
                   </div>
               @endif
             </div>
-
+            <div class="container-fluid">
+            <div class="row">
+              <div class="col-sm-12">
               <table class="table table-bordered table-hover" id="country-details-table">
                 <tbody>
                   <?php //dd($service_allocation_data);?>
@@ -120,7 +122,19 @@
                           <th>Labour Feedback</th>
                           <th>Feedback Date And Time</th>
                           <th>Status</th>
-                          <th>Action @if($task_data->task_complete_percent!=100 and $task_action>0)<input type="checkbox" name="all_labour_task" id="all_labour_task">@endif</th>
+                          @if($task_data->contract_services->service_type=='Maintenance')
+                          <th>Action @if($task_data->task_complete_percent!=100 and $task_action>0)<input type="checkbox" name="all_labour_task_maintain" id="all_labour_task_maintain">
+                                    <i class="right fas fa-trash-alt" id='delete_selected_maintain'></i> 
+                           @endif 
+                          </th>
+                          @else
+                            <th>Action @if($task_data->task_complete_percent!=100 and $task_action>0)<input type="checkbox" name="all_labour_task" id="all_labour_task">
+                                @if($task_data->task_complete_percent!=100 and $task_action>0)
+                                      <i class="right fas fa-trash-alt" id='delete_selected'></i> 
+                                @endif 
+                            @endif 
+                          </th>
+                          @endif
                         </tr>
                     </thead>
                 </table>
@@ -279,6 +293,79 @@
                 <!-- Reschedule Labour Task by the Service provider end -->
 
 
+                <!-- Edit Labour Task by the Service provider -->
+
+                <div class="modal fade" id="updateLabourMaintanenceTaskModal" role="dialog">
+                  <div class="modal-dialog">
+                  
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        
+                        <h4 class="modal-title">Edit Labour Task</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                      </div>
+                      <div class="modal-body">
+                        <div class="card-body">
+                            <div class="row justify-content-center">
+                              <div class="col-md-10 col-sm-12">
+                                
+                                <form  id="edit_labour_task" action="{{route('admin.work-order-management.labourTaskUpdateMaintanence')}}" method="post" enctype="multipart/form-data">
+                                  @csrf
+                                        <div>  
+                                          <input type="hidden" name="update_task_details_id_maintain" id="update_task_details_id_maintain" />
+                                   
+                                          <div class="form-group">
+
+                                            <div class="form-group required">
+                                               <label for="labour_user_maintain">Labour <span class="error">*</span></label>
+                                                <select class="form-control select-labour" id="labour_user_maintain" name="labour_user_maintain" style="width: 100%;" onchange="updateCheckMaintanenceAvailablity()">
+                                                  @forelse($labour_list as $labour_data)
+                                                       <option value="{{@$labour_data->id}}" >{{@$labour_data->name}}( Woring Hour : {{@$labour_data->start_time}} to {{@$labour_data->end_time}})</option>
+                                                  @empty
+                                                  <option value="">No Labour Found</option>
+                                                  @endforelse 
+                                                </select>
+                                            </div>
+
+                                           
+                                            <div class="form-group required">
+                                              <label for="finish_time">Task Finish Time<span class="error">*</span></label>
+                                                  
+                                                  <input type="text" class="form-control clockpicker" readonly="" value="" name="modified_assigned_finish_time_maintain" id="modified_assigned_finish_time_maintain" onchange="updateCheckMaintanenceAvailablity()">
+                                                
+                                            </div> 
+                                            <div class="form-group required">
+                                              <label for="task_description">Task Details</label>
+                                              <textarea class="form-control" name="task_description_maintain" id="task_description_maintain">{{old('task_description_maintain')}}</textarea>
+                                               @if($errors->has('task_description_maintain'))
+                                                <span class="text-danger">{{$errors->first('task_description_maintain')}}</span>
+                                               @endif
+                                            </div>
+                          
+                                            <!-- /.input group -->
+                                          </div>
+                                          
+                                          <div>
+                                             <button type="submit" class="btn btn-success btn-update-maintain" disabled="">Submit</button> 
+                                             <div class="live_list" id="live_list" content="width=device-width, initial-scale=1"></div>
+
+                                          </div>
+                                        </div>
+                                </form>
+                              </div>
+                            </div>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Edit Labour Task by the Service provider end -->
+
 
                 <div class="modal fade" id="reviewRatingModal" role="dialog">
                   <div class="modal-dialog">
@@ -354,14 +441,12 @@
                  <div>
                     <div>
                         <a href="{{route('admin.work-order-management.labourTaskList', $task_data->work_order_id)}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
-                    </div>
-                    @if($task_data->task_complete_percent!=100 and $task_action>0)
-                      <div style="text-align: right;">
-                          <button id='delete_selected'>Delete</button>
-                      </div>
-                    @endif    
-                    
+                    </div>                    
                  </div>
+                </div>
+               </div>
+             </div>
+
         </section>
     </div>    
               <!-- Labour Feedback END-->  
@@ -385,6 +470,11 @@ $( document ).ready(function() {
 
 
 $("#all_labour_task").click(function(){
+   $("input[type=checkbox]").prop('checked', $(this).prop('checked'));
+
+});
+
+$("#all_labour_task_maintain").click(function(){
    $("input[type=checkbox]").prop('checked', $(this).prop('checked'));
 
 });
@@ -454,6 +544,70 @@ $("#all_labour_task").click(function(){
 
   }); 
 
+
+  
+  $("#delete_selected_maintain").on('click',function(e){
+      e.preventDefault();
+      var checkboxValues = [];
+      $('input[name=labour_task_list_maintain]:checked').map(function() {
+            checkboxValues.push($(this).val());
+      });
+      if(checkboxValues.length>0){
+
+        console.log(checkboxValues);
+
+        swal({
+        title: "Are you sure?",
+        //text: "Once Assigned, you will not be able to modify this task!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+        }).then((isConfirm) => {
+          if(isConfirm){
+            $.LoadingOverlay("show");
+            $.ajax({
+        
+                url: "{{route('admin.work-order-management.deleteMaintanenceSubTask')}}",
+                type:'post',
+                dataType: "json",
+                data: {checkboxValues : checkboxValues, _token:"{{ csrf_token() }}"},
+                cache: false,
+                }).done(function(response) {
+                   
+                   console.log(response.status);
+                   if(response.status==true){
+                      if(response.redirect==true)
+                      {
+                        window.location.href = "{{url('/admin/work-order-management')}}";
+                      }
+                      else
+                      {
+                        location.reload();
+                      }
+                      
+                    
+                    }
+
+                    
+                });
+            }
+        });
+
+
+      }
+      else{
+
+         swal({
+        title: "Pleace select labour task first!",
+        //text: "Once Assigned, you will not be able to modify this task!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+        });
+      }
+      
+
+  }); 
 
 
 function reviewRating(taskdetails_id)
@@ -601,6 +755,19 @@ function updateCheckAvailablity()
           $('.btn-update').prop('disabled', true);
         }
     }
+
+function updateCheckMaintanenceAvailablity()
+    {
+        if (($('#labour_user_maintain').val().length > 0)  && ($('#modified_assigned_finish_time_maintain').val().length  > 0))
+        {
+          $('.btn-update-maintain').prop('disabled', false);
+        }
+
+        else
+        {
+          $('.btn-update-maintain').prop('disabled', true);
+        }
+    }    
 
 
 </script>

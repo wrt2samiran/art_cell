@@ -9,12 +9,12 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Work Order Management</h1>
+                <h1>{{__('work_order_module.module_title')}}</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item active">Work Order</li>
+                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
+                  <li class="breadcrumb-item active">{{__('work_order_module.work_order')}}</li>
                 </ol>
               </div>
             </div>
@@ -28,11 +28,11 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="d-flex justify-content-between" >
-                                    <div><span>Work Order List</span></div>
+                                    <div><span>{{__('work_order_module.work_order_list')}}</span></div>
                                     @if(auth()->guard('admin')->user()->hasAllPermission(['work-order-create']))
                                       <div>
                                         <a class="btn btn-success" href="{{route('admin.work-order-management.workOrderCreate')}}">
-                                         Create Work Order
+                                         {{__('general_sentence.breadcrumbs.create_work_order')}}
                                         </a>
                                       </div>
                                     @endif
@@ -58,10 +58,11 @@
                                     <div class="row">
                                         <div class="col-md-4" id="status-filter-container1">
                                             <select id='status' name="status" class="form-control status-filter" style="width: 200px">
-                                                  <option value="">--Filter By Status--</option>
+                                                  <option value="">--{{__('work_order_module.filter_labels.filter_by_status')}}--</option>
                                                   <option value="0">Pending</option>
                                                   <option value="1">Overdue</option>
                                                   <option value="2">Completed</option>
+                                                  <option value="emergency">Emergency</option>
                                                   
                                               </select>
 
@@ -74,7 +75,7 @@
                                                     <div class="input-group-addon">
                                                         <i class="fa fa-clock-o"></i>
                                                     </div>
-                                                    <input class="form-control" type="text" name="contract_duration" id="contract_duration" placeholder="Search By Date">
+                                                    <input class="form-control" type="text" name="contract_duration" id="contract_duration" placeholder="{{__('work_order_module.filter_labels.filter_by_date')}}">
 
                                                     <input type="hidden" name="daterange" id="daterange" placeholder="Search By Date">
                                                 </div>
@@ -89,18 +90,18 @@
                                     <thead>
                                         <tr>
                                             <th>Id</th>
-                                            <th>Contract Id</th>
-                                            <th>Title</th>
-                                            <th>Type</th>
-                                            <th>Property Name</th>
-                                            <th>Service</th>
-                                            <th>Address</th>
-                                            <th>Service Start Date</th>
-                                            <th>Assigned</th>
-                                            <th>Completed (%)</th>
-                                            <th>Status</th>
+                                            <th>{{__('work_order_module.work_order_task_column_name.contract_id')}}</th>
+                                            <th>{{__('work_order_module.work_order_task_column_name.title')}}</th>
+                                            <th>{{__('work_order_module.work_order_task_column_name.type')}}</th>
+                                            <th>{{__('work_order_module.work_order_task_column_name.property_name')}}</th>
+                                            <th>{{__('work_order_module.work_order_task_column_name.service')}}</th>
+                                            <th>{{__('work_order_module.work_order_task_column_name.address')}}</th>
+                                            <th>{{__('work_order_module.work_order_task_column_name.service_start_date')}}</th>
+                                            <th>{{__('work_order_module.work_order_task_column_name.assigned')}}</th>
+                                            <th>{{__('work_order_module.work_order_task_column_name.completed')}}</th>
+                                            <th>{{__('work_order_module.status')}}</th>
                                             
-                                            <th>Action</th>
+                                            <th>{{__('work_order_module.action')}}</th>
                                         </tr>
                                     </thead>
                                 </table>
