@@ -10,7 +10,7 @@
 
         columns: [
             { data: 'id', name: 'id' },          
-            { data: 'user_details.name', name: 'user_details.name' },
+            { data: 'users.name', name: 'users.name' },
             { data: 'task_date', name: 'task_date' },
             
             {
@@ -63,7 +63,7 @@
             
             { data: 'user_feedback', name: 'user_feedback' },
             { data: 'task_finish_date_time', name: 'task_finish_date_time' },
-            { data: 'status', name: 'ststus' },
+            { data: 'status', name: 'status' },
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
          order: [ [0, 'asc'] ],
@@ -219,7 +219,42 @@
 
     $('#task_description').val(task_description);
 
-}
+ }
+
+
+
+function updateLabourTask(id, task_description)
+ {
+  //alert(id);
+  console.log(id);
+  
+  $('#update_task_details_id').val(id);
+  $('#updateLabourTaskModal').modal('show');
+
+    $('#update_task_description').val(task_description);
+    
+ }
+
+ $('.select-labour').select2({
+      theme: 'bootstrap4',
+      placeholder:'Filter by Labour'
+    });
+
+
+
+
+function updateLabourTaskMaintanence(id, task_description)
+ {
+  //alert(id);
+  console.log(id);
+  
+  $('#update_task_details_id_maintain').val(id);
+  $('#updateLabourMaintanenceTaskModal').modal('show');
+
+    $('#update_task_description_maintain').val(task_description);
+    
+ }
+
 
 
 //  $(".ui-state-disabled").hover(function() {

@@ -24,6 +24,9 @@ return [
   'weeks'=>'Week(s)',
   'months'=>'Month(s)',
   'years'=>'Year(s)',
+  'search'=> 'Search',
+  'no_data_found'=> 'No Data Found!',
+  'create_task' => 'Create Task',
   'week_days'=>[
       'Sunday'=>'Sunday',
       'Monday'=>'Monday',
@@ -76,6 +79,7 @@ return [
     'settings'=>'Settings',
     'edit'=>'Edit',
     'create'=>'Create',
+    'add' => 'Add',
     'details'=>'Details',
     'sms_templates'=>'Sms Templates',
     'emergency_service' => 'Emergency Service',
@@ -91,6 +95,7 @@ return [
     'details'=>'Details',
     'download_invoice'=>'Download Invoice',
     'ok'=>'Ok',
+    'assign_labour_task' =>'Assign Labour Task',
     'create_country'=>'Create Country',
     'create_state'=>'Create State',
     'create_city'=>'Create City',
@@ -100,6 +105,7 @@ return [
     'create_unit'=>'Create Unit',
     'import_groups'=>'Import Groups',
     'create_services'=>'Find translation in files',
+    'create_work_order' => 'Create Work Order',
     'publish_all'=>'Publish All',
     'create_group'=>'Create Group',
     'edit'=>'Edit',
@@ -125,7 +131,20 @@ return [
     'discard'=>'Discard',
     'send'=>'Send',
     'delete'=>'Delete',
-    'add_note'=>'Add Note'
+    'add_note'=>'Add Note',
+    'select_all' => 'Select All',
+    'search' => 'Search',
+    'close' => 'Close',
+  ],
+  'status_button' =>[
+    'completed' => 'Completed',
+    'pending' => 'Pending',
+    'overdue' => 'Overdue',
+    'warning' => 'Warning',
+    'emergency' => 'Emergency',
+    'complain' => 'Complain',
+    'rating_and_view'=> 'Rating and view',
+    'view' => 'View'
   ]
     
   ];

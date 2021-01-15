@@ -903,17 +903,9 @@ class ReportController extends Controller
             } 
 
         }
-    	return view('admin.report.customer.index',$this->data);
+        return view('admin.report.customer.index',$this->data);
     }
     public function service_provider_report($request,$current_user){
-
-        //$this->data['workorder']=WorkOrderLists::with('tasks')->whereUserId($current_user->id)->orderBy('id','desc')->get();
-
-        // $this->data['properties']=Property::whereHas('owner_details')
-        // ->where(function($q)use($current_user){
-        //     $q->where('property_owner',$current_user->id)->orWhere('property_manager',$current_user->id);
-        // })
-        // ->orderBy('id','desc')->get();
 
         if($request->isMethod('post')){
 
@@ -942,9 +934,24 @@ class ReportController extends Controller
                     })
                     
                     ->orderBy('id','desc')->get();
-                    return Excel::download(new WorkOrderTaskReport($task_list),'work-order-task-report.csv', \Maatwebsite\Excel\Excel::CSV,[
-                        'Content-Type' => 'text/csv',
-                    ]);
+                   
+
+                        if($request->output_format=='excel'){
+
+                        return Excel::download(new WorkOrderTaskReport($task_list),'work-order-task-report.xlsx');
+
+                        }elseif ($request->output_format=='pdf') {
+                            $pdf = PDF::loadView('admin.report.pdf.service_provider.work_order_task_report',[
+                                'task_lists'=>$task_list
+                            ]);
+                            
+                            $file_name='work_order_task_report.pdf';
+                            ob_end_clean(); //without ob_end_clean I got error before loade PDF after download. Got this solution from github
+                            return $pdf->download($file_name); 
+                            
+                        }else{
+                            return redirect()->back()->with('error','No output format selected.');
+                        }
                 }
                 else
                 {
@@ -973,9 +980,25 @@ class ReportController extends Controller
                     })
                     
                     ->orderBy('id','desc')->get();
-                    return Excel::download(new WorkOrderTaskDetailsReport($task_details_list),'work-order-task-details-report.csv', \Maatwebsite\Excel\Excel::CSV,[
-                        'Content-Type' => 'text/csv',
-                    ]);
+                    
+
+                    if($request->output_format=='excel'){
+
+                        return Excel::download(new WorkOrderTaskDetailsReport($task_details_list),'work-order-task-details-report.xlsx');
+
+                        }elseif ($request->output_format=='pdf') {
+                            $pdf = PDF::loadView('admin.report.pdf.service_provider.work_order_task_report',[
+                                'task_lists'=>$task_details_list
+                            ]);
+                            
+                            $file_name='work_order_task_report.pdf';
+                            ob_end_clean(); //without ob_end_clean I got error before loade PDF after download. Got this solution from github
+                            return $pdf->download($file_name); 
+                            
+                        }else{
+                            return redirect()->back()->with('error','No output format selected.');
+                        }
+
                 }
                 
 

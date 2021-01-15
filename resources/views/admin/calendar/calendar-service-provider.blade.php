@@ -9,12 +9,12 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Calendar Management</h1>
+                <h1>{{__('calendar_module.module_title')}}</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item active">Task</li>
+                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.dashboard')}}</a></li>
+                  <li class="breadcrumb-item active">{{__('calendar_module.filter_labels.calendar')}}</li>
                 </ol>
               </div>
             </div>
@@ -51,7 +51,7 @@
                       <div class="col-lg-12">
                         <?php //dd($request->all()); 
                         //if(!is_array($request->property_id)){ settype($request->property_id, "array");}?>
-                        <button class="btn-filter-drop">Filter <i class="fa fa-filter"></i></button> 
+                        <button class="btn-filter-drop">{{__('calendar_module.filter_labels.filter')}} <i class="fa fa-filter"></i></button> 
                         <form  method="post" id="filter_calendar" action="{{route('admin.calendar.calendardata')}}" method="post" enctype="multipart/form-data">
                           @csrf
                           <div class="row">
@@ -59,19 +59,19 @@
 
                             <div class="col-md-4 form-group" id="status-filter-container">
 
-                                <select data-placeholder="Filter with Property" multiple class="chosen-select" tabindex="8" name="property_id[]" id="property_id"  multiple="multiple" onchange="getWorkOderList()">
+                                <select data-placeholder="{{__('calendar_module.filter_labels.filter_with_property')}}" multiple class="chosen-select" tabindex="8" name="property_id[]" id="property_id"  multiple="multiple" onchange="getWorkOderList()">
                                       @foreach($property_list as $property_key=> $property_data)
                                          <option value="{{$property_data->id}}" @if(is_array($request->property_id))@if(in_array($property_data->id, $request->property_id)) selected @endif @elseif($property_data->id == $request->property_id) selected  @endif >{{$property_data->property_name}}</option>
                                     
                                       @endforeach
                                 </select>
-                                <input type="button" id="property_all" value="Select All">
+                                <input type="button" id="property_all" value="{{__('general_sentence.button_and_links.select_all')}}">
                               </div>
                             
                             <div class="col-md-4 form-group" id="status-filter-container">
                              
 
-                               <select data-placeholder="Filter with Work Order"  class="chosen-select" tabindex="8" name="work_order_id[]" id="work_order_id"  multiple="multiple" onchange="getTaskLIst()">
+                               <select data-placeholder="{{__('calendar_module.filter_labels.filter_with_work_order')}}"  class="chosen-select" tabindex="8" name="work_order_id[]" id="work_order_id"  multiple="multiple" onchange="getTaskLIst()">
                                   <option value=""> </option>
                                     
                                       @forelse(@$allPropertyRelatedWorkOrders as $work_order_key=> $work_order_data)
@@ -81,11 +81,11 @@
                                       @endforelse
                                      
                                 </select>
-                                <input type="button" id="work_order_all" value="Select All">
+                                <input type="button" id="work_order_all" value="{{__('general_sentence.button_and_links.select_all')}}">
                             </div>
 
                             <div class="col-md-4 form-group" id="status-filter-container">
-                              <select data-placeholder="Filter with Task"  class="chosen-select" tabindex="2"  name="task_id[]" id="task_id" multiple onchange="getLabourList()" >
+                              <select data-placeholder="{{__('calendar_module.filter_labels.filter_task')}}"  class="chosen-select" tabindex="2"  name="task_id[]" id="task_id" multiple onchange="getLabourList()" >
 
                                   @forelse(@$task_list as $task_list_key=> $task_list_data)
                                      <option value="{{$task_list_data->id}}" @if(is_array($request->task_id)) @if(in_array($task_list_data->id, $request->task_id)) selected @endif @endif>{{@$task_list_data->task_title}}</option>
@@ -94,11 +94,11 @@
                                   @endforelse
                                   
                                </select>
-                               <input type="button" id="task_id_all" value="Select All">
+                               <input type="button" id="task_id_all" value="{{__('general_sentence.button_and_links.select_all')}}">
                             </div>
                          
                             <div class="col-md-4 form-group" id="status-filter-container">
-                                <select data-placeholder="Filter with Labour"  class="chosen-select" tabindex="8"  name="labour_id[]" id="labour_id" multiple >
+                                <select data-placeholder="{{__('calendar_module.filter_labels.filter_labour')}}"  class="chosen-select" tabindex="8"  name="labour_id[]" id="labour_id" multiple >
                                   @if(is_array(@$allLabourList))
                                     @forelse(@$allLabourList as $labour_list_key=> $labour_list_data)
                                        <option value="{{$labour_list_data->userDetails->id}}" @if(is_array($request->labour_id)) @if(in_array($labour_list_data->userDetails->id, $request->labour_id)) selected @endif @endif>{{@$labour_list_data->userDetails->name}}</option>
@@ -108,10 +108,10 @@
                                   @endif  
                                </select>
 
-                               <input type="button" id="labour_all" value="Select All">
+                               <input type="button" id="labour_all" value="{{__('general_sentence.button_and_links.select_all')}}">
                             </div>
                             <div class="col-md-4 form-group" id="status-filter-container">
-                                <select data-placeholder="Filter with Maintenance Type"   class="chosen-select" tabindex="8" name="maintenance_type[]" id="maintenance_type" multiple >
+                                <select data-placeholder="{{__('calendar_module.filter_labels.filter_with_maintanence_type')}}"   class="chosen-select" tabindex="8" name="maintenance_type[]" id="maintenance_type" multiple >
                                   @if(is_array(@$allContractServices))
                                     @forelse(@$allContractServices as $contract_service_list_key=> $contract_service_list_data)
                                        <option value="{{$contract_service_list_data->contract_services->service_id}}" @if(is_array($request->maintenance_type)) @if(in_array($contract_service_list_data->contract_services->service_id, $request->labour_id)) selected @endif @endif>{{@$contract_service_list_data->contract_services->service_type}}</option>
@@ -121,7 +121,7 @@
                                   @endif  
                                    
                                </select>
-                               <input type="button" id="maintenance_all" value="Select All">
+                               <input type="button" id="maintenance_all" value="{{__('general_sentence.button_and_links.select_all')}}">
                             </div>
                             <div class="col-md-4 form-group" id="status-filter-container">
                                 <select data-placeholder="Filter with Service"  class="chosen-select" tabindex="8"  name="service_type[]" id="service_type" multiple >
@@ -131,7 +131,7 @@
                             </div>
 
                             <div class="col-md-4 form-group" id="status-filter-container">
-                                <select data-placeholder="Filter with Status"  class="chosen-select" tabindex="8"  name="status[]" id="status" multiple >
+                                <select data-placeholder="{{__('calendar_module.filter_labels.filter_with_status')}}"  class="chosen-select" tabindex="8"  name="status[]" id="status" multiple >
                                  
                                   <option value="0" @if(is_array($request->status)) @if(in_array(0, $request->status)) selected @endif @endif>Pending</option>
                                   <option value="1" @if(is_array($request->status)) @if(in_array(1, $request->status)) selected @endif @endif>Overdue</option>
@@ -139,14 +139,17 @@
                                   <option value="4" @if(is_array($request->status)) @if(in_array(4, $request->status)) selected @endif @endif>Warning</option>
                                   
                                </select>
-                               <input type="button" id="status_all" value="Select All">
+                               <input type="button" id="status_all" value="{{__('general_sentence.button_and_links.select_all')}}">
                             </div>
                             
                             <div class="col-md-4 form-group" id="status-filter-container" >
-                              <input type="checkbox" name="un_assigned" id="un_assigned" value="1" @if($request->un_assigned==1) checked @endif> Un Assigned
+                              <input type="checkbox" name="un_assigned" id="un_assigned" value="1" @if($request->un_assigned==1) checked @endif> {{__('calendar_module.filter_labels.un_assigned')}}
+                            </div>
+                            <div class="col-md-4 form-group" id="status-filter-container" >
+                              <input type="checkbox" name="emergency_service" id="emergency_service" value="1" @if($request->emergency_service==1) checked @endif> {{__('calendar_module.filter_labels.emergency_service')}}
                             </div>
                             <div class="col-md-12 btn-en-ar" id="status-filter-container">
-                               <button type="submit" class="btn btn-search disable-button">Search</button> 
+                               <button type="submit" class="btn btn-search disable-button">{{__('general_sentence.button_and_links.search')}}</button> 
                             </div>
                           </div>
                            
@@ -164,15 +167,16 @@
                         <div class="sticky-top mb-3">
                           <div class="card">
                             <div class="card-header">
-                              <h4 class="card-title">Color Details</h4>
+                              <h4 class="card-title">{{__('calendar_module.filter_labels.color_details')}}</h4>
                             </div>
                             <div class="card-body">
                               <!-- the events -->
                               <div id="external-events" style="width: 88px">
-                                <div class="external-event bg-success">Completed</div>
-                                <div class="external-event bg-warning">Pending</div>
-                                <div class="external-event btn-secondary">Overdue</div>
-                                <div class="external-event bg-danger">Warning</div>
+                                <div class="external-event bg-success">{{__('general_sentence.status_button.completed')}}</div>
+                                <div class="external-event bg-warning">{{__('general_sentence.status_button.pending')}}</div>
+                                <div class="external-event btn-secondary">{{__('general_sentence.status_button.overdue')}}</div>
+                                <div class="external-event bg-danger">{{__('general_sentence.status_button.warning')}}</div>
+                                <!-- <div class="external-event" style="background: #ff6600">Emergency</div> -->
                               </div>
                             </div>
                             <!-- /.card-body -->
@@ -214,7 +218,7 @@
                           </table>                                   
                       </div>
                       <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{{__('general_sentence.button_and_links.close')}}</button>
                       </div>
                     </div>                 
                   </div>
@@ -353,67 +357,36 @@
       //Random default events
       events    : [
        
-       <?php 
-              if($request->un_assigned=='')
-              {
-                foreach($task_details_list as $task_data)
-                { 
-                  //foreach($task_data->task_details as $detailsData){
-                  $user = $task_data->userDetails->name;
-                  if($task_data->status==1)
-                  {
-                      $color = '#545b62';              
-                  }
-                  else if($task_data->status==0)
-                  {
-                    $color = '#ffc107';
-                  }
-                  else if($task_data->status==2)
-                  {
-                    $color = '#28a745';
-                  }
-                  else if($task_data->status==4)
-                  {
-                    $color = '#dc3d45';
-                  }
-              
-            ?>
-
-                  {
-                    title          : '<?=$task_data->task->task_title?>(<?=$user?>)',
-                    start          : '<?=$task_data->task_date?>',
-                    end            : '<?=$task_data->task_date?>',
-                    backgroundColor: '<?=$color?>', //red
-                    borderColor    : '<?=$color?>', //red
-                    id             : '<?=$task_data->id?>',
-                    allDay         : false,
-                    
-                    description: 'Task Title : <?=@$task_data->task->task_title?><br>Property Name : <?=@$task_data->task->property->property_name?><br>Service : <?=@$task_data->task->service->service_name?><br>Service Type : <?=@$task_data->task->contract_services->service_type?><br>Country : <?=@$task_data->task->property->country->name?><br>State : <?=@$task_data->task->property->state->name?><br>City : <?=@$task_data->task->property->city->name?><br>Task Date : <?=@$task_data->task_date?>'
-                  },
-
-        <?php } } else{
+       <?php if($request->emergency_service==1 || $request->un_assigned==1){
 
 
                     foreach($workOrder as $work_order_data)
                       { 
-                       
-                        if($work_order_data->status==1)
-                        {
-                            $color = '#545b62';              
-                        }
-                        else if($work_order_data->status==0)
-                        {
-                          $color = '#ffc107';
-                        }
-                        else if($work_order_data->status==2)
-                        {
-                          $color = '#28a745';
-                        }
 
-                        else if($work_order_data->status==4)
+                        if($work_order_data->emergency_service=='Y')
                           {
-                            $color = '#dc3d45';
+                              $color = '#ff6600';
                           }
+                          else
+                          {
+                              if($work_order_data->status==1)
+                              {
+                                  $color = '#545b62';              
+                              }
+                              else if($work_order_data->status==0)
+                              {
+                                $color = '#ffc107';
+                              }
+                              else if($work_order_data->status==2)
+                              {
+                                $color = '#28a745';
+                              }
+
+                              else if($work_order_data->status==4)
+                              {
+                                $color = '#dc3d45';
+                              }
+                          }             
           ?>
 
                     {
@@ -425,9 +398,46 @@
                     id             : '<?=$work_order_data->id?>',
                     allDay         : false,
                     
-                    description: 'Work Order Title : <?=@$work_order_data->task_title?><br>Property Name : <?=@$work_order_data->property->property_name?><br>Service : <?=@$work_order_data->service->service_name?><br>Service Type : <?=@$work_order_data->contract_services->service_type?><br>Country : <?=@$work_order_data->property->country->name?><br>State : <?=@$work_order_data->property->state->name?><br>City : <?=@$work_order_data->property->city->name?><br>Task Date : <?=@$work_order_data->start_date?>'
+                    description: '{{__("calendar_module.work_order_title")}} : <?=@$work_order_data->task_title?><br>{{__("calendar_module.propety_name")}} : <?=@$work_order_data->property->property_name?><br>{{__("calendar_module.service")}} : <?=@$work_order_data->service->service_name?><br>{{__("calendar_module.service_type")}} : <?=@$work_order_data->contract_services->service_type?><br>{{__("general_sentence.breadcrumbs.country")}} : <?=@$work_order_data->property->country->name?><br>{{__("general_sentence.breadcrumbs.state")}} : <?=@$work_order_data->property->state->name?><br>{{__("general_sentence.breadcrumbs.city")}} : <?=@$work_order_data->property->city->name?><br>{{__("calendar_module.task_start_date")}} : <?=@$work_order_data->start_date?>'
                   },
-          <?php  } }?>        
+          <?php  } } else{
+                   foreach($task_details_list as $task_data)
+                    { 
+                      //foreach($task_data->task_details as $detailsData){
+                      $user = $task_data->userDetails->name;
+                      if($task_data->status==1)
+                      {
+                          $color = '#545b62';              
+                      }
+                      else if($task_data->status==0)
+                      {
+                        $color = '#ffc107';
+                      }
+                      else if($task_data->status==2)
+                      {
+                        $color = '#28a745';
+                      }
+                      else if($task_data->status==4)
+                      {
+                        $color = '#dc3d45';
+                      }
+                  
+            ?>
+
+                  {
+                    title          : '<?=$task_data->task->task_title?>(<?=$user?>)',
+                    start          : '<?=$task_data->task_date?>',
+                    end            : '<?=$task_data->task_date?>',
+                    backgroundColor: '<?=$color?>', //red
+                    borderColor    : '<?=$color?>', //red
+                    id             : '<?=$task_data->id?>',
+                    allDay         : false,
+                    
+                    description: '{{__("calendar_module.task_title")}} : <?=@$task_data->task->task_title?><br>{{__("calendar_module.propety_name")}} : <?=@$task_data->task->property->property_name?><br>{{__("calendar_module.service")}} : <?=@$task_data->task->service->service_name?><br>{{__("calendar_module.service_type")}} : <?=@$task_data->task->contract_services->service_type?><br>{{__("general_sentence.breadcrumbs.country")}} : <?=@$task_data->task->property->country->name?><br>{{__("general_sentence.breadcrumbs.state")}} : <?=@$task_data->task->property->state->name?><br>{{__("general_sentence.breadcrumbs.city")}} : <?=@$task_data->task->property->city->name?><br>{{__("calendar_module.task_start_date")}} : <?=@$task_data->task_date?>'
+                  },
+
+
+          <?php }} ?>        
       ],
       timeFormat: 'H(:mm)', // uppercase H for 24-hour clock、
       displayEventTime: false,
@@ -534,33 +544,62 @@ function checKClickedDate(clicked_date){
 
       if(new Date(clicked_date) >= new Date())
       {
-        task_list +=  '<tr  class="col-12 text-right"><td colspan="7" style="margin:0; padding:0;" a><a class="btn btn-success" href="{{route('admin.work-order-management.list')}}"><p>Create Task</p></a></td></tr>'; 
+        task_list +=  '<tr  class="col-12 text-right"><td colspan="7" style="margin:0; padding:0;" a><a class="btn btn-success" href="{{route('admin.work-order-management.list')}}"><p>{{__('general_sentence.create_task')}}</p></a></td></tr>'; 
       }
-      task_list +=  '<tr><th><strong>Task Title</strong></th><th><strong>Property Name</strong></th><th><strong>Service</strong></th><th><strong>Service Type</strong></th><th><strong>Task Date</strong></th><th><strong>Status</strong></th><th><strong>Action</strong></th></tr>';
-          <?php if($request->un_assigned=='') { foreach($task_details_list as $task_data){
+
+      task_list +=  '<tr><th><strong>{{__('calendar_module.task_title')}}</strong></th><th><strong>{{__('calendar_module.property_name')}}</strong></th><th><strong>{{__('calendar_module.service')}}</strong></th><th><strong>{{__('calendar_module.service_type')}}</strong></th><th><strong>{{__('calendar_module.task_date')}}</strong></th><th><strong>{{__('calendar_module.status')}}</strong></th><th><strong>{{__('calendar_module.action')}}</strong></th></tr>';
+          <?php if($request->un_assigned==1 || $request->emergency_service==1 ) { foreach($workOrder as $work_order_data){
+
+            $details_url = route('admin.work-order-management.show',$work_order_data->id);
+          ?>
+
+              taskDate = '<?php echo date("Y-m-d", strtotime(@$work_order_data->start_date)); ?>';
+
+              if(clicked_date==taskDate){
+                    total++;
+                    task_list += '<tr><th><?php echo $work_order_data->task_title; ?></th><th><?php echo @$work_order_data->property->property_name;?> </th><th><?php echo @$work_order_data->service->service_name;?></th><th><?php echo @$work_order_data->contract_services->service_type;?></th><th><?php echo date("d/m/Y H:i a", strtotime(@$work_order_data->start_date)); ?></th><th><?php 
+
+                    if(@$work_order_data->emergency_service=='Y') { echo '<div class="external-event ui-draggable ui-draggable-handle" style="position: relative; background-color: #ff6600 !important">'?>{{__("general_sentence.status_button.emergency")}}<?php '</div>';}
+
+                    elseif(@$work_order_data->status==0) {echo '<div class="external-event bg-warning ui-draggable ui-draggable-handle" style="position: relative; background-color: #ffc107 !important">'?>{{__("general_sentence.status_button.pending")}}<?php '</div>'; }
+                    
+                    elseif(@$work_order_data->status==1) {echo '<div class="external-event btn-secondary ui-draggable ui-draggable-handle" style="position: relative; background-color: #5a6268 !important">'?>{{__("general_sentence.status_button.overdue")}}<?php '</div>';} 
+                    
+                    elseif(@$work_order_data->status==2) {echo '<div class="external-event bg-success ui-draggable ui-draggable-handle" style="position: relative; background-color: #3ea846 !important">'?>{{__("general_sentence.status_button.completed")}}<?php '</div>';} 
+                    
+                    elseif(@$work_order_data->status==4) {echo '<div class="external-event bg-danger ui-draggable ui-draggable-handle" style="position: relative; background-color: #dc3d45!important">'?>{{__("general_sentence.status_button.warning")}}<?php }?></div></th><th> <?php 
+                    
+                    if(@$work_order_data->status==2){?><a target="_blank" href="<?php echo @$details_url;?>"  title="{{__("general_sentence.status_button.rating_and_view")}}">&nbsp; &nbsp;{{__("general_sentence.status_button.rating_and_view")}}</a><?php } 
+
+                    
+                    else{?><a target="_blank" href="<?php echo @$details_url;?>"  title="{{__("general_sentence.status_button.view")}}">&nbsp; &nbsp; {{__("general_sentence.status_button.view")}}</a><?php }?></th></tr>';
+                    } 
+
+         <?php } } else { foreach($task_details_list as $task_data){
                   $details_url = route('admin.work-order-management.labourTaskDetails',@$task_data->id);
                   $complain_url = route('admin.complaints.create','workorder_id='.@$task_data->task->work_order_id);
           ?>
             taskDate = '<?php echo date("Y-m-d", strtotime($task_data->task_date)); ?>';
             if(clicked_date==taskDate){
                   total++;
-                  task_list += '<tr><th><?php echo $task_data->task->task_title; ?></th><th><?php echo @$task_data->task->property->property_name;?> </th><th><?php echo @$task_data->task->service->service_name;?></th><th><?php echo @$task_data->task->contract_services->service_type;?></th><th><?php echo date("d/m/Y H:i a", strtotime(@$task_data->task_date)); ?></th><th><?php if(@$task_data->status==0) echo  '<div class="external-event bg-warning ui-draggable ui-draggable-handle" style="position: relative; background-color: #ffc107 !important">Pending</div>'; elseif(@$task_data->status==1) echo '<div class="external-event btn-secondary ui-draggable ui-draggable-handle" style="position: relative; background-color: #5a6268 !important">Overdue</div>'; elseif(@$task_data->status==2) echo '<div class="external-event bg-success ui-draggable ui-draggable-handle" style="position: relative; background-color: #3ea846 !important">Completed</div>'; elseif(@$task_data->status==4) echo '<div class="external-event bg-danger ui-draggable ui-draggable-handle" style="position: relative; background-color: #dc3d45!important">Warning</div>'  ?></th><th><a target="_blank" href="<?php echo $complain_url;?>" title="Complain">Complain</a> &nbsp &nbsp <?php if(@$task_data->status==2){?><a target="_blank" href="<?php echo @$details_url;?>"  title="Rating and view">&nbsp; &nbsp; Rating and view</a><?php } else{?><a target="_blank" href="<?php echo @$details_url;?>"  title="View"> &nbsp; &nbsp; View</a><?php }?></th></tr>';
+                  task_list += '<tr><th><?php echo $task_data->task->task_title; ?></th><th><?php echo @$task_data->task->property->property_name;?> </th><th><?php echo @$task_data->task->service->service_name;?></th><th><?php echo @$task_data->task->contract_services->service_type;?></th><th><?php echo date("d/m/Y H:i a", strtotime(@$task_data->task_date)); ?></th><th><?php 
+
+                    if(@$task_data->status==0) {echo  '<div class="external-event bg-warning ui-draggable ui-draggable-handle" style="position: relative; background-color: #ffc107 !important">' ?>{{__("general_sentence.status_button.pending")}}<?php '</div>'; }
+
+                    elseif(@$task_data->status==1){ echo '<div class="external-event btn-secondary ui-draggable ui-draggable-handle" style="position: relative; background-color: #5a6268 !important">' ?>{{__("general_sentence.status_button.overdue")}}<?php '</div>'; }
+
+                    elseif(@$task_data->status==2) { echo '<div class="external-event bg-success ui-draggable ui-draggable-handle" style="position: relative; background-color: #3ea846 !important">' ?>{{__("general_sentence.status_button.completed")}}<?php '</div>'; }
+
+                    elseif(@$task_data->status==4) { echo '<div class="external-event bg-danger ui-draggable ui-draggable-handle" style="position: relative; background-color: #dc3d45!important">' ?> {{__("general_sentence.status_button.warning")}}<?php '</div>'; } ?></th><th><a target="_blank" href="<?php echo $complain_url;?>" title="{{__("general_sentence.status_button.complain")}}">{{__("general_sentence.status_button.complain")}}</a> &nbsp &nbsp <?php 
+
+                    if(@$task_data->status==2){?><a target="_blank" href="<?php echo @$details_url;?>"  title="{{__("general_sentence.status_button.rating_and_view")}}">&nbsp; &nbsp; {{__("general_sentence.status_button.rating_and_view")}}</a><?php } 
+
+                    else{?><a target="_blank" href="<?php echo @$details_url;?>"  title="{{__("general_sentence.status_button.view")}}"> &nbsp; &nbsp; {{__("general_sentence.status_button.view")}}</a><?php }?></th></tr>';
                   } 
-         <?php  } } else { foreach($workOrder as $work_order_data){
-
-            $details_url = route('admin.work-order-management.show',$work_order_data->id);
-          ?>
-
-              taskDate = '<?php echo date("Y-m-d", strtotime(@$work_order_data->start_date)); ?>';
-              if(clicked_date==taskDate){
-                    total++;
-                    task_list += '<tr><th><?php echo $work_order_data->task_title; ?></th><th><?php echo @$work_order_data->property->property_name;?> </th><th><?php echo @$work_order_data->service->service_name;?></th><th><?php echo @$work_order_data->contract_services->service_type;?></th><th><?php echo date("d/m/Y H:i a", strtotime(@$work_order_data->start_date)); ?></th><th><?php if(@$work_order_data->status==0) echo '<div class="external-event bg-warning ui-draggable ui-draggable-handle" style="position: relative; background-color: #ffc107 !important">Pending</div>'; elseif(@$work_order_data->status==1) echo '<div class="external-event btn-secondary ui-draggable ui-draggable-handle" style="position: relative; background-color: #5a6268 !important">Overdue</div>'; elseif(@$work_order_data->status==2) echo '<div class="external-event bg-success ui-draggable ui-draggable-handle" style="position: relative; background-color: #3ea846 !important">Completed</div>'; elseif(@$work_order_data->status==4) echo '<div class="external-event bg-danger ui-draggable ui-draggable-handle" style="position: relative; background-color: #dc3d45!important">Warning</div>'  ?></th><th><a target="_blank" href="<?php echo $complain_url;?>" title="Complain">Complain</a> &nbsp &nbsp <?php if(@$work_order_data->status==2){?><a target="_blank" href="<?php echo @$details_url;?>"  title="Rating and view">&nbsp; &nbsp;Rating and view</a><?php } else{?><a target="_blank" href="<?php echo @$details_url;?>"  title="View">&nbsp; &nbsp; View</a><?php }?></th></tr>';
-                    } 
-
-         <?php } }?> 
+         <?php  } } ?>
          if(total==0)
          {
-            task_list += '<tr><th colspan="7"><span><strong style="color:red; text-align: justify;">No Data Found!</strong></span></th></tr>';
+            task_list += '<tr><th colspan="7"><span><strong style="color:red; text-align: justify;">{{__("general_sentence.no_data_found")}}</strong></span></th></tr>';
          }
                                
 
@@ -591,7 +630,7 @@ function onTaskChange(task_details_id, start_date, end_date){
             else
             { 
               console.log(response.status);
-            //  location.reload();
+              location.reload();
             }
         });
     }    

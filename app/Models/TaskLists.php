@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 
 class TaskLists extends Model
 {
+    use SoftDeletes;
     protected $guarded=[];
     public function get_status_name(){
         if($this->status=='0'){

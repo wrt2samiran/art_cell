@@ -16,17 +16,7 @@
             { data: 'id', name: 'id' },
             { data: 'contract.code', name: 'contract.code'},
             { data: 'task_title', name: 'task_title'},
-            { data: 'contract_services', 
-              render:function (data) {
-                  if(data.service_type=='On Demand'){
-                    return data.service_type+' (Used :'+data.number_of_times_already_used+' Out of : '+data.number_of_time_can_used+')';
-                  }
-                  else
-                  {
-                     return data.service_type
-                  }
-              }, searchable: false, sortable : false
-            },
+            { data: 'service_type', name: 'service_type', searchable: false, sortable : false},
 
 
             { data: 'property.property_name', name: 'property.property_name' },
@@ -161,7 +151,6 @@
 
  $('.status-filter').select2({
       theme: 'bootstrap4',
-      placeholder:'Filter by Status'
     });
 
     $('#contract_duration').daterangepicker({

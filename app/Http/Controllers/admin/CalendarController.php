@@ -71,7 +71,41 @@ class CalendarController extends Controller
 
             if ($request->has('search')) {
 
-                if($request->un_assigned==''){
+                
+                if($request->un_assigned==1 || $request->emergency_service==1)
+                {
+                   // dd($sqlContract);
+                    //$sqlContract = array();
+                        foreach ($sqlContract as $key => $value) {
+                            $contractList[]=$value->id;
+                    }
+                    //dd($contractList);
+
+                    $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->whereIn('contract_id', $contractList)->where(function ($q) use ($request) {
+
+                            if ($request->un_assigned==1) {
+                                    
+                                    $q->where(function ($que) use ($request) {
+                                        $que->where('task_assigned', 'N');
+                                       
+                                     });                   
+
+                            }
+
+                            if ($request->emergency_service==1) {
+                                    
+                                    $q->where(function ($que) use ($request) {
+                                        $que->where('emergency_service', 'Y');
+                                       
+                                     });                   
+
+                            }
+
+
+                    })->orderBy('id','Desc')->get();   
+                } 
+
+                else{
                
                         $workOrder = WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'contract_service_dates', 'property.country', 'property.state', 'property.city', 'tasks', 'tasks.task_details'])->where(function ($q) use ($request, $property_list, $sqlContract) {
                             
@@ -200,18 +234,7 @@ class CalendarController extends Controller
                             $allWorkOrdersRelatedServices = WorkOrderLists::with('service')->whereNull('deleted_at')->whereIn('id', $request->work_order_id)->groupBy('service_id')->get();
                         }
 
-                }
-                else
-                {
-                   // dd($sqlContract);
-                    //$sqlContract = array();
-                        foreach ($sqlContract as $key => $value) {
-                            $contractList[]=$value->id;
-                    }
-                    //dd($contractList);
-
-                    $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->whereIn('contract_id', $contractList)->where('task_assigned', 'N')->orderBy('id','Desc')->get();   
-                }   
+                }  
 
             } 
             else 
@@ -267,7 +290,34 @@ class CalendarController extends Controller
 
             if ($request->has('search')) 
             {
-                if($request->un_assigned=='')
+                
+                if($request->un_assigned==1 ||  $request->emergency_service==1)
+                {
+                    $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->where('user_id',$logedInUser)->where(function ($q) use ($request) {
+
+                            if ($request->un_assigned==1) {
+                                    
+                                    $q->where(function ($que) use ($request) {
+                                        $que->where('task_assigned', 'N');
+                                       
+                                     });                   
+
+                            }
+
+                            if ($request->emergency_service==1) {
+                                    
+                                    $q->where(function ($que) use ($request) {
+                                        $que->where('emergency_service', 'Y');
+                                       
+                                     });                   
+
+                            }
+
+
+                    })->orderBy('id','Desc')->get();   
+                }
+
+                else
                 {
                     //dd($request->all());
                     //$taskList = TaskLists::with(['contract', 'task_details', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->where(function ($q) use ($request) {
@@ -419,10 +469,6 @@ class CalendarController extends Controller
                        }
                
                 }
-                else
-                {
-                    $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->where('user_id',$logedInUser)->where('task_assigned', 'N')->orderBy('id','Desc')->get();   
-                }
 
             } 
             else 
@@ -494,7 +540,41 @@ class CalendarController extends Controller
 
             if ($request->has('search')) {
 
-                if($request->un_assigned==''){
+                
+                if($request->un_assigned==1 || $request->emergency_service==1)
+                {
+                   // dd($sqlContract);
+                    //$sqlContract = array();
+                        foreach ($sqlContract as $key => $value) {
+                            $contractList[]=$value->id;
+                    }
+                    //dd($contractList);
+
+                    $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->whereIn('contract_id', $contractList)->where(function ($q) use ($request) {
+
+                            if ($request->un_assigned==1) {
+                                    
+                                    $q->where(function ($que) use ($request) {
+                                        $que->where('task_assigned', 'N');
+                                       
+                                     });                   
+
+                            }
+
+                            if ($request->emergency_service==1) {
+                                    
+                                    $q->where(function ($que) use ($request) {
+                                        $que->where('emergency_service', 'Y');
+                                       
+                                     });                   
+
+                            }
+
+
+                    })->orderBy('id','Desc')->get();   
+                } 
+
+                else{
                
                         $workOrder = WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'contract_service_dates', 'property.country', 'property.state', 'property.city', 'tasks', 'tasks.task_details'])->where(function ($q) use ($request, $property_list, $sqlContract) {
                             
@@ -623,18 +703,7 @@ class CalendarController extends Controller
                             $allWorkOrdersRelatedServices = WorkOrderLists::with('service')->whereNull('deleted_at')->whereIn('id', $request->work_order_id)->groupBy('service_id')->get();
                         }
 
-                }
-                else
-                {
-                   // dd($sqlContract);
-                    //$sqlContract = array();
-                        foreach ($sqlContract as $key => $value) {
-                            $contractList[]=$value->id;
-                    }
-                    //dd($contractList);
-
-                    $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->whereIn('contract_id', $contractList)->where('task_assigned', 'N')->orderBy('id','Desc')->get();   
-                }   
+                }  
 
             } 
             else 

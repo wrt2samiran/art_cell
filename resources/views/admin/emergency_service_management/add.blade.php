@@ -14,8 +14,8 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.work-order-management.list')}}">{{__('general_sentence.breadcrumbs.emergency_service')}}</a></li>
-              <li class="breadcrumb-item active">{{__('general_sentence.breadcrumbs.emergency_service')}}</li>
+              <li class="breadcrumb-item"><a href="{{route('admin.emergency-service-management.list')}}">{{__('general_sentence.breadcrumbs.emergency_service')}}</a></li>
+              <li class="breadcrumb-item active">{{__('general_sentence.breadcrumbs.create')}}</li>
             </ol>
           </div>
         </div>

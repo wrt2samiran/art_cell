@@ -487,11 +487,17 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
                 Route::post('/task-feedback', 'WorkOrderManagementController@taskFeedback')->name('taskFeedback'); 
                 Route::get('/daily-task-show/{id}', 'WorkOrderManagementController@dailyTaskShow')->name('dailyTaskShow');
                 Route::any('/{id}/edit-daily-task', 'WorkOrderManagementController@editDailyTask')->name('editDailyTask'); 
-                Route::any('/{id}/delete-labour-task', 'WorkOrderManagementController@deleteLabourTask')->name('deleteLabourTask');
+                Route::post('/delete-labour-task', 'WorkOrderManagementController@deleteSubTask')->name('deleteSubTask');
+                Route::post('/delete-labour-task-maintanence', 'WorkOrderManagementController@deleteMaintanenceSubTask')->name('deleteMaintanenceSubTask');
+                
+                Route::post('/update-labour-task', 'WorkOrderManagementController@labourTaskUpdate')->name('labourTaskUpdate');
+                Route::post('/update-labour-task-maintanence', 'WorkOrderManagementController@labourTaskUpdateMaintanence')->name('labourTaskUpdateMaintanence');
+                
                 
                 Route::get('/{id}/change-status', 'WorkOrderManagementController@change_status')->name('change_status');
                 Route::post('/labour-task-rating-review', 'WorkOrderManagementController@labourTaskReviewRating')->name('labourTaskReviewRating'); 
                 Route::post('/work-order-rating-review', 'WorkOrderManagementController@poPmTaskReviewRating')->name('poPmTaskReviewRating');
+
                 
                 //Route::get('/{id}/reschedule-task', 'WorkOrderManagementController@rescheduleTask')->name('rescheduleTask'); 
                 
