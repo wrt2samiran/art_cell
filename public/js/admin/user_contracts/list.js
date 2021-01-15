@@ -32,7 +32,10 @@
         }],
         "drawCallback": function( settings ) {
           $.LoadingOverlay("hide");
-      }
+        },
+        "language": {
+            "url": (current_locale=="ar")?"//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Arabic.json":"//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/English.json"
+        }
 
 
     });
@@ -41,7 +44,8 @@
 
 $('.status-filter').select2({
   theme: 'bootstrap4',
-  placeholder:'Filter by Status type'
+  placeholder:translations.contract_manage_module.placeholders.filter_by_status,
+  language: current_locale,
 });
 $('#contract_status_id').on('change', function(e) {
   if(this.value!=''){

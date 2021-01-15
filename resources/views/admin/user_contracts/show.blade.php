@@ -9,13 +9,13 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Contract Management</h1>
+            <h1>{{__('contract_manage_module.module_title')}}</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.contracts.list')}}">Contracts</a></li>
-              <li class="breadcrumb-item active">Details</li>
+              <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.user_contracts.list')}}">{{__('general_sentence.breadcrumbs.contracts')}}</a></li>
+              <li class="breadcrumb-item active">{{__('general_sentence.breadcrumbs.details')}}</li>
             </ol>
           </div>
         </div>
@@ -28,7 +28,7 @@
             <!-- Default box -->
             <div class="card card-success">
                 <div class="card-header">
-                  Contract Details
+                  {{__('contract_manage_module.contract_details')}}
                 </div> 
               <div class="card-body"> 
                 @if(Session::has('success'))
@@ -46,28 +46,28 @@
                  <table class="table table-bordered table-hover record-details-table" id="contract-details-table">
                       <tbody>
                         <tr>
-                          <td>Contract Code</td>
+                          <td>{{__('contract_manage_module.labels.contract_code')}}</td>
                           <td >{{$contract->code}}</td>
                         </tr>
                         <tr>
-                          <td>Contract Title</td>
+                          <td>{{__('contract_manage_module.labels.contract_title')}}</td>
                           <td >{{$contract->title}}</td>
                         </tr>
                         <tr>
-                          <td>Contract Description</td>
+                          <td>{{__('contract_manage_module.labels.description')}}</td>
                           <td >{!!$contract->description!!}</td>
                         </tr>
                         <tr>
-                          <td>Services Required</td>
+                          <td>{{__('contract_manage_module.services_required')}}</td>
                           <td>
                             @if(count($contract->services))
                             <table class="table table-bordered">
                               <thead>
                                 <tr>
-                                  <th>Service Name</th>
-                                  <th>Service Type</th>
-                                  <th>Recurrence Details</th>
-                                  <th>Service Price</th>
+                                  <th>{{__('contract_manage_module.labels.service')}}</th>
+                                  <th>{{__('contract_manage_module.labels.service_type')}}</th>
+                                  <th>{{__('contract_manage_module.recurrence_details')}}</th>
+                                  <th>{{__('contract_manage_module.labels.service_price')}}</th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -85,12 +85,12 @@
                                   <td>
                                     @if($service->service_type=='Maintenance')
                                     <div>
-                                      <span>From {{Carbon::parse($service->recurrence_details->start_date)->format('d/m/Y')}}</span> To 
+                                      <span>{{__('contract_manage_module.from')}} {{Carbon::parse($service->recurrence_details->start_date)->format('d/m/Y')}}</span> {{__('contract_manage_module.to')}} 
                                       <span>
                                       @if($service->recurrence_details->end_by_or_after=='end_by')
                                         {{Carbon::parse($service->recurrence_details->end_date)->format('d/m/Y')}}
                                       @else
-                                        after {{$service->recurrence_details->no_of_occurrences}} occurrences
+                                        {{__('contract_manage_module.after')}} {{$service->recurrence_details->no_of_occurrences}} {{__('contract_manage_module.occurences')}}
                                       @endif
                                       </span>
 
@@ -102,30 +102,30 @@
                                     <div>
                                       
                                     @if($service->recurrence_details->interval_type=='yearly')
-                                    <div>Recurre every {{$service->recurrence_details->reccure_every}} year(s)</div>
+                                    <div>{{__('contract_manage_module.reccur_every')}} {{$service->recurrence_details->reccure_every}} {{__('general_sentence.years')}}</div>
                                     <div>
                                       @if($service->recurrence_details->on_or_on_the=='on')
-                                      On <span>{{$service->recurrence_details->day_number}} {{$service->recurrence_details->month_name}}</span>
+                                      {{__('contract_manage_module.on')}} <span>{{$service->recurrence_details->day_number}} {{$service->recurrence_details->month_name}}</span>
                                       @else
-                                      On the <span>{{$service->recurrence_details->ordinal}}, {{$service->recurrence_details->week_day_name}}, {{$service->recurrence_details->month_name}}</span>
+                                      {{__('contract_manage_module.on_the')}} <span>{{$service->recurrence_details->ordinal}}, {{$service->recurrence_details->week_day_name}}, {{$service->recurrence_details->month_name}}</span>
                                       @endif
                                     </div>
                                     @elseif($service->recurrence_details->interval_type=='monthly')
-                                    <div>Recurre every {{$service->recurrence_details->reccure_every}} month(s)</div>
+                                    <div>{{__('contract_manage_module.reccur_every')}} {{$service->recurrence_details->reccure_every}} {{__('general_sentence.months')}}</div>
                                     <div>
                                       @if($service->recurrence_details->on_or_on_the=='on')
-                                      On <span>{{$service->recurrence_details->day_number}} day 
+                                      {{__('contract_manage_module.on')}} <span>{{$service->recurrence_details->day_number}} {{__('general_sentence.day')}} 
                                       @else
-                                      On the <span>{{$service->recurrence_details->ordinal}}, {{$service->recurrence_details->week_day_name}}</span>
+                                      {{__('contract_manage_module.on_the')}} <span>{{$service->recurrence_details->ordinal}}, {{$service->recurrence_details->week_day_name}}</span>
                                       @endif
-                                      Of every {{$service->recurrence_details->reccure_every}} month(s)
+                                      {{__('contract_manage_module.of_every')}} {{$service->recurrence_details->reccure_every}} {{__('general_sentence.months')}}
                                     </div>
 
                                     @elseif($service->recurrence_details->interval_type=='weekly')
-                                    <div>Recurre every {{$service->recurrence_details->reccure_every}} week(s)</div>
+                                    <div>{{__('contract_manage_module.reccur_every')}} {{$service->recurrence_details->reccure_every}} {{__('general_sentence.weeks')}}</div>
                                     <div>({{$service->recurrence_details->weekly_days}})</div>
                                     @else
-                                    <div>Recurre every {{$service->recurrence_details->reccure_every}} day(s)</div>
+                                    <div>{{__('contract_manage_module.reccur_every')}} {{$service->recurrence_details->reccure_every}} {{__('general_sentence.days')}}</div>
                                     @endif
 
                                     </div>
@@ -149,42 +149,42 @@
                         </tr>
 
                         <tr>
-                          <td>Start Date</td>
+                          <td>{{__('contract_manage_module.labels.start_date')}}</td>
                           <td >{{Carbon\Carbon::createFromFormat('Y-m-d', $contract->start_date)->format('d/m/Y')}}</td>
                         </tr>
                         <tr>
-                          <td>End Date</td>
+                          <td>{{__('contract_manage_module.labels.end_date')}}</td>
                           <td >{{Carbon\Carbon::createFromFormat('Y-m-d', $contract->end_date)->format('d/m/Y')}}</td>
                         </tr>
 
     
                         <tr>
-                          <td>Property</td>
+                          <td>{{__('contract_manage_module.labels.property')}}</td>
                           <td >{{$contract->property->property_name}}</td>
                         </tr>
                         <tr>
-                          <td>Property Type</td>
+                          <td>{{__('contract_manage_module.labels.property_type')}}</td>
                           <td >{{$contract->property->property_type->type_name}}</td>
                         </tr>
                         <tr>
-                          <td>Location/Landmark</td>
+                          <td>{{__('contract_manage_module.labels.location')}}</td>
                           <td >{{$contract->property->location}}</td>
                         </tr>
                         @if(in_array($current_user->role->user_type->slug,['super-admin','property-owner']))
                           <tr>
-                          <td>Contract Price</td>
+                          <td>{{__('contract_manage_module.labels.contract_price')}}</td>
                           <td >
                             {{$contract->contract_price_currency}}{{number_format($contract->contract_price, 2, '.', '')}}
 
                             @if(!$contract->in_installment)
 
                               @if($contract->is_paid)
-                              <span class="text-success">Paid on : {{Carbon::parse($contract->paid_on)->format('d/m/Y')}}</span>
+                              <span class="text-success">{{__('contract_manage_module.paid_on')}} : {{Carbon::parse($contract->paid_on)->format('d/m/Y')}}</span>
                               @else
                                 @if($current_user->role->user_type->slug=='property-owner')
                                   <a href="{{route('admin.pay_contract_amount',$contract->id)}}" class="btn btn-success">Pay</a>
                                 @else
-                                  Not Paid
+                                  ({{__('contract_manage_module.not_paid')}})
                                 @endif
                               
                               @endif
@@ -203,10 +203,9 @@
                             <td>
                               <table class="table table-bordered">
                                 <thead>
-                                  <tr>
-                                    <th>Payment Amount</th>
-                                    <th>Due Date</th>
-                                    <th>Payment</th>
+                                  <th>{{__('contract_manage_module.labels.amount')}}</th>
+                                  <th>{{__('contract_manage_module.labels.due_date')}}</th>
+                                  <th>{{__('contract_manage_module.labels.payment')}}</th>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -219,12 +218,12 @@
                                     <td>
 
                                       @if($installment->is_paid)
-                                      <span class="text-success">Paid on : {{Carbon::parse($installment->paid_on)->format('d/m/Y')}}</span>
+                                      <span class="text-success">{{__('contract_manage_module.paid_on')}} : {{Carbon::parse($installment->paid_on)->format('d/m/Y')}}</span>
                                       @else
                                         @if($current_user->role->user_type->slug=='property-owner')
                                           <a href="{{route('admin.pay_contract_installment',$installment->id)}}" class="btn btn-success">Pay</a>
                                         @else
-                                          Not Paid
+                                          {{__('contract_manage_module.not_paid')}}
                                         @endif
                                       
                                       @endif
@@ -240,7 +239,7 @@
                         @endif
 
                         <tr>
-                          <td>Status</td>
+                          <td>{{__('contract_manage_module.labels.status')}}</td>
                           <td>
                             @if($status=$contract->contract_status)
                               <span style="color: {{$status->color_code}}">{{$status->status_name}}</span>
@@ -250,7 +249,7 @@
                           </td>
                         </tr>
                         <tr>
-                          <td>Downloadable Files</td>
+                          <td>{{__('contract_manage_module.downloadable_files')}}</td>
                           <td>
                             <div class="row">
                               @if(count($files=$contract->contract_attachments))
@@ -279,20 +278,20 @@
                                   </div>
                                 @endforeach
                               @else
-                              <div class="col-md-12">No files</div>
+                              <div class="col-md-12">{{__('contract_manage_module.no_files')}}</div>
                               @endif
                             </div>
                           </td>
                         </tr>
 
                         <tr>
-                          <td>Created At</td>
+                          <td>{{__('contract_manage_module.labels.created_at')}}</td>
                           <td>{{$contract->created_at->format('d/m/Y')}}</td>
                         </tr>
                       </tbody>
                       <tfoot>
                         <tr>
-                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.user_contracts.list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
+                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.user_contracts.list')}}"><i class="fas fa-backward"></i>&nbsp;{{__('general_sentence.button_and_links.back')}}</a></td>
                         </tr>
                       </tfoot>
                   </table>

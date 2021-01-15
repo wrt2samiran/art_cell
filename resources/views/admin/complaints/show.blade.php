@@ -32,13 +32,13 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Complaint Management</h1>
+            <h1>{{__('complaint_module.module_title')}}</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.complaints.list')}}">Complaints</a></li>
-              <li class="breadcrumb-item active">Details</li>
+              <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.complaints.list')}}">{{__('general_sentence.breadcrumbs.complaints')}}</a></li>
+              <li class="breadcrumb-item active">{{__('general_sentence.breadcrumbs.details')}}</li>
             </ol>
           </div>
         </div>
@@ -51,7 +51,7 @@
             <!-- Default box -->
             <div class="card card-success">
                 <div class="card-header">
-                  Complaint Details
+                  {{__('complaint_module.complaint_details')}}
                 </div> 
                 <div class="card-body"> 
                   @if(Session::has('success'))
@@ -71,11 +71,11 @@
                       <table class="table table-bordered table-hover record-details-table" id="property-details-table">
                         <tbody>
                           <tr>
-                            <td>Complaint against contract</td>
+                            <td>{{__('complaint_module.labels.contract')}}</td>
                             <td >{{$complaint->contract->title}} ({{$complaint->contract->code}})</td>
                           </tr>
                           <tr>
-                            <td>Complaint agains work order</td>
+                            <td>{{__('complaint_module.labels.work_order')}}</td>
                             <td>
                               @if($complaint->work_order)
                                 {{$complaint->work_order->task_title}}
@@ -85,19 +85,19 @@
                             </td>
                           </tr>
                           <tr>
-                            <td>Subject</td>
+                            <td>{{__('complaint_module.labels.subject')}}</td>
                             <td >{{$complaint->subject}}</td>
                           </tr>
                           <tr>
-                            <td>Complaint Details</td>
+                            <td>{{__('complaint_module.labels.complaint')}}</td>
                             <td >{{$complaint->details}}</td>
                           </tr>
                           <tr>
-                            <td>Complaint By</td>
+                            <td>{{__('complaint_module.labels.complaint_by')}}</td>
                             <td >{{$complaint->user_display_title()}}</td>
                           </tr>
                           <tr>
-                            <td>Created At</td>
+                            <td>{{__('complaint_module.labels.created_at')}}</td>
                             <td>{{$complaint->created_at->format('d/m/Y g:i A')}}</td>
                           </tr>
                         </tbody>
@@ -107,11 +107,11 @@
                     <div class="col-sm-5">
                         <div class="row">
                             <div class="col-md-12">
-                                <h5>Update Complaint Status</h5>
+                                <h5>{{__('complaint_module.update_complaint_status')}}</h5>
                                 <form class="form-inline" action="{{route('admin.complaints.update_status',$complaint->id)}}" method="post">
                                     @csrf
                                     @method("PUT")
-                                  <label for="email" class="mr-sm-2">Status:</label>
+                                  <label for="email" class="mr-sm-2">{{__('complaint_module.labels.status')}}:</label>
                                     <select class="form-control mb-2 mr-sm-2" name="status" id="status">
                                         @if(count($complaint_statusses))
                                           @foreach($complaint_statusses as $complaint_status)
@@ -131,9 +131,9 @@
                               <table class="table table-fixed">
                                 <thead>
                                   <tr class="row p-0 m-0">
-                                    <th class="col">Updated By</th>
-                                    <th class="col">Status</th>
-                                    <th class="col">Updated At</th>
+                                    <th class="col">{{__('complaint_module.labels.updated_by')}}</th>
+                                    <th class="col">{{__('complaint_module.labels.status')}}</th>
+                                    <th class="col">{{__('complaint_module.labels.updated_at')}}</th>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -145,7 +145,7 @@
                                   </tr>
                                   @empty
                                   <tr class="row p-0 m-0">
-                                    <td class="col">No updates</td>
+                                    <td class="col">{{__('complaint_module.no_updates')}}</td>
                                   </tr>
                                   @endforelse
                                 </tbody>
@@ -160,9 +160,9 @@
                       <div class="col-lg-12">
                           <div class="card">
                               <div class="card-body text-center">
-                                  <h4 class="card-title">Latest Notes 
+                                  <h4 class="card-title">{{__('complaint_module.latest_notes')}} 
                                     @if(auth()->guard('admin')->user()->hasAllPermission(['complaint-add-note']))
-                                    <a href="javascript:add_new_note()" class="btn btn-success">Add New Note</a>
+                                    <a href="javascript:add_new_note()" class="btn btn-success">{{__('complaint_module.add_note_button')}}</a>
                                     @endif
                                   </h4>
                               </div>
@@ -181,7 +181,7 @@
                                          <span class="text-muted m-b-15 d-block"><i class="far fa-clock"></i> {{$note->created_at->format('d/m/Y g:i A')}}</span>
                  
                                          @if($note->file)
-                                         <span class="m-b-15 d-block"><a href="{{asset('uploads/complaint_files/'.$note->file)}}">View/Download file</a></span>
+                                         <span class="m-b-15 d-block"><a href="{{asset('uploads/complaint_files/'.$note->file)}}">{{__('complaint_module.download_file')}}</a></span>
                                          @endif
 
                                         <div class="comment-footer">
@@ -197,10 +197,10 @@
                                         @endphp
 
                                           @if(auth()->guard('admin')->user()->hasAllPermission(['complaint-edit-note']))
-                                          <button type="button" data-file_url="{{$file_url}}" data-edit_url="{{route('admin.complaints.update_note',['complaint_id'=>$complaint->id,'note_id'=>$note->id])}}" data-note_data="{{json_encode($note)}}" class="btn btn-success btn-sm edit_note_button" >Edit</button>
+                                          <button type="button" data-file_url="{{$file_url}}" data-edit_url="{{route('admin.complaints.update_note',['complaint_id'=>$complaint->id,'note_id'=>$note->id])}}" data-note_data="{{json_encode($note)}}" class="btn btn-success btn-sm edit_note_button" >{{__('general_sentence.button_and_links.edit')}}</button>
                                           @endif
                                           @if(auth()->guard('admin')->user()->hasAllPermission(['complaint-delete-note']))
-                                          <button type="button" data-delete_url="{{route('admin.complaints.delete_note',['complaint_id'=>$complaint->id,'note_id'=>$note->id])}}" class="btn btn-danger btn-sm delete_note_button">Delete</button>
+                                          <button type="button" data-delete_url="{{route('admin.complaints.delete_note',['complaint_id'=>$complaint->id,'note_id'=>$note->id])}}" class="btn btn-danger btn-sm delete_note_button">{{__('general_sentence.button_and_links.delete')}}</button>
                                           @endif
                                         @endif
                                         </div>
@@ -210,7 +210,7 @@
                                 @endforeach
                                 @else
                                 <div class="d-flex flex-row comment-row m-t-0">
-                                  <p>No Notes</p>
+                                  <p>{{__('complaint_module.no_notes')}}</p>
                                 </div> <!-- Comment Row -->
                                 @endif
 
@@ -226,7 +226,7 @@
 
                 </div>
                 <div class="card-footer">
-                  <a class="btn btn-primary" href="{{route('admin.complaints.list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a>
+                  <a class="btn btn-primary" href="{{route('admin.complaints.list')}}"><i class="fas fa-backward"></i>&nbsp;{{__('general_sentence.button_and_links.back')}}</a>
                 </div> 
             </div>
             <!-- /.card -->

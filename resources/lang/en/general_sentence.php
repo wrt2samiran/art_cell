@@ -117,8 +117,15 @@ return [
     'add_file'=>'Add Files',
     'save_and_next'=>'Save & Next',
     'next'=>'Next',
-    'previous'=>'Previous'
-
+    'previous'=>'Previous',
+    'compose'=>'Compose',
+    'sent'=>'Sent',
+    'inbox'=>'Inbox',
+    'attachment'=>'Attachment',
+    'discard'=>'Discard',
+    'send'=>'Send',
+    'delete'=>'Delete',
+    'add_note'=>'Add Note'
   ]
     
   ];

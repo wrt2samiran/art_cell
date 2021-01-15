@@ -49,12 +49,19 @@ $("#message_compose_form").validate({
 });
 
 
+
 $('#message_to').select2({
     theme: 'bootstrap4',
-    placeholder:'Select recipient',
+    placeholder:translations.message_module.placeholders.recipient,
     "language": {
+        locale: current_locale,
        "noResults": function(){
-           return "No User";
+           if(current_locale=='ar'){
+            return "لا مستخدم";
+           }else{
+             return "No User";
+           }
+          
        }
     },
     escapeMarkup: function(markup) {

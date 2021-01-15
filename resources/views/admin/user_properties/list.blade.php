@@ -9,12 +9,12 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Properties</h1>
+                <h1>{{__('property_manage_module.module_title')}}</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item active">Properties</li>
+                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
+                  <li class="breadcrumb-item active">{{__('general_sentence.breadcrumbs.properties')}}</li>
                 </ol>
               </div>
             </div>
@@ -28,7 +28,7 @@
                         <div class="card">
 				            <div class="card-header">
 				                <div class="d-flex justify-content-between" >
-				                    <div><span>Properties</span></div>
+				                    <div><span>{{__('property_manage_module.property_list')}}</span></div>
 					                <div>
               
 					                </div>
@@ -53,12 +53,12 @@
                                     <thead>
                                         <tr>
                                             <th>Id</th>
-                                            <th>Property Code</th>
-                                            <th>Name</th>
-                                            <th>City</th>
-                                            <th>Status</th>
-                                            <th>Created At</th>
-                                            <th>Action</th>
+                                            <th>{{__('property_manage_module.labels.property_code')}}</th>
+                                            <th>{{__('property_manage_module.labels.property_name')}}</th>
+                                            <th>{{__('property_manage_module.labels.city')}}</th>
+                                            <th>{{__('property_manage_module.labels.status')}}</th>
+                                            <th>{{__('property_manage_module.labels.created_at')}}</th>
+                                            <th>{{__('property_manage_module.labels.action')}}</th>
                                         </tr>
                                     </thead>
                                 </table>

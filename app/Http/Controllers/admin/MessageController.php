@@ -219,7 +219,7 @@ class MessageController extends Controller
         ]);
 
 
-        return redirect()->route('admin.messages.list')->with('success','Message successfully sent.');
+        return redirect()->route('admin.messages.list')->with('success',__('message_module.send_message_success_message'));
 
     }
 

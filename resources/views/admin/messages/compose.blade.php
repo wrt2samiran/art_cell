@@ -9,13 +9,13 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Compose Message</h1>
+                <h1>{{__('message_module.compose_message_page_title')}}</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item"><a href="{{route('admin.messages.list')}}">Messages</a></li>
-                  <li class="breadcrumb-item active">Compose</li>
+                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
+                  <li class="breadcrumb-item"><a href="{{route('admin.messages.list')}}">{{__('general_sentence.breadcrumbs.messages')}}</a></li>
+                  <li class="breadcrumb-item active">{{__('general_sentence.breadcrumbs.create')}}</li>
                 </ol>
               </div>
             </div>
@@ -38,13 +38,13 @@
                   @csrf
                   <input type="hidden" name="upload_unique_key" value="{{$upload_unique_key}}">
                 <div class="card-header">
-                  <h3 class="card-title">Compose New Message</h3>
+                  <h3 class="card-title">{{__('message_module.compose_message_section_header')}}</h3>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
                   <div class="form-group">
                     <select class="form-control " id="message_to" name="message_to" style="width: 100%;">
-                      <option value="">Select Reciepent</option>
+                      <option value="">{{__('message_module.placeholders.recipient')}}</option>
                       @forelse($users as $user)
                          <option value="{{$user->id}}" >
                           {{$user->name}}-{{$user->email}} 
@@ -67,7 +67,7 @@
                     <div id="message_to_error"></div>
                   </div>
                   <div class="form-group">
-                    <input class="form-control" name="subject" placeholder="Subject:">
+                    <input class="form-control" name="subject" placeholder="{{__('message_module.placeholders.subject')}}">
                   </div>
                   <div class="form-group">
                       <textarea id="message" name="message" class="form-control" style="height: 300px"></textarea>
@@ -75,7 +75,7 @@
                   </div>
                   <div class="form-group">
                     <div class="btn btn-default btn-file" id="attachment_block">
-                      <i class="fas fa-paperclip"></i> Attachment
+                      <i class="fas fa-paperclip"></i> {{__('general_sentence.button_and_links.attachment')}}
                       <input multiple type="file" id="attachment">
                     </div>
 
@@ -97,9 +97,9 @@
                 <!-- /.card-body -->
                 <div class="card-footer">
                   <div class="float-right">
-                    <button type="submit" class="btn btn-primary"><i class="far fa-envelope"></i> Send</button>
+                    <button type="submit" class="btn btn-primary"><i class="far fa-envelope"></i> {{__('general_sentence.button_and_links.send')}}</button>
                   </div>
-                  <a href="{{route('admin.messages.list')}}" class="btn btn-default"><i class="fas fa-times"></i> Discard</a>
+                  <a href="{{route('admin.messages.list')}}" class="btn btn-default"><i class="fas fa-times"></i> {{__('general_sentence.button_and_links.discard')}}</a>
                 </div>
                 <!-- /.card-footer -->
                 </form>
@@ -132,11 +132,11 @@ $(document).on('click', '.attachment_remove_btn', function(){
     var element_to_remove=$(this).closest(".attachment_row");
 
     swal({
-    title: "Are you sure?",
-    text: "Once removed, you will not be able to recover this file!",
-    icon: "warning",
-    buttons: true,
-    dangerMode: true,
+      title: translations.message_module.warning_title,
+      text: translations.message_module.file_delete_warning,
+      icon: "warning",
+      buttons: [translations.general_sentence.button_and_links.cancel,translations.general_sentence.button_and_links.ok],
+      dangerMode: false,
     })
     .then((willDelete) => {
       if (willDelete) {
@@ -152,7 +152,7 @@ $(document).on('click', '.attachment_remove_btn', function(){
           success: function (data) {
             element_to_remove.remove();
             $.LoadingOverlay("hide");
-            toastr.success('File successfully removed.', 'Success', {timeOut: 5000});
+            toastr.success(translations.message_module.file_delete_success_message, 'Success', {timeOut: 5000});
           },
           error: function(jqXHR, textStatus, errorThrown) {
              $.LoadingOverlay("hide");
@@ -214,15 +214,18 @@ $('#attachment').on('change',function(){
 
             var error_message='';
 
-            if(file_size_error==true && file_type_error==true){
-                error_message="Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files of max size 2mb";
-            }else if(file_size_error==true && file_type_error==false){
-                error_message="File size should not be more than 2 mb";
-            }else{
-                error_message="Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files";
-            }
 
-            swal(error_message);
+          if(file_size_error==true && file_type_error==true){
+
+             error_message=(current_locale=="ar")?"يرجى تحميل ملفات PDF / DOC / JPG / JPEG / PNG / TEXT فقط بحجم أقصى 2 ميجا بايت":"Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files of max size 2Mb";
+
+          }else if(file_size_error==true && file_type_error==false){
+              error_message=(current_locale=="ar")?"يجب ألا يزيد حجم الملف عن 2 ميغا بايت":"File size should not be more than 2Mb";
+          }else{
+              error_message=(current_locale=="ar")?"يرجى تحميل ملفات PDF / DOC / JPG / JPEG / PNG / TEXT فقط":"Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files";
+          }
+
+          swal(error_message);
 
         }else{
 
@@ -270,7 +273,7 @@ $('#attachment').on('change',function(){
                   <div class="d-flex justify-content-between  p-1">
                   <div>${file.file_name}</div>
                   <div>
-                  <a class="attachment_remove_btn" href="javascript:void(0)" data-id=`+file.id+` data-delete_url=`+url+` style="color:red;fon">Remove</a>
+                  <a class="attachment_remove_btn" href="javascript:void(0)" data-id=`+file.id+` data-delete_url=`+url+` style="color:red;fon">`+translations.message_module.remove+`</a>
                   </div>
                   </div>
                   

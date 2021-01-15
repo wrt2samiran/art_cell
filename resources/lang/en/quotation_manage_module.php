@@ -20,13 +20,16 @@ return [
 		'property_type'=>'Property Type',
 		'service_required'=>'Services',
         'duration'=>'Duration',
-		'images'=>'Images (Optional)',
-		'no_of_resources'=>'No. Of Resources (optional)',
+		'details_resources'=>'Resources',
+		'details_image'=>'Images',
 		'description'=>'Description',
         'status'=>'Status',
         'created_at'=>'Created At',
         'created_by'=>'Created By',
-        'action'=>'Action'
+        'action'=>'Action',
+        'update_status'=>'Update Quotation Status',
+        'service'=>'Service',
+        'work_details'=>'Work Details'
 	],
 	'placeholders'=>[
         'filter_by_service'=>'Filter By Service',
