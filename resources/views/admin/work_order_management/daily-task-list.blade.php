@@ -131,7 +131,7 @@
                     </td>
                   </tr>
                   <tr>
-                    <td>Completed (%)</td> 
+                    <td>{{__('work_order_module.work_order_task_column_name.completed')}}</td> 
                     <td ><div class="progress"><div class="progress-bar bg-success progress-bar-striped" role="progressbar" aria-valuenow="{{$work_order_list->work_order_complete_percent}}" aria-valuemin="0" aria-valuemax="100" style="width: {{$work_order_list->work_order_complete_percent}}%">{{$work_order_list->work_order_complete_percent}}% </div></div></td>
                   </tr>
                   <tr>
@@ -173,7 +173,7 @@
                 
             </table>
 
-            @if(@$work_order_list->task_assigned=='N') 
+            @if(@$work_order_list->task_assigned=='N' and @$work_order_list->contract->status_id==1) 
             <div class="card-header">
               <div class="d-flex justify-content-between" >
                 <div class="assign-labour-task">
@@ -208,7 +208,7 @@
             </table>
 
             <div>
-              <a href="{{route('admin.work-order-management.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
+              <a href="{{route('admin.work-order-management.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;{{__('general_sentence.button_and_links.back')}}</a>
             </div>
             <!-- <input type="hidden" id="labour_assigned_task_list" value="{{route('admin.work-order-management.list')}}"> -->
 

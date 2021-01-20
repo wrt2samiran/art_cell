@@ -4,8 +4,14 @@ return [
 	'work_order_list'=> 'Work Order List',
 	'work_order' => 'Work Order',
 	'work_details_and_task_list'=> 'Work Details And Task List',
+	'create_work_order' => 'Create Work Order',
+	'details' => 'Details',
 	'status' => 'Status',
 	'action' => 'Action',
+	'date' => 'Date',
+	'slot' => 'Slot',
+	'task_labour_list' => 'Task Details And Labour List',
+	'task_list' => 'Task List',
 	
 
 	
@@ -26,8 +32,18 @@ return [
 		'work_order_details' => 'Work Order Details',
 		'service_provider' => 'Service Provider',
 		'date_of_service' => 'Date of Service',
+		'review_rating' => 'Review & Rating',
 		'create_at' => 'Created At',
 		'task_title' => 'Task Title',
+		'start_date' => 'Start Date',
+		'task_details' => 'Task Details',
+		'labour_title' => 'Labour Title',
+		'task_finish_date_time_assigned' => 'Task Finish Date And Time (Assigned)',
+		'task_slot' => 'Task Slot',
+		'task_mode' => 'Task Mode',
+		'labour_feedback' => 'Labour Feedback',
+		'feedback_date_time' => 'Feedback Date And Time',
+		'add_reschedule' => 'Add Reschedule',
 	],
 
 

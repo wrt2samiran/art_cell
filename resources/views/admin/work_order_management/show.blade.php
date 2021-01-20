@@ -9,13 +9,13 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Work Order Management</h1>
+                <h1>{{__('work_order_module.module_title')}}</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
+                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
                   
-                  <li class="breadcrumb-item active">Details</li>
+                  <li class="breadcrumb-item active">{{__('work_order_module.details')}}</li>
                 </ol>
               </div>
             </div>
@@ -41,39 +41,39 @@
                 <tbody>
                   <?php //dd($service_allocation_data);?>
                         <tr>
-                          <td >Contract Id</td>
+                          <td >{{__('work_order_module.work_order_task_column_name.contract_id')}}</td>
                           <td >{{$work_order_list->contract->code}}</td>
                         </tr>
                         <tr>
-                          <td >Title</td>
+                          <td >{{__('work_order_module.work_order_task_column_name.title')}}</td>
                           <td >{{$work_order_list->task_title}}</td>
                         </tr>
                         <tr>
-                          <td >Details</td>
+                          <td >{{__('work_order_module.details')}}</td>
                           <td >{!!$work_order_list->task_desc!!}</td>
                         </tr>
                         <tr>
-                          <td >Property Name</td>
+                          <td >{{__('work_order_module.work_order_task_column_name.property_name')}}</td>
                           <td >{{$work_order_list->property->property_name}}</td>
                         </tr>
                         <tr>
-                          <td >Service</td>
+                          <td >{{__('work_order_module.work_order_task_column_name.service')}}</td>
                           <td >{{$work_order_list->service->service_name}}</td>
                         </tr>
                         <tr>
-                          <td >Service Type</td>
+                          <td >{{__('work_order_module.work_order_task_column_name.service_type')}}</td>
                           <td >{{$work_order_list->contract_services->service_type}}</td>
                         </tr>
                         <tr>
-                          <td >Country</td>
+                          <td >{{__('general_sentence.breadcrumbs.country')}}</td>
                           <td >{{$work_order_list->property->country->name}}</td>
                         </tr>
                         <tr>
-                          <td >State</td>
+                          <td >{{__('general_sentence.breadcrumbs.state')}}</td>
                           <td >{{$work_order_list->property->state->name}}</td>
                         </tr>
                         <tr>
-                          <td >City</td>
+                          <td >{{__('general_sentence.breadcrumbs.city')}}</td>
                           <td >{{$work_order_list->property->city->name}}</td>
                         </tr>
                         <tr>
@@ -81,17 +81,17 @@
                           <td >{{$work_order_list->start_date}}</td>
                         </tr>
                         <tr>
-                          <td >Service Provider</td>
+                          <td >{{__('work_order_module.work_order_task_column_name.service_type')}}</td>
                           <td >{{$work_order_list->userDetails->name}}</td>
                         </tr>
                         <tr>
-                          <td> Date of Service</td> 
+                          <td> {{__('work_order_module.work_order_task_column_name.date_of_service')}}</td> 
                           <td >
                             @if(@$work_order_list->contract_services->service_type=='Maintenance'  and @$work_order_list->contract_service_recurrence->interval_type != 'daily') 
                               <table class="table table-bordered" >
                                   <tr> 
                                         <tr>
-                                          <td scope="col" style="text-align:center;" colspan="6"><strong>Date</strong> </td>
+                                          <td scope="col" style="text-align:center;" colspan="6"><strong>{{__('work_order_module.date')}}</strong> </td>
                                         </tr>
                                        @foreach(@$work_order_list->contract_service_dates as $valueDate)
                                           <td>
@@ -108,8 +108,8 @@
                                     @php $arraySlot = array('1'=> 'First Slot', '2'=> 'Second Slot', '3'=> 'Third Slot', '4'=> 'Fourth Slot', '5'=> 'Fifth Slot', '6'=>'Sixth Slot', '7'=> 'Seventh Slot', '8'=> 'Eight Slot', '9'=>'Nineth Slot', '10'=>'Tenth Slot'); @endphp
                                     @if(!empty($available_dates))
                                       <tr>
-                                        <td scope="col"><strong>Date</strong> </td>
-                                        <td scope="col" colspan="{{count(@$all_slot_data)/count(@$all_available_dates)}}" style="text-align:center;"><strong>Slot</strong></td>
+                                        <td scope="col"><strong>{{__('work_order_module.date')}}</strong> </td>
+                                        <td scope="col" colspan="{{count(@$all_slot_data)/count(@$all_available_dates)}}" style="text-align:center;"><strong>{{__('work_order_module.slot')}}</strong></td>
                                       </tr>
                                      @foreach(@$all_available_dates as $valueDate)
                                       
@@ -138,13 +138,13 @@
                         </tr>  
                   
                         <tr>
-                          <td>Completed</td> 
+                          <td>{{__('work_order_module.work_order_task_column_name.completed')}}</td> 
                           <td ><div class="progress"><div class="progress-bar bg-success progress-bar-striped" role="progressbar" aria-valuenow="{{$work_order_list->work_order_complete_percent}}" aria-valuemin="0" aria-valuemax="100" style="width: {{$work_order_list->work_order_complete_percent}}%">{{$work_order_list->work_order_complete_percent}}% </div></div></td>
                         </tr>
 
                         @if($work_order_list->status=='2')
                           <tr>
-                            <td>Review & Rating</td>
+                            <td>{{__('work_order_module.work_order_task_column_name.review_rating')}}</td>
                             <td>
                                 {{$work_order_list->review}}
                                 <section class='rating-widget'>
@@ -170,7 +170,7 @@
                         @endif
                        
                         <tr>
-                          <td>Status</td>
+                          <td>{{__('work_order_module.status')}}</td>
                           <td>
                             @php
                               if($work_order_list->status=='0'){

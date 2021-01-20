@@ -9,13 +9,13 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Task Details And Labour List</h1>
+                <h1>{{__('work_order_module.module_title')}}</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item "><a href="{{route('admin.work-order-management.labourTaskList', $task_data->work_order_id)}}">Task List</a></li>
-                  <li class="breadcrumb-item active">Task Details And Labour List</li>
+                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
+                  <li class="breadcrumb-item "><a href="{{route('admin.work-order-management.labourTaskList', $task_data->work_order_id)}}">{{__('work_order_module.task_list')}}</a></li>
+                  <li class="breadcrumb-item active">{{__('work_order_module.task_labour_list')}}</li>
                 </ol>
               </div>
             </div>
@@ -44,43 +44,43 @@
                 <tbody>
                   <?php //dd($service_allocation_data);?>
                   <tr>
-                    <td >Task Title</td>
+                    <td >{{__('work_order_module.work_order_task_column_name.task_title')}}</td>
                     <td >{{$task_data->task_title}}</td>
                   </tr>
                   <tr>
-                    <td >Contract Code</td>
+                    <td >{{__('work_order_module.work_order_task_column_name.contract_code')}}</td>
                     <td >{{$task_data->contract->code}}</td>
                   </tr>
                   <tr>
-                    <td >Work Order Title</td>
+                    <td >{{__('work_order_module.work_order_task_column_name.work_order_title')}}</td>
                     <td >{{$task_data->work_order->task_title}}</td>
                   </tr>
                   <tr>
-                    <td >Property Name</td>
+                    <td >{{__('work_order_module.work_order_task_column_name.property_name')}}</td>
                     <td >{{$task_data->property->property_name}}</td>
                   </tr>
                   <tr>
-                    <td >Service</td>
+                    <td >{{__('work_order_module.work_order_task_column_name.service')}}</td>
                     <td >{{$task_data->service->service_name}}</td>
                   </tr>
                   <tr>
-                    <td >Service Type</td>
+                    <td >{{__('work_order_module.work_order_task_column_name.service_type')}}</td>
                     <td >{{$task_data->contract_services->service_type}}</td>
                   </tr>
                   <tr>
-                    <td>Task Details</td>
+                    <td>{{__('work_order_module.work_order_task_column_name.task_details')}}</td>
                     <td >{!! $task_data->task_desc!!}</td>
                   </tr>
                   <tr>
-                    <td>Created At</td>
+                    <td>{{__('work_order_module.work_order_task_column_name.create_at')}}</td>
                     <td >{{Carbon\Carbon::createFromFormat('Y-m-d H:i:s', @$task_data->created_at)->format('d/m/Y')}}</td>
                   </tr>
                   <tr>
-                    <td>Completed (%)</td> 
+                    <td>{{__('work_order_module.work_order_task_column_name.completed')}}</td> 
                     <td ><div class="progress"><div class="progress-bar bg-success progress-bar-striped" role="progressbar" aria-valuenow="{{$task_data->task_complete_percent}}" aria-valuemin="0" aria-valuemax="100" style="width: {{$task_data->task_complete_percent}}%">{{$task_data->task_complete_percent}}% </div></div></td>
                   </tr>
                   <tr>
-                    <td>Status</td>
+                    <td>{{__('work_order_module.status')}}</td>
                     <td>
                       @php
                         if($task_data->status=='0'){
@@ -115,20 +115,20 @@
 
                         <tr>
                           <th>Id</th>
-                          <th>Labour Title</th>
-                          <th>Task Finish Date And Time (Assigned)</th>
-                          <th>Task Slot</th>
-                          <th>Task Mode</th>
-                          <th>Labour Feedback</th>
-                          <th>Feedback Date And Time</th>
-                          <th>Status</th>
+                          <th>{{__('work_order_module.work_order_task_column_name.labour_title')}}</th>
+                          <th>{{__('work_order_module.work_order_task_column_name.task_finish_date_time_assigned')}}</th>
+                          <th>{{__('work_order_module.work_order_task_column_name.task_slot')}}</th>
+                          <th>{{__('work_order_module.work_order_task_column_name.task_mode')}}</th>
+                          <th>{{__('work_order_module.work_order_task_column_name.labour_feedback')}}</th>
+                          <th>{{__('work_order_module.work_order_task_column_name.feedback_date_time')}}</th>
+                          <th>{{__('work_order_module.status')}}</th>
                           @if($task_data->contract_services->service_type=='Maintenance')
-                          <th>Action @if($task_data->task_complete_percent!=100 and $task_action>0)<input type="checkbox" name="all_labour_task_maintain" id="all_labour_task_maintain">
+                          <th>{{__('work_order_module.action')}} @if($task_data->task_complete_percent!=100 and $task_action>0)<input type="checkbox" name="all_labour_task_maintain" id="all_labour_task_maintain">
                                     <i class="right fas fa-trash-alt" id='delete_selected_maintain'></i> 
                            @endif 
                           </th>
                           @else
-                            <th>Action @if($task_data->task_complete_percent!=100 and $task_action>0)<input type="checkbox" name="all_labour_task" id="all_labour_task">
+                            <th>{{__('work_order_module.action')}} @if($task_data->task_complete_percent!=100 and $task_action>0)<input type="checkbox" name="all_labour_task" id="all_labour_task">
                                 @if($task_data->task_complete_percent!=100 and $task_action>0)
                                       <i class="right fas fa-trash-alt" id='delete_selected'></i> 
                                 @endif 

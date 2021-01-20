@@ -4,8 +4,14 @@ return [
 	'work_order_list'=> 'قائمة أوامر العمل',
 	'work_order' =>'أمر العمل',
 	'work_details_and_task_list'=> 'تفاصيل العمل وقائمة المهام',
+	'create_work_order' => 'إنشاء أمر عمل',
+	'details' => 'تفاصيل',
 	'status' => 'الحالة',
 	'action' => 'عمل',
+	'date' => 'تاريخ',
+	'slot' => 'فتحة',
+	'task_labour_list' => 'تفاصيل المهمة وقائمة العمل',
+	'task_list' => 'قائمة المهام',
 
 	
 
@@ -25,8 +31,18 @@ return [
 		'work_order_details' => 'تفاصيل أمر العمل',
 		'service_provider' => 'مقدم الخدمة',
 		'date_of_service' => 'تاريخ الخدمة',
+		'review_rating' => 'مراجعة وتقييم',
 		'create_at' => 'أنشئت في',
 		'task_title' => 'عنوان المهمة',
+		'start_date' => 'تاريخ البدء',
+		'task_details' => 'تفاصيل المهمة',
+		'labour_title' => 'عنوان العمل',
+		'task_finish_date_time_assigned' => '(معين) تاريخ ووقت إنهاء المهمة',
+		'task_slot' => 'فتحة مهمة',
+		'task_mode' => 'وضع المهمة',
+		'labour_feedback' => 'ملاحظات العمل',
+		'feedback_date_time' => 'تاريخ ووقت التعليقات',
+		'add_reschedule' => 'إضافة إعادة الجدولة',
 	],
 	
 	'filter_labels'=>[
