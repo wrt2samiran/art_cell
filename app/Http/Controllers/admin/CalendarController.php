@@ -39,7 +39,7 @@ class CalendarController extends Controller
 
         if($logedInUserRole->role->user_type->slug=='property-owner' || $logedInUserRole->role->user_type->slug=='property-manager')
         {
-            $sqlContract=Contract::with('property')->where(function($q) use ($logedInUser){
+            $sqlContract=Contract::with('property')->whereStatusId('1')->where(function($q) use ($logedInUser){
           
                
                 //OR if logged in user is the property_owner or added as property manager of the property related to this contract 
@@ -516,7 +516,7 @@ class CalendarController extends Controller
 
         else if($logedInUserRole->role->user_type->slug=='super-admin' || $logedInUserRole->role->user_type->slug=='sub-admin') 
         {
-            $sqlContract=Contract::with('property')->whereIsActive(1)->whereNull('deleted_at')
+            $sqlContract=Contract::with('property')->whereStatusId('1')->whereNull('deleted_at')
 
 
 
@@ -801,7 +801,7 @@ class CalendarController extends Controller
               return response()->json(['success' =>false,'message'=>$validator->errors()->first()], 200);
             }
 
-        $allContracts = Contract::whereNull('deleted_at')->where('property_id', $request->property_id)->get();
+        $allContracts = Contract::whereNull('deleted_at')->whereStatusId('1')->where('property_id', $request->property_id)->get();
         return response()->json(['status'=>true, 'allContracts'=>$allContracts,],200);
     }
 

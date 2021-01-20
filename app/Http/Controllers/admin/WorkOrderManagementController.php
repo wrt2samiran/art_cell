@@ -156,11 +156,11 @@ class WorkOrderManagementController extends Controller
                         ->orWhere('property_manager',$logedInUser);
                     });
                 })
-                ->select('contracts.*')->get();
+                ->select('contracts.*')->whereStatusId('1')->get();
             }
             else
             {
-                $this->data['contract_list']=Contract::whereIsActive('1')->whereNull('deleted_at')->orderBy('id','ASC')->get();
+                $this->data['contract_list']=Contract::whereStatusId('1')->whereNull('deleted_at')->orderBy('id','ASC')->get();
             }
             //dd($this->data['contract_list']);
             return view($this->view_path.'.add',$this->data);
@@ -193,7 +193,7 @@ class WorkOrderManagementController extends Controller
             }
         
 
-        $sqlProperty = Contract::with('property')->whereId($request->contract_id)->whereIsActive('1')->whereNull('deleted_at')->first();
+        $sqlProperty = Contract::with('property')->whereId($request->contract_id)->whereStatusId('1')->whereNull('deleted_at')->first();
 
         $sqlService = ContractService::with('service')->whereContractId($request->contract_id)->where('service_type','<>', 'Maintenance')->get();
         // $restContractService = array();
@@ -568,9 +568,13 @@ class WorkOrderManagementController extends Controller
                
              
                 if($logedInUser==$workOrder->user_id){
-                     $add_url=route('admin.work-order-management.labourTaskList',$workOrder->id);
+                    if($workOrder->contract->status_id==1)
+                    {
+                        $add_url=route('admin.work-order-management.labourTaskList',$workOrder->id);
 
-                     $action_buttons =$action_buttons.'<a title="Labour Task List" href="'.$add_url.'"><i class="fas fa-plus text-success"></i></a>';
+                        $action_buttons =$action_buttons.'<a title="Labour Task List" href="'.$add_url.'"><i class="fas fa-plus text-success"></i></a>';
+                    }
+                     
                 }
                 
                 if($logedInUserRole->role->user_type->slug=='labour'){    
@@ -669,11 +673,11 @@ class WorkOrderManagementController extends Controller
                         ->orWhere('property_manager',$logedInUser);
                     });
                 })
-                ->select('contracts.*')->get();
+                ->select('contracts.*')->whereStatusId('1')->get();
             }
             else
             {
-                $this->data['contract_list']=Contract::with('property')->whereIsActive('1')->whereNull('deleted_at')->orderBy('id','ASC')->get();
+                $this->data['contract_list']=Contract::with('property')->whereNull('deleted_at')->whereStatusId('1')->orderBy('id','ASC')->get();
             }
 
             $this->data['property_list']=Property::with('parent_user')->whereIsActive('1')->whereNull('deleted_at')->orderBy('id','ASC')->get();

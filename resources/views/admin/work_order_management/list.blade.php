@@ -32,7 +32,7 @@
                                     @if(auth()->guard('admin')->user()->hasAllPermission(['work-order-create']))
                                       <div>
                                         <a class="btn btn-success" href="{{route('admin.work-order-management.workOrderCreate')}}">
-                                         {{__('general_sentence.breadcrumbs.create_work_order')}}
+                                         {{__('work_order_module.create_work_order')}}
                                         </a>
                                       </div>
                                     @endif
