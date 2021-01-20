@@ -98,7 +98,7 @@
                   </tr>
                   @empty
                   <tr>
-                    <td colspan="3">{{__('message_module.no_messages')}}</td>
+                    <td colspan="3">{{__('message_module.no_message')}}</td>
                   </tr>
                   @endforelse
                   </tbody>
