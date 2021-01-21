@@ -22,6 +22,9 @@ var notifications_table=$('#notifications_table').DataTable({
         "visible": false,
         "searchable": false
     }],
+    "language": {
+        "url": (current_locale=="ar")?"//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Arabic.json":"//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/English.json"
+    }
 
 
 });

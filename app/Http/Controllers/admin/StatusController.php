@@ -56,7 +56,7 @@ class StatusController extends Controller
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Edit status" href="'.$edit_url.'"><i class="fas fa-pen-square text-success"></i></a>';
                 }
                 //need to check permissions later
-                if(true){
+                if(false){
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Delete role" href="javascript:delete_status('."'".$delete_url."'".')"><i class="far fa-minus-square text-danger"></i></a>';
                 }
                 return $action_buttons;

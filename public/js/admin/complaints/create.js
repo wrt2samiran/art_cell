@@ -19,20 +19,6 @@ $("#complaint_create_form").validate({
 
     },
     messages: {
-        contract_id: {
-            required:  "Select contract",
-        },
-        // work_order_id:{
-        //     required:  "Select work order",
-        // },
-        subject: {
-            required:  "Subject is required",
-            maxlength: "Subject should not be more then 100 characters",
-        },
-        details: {
-            required:  "Details is required",
-            maxlength: "Details should not be more then 1000 characters",
-        },
 
     },
     errorPlacement: function (error, element) {
@@ -54,18 +40,29 @@ $("#complaint_create_form").validate({
 });
 
 
+
 $('#contract_id').select2({
     theme: 'bootstrap4',
-    placeholder:'Select contract',
+    placeholder:translations.complaint_module.placeholders.contract,
     "language": {
+        locale: current_locale,
        "noResults": function(){
-           return "No Contract Found";
+           if(current_locale=='ar'){
+            return "لا يوجد عقد";
+           }else{
+             return "No Contract Found";
+           }
+          
        }
     },
     escapeMarkup: function(markup) {
       return markup;
     },
 });
+
+
+
+
 
 
 $('#contract_id').on('change',function(){
@@ -85,15 +82,30 @@ $('#contract_id').on('change',function(){
   }
 
   $('#work_order_select_container').show();
-  $('#work_order_id').select2({
-    theme: 'bootstrap4',
-    placeholder:'Select work order',
-    "language": {
-       "noResults": function(){
-           return "No Work Order Found";
-       }
-    }
-  });
+
+
+    $('#work_order_id').select2({
+        theme: 'bootstrap4',
+        placeholder:translations.complaint_module.placeholders.work_order,
+        "language": {
+            locale: current_locale,
+           "noResults": function(){
+               if(current_locale=='ar'){
+                return "لم يتم العثور على أمر عمل";
+               }else{
+                 return "No Work Order Found";
+               }
+              
+           }
+        },
+        escapeMarkup: function(markup) {
+          return markup;
+        },
+    });
+
+
+
+
   
 });
 
@@ -132,12 +144,14 @@ $(document).on('change', '#file', function() {
         var error_message='';
 
         if(file_size_error==true && file_type_error==true){
-            error_message="Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files of max size 1mb";
+            error_message=(current_locale=="ar")?"يرجى تحميل ملفات PDF / DOC / JPG / JPEG / PNG / TEXT فقط بحجم أقصى 1 ميجا بايت":"Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files of max size 1Mb";
         }else if(file_size_error==true && file_type_error==false){
-            error_message="File size should not be more than 1 mb";
+            error_message=(current_locale=="ar")?"يجب ألا يزيد حجم الملف عن 1 ميغا بايت":"File size should not be more than 1Mb";
         }else{
-            error_message="Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files";
+            error_message=(current_locale=="ar")?"يرجى تحميل ملفات PDF / DOC / JPG / JPEG / PNG / TEXT فقط":"Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files";
         }
+
+
 
         swal(error_message);
     }

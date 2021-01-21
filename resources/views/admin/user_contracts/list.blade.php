@@ -8,12 +8,12 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Contracts</h1>
+                <h1>{{__('contract_manage_module.module_title')}}</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item active">Contracts</li>
+                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
+                  <li class="breadcrumb-item active">{{__('general_sentence.breadcrumbs.contracts')}}</li>
                 </ol>
               </div>
             </div>
@@ -27,7 +27,7 @@
                         <div class="card">
 				            <div class="card-header">
 				                <div class="d-flex justify-content-between" >
-				                    <div><span>Contract List</span></div>
+				                    <div><span>{{__('contract_manage_module.contract_list')}}</span></div>
 				                </div>
 				            </div>
 
@@ -47,16 +47,16 @@
                                 @endif
                                 <div class="filter-area ">
                                     <div class="row">
-                                        <div class="col-sm-4" id="status-filter-container">
+                                        <div class="col-sm-4" id="contract-status-filter-container">
                                             <select class="form-control status-filter"  name="contract_status_id" id="contract_status_id">
-                                                <option value="">Filter by Status</option>
+                                                <option value="">{{__('contract_manage_module.placeholders.filter_by_status')}}</option>
                                                 @forelse($ContractStatus as $status)
                                                    <option value="{{$status->id}}">{{$status->status_name}}</option>
                                                 @empty
-                                                <option value="">No Service Found</option>
+                                                <option value="">No Status Found</option>
                                                 @endforelse
                                            </select>
-                                           <div class="cursor-poiner" title="Click to clear filter" style="display: none;" id="status-filter-clear"><span class="badge badge-danger">Clear Filter<i class="fas fa-times"></i></span></div>
+                                           <div class="cursor-poiner" title="Click to clear filter" style="display: none;" id="status-filter-clear"><span class="badge badge-danger">{{__('contract_manage_module.clear_filter')}}<i class="fas fa-times"></i></span></div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
@@ -68,11 +68,11 @@
                                                     <input class="form-control" type="text" name="contract_duration" id="contract_duration" placeholder="Search By Date">
                                                 
 
-                                                    <input type="hidden" name="daterange" id="daterange" placeholder="Search By Date">
+                                                    <input type="hidden" name="daterange" id="daterange" placeholder="{{__('contract_manage_module.placeholders.search_by_date')}}">
 
                                                     
                                                 </div>
-                                                <div class="cursor-poiner" title="Click to clear filter" style="display: none;" id="contract_duration-filter-clear"><span class="badge badge-danger">Clear Filter<i class="fas fa-times"></i></span></div>
+                                                <div class="cursor-poiner" title="Click to clear filter" style="display: none;" id="contract_duration-filter-clear"><span class="badge badge-danger">{{__('contract_manage_module.clear_filter')}}<i class="fas fa-times"></i></span></div>
                                                 
                                                                         
                                             </div>
@@ -85,12 +85,12 @@
                                     <thead>
                                         <tr>
                                             <th>Id</th>
-                                            <th>Contract Code</th>
-                                            <th>Title</th>
-                                            <th>Start Date</th>
-                                            <th>End Date</th>
-                                            <th>Status</th>
-                                            <th>Action</th>
+                                            <th>{{__('contract_manage_module.labels.contract_code')}}</th>
+                                            <th>{{__('contract_manage_module.labels.contract_title')}}</th>
+                                            <th>{{__('contract_manage_module.labels.start_date')}}</th>
+                                            <th>{{__('contract_manage_module.labels.end_date')}}</th>
+                                            <th>{{__('contract_manage_module.labels.status')}}</th>
+                                            <th>{{__('contract_manage_module.labels.action')}}</th>
                                         </tr>
                                     </thead>
                                 </table>

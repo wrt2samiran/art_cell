@@ -101,7 +101,7 @@
                                       
 
                                       @elseif($service->recurrence_details->interval_type=='monthly')
-                                      <div>{{__('contract_manage_module.reccur_every')}}  {{$service->recurrence_details->reccure_every}} month(s)</div>
+                                      <div>{{__('contract_manage_module.reccur_every')}}  {{$service->recurrence_details->reccure_every}} {{__('general_sentence.months')}}</div>
                                       <div>
                                         @if($service->recurrence_details->on_or_on_the=='on')
                                         {{__('contract_manage_module.on')}} <span>{{$service->recurrence_details->day_number}} {{__('general_sentence.day')}} 
@@ -180,7 +180,26 @@
                         </tr>
                         <tr>
                           <td>{{__('contract_manage_module.labels.contract_price')}}</td>
-                          <td >{{$contract->contract_price_currency}}{{number_format($contract->contract_price, 2, '.', '')}}</td>
+                          <td >
+                            {{$contract->contract_price_currency}}{{number_format($contract->contract_price, 2, '.', '')}}
+
+                            @if(!$contract->in_installment)
+
+                              @if($contract->is_paid)
+                              <br><span class="text-success">{{__('contract_manage_module.paid_on')}} : {{Carbon::parse($contract->paid_on)->format('d/m/Y')}}</span>
+                              @else
+                                @if($current_user->role->user_type->slug=='property-owner')
+                                  <a href="{{route('admin.pay_contract_amount',$contract->id)}}" class="btn btn-success">Pay</a>
+                                @else
+                                  ({{__('contract_manage_module.not_paid')}})
+                                @endif
+                              
+                              @endif
+
+                            @endif
+
+
+                          </td>
                         </tr>
 
                         @if(in_array($current_user->role->user_type->slug,['super-admin']))
@@ -202,6 +221,7 @@
                                 <tr>
                                   <th>{{__('contract_manage_module.labels.amount')}}</th>
                                   <th>{{__('contract_manage_module.labels.due_date')}}</th>
+                                  <th>{{__('contract_manage_module.labels.payment')}}</th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -209,7 +229,15 @@
                                 <tr>
                                   <td>{{$installment->currency}} {{number_format($installment->price, 2, '.', '')}}</td>
                                   <td>
-                                    {{Carbon::parse($installment->due_date)->format('d/m/Y')}}</td>
+                                    {{Carbon::parse($installment->due_date)->format('d/m/Y')}}
+                                  </td>
+                                  <td>
+                                      @if($installment->is_paid)
+                                      <span class="text-success">{{__('contract_manage_module.paid_on')}} : {{Carbon::parse($installment->paid_on)->format('d/m/Y')}}</span>
+                                      @else
+                                          {{__('contract_manage_module.not_paid')}}
+                                      @endif
+                                    </td>
                                 </tr>
                                 @endforeach
                               </tbody>

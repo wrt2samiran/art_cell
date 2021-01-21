@@ -9,13 +9,13 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Properties</h1>
+            <h1>{{__('property_manage_module.module_title')}}</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.properties.list')}}">Properties</a></li>
-              <li class="breadcrumb-item active">Details</li>
+              <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.user_properties.list')}}">{{__('general_sentence.breadcrumbs.properties')}}</a></li>
+              <li class="breadcrumb-item active">{{__('general_sentence.breadcrumbs.edit')}}</li>
             </ol>
           </div>
         </div>
@@ -28,54 +28,80 @@
             <!-- Default box -->
             <div class="card card-success">
                 <div class="card-header">
-                  Property Details
+                  {{__('property_manage_module.property_details')}}
                 </div> 
               <div class="card-body"> 
                  <table class="table table-bordered table-hover record-details-table" id="property-details-table">
                       <tbody>
                         <tr>
-                          <td>Property Code</td>
+                          <td>{{__('property_manage_module.labels.property_code')}}</td>
                           <td >{{$property->code}}</td>
                         </tr>
                         <tr>
-                          <td>Property Name</td>
+                          <td>{{__('property_manage_module.labels.property_name')}}</td>
                           <td >{{$property->property_name}}</td>
                         </tr>
+                        
                         <tr>
-                          <td>Number Of Active Units</td>
-                          <td >{{$property->number_of_active_units}}</td>
+                          <td>{{__('property_manage_module.labels.property_owner')}}</td>
+                          <td>
+                            @if($property_owner=$property->owner_details()->withTrashed()->first())
+                              @if($property_owner->deleted_at)
+                                <span class="text-danger"><del>{{$property_owner->name}} </del>(user deleted)</span>
+                              @else
+                                <span>{{$property_owner->name}}</span>
+                              @endif
+                            @else
+                            N/A
+                            @endif
+                          </td>
                         </tr>
                         <tr>
-                          <td>Number Of Inctive Units</td>
-                          <td >{{$property->number_of_inactive_units}}</td>
+                          <td>{{__('property_manage_module.labels.property_manager')}}</td>
+                          <td>
+                            @if($property->manager_details)
+                            <span>{{$property->manager_details->name}} </span>
+                            @else
+                            N/A
+                            @endif
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td>{{__('property_manage_module.labels.no_of_active_units')}}</td>
+                          <td >{{$property->no_of_active_units}}</td>
                         </tr>
                         <tr>
-                          <td>Property Type</td>
+                          <td>{{__('property_manage_module.labels.no_of_inactive_units')}}</td>
+                          <td >{{$property->no_of_inactive_units}}</td>
+                        </tr>
+                        <tr>
+                          <td>{{__('property_manage_module.labels.property_type')}}</td>
                           <td >{{($property->property_type)?$property->property_type->type_name:'N/A'}}</td>
                         </tr>
                         <tr>
-                          <td>Description</td>
+                          <td>{{__('property_manage_module.labels.description')}}</td>
                           <td >{{$property->description}}</td>
                         </tr>
                         </tr>
                         <tr>
-                          <td>Addeess</td>
+                          <td>{{__('property_manage_module.labels.address')}}</td>
                           <td >{{$property->address}}</td>
                         </tr>
                         <tr>
-                          <td>City</td>
+                          <td>{{__('property_manage_module.labels.city')}}</td>
                           <td >{{$property->city->name}}</td>
                         </tr>
                         <tr>
-                          <td>Location</td>
+                          <td>{{__('property_manage_module.labels.location')}}</td>
                           <td >{{$property->location}}</td>
                         </tr>
                         <tr>
-                          <td >Contact Number</td>
+                          <td >{{__('property_manage_module.labels.contact_number')}}</td>
                           <td >{{$property->contact_number}}</td>
                         </tr>
                         <tr>
-                          <td >Contact Email</td>
+                          <td >{{__('property_manage_module.labels.contact_email')}}</td>
                           <td >{{$property->contact_email}}</td>
                         </tr>
                         <tr>
@@ -94,26 +120,27 @@
                         </tr>
 
                         <tr>
-                          <td>Status</td>
+                          <td>{{__('property_manage_module.labels.status')}}</td>
                           <td>
-                            <button role="button" class="btn btn-{{($property->is_active)?'success':'danger'}}">{{($property->is_active)?'Active':'Inactive'}}</button>
+                            <button role="button" class="btn btn-{{($property->is_active)?'success':'danger'}}">{{($property->is_active)?__('general_sentence.active'):__('general_sentence.inactive')}}</button>
                           </td>
                         </tr>
 
                         <tr>
-                          <td >Electricity Account Number</td>
+                          <td >{{__('property_manage_module.labels.electricity_account_number')}}</td>
                           <td >
-                          {{$property->electricity_account_number}}   </td>
+                            {{$property->electricity_account_number}}
+                          </td>
                         </tr>
 
                         <tr>
-                          <td >Water Account Due Date</td>
+                          <td >{{__('property_manage_module.labels.water_account_number')}}</td>
                           <td >
-                            {{$property->water_account_number}}
+                          {{$property->water_account_number}}
                           </td>
                         </tr>
                         <tr>
-                          <td>Downloadable Files</td>
+                          <td>{{__('property_manage_module.downloadable_files')}}</td>
                           <td>
                             <div class="row">
                               @if(count($files=$property->property_attachments))
@@ -138,23 +165,25 @@
                                   @endphp
                             
                                   <div style="height: 55px" class="col-sm-1 col-xs-1">
-                                    <a title="{{$file->title}}" href="{{route('admin.properties.download_attachment',$file->id)}}"><i style="color: {{$color}};" class="fa-4x {{$font_icon}}"></i></a>
+                                    <a title="Click to download" href="{{route('admin.properties.download_attachment',$file->id)}}"><i style="color: {{$color}};" class="fa-4x {{$font_icon}}"></i></a>
                                   </div>
                                 @endforeach
                               @else
-                              <div class="col-md-12">No files</div>
+                              <div class="col-md-12">{{__('property_manage_module.no_files')}}</div>
                               @endif
                             </div>
                           </td>
                         </tr>
+                        
+
                         <tr>
-                          <td>Created At</td>
+                          <td>{{__('property_manage_module.labels.created_at')}}</td>
                           <td>{{$property->created_at->format('d/m/Y')}}</td>
                         </tr>
                       </tbody>
                       <tfoot>
                         <tr>
-                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.user_properties.list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
+                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.user_properties.list')}}"><i class="fas fa-backward"></i>&nbsp;{{__('general_sentence.button_and_links.back')}}</a></td>
                         </tr>
                       </tfoot>
                   </table>

@@ -124,10 +124,17 @@ return [
     'save_and_next'=>'Save & Next',
     'next'=>'Next',
     'previous'=>'Previous',
+    'compose'=>'Compose',
+    'sent'=>'Sent',
+    'inbox'=>'Inbox',
+    'attachment'=>'Attachment',
+    'discard'=>'Discard',
+    'send'=>'Send',
+    'delete'=>'Delete',
+    'add_note'=>'Add Note',
     'select_all' => 'Select All',
     'search' => 'Search',
     'close' => 'Close',
-
   ],
   'status_button' =>[
     'completed' => 'Completed',
@@ -137,8 +144,7 @@ return [
     'emergency' => 'Emergency',
     'complain' => 'Complain',
     'rating_and_view'=> 'Rating and view',
-    'view' => 'View',
-
+    'view' => 'View'
   ]
     
   ];

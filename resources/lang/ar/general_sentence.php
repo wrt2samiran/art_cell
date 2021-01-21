@@ -121,9 +121,17 @@ return [
     'add_service'=>'Add Service',
     'update_service'=>'Update Service',
     'add_file'=>'إضافة ملفات',
-    'save_and_next'=>'حفظ & التالي',
-    'next'=>'التالى',
+    'save_and_next'=>'Save & Next',
+    'next'=>'Next',
     'previous'=>'السابق',
+    'compose'=>'Compose',
+    'sent'=>'Sent',
+    'inbox'=>'Inbox',
+    'attachment'=>'Attachment',
+    'discard'=>'Discard',
+    'send'=>'Send',
+    'delete'=>'Delete',
+    'add_note'=>'Add Note',
     'select_all' => 'اختر الكل',
     'search'=> 'بحث',
     'close' =>'قريب',
@@ -138,6 +146,5 @@ return [
     'complain' => 'تذمر',
     'rating_and_view'=> 'التقييم والعرض',
     'view' =>  'رأي',
-
   ]
   ];

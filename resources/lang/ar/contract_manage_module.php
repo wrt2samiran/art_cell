@@ -51,6 +51,8 @@ return [
 	'recurrence_details'=>'Recurrence Details',
 	'services_required'=>'Services Required',
 	'installments'=>'Installments',
+	'not_paid'=>'Not Paid',
+	'paid_on'=>'Paid On',
 	'labels'=>[
 		'contract_code'=>'Contract Code',
 		'contract_title'=>'Title',
@@ -82,7 +84,8 @@ return [
 		'status'=>'Status',
 		'created_at'=>'Created At',
 		'created_by'=>'Created By',
-		'action'=>'Action'
+		'action'=>'Action',
+		'payment'=>'Payment'
 	],
 	'placeholders'=>[
 		'contract_code'=>'Contract Code',

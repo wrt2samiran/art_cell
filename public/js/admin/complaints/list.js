@@ -30,6 +30,9 @@ var complaints_table=$('#complaints_table').DataTable({
     }],
     "drawCallback": function( settings ) {
         $.LoadingOverlay("hide");
+    },
+    "language": {
+        "url": (current_locale=="ar")?"//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Arabic.json":"//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/English.json"
     }
 
 });
@@ -39,11 +42,11 @@ var complaints_table=$('#complaints_table').DataTable({
  //function to delete complaint
  function delete_complaint(url){
   swal({
-  title: "Are you sure?",
-  text: "Once deleted, you will not be able to recover this complaint!",
+  title: translations.complaint_module.warning_title,
+  text: translations.complaint_module.delete_warning,
   icon: "warning",
-  buttons: true,
-  dangerMode: true,
+  buttons: [translations.general_sentence.button_and_links.cancel,translations.general_sentence.button_and_links.ok],
+  dangerMode: false,
   })
   .then((willDelete) => {
     if (willDelete) {
@@ -56,7 +59,7 @@ var complaints_table=$('#complaints_table').DataTable({
         success: function (data) {
           complaints_table.ajax.reload(null, false);
           $.LoadingOverlay("hide");
-          toastr.success('Complaint successfully deleted.', 'Success', {timeOut: 5000});
+          toastr.success(translations.complaint_module.delete_success_message, 'Success', {timeOut: 5000});
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $.LoadingOverlay("hide");
@@ -78,10 +81,12 @@ var complaints_table=$('#complaints_table').DataTable({
 
 
 /* code for contract wise complaints filter*/
-$('#contract_id').select2({
+ $('#contract_id').select2({
   theme: 'bootstrap4',
-  placeholder:'Filter by Contract'
+  placeholder:translations.complaint_module.placeholders.filter_by_contract,
+  language: current_locale,
 });
+
 
 $('#contract_id').on('change', function(e) {
   if(this.value!=''){

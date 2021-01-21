@@ -26,7 +26,7 @@ use App\Http\Requests\Admin\Contract\{CreateContractRequest,UpdateContractReques
 use File;
 use Helper;
 use App\Events\Contract\ContractCreated;
-use App\Mail\Admin\Contract\{ContratCreationMailToPropertyOwner,ContractCreationMailToServiceProvider,ContractCreationMailToAdmin};
+use App\Mail\Admin\Contract\{ContratCreationMailToPropertyOwner,ContractCreationMailToServiceProvider,ContractCreationMailToAdmin,StatusUpdateMailToPropertyOwner};
 use Mail;
 class ContractController extends Controller
 {
@@ -990,6 +990,8 @@ class ContractController extends Controller
         $start_date=Carbon::createFromFormat('d/m/Y', $request->start_date)->format('Y-m-d');
         $end_date=Carbon::createFromFormat('d/m/Y', $request->end_date)->format('Y-m-d');
 
+        $previous_status_id=$contract->status_id;
+
         $contract->update([
          'title'=>$request->title,
          'description'=>$request->description,
@@ -1000,6 +1002,21 @@ class ContractController extends Controller
          'status_id'=>($request->contract_status_id)?$request->contract_status_id:$contract->status_id,
          'updated_by'=>$current_user->id
         ]);
+
+        $updated_contract=Contract::with('contract_status')->findOrFail($id);
+
+        if($previous_status_id!=$updated_contract->status_id){
+           if($contract->property && $contract->property->owner_details){
+            $data=[
+                'user'=>$contract->property->owner_details,
+                'contract'=>$updated_contract,
+                'from_name'=>env('MAIL_FROM_NAME','SMMS'),
+                'from_email'=>env('MAIL_FROM_ADDRESS'),
+                'subject'=>'Contract Status Updated'
+            ];
+            Mail::to($contract->property->owner_details->email)->send(new StatusUpdateMailToPropertyOwner($data));
+            }    
+        }
 
         return redirect()->route('admin.contracts.services',$contract->id)->with('success','Contract info updated.');
 

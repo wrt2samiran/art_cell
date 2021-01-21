@@ -4,7 +4,7 @@
 
       <!-- Modal Header -->
       <div class="modal-header">
-        <h4 class="modal-title">Edit Note</h4>
+        <h4 class="modal-title">{{__('complaint_module.edit_note')}}</h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
       <form  method="post" id="edit_note_form" action=""  enctype="multipart/form-data">
@@ -13,8 +13,8 @@
             <!-- Modal body -->
             <div class="modal-body">
                 <div class="form-group required">
-                  <label for="note">Note <span class="error">*</span></label>
-                  <textarea class="form-control" name="note" id="note_edit"  placeholder="Note">{!!old('note')?old('note'):''!!}</textarea>
+                  <label for="note">{{__('complaint_module.labels.note')}} <span class="error">*</span></label>
+                  <textarea class="form-control" name="note" id="note_edit"  placeholder="{{__('complaint_module.placeholders.note')}}">{!!old('note')?old('note'):''!!}</textarea>
                   @if($errors->has('note'))
                   <span class="text-danger">{{$errors->first('note')}}</span>
                   @endif
@@ -25,7 +25,7 @@
                 @endphp
                 @if(in_array($user_type,['super-admin','service-provider']))
                 <div class="form-group">
-                  <label for="note">Note will be visible to </label><br>
+                  <label for="note">{{__('complaint_module.labels.note_visibile')}} </label><br>
                   <div class="form-check-inline">
                     <label class="form-check-label">
                       <input type="checkbox" name="visible_to[]" checked  disabled class="form-check-input" value="help desk">Help Desk
@@ -49,7 +49,7 @@
                 </div>
                 @endif
                 <div class="form-group required">
-                  <label for="file">Attach File</label>
+                  <label for="file">{{__('complaint_module.labels.attach_file')}}</label>
                   <input type="file" class="form-control note_file" id="file_edit" name="file">
                   <div id="file_help_text"></div>
                   @if($errors->has('file'))
@@ -59,7 +59,7 @@
             </div>
             <!-- Modal footer -->
             <div class="modal-footer">
-             <button class="btn btn-success">Update Note</button> <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+             <button class="btn btn-success">{{__('general_sentence.button_and_links.update')}}</button> <button type="button" class="btn btn-danger" data-dismiss="modal">{{__('general_sentence.button_and_links.cancel')}}</button>
             </div>
        </form>
     </div>

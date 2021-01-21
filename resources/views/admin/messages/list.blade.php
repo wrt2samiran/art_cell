@@ -8,12 +8,12 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Messages</h1>
+                <h1>{{__('message_module.messages_page_title')}}</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item active">Messages</li>
+                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
+                  <li class="breadcrumb-item active">{{__('general_sentence.breadcrumbs.messages')}}</li>
                 </ol>
               </div>
             </div>
@@ -31,13 +31,13 @@
         <div class="col-md-9">
           <div class="card card-primary card-outline">
             <div class="card-header">
-              <h3 class="card-title">Inbox</h3>
+              <h3 class="card-title">{{__('message_module.inbox_section_header')}}</h3>
 
               <div class="card-tools">
                  <form action="{{route('admin.messages.list')}}">
                 <div class="input-group input-group-sm">
                  
-                    <input value="{{request()->keyword}}" type="text" name="keyword" class="form-control" placeholder="Search Mail">
+                    <input value="{{request()->keyword}}" type="text" name="keyword" class="form-control" placeholder="{{__('message_module.placeholders.search_mail')}}">
                     <div class="input-group-append">
                       @if(request()->keyword)
                       <a href="{{route('admin.messages.list')}}" class="btn btn-danger">
@@ -72,20 +72,6 @@
               @endif
               <div class="mailbox-controls">
                
-<!--                 <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="far fa-square"></i>
-                </button>
-                <div class="btn-group">
-                  <button type="button" class="btn btn-default btn-sm"><i class="far fa-trash-alt"></i></button>
-                </div>
-                
-                <button type="button" class="btn btn-default btn-sm"><i class="fas fa-sync-alt"></i></button>
-                <div class="float-right">
-                  
-                  <div class="btn-group">
-
-                  </div>
-                  
-                </div> -->
                 
               </div>
               <div class="table-responsive mailbox-messages">
@@ -93,12 +79,6 @@
                   <tbody>
                   @forelse($messages as $message)
                   <tr class="{{(!$message->is_read)?'message-unread':'message-read'}}">
-<!--                     <td>
-                      <div class="icheck-primary">
-                        <input type="checkbox" value="" id="check_{{$message->id}}">
-                        <label for="check_{{$message->id}}"></label>
-                      </div>
-                    </td> -->
                     
                     <td class="mailbox-name"><a href="{{route('admin.messages.details',$message->id)}}">{{$message->to_user->name}}</a></td>
                     <td class="mailbox-subject">
@@ -118,7 +98,7 @@
                   </tr>
                   @empty
                   <tr>
-                    <td colspan="3">No messages</td>
+                    <td colspan="3">{{__('message_module.no_message')}}</td>
                   </tr>
                   @endforelse
                   </tbody>
@@ -150,46 +130,6 @@
         <!-- /.content -->
     </div>
 @endsection
-@push('custom-scripts')
-<!-- <script type="text/javascript" src="{{asset('js/admin/notifications/list.js')}}"></script> -->
-<script>
-  $(function () {
-    //Enable check and uncheck all functionality
-    $('.checkbox-toggle').click(function () {
-      var clicks = $(this).data('clicks')
-      if (clicks) {
-        //Uncheck all checkboxes
-        $('.mailbox-messages input[type=\'checkbox\']').prop('checked', false)
-        $('.checkbox-toggle .far.fa-check-square').removeClass('fa-check-square').addClass('fa-square')
-      } else {
-        //Check all checkboxes
-        $('.mailbox-messages input[type=\'checkbox\']').prop('checked', true)
-        $('.checkbox-toggle .far.fa-square').removeClass('fa-square').addClass('fa-check-square')
-      }
-      $(this).data('clicks', !clicks)
-    })
 
-    //Handle starring for glyphicon and font awesome
-    $('.mailbox-star').click(function (e) {
-      e.preventDefault()
-      //detect type
-      var $this = $(this).find('a > i')
-      var glyph = $this.hasClass('glyphicon')
-      var fa    = $this.hasClass('fa')
-
-      //Switch states
-      if (glyph) {
-        $this.toggleClass('glyphicon-star')
-        $this.toggleClass('glyphicon-star-empty')
-      }
-
-      if (fa) {
-        $this.toggleClass('fa-star')
-        $this.toggleClass('fa-star-o')
-      }
-    })
-  })
-</script>
-@endpush
 
 

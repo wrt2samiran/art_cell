@@ -30,9 +30,9 @@
 				                <div class="d-flex justify-content-between" >
 				                    <div><span>Status List</span></div>
 					                <div>
-						                <a class="btn btn-success" href="{{route('admin.statuses.create')}}">
+<!-- 						                <a class="btn btn-success" href="{{route('admin.statuses.create')}}">
 						                 Create Status
-						                </a>
+						                </a> -->
 					                </div>
 				                </div>
 				            </div>

@@ -9,13 +9,13 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Message Details</h1>
+                <h1>{{__('message_module.message_details_page_title')}}</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item"><a href="{{route('admin.messages.list')}}">Messages</a</li>
-                  <li class="breadcrumb-item active">Details</li>
+                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
+                  <li class="breadcrumb-item"><a href="{{route('admin.messages.list')}}">{{__('general_sentence.breadcrumbs.messages')}}</a></li>
+                  <li class="breadcrumb-item active">{{__('general_sentence.breadcrumbs.details')}}</li>
                 </ol>
               </div>
             </div>
@@ -33,7 +33,7 @@
           <div class="col-md-9">
             <div class="card card-primary card-outline">
               <div class="card-header">
-                <h3 class="card-title">Read Message</h3>
+                <h3 class="card-title">{{__('message_module.message_details_section_header')}}</h3>
 
                 <div class="card-tools">
 
@@ -42,12 +42,12 @@
               <!-- /.card-header -->
               <div class="card-body p-0">
                 <div class="mailbox-read-info">
-                  <h6>Subject : {{$message->subject}}</h6>
+                  <h6>{{__('message_module.labels.subject')}} : {{$message->subject}}</h6>
                   <h6>
                 @if($message->message_from==auth()->guard('admin')->id())
-                  To: {{$message->to_user->name}}-{{$message->to_user->email}}
+                  {{__('message_module.to')}}: {{$message->to_user->name}}-{{$message->to_user->email}}
                 @else
-                  From: {{$message->from_user->name}}-{{$message->from_user->email}}
+                  {{__('message_module.from')}}: {{$message->from_user->name}}-{{$message->from_user->email}}
                 @endif
                     
                   <span class="mailbox-read-time float-right">{{$message->created_at->format('d/m/Y g:i A')}}</span></h6>
@@ -135,9 +135,11 @@
               <!-- /.card-footer -->
               <div class="card-footer">
                 @if($message->message_from==auth()->guard('admin')->id())
-                <a class="btn btn-primary" href="{{route('admin.messages.sent')}}"><i class="fas fa-backward"></i>&nbsp;Back</a>
+                <a class="btn btn-primary" href="{{route('admin.messages.sent')}}"><i class="fas fa-backward"></i>&nbsp;{{__('general_sentence.button_and_links.back')}}</a>
                 @else
-                <a class="btn btn-primary" href="{{route('admin.messages.list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a>
+                  @if(auth()->guard('admin')->user()->hasAllPermission(['send-message']))
+                  <a class="btn btn-primary" href="{{route('admin.messages.list')}}"><i class="fas fa-backward"></i>&nbsp;{{__('general_sentence.button_and_links.back')}}</a>
+                  @endif
                 @endif
                 
               </div>

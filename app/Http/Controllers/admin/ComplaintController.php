@@ -242,7 +242,7 @@ class ComplaintController extends Controller
 
         event(new ComplaintCreated($complaint));
 
-        return redirect()->route('admin.complaints.list')->with('success','Complaint successfully posted.');
+        return redirect()->route('admin.complaints.list')->with('success',__('complaint_module.create_success_message'));
     }
 
     /********************************************************************************/
@@ -343,7 +343,7 @@ class ComplaintController extends Controller
 
         event(new NoteAdded($complaint,$complaint_note));
 
-        return redirect()->back()->with('success','Note successfully added.');
+        return redirect()->back()->with('success',__('complaint_module.note_added_message'));
 
     }
 
@@ -416,7 +416,7 @@ class ComplaintController extends Controller
             'visible_to'=>$visible_to,
         ]);
 
-        return redirect()->back()->with('success','Note successfully added.');
+        return redirect()->back()->with('success',__('complaint_module.note_updated_message'));
 
     }
 
@@ -480,7 +480,7 @@ class ComplaintController extends Controller
 
         }
 
-        return redirect()->back()->with('success','Status successfully updated.');
+        return redirect()->back()->with('success',__('complaint_module.status_update_message'));
 
     }
 
@@ -541,7 +541,7 @@ class ComplaintController extends Controller
             'details'=>$request->details,
             'file'=>$file_name,
         ]);
-        return redirect()->route('admin.complaints.list')->with('success','Complaint successfully posted.');
+        return redirect()->route('admin.complaints.list')->with('success',__('complaint_module.edit_success_message'));
     }
 
     /************************************************************************/

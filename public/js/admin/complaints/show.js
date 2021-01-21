@@ -17,7 +17,7 @@ $('.edit_note_button').on('click',function(){
     console.log(note_data);
 	if(note_data.file){
 		var file_help_text=`<small class="form-text text-muted">
-	    Leave blank if you do not want to replace the file (<a target="_blank" href="`+file_url+`">view/download uploaded file</a>)
+	    `+translations.complaint_module.file_update_help_text+` (<a target="_blank" href="`+file_url+`">`+translations.complaint_module.download_file+`</a>)
 	    </small>`;
 		$('#file_help_text').html(file_help_text)
 	}
@@ -46,11 +46,11 @@ $('.delete_note_button').on('click',function(){
 	var delete_url=$(this).data('delete_url');
 
 	swal({
-	title: "Are you sure?",
-	text: "Once deleted, you will not be able to recover this note!",
-	icon: "warning",
-	buttons: true,
-	dangerMode: true,
+      title: translations.complaint_module.warning_title,
+      text: translations.complaint_module.note_delete_warning,
+      icon: "warning",
+      buttons: [translations.general_sentence.button_and_links.cancel,translations.general_sentence.button_and_links.ok],
+      dangerMode: false,
 	})
 	.then((willDelete) => {
 	if (willDelete) {
@@ -63,7 +63,7 @@ $('.delete_note_button').on('click',function(){
 	    success: function (data) {
 	      window.location.reload();
 	      $.LoadingOverlay("hide");
-	      toastr.success('Note successfully deleted.', 'Success', {timeOut: 5000});
+	      toastr.success(translations.complaint_module.note_delete_success_message, 'Success', {timeOut: 5000});
 	    },
 	    error: function(jqXHR, textStatus, errorThrown) {
 	       $.LoadingOverlay("hide");
@@ -104,10 +104,6 @@ $("#edit_note_form").validate({
 
     },
     messages: {
-        note: {
-            required:  "Please add a note",
-            maxlength: "Note should not be more then 1000 characters",
-        },
 
     },
     errorPlacement: function (error, element) {
@@ -136,10 +132,7 @@ $("#add_note_form").validate({
         },
     },
     messages: {
-        note: {
-            required:  "Please add a note",
-            maxlength: "Note should not be more then 1000 characters",
-        },
+
     },
     errorPlacement: function (error, element) {
         error.addClass('invalid-feedback');
@@ -192,11 +185,11 @@ $(document).on('change', '.note_file', function() {
         var error_message='';
 
         if(file_size_error==true && file_type_error==true){
-            error_message="Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files of max size 1mb";
+            error_message=(current_locale=="ar")?"يرجى تحميل ملفات PDF / DOC / JPG / JPEG / PNG / TEXT فقط بحجم أقصى 1 ميجا بايت":"Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files of max size 1Mb";
         }else if(file_size_error==true && file_type_error==false){
-            error_message="File size should not be more than 1 mb";
+            error_message=(current_locale=="ar")?"يجب ألا يزيد حجم الملف عن 1 ميغا بايت":"File size should not be more than 1Mb";
         }else{
-            error_message="Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files";
+            error_message=(current_locale=="ar")?"يرجى تحميل ملفات PDF / DOC / JPG / JPEG / PNG / TEXT فقط":"Please upload only PDF/DOC/JPG/JPEG/PNG/TEXT files";
         }
 
         swal(error_message);

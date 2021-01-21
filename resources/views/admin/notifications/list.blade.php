@@ -9,12 +9,12 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Notifications</h1>
+                <h1>{{__('notification_module.module_title')}}</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item active">Notifications</li>
+                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
+                  <li class="breadcrumb-item active">{{__('general_sentence.breadcrumbs.notifications')}}</li>
                 </ol>
               </div>
             </div>
@@ -28,7 +28,7 @@
                         <div class="card">
 				            <div class="card-header">
 				                <div class="d-flex justify-content-between" >
-				                    <div><span>Notifications List</span></div>
+				                    <div><span>{{__('notification_module.notification_list')}}</span></div>
 					                <div>
                                         
 					                </div>
@@ -53,8 +53,8 @@
                                     <thead>
                                         <tr>
                                             <th>Id</th>
-                                            <th style="width: 80%">Message</th>
-                                            <th>Created At</th>
+                                            <th style="width: 80%">{{__('notification_module.labels.message')}}</th>
+                                            <th>{{__('notification_module.labels.created_at')}}</th>
                                         </tr>
                                     </thead>
                                 </table>

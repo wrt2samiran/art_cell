@@ -113,7 +113,7 @@
                         <tr>
                           <td >{{__('property_manage_module.labels.electricity_account_number')}}</td>
                           <td >
-                            {{$property->electricity_account_numver}}
+                            {{$property->electricity_account_number}}
                           </td>
                         </tr>
 
