@@ -326,7 +326,7 @@ $("#admin_other_maintanence_labour_task_add_form").validate({
             { data: 'task.property.property_name', name: 'task.property.property_name' },
             { data: 'task.property',
               render: function(data){
-                      return 'data.country.name'+', '+data.state.name+', '+data.city.name;
+                      return data.country.name+', '+data.state.name+', '+data.city.name;
                   }, searchable: false, sortable : false
             }, 
             

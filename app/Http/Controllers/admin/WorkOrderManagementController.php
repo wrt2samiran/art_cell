@@ -1811,12 +1811,14 @@ class WorkOrderManagementController extends Controller
                 $logedInUser = \Auth::guard('admin')->user()->id;
                 $today = date('Y-m-d');
                 $action_buttons='';
-            
+
+               // $labour_task_list->task_date = date('Y-m-d', strtotime($labour_task_list->task_date));
+                
 
                 if(\Auth::guard('admin')->user()->role_id==4){
                     $details_url = route('admin.work-order-management.labourTaskDetails',$labour_task_list->id);
                     $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Daily Task List" id="details_task" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a>';
-                    if($labour_task_list->status=='0' and $labour_task_list->task_date > date('Y-m-d'))
+                    if($labour_task_list->status=='0' and date('Y-m-d', strtotime($labour_task_list->task_date)) > date('Y-m-d'))
                     {
                         if($labour_task_list->task->contract_services->service_type == 'Maintenance')
                         {

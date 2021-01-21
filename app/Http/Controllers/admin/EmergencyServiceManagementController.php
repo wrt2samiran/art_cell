@@ -278,15 +278,15 @@ class EmergencyServiceManagementController extends Controller
                     
                 }
 
-                if($logedInUserRole ->role->user_type->slug=='property-owner' || $logedInUserRole ->role->user_type->slug=='property-manager')
-                {
-                    if($workOrder->work_order_complete_percent==100 and $workOrder->rating==0 and $workOrder->review=='')
-                    {
-                        $action_buttons=$action_buttons."&nbsp;&nbsp;<a title='Review and Rating' id='review_rating' 
-                    href='javascript:reviewRating(".$workOrder->id.")'><i class='fas fa-star-half-alt'></i></a>";
-                    }
+                // if($logedInUserRole ->role->user_type->slug=='property-owner' || $logedInUserRole ->role->user_type->slug=='property-manager')
+                // {
+                //     if($workOrder->work_order_complete_percent==100 and $workOrder->rating==0 and $workOrder->review=='')
+                //     {
+                //         $action_buttons=$action_buttons."&nbsp;&nbsp;<a title='Review and Rating' id='review_rating' 
+                //     href='javascript:reviewRating(".$workOrder->id.")'><i class='fas fa-star-half-alt'></i></a>";
+                //     }
                     
-                }
+                // }
 
 
 

@@ -449,6 +449,7 @@
                 </li>
                 @endif
 
+                @if(auth()->guard('admin')->user()->hasAllPermission(['generate-report']))
                 <li class="nav-item ">
                     <a href="{{route('admin.reports.index')}}"
                     class="nav-link {{(request()->is('admin/reports/*','admin/reports'))?'active':''}}">
@@ -456,7 +457,8 @@
                         <p>{{__('nav_link_text.reports')}}</p>
                     </a>
                 </li>  
-
+                @endif
+                
                 @if(auth()->guard('admin')->user()->hasAllPermission(['work-order-list']))
                 <li class="nav-item ">
                     <a href="{{route('admin.work-order-management.list')}}"
