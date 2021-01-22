@@ -1,55 +1,28 @@
 
+
 $('.contract').select2({
-    theme: 'bootstrap4',
-    placeholder:'Select Contract',
-    "language": {
-        "noResults": function(){
-            return "No Contract Found";
-        }
-    },
-    escapeMarkup: function(markup) {
-        return markup;
-    },
+  theme: 'bootstrap4',
+  placeholder:translations.report_module.placeholders.contract,
+  language: current_locale,
 });
+
 $('.property').select2({
-    theme: 'bootstrap4',
-    placeholder:'Select Property',
-    "language": {
-        "noResults": function(){
-            return "No Property Found";
-        }
-    },
-    escapeMarkup: function(markup) {
-        return markup;
-    },
+  theme: 'bootstrap4',
+  placeholder:translations.report_module.placeholders.property,
+  language: current_locale,
 });
 
 $('#upcoming_weekly_maintenance_sp_or_labour_id').select2({
-    theme: 'bootstrap4',
-    placeholder:'Select Service Provider/Labour',
-    "language": {
-        "noResults": function(){
-            return "No Service Provider/Labour Found";
-        }
-    },
-    escapeMarkup: function(markup) {
-        return markup;
-    },
+  theme: 'bootstrap4',
+  placeholder:translations.report_module.placeholders.sp_or_labour,
+  language: current_locale,
 });
 
 $('#upcoming_weekly_maintenance_service_id').select2({
-    theme: 'bootstrap4',
-    placeholder:'Select Service',
-    "language": {
-        "noResults": function(){
-            return "No Service Found";
-        }
-    },
-    escapeMarkup: function(markup) {
-        return markup;
-    },
+  theme: 'bootstrap4',
+  placeholder:translations.report_module.placeholders.service,
+  language: current_locale,
 });
-
 
 $('.from_date').datepicker({
     dateFormat:'dd/mm/yy'
@@ -57,7 +30,6 @@ $('.from_date').datepicker({
 $('.to_date').datepicker({
     dateFormat:'dd/mm/yy'
 });
-
 
 $('#schedule_compliance_property_id').on('change',function(){
     if(this.value){
@@ -109,18 +81,48 @@ $("#schedule_compliance_report_form").validate({
     },
     messages: {
         property_id: {
-            required:  "Select Contract Or Property",
+            required: function(){
+                if(current_locale=='ar'){
+                  return "حدد العقد أو الممتلكات";
+                }else{
+                  return "Select Contract Or Property";
+                }
+            }
         },
         contract_id:{
-            required:  "Select Contract Or Property",
+            required: function(){
+                if(current_locale=='ar'){
+                  return "حدد العقد أو الممتلكات";
+                }else{
+                  return "Select Contract Or Property";
+                }
+            }
         },
         from_date:{
-            required:  "Enter from date",
+            required: function(){
+                if(current_locale=='ar'){
+                  return "دخل من التاريخ";
+                }else{
+                  return "Enter from date";
+                }
+            }
         },
         to_date:{
-            required:  "Enter to date",
-            toDateShouldGreatherFromDate:'To date should be greater than from date'
-        },
+            required: function(){
+                if(current_locale=='ar'){
+                  return "أدخل حتى الآن";
+                }else{
+                  return "Enter to date";
+                }
+            },
+            toDateShouldGreatherFromDate:function(){
+                if(current_locale=='ar'){
+                  return "يجب أن يكون حتى الآن أكبر من التاريخ";
+                }else{
+                  return "To date should be greater than from the date";
+                }
+            }
+        }
     },
     errorPlacement: function (error, element) {
         error.addClass('invalid-feedback');
@@ -152,18 +154,13 @@ $('#maintenance_backlog_to_date').datepicker({
     dateFormat:'dd/mm/yy',
     maxDate: 0,
 });
+
 $('#maintenance_backlog_sp_or_labour_id').select2({
-    theme: 'bootstrap4',
-    placeholder:'Select Service Provider/Labour',
-    "language": {
-        "noResults": function(){
-            return "No Service Provider/Labour Found";
-        }
-    },
-    escapeMarkup: function(markup) {
-        return markup;
-    },
+  theme: 'bootstrap4',
+  placeholder:translations.report_module.placeholders.sp_or_labour,
+  language: current_locale,
 });
+
 
 $("#maintenance_backlog_report_form").validate({
     ignore:[],
@@ -184,12 +181,30 @@ $("#maintenance_backlog_report_form").validate({
     messages: {
 
         from_date:{
-            required:  "Enter from date",
+            required: function(){
+                if(current_locale=='ar'){
+                  return "دخل من التاريخ";
+                }else{
+                  return "Enter from date";
+                }
+            }
         },
         to_date:{
-            required:  "Enter to date",
-            toDateShouldGreatherFromDate:'To date should be greater than from date'
-        },
+            required: function(){
+                if(current_locale=='ar'){
+                  return "أدخل حتى الآن";
+                }else{
+                  return "Enter to date";
+                }
+            },
+            toDateShouldGreatherFromDate:function(){
+                if(current_locale=='ar'){
+                  return "يجب أن يكون حتى الآن أكبر من التاريخ";
+                }else{
+                  return "To date should be greater than from the date";
+                }
+            }
+        }
     },
     errorPlacement: function (error, element) {
         error.addClass('invalid-feedback');
@@ -234,16 +249,31 @@ $("#work_order_report_form").validate({
         },
     },
     messages: {
-        work_order_status:{
-            required:  "Select Status",
-        },
         from_date:{
-            required:  "Enter from date",
+            required: function(){
+                if(current_locale=='ar'){
+                  return "دخل من التاريخ";
+                }else{
+                  return "Enter from date";
+                }
+            }
         },
         to_date:{
-            required:  "Enter to date",
-            toDateShouldGreatherFromDate:'To date should be greater than from date'
-        },
+            required: function(){
+                if(current_locale=='ar'){
+                  return "أدخل حتى الآن";
+                }else{
+                  return "Enter to date";
+                }
+            },
+            toDateShouldGreatherFromDate:function(){
+                if(current_locale=='ar'){
+                  return "يجب أن يكون حتى الآن أكبر من التاريخ";
+                }else{
+                  return "To date should be greater than from the date";
+                }
+            }
+        }
     },
     errorPlacement: function (error, element) {
         error.addClass('invalid-feedback');
@@ -285,16 +315,31 @@ $("#work_order_completed_per_month_report_form").validate({
         },
     },
     messages: {
-        work_order_status:{
-            required:  "Select Status",
-        },
         from_date:{
-            required:  "Enter from date",
+            required: function(){
+                if(current_locale=='ar'){
+                  return "دخل من التاريخ";
+                }else{
+                  return "Enter from date";
+                }
+            }
         },
         to_date:{
-            required:  "Enter to date",
-            toDateShouldGreatherFromDate:'To date should be greater than from date'
-        },
+            required: function(){
+                if(current_locale=='ar'){
+                  return "أدخل حتى الآن";
+                }else{
+                  return "Enter to date";
+                }
+            },
+            toDateShouldGreatherFromDate:function(){
+                if(current_locale=='ar'){
+                  return "يجب أن يكون حتى الآن أكبر من التاريخ";
+                }else{
+                  return "To date should be greater than from the date";
+                }
+            }
+        }
     },
     errorPlacement: function (error, element) {
         error.addClass('invalid-feedback');
@@ -334,16 +379,31 @@ $("#work_order_requested_vs_completed_report_form").validate({
         },
     },
     messages: {
-        work_order_status:{
-            required:  "Select Status",
-        },
         from_date:{
-            required:  "Enter from date",
+            required: function(){
+                if(current_locale=='ar'){
+                  return "دخل من التاريخ";
+                }else{
+                  return "Enter from date";
+                }
+            }
         },
         to_date:{
-            required:  "Enter to date",
-            toDateShouldGreatherFromDate:'To date should be greater than from date'
-        },
+            required: function(){
+                if(current_locale=='ar'){
+                  return "أدخل حتى الآن";
+                }else{
+                  return "Enter to date";
+                }
+            },
+            toDateShouldGreatherFromDate:function(){
+                if(current_locale=='ar'){
+                  return "يجب أن يكون حتى الآن أكبر من التاريخ";
+                }else{
+                  return "To date should be greater than from the date";
+                }
+            }
+        }
     },
     errorPlacement: function (error, element) {
         error.addClass('invalid-feedback');
@@ -385,16 +445,31 @@ $("#upcoming_schedule_maintenance_report_form").validate({
         },
     },
     messages: {
-        work_order_status:{
-            required:  "Select Status",
-        },
         from_date:{
-            required:  "Enter from date",
+            required: function(){
+                if(current_locale=='ar'){
+                  return "دخل من التاريخ";
+                }else{
+                  return "Enter from date";
+                }
+            }
         },
         to_date:{
-            required:  "Enter to date",
-            toDateShouldGreatherFromDate:'To date should be greater than from date'
-        },
+            required: function(){
+                if(current_locale=='ar'){
+                  return "أدخل حتى الآن";
+                }else{
+                  return "Enter to date";
+                }
+            },
+            toDateShouldGreatherFromDate:function(){
+                if(current_locale=='ar'){
+                  return "يجب أن يكون حتى الآن أكبر من التاريخ";
+                }else{
+                  return "To date should be greater than from the date";
+                }
+            }
+        }
     },
     errorPlacement: function (error, element) {
         error.addClass('invalid-feedback');
@@ -439,12 +514,30 @@ $("#upcoming_weekly_maintenance_report_form").validate({
     },
     messages: {
         from_date:{
-            required:  "Enter from date",
+            required: function(){
+                if(current_locale=='ar'){
+                  return "دخل من التاريخ";
+                }else{
+                  return "Enter from date";
+                }
+            }
         },
         to_date:{
-            required:  "Enter to date",
-            toDateShouldGreatherFromDate:'To date should be greater than from date'
-        },
+            required: function(){
+                if(current_locale=='ar'){
+                  return "أدخل حتى الآن";
+                }else{
+                  return "Enter to date";
+                }
+            },
+            toDateShouldGreatherFromDate:function(){
+                if(current_locale=='ar'){
+                  return "يجب أن يكون حتى الآن أكبر من التاريخ";
+                }else{
+                  return "To date should be greater than from the date";
+                }
+            }
+        }
     },
     errorPlacement: function (error, element) {
         error.addClass('invalid-feedback');
@@ -483,12 +576,30 @@ $("#contract_status_report_form").validate({
     },
     messages: {
         from_date:{
-            required:  "Enter from date",
+            required: function(){
+                if(current_locale=='ar'){
+                  return "دخل من التاريخ";
+                }else{
+                  return "Enter from date";
+                }
+            }
         },
         to_date:{
-            required:  "Enter to date",
-            toDateShouldGreatherFromDate:'To date should be greater than from date'
-        },
+            required: function(){
+                if(current_locale=='ar'){
+                  return "أدخل حتى الآن";
+                }else{
+                  return "Enter to date";
+                }
+            },
+            toDateShouldGreatherFromDate:function(){
+                if(current_locale=='ar'){
+                  return "يجب أن يكون حتى الآن أكبر من التاريخ";
+                }else{
+                  return "To date should be greater than from the date";
+                }
+            }
+        }
     },
     errorPlacement: function (error, element) {
         error.addClass('invalid-feedback');
@@ -525,12 +636,30 @@ $("#payment_report_form").validate({
     },
     messages: {
         from_date:{
-            required:  "Enter from date",
+            required: function(){
+                if(current_locale=='ar'){
+                  return "دخل من التاريخ";
+                }else{
+                  return "Enter from date";
+                }
+            }
         },
         to_date:{
-            required:  "Enter to date",
-            toDateShouldGreatherFromDate:'To date should be greater than from date'
-        },
+            required: function(){
+                if(current_locale=='ar'){
+                  return "أدخل حتى الآن";
+                }else{
+                  return "Enter to date";
+                }
+            },
+            toDateShouldGreatherFromDate:function(){
+                if(current_locale=='ar'){
+                  return "يجب أن يكون حتى الآن أكبر من التاريخ";
+                }else{
+                  return "To date should be greater than from the date";
+                }
+            }
+        }
     },
     errorPlacement: function (error, element) {
         error.addClass('invalid-feedback');
