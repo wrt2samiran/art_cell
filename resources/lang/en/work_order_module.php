@@ -12,7 +12,18 @@ return [
 	'slot' => 'Slot',
 	'task_labour_list' => 'Task Details And Labour List',
 	'task_list' => 'Task List',
-	
+	'first_slot' => 'First Slot',
+	'second_slot' => 'Second Slot',
+	'third_slot' => 'Third Slot',
+	'fourth_slot' => 'Fourth Slot',
+	'fifth_slot' => 'Fifth Slot',
+	'sixth_slot' => 'Sixth Slot',
+	'seventh_slot' => 'Seventh Slot',
+	'eighth_slot' => 'Eighth Slot',
+	'nineth_slot' => 'Nineth Slot',
+	'tenth_slot' => 'Tenth Slot',
+	'no_slot'	=> 'No Slot',
+
 
 	
 
@@ -43,6 +54,8 @@ return [
 		'task_mode' => 'Task Mode',
 		'labour_feedback' => 'Labour Feedback',
 		'feedback_date_time' => 'Feedback Date And Time',
+		'feedback_file' => 'Feedback File',
+		'feedback_on_time' => 'Feedback on time',
 		'add_reschedule' => 'Add Reschedule',
 	],
 

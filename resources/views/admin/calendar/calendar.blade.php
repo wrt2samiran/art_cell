@@ -119,7 +119,7 @@
                             <div class="col-md-4 form-group" id="status-filter-container">
                                 <select data-placeholder="{{__('calendar_module.filter_labels.filter_with_service')}}"  class="chosen-select" tabindex="8"  name="service_type[]" id="service_type" multiple >
                                     @forelse(@$allWorkOrdersRelatedServices as $service_type_key=> $service_type_list_data)
-                                       <option value="{{$service_type_list_data->service->id}}" @if(is_array($request->maintenance_type)) @if(in_array($service_type_list_data->service->id, $request->service_type)) selected @endif @endif>{{@$service_type_list_data->service->service_name}}</option>
+                                       <option value="{{$service_type_list_data->service->id}}" @if(is_array($request->maintenance_type)) @if(in_array($service_type_list_data->service->id, $request->maintenance_type)) selected @endif @endif>{{@$service_type_list_data->service->service_name}}</option>
                                     @empty
                                     <option value="">No Maintenance Type Found</option>
                                     @endforelse
@@ -167,11 +167,14 @@
                             <div class="card-body">
                               <!-- the events -->
                               <div id="external-events" style="width: 88px">
-                                <div class="external-event bg-success">{{__('general_sentence.status_button.completed')}}</div>
+                                <!-- <div class="external-event bg-success">{{__('general_sentence.status_button.completed')}}</div>
                                 <div class="external-event bg-warning">{{__('general_sentence.status_button.pending')}}</div>
                                 <div class="external-event btn-secondary">{{__('general_sentence.status_button.overdue')}}</div>
                                 <div class="external-event bg-danger">{{__('general_sentence.status_button.warning')}}</div>
-                                <div class="external-event" style="background: #ff6600">{{__('general_sentence.status_button.emergency')}}</div>
+                                <div class="external-event" style="background: #ff6600">{{__('general_sentence.status_button.emergency')}}</div> -->
+                                @foreach($status_list as $status_data)
+                                  <div class="external-event bg" style="background-color: {{@$status_data->color_code}}">{{@$status_data->status_name}}</div>
+                                @endforeach
                               </div>
                             </div>
                             <!-- /.card-body -->
@@ -452,22 +455,9 @@ $list = json_encode($filtered);
                     }
                     else
                     {
-                        if($work_order_data->status==1)
-                        {
-                            $color = '#545b62';              
-                        }
-                        else if($work_order_data->status==0)
-                        {
-                          $color = '#ffc107';
-                        }
-                        else if($work_order_data->status==2)
-                        {
-                          $color = '#28a745';
-                        }
-                        else if($work_order_data->status==4)
-                        {
-                          $color = '#dc3d45';
-                        }
+
+                        $color =$work_order_data->work_order_status->color_code;
+                        
                     }
                     
 

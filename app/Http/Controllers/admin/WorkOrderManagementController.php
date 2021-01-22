@@ -5,7 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\Models\{User,Country,State,City,WorkOrderLists,TaskLists, TaskDetails, ServiceAllocationManagement, Property, Contract, ContractService, ContractServiceDate, WorkOrderSlot, ContractServiceRecurrence, TaskDetailsFeedbackFiles, Notification, LabourLeave, LeaveDates};
+use App\Models\{User,Country,State,City,WorkOrderLists,TaskLists, TaskDetails, ServiceAllocationManagement, Property, Contract, ContractService, ContractServiceDate, WorkOrderSlot, ContractServiceRecurrence, TaskDetailsFeedbackFiles, Notification, LabourLeave, LeaveDates, WorkOrderStatus};
 use Auth, Validator, Helper, File, Image;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Str;
@@ -468,7 +468,7 @@ class WorkOrderManagementController extends Controller
             
            // $tasks=WorkOrderLists::with('property')->with('service')->with('country')->with('state')->with('city')->where('created_by', $logedInUser)->orWhere('user_id', $logedInUser)->orderBy('id','Desc');
 
-            $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'property.country', 'property.state', 'property.city'])
+            $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'property.country', 'property.state', 'property.city', 'work_order_status'])
                 
                 ->where(function($q) use ($logedInUser, $logedInUserRole){
                     if($logedInUserRole->role->user_type->slug!='super-admin'){
@@ -549,23 +549,13 @@ class WorkOrderManagementController extends Controller
             })
             
             ->addColumn('status',function($workOrder){
-                if($workOrder->status=='0'){
-                   $message='Pending';
-                    return '<a href="javascript:void(0)" class="btn btn-block btn-outline-warning btn-sm">Pending</a>';
+                   $message = $workOrder->work_order_status->status_name;
+                   $color_code = $workOrder->work_order_status->color_code;
+                   return '<a href="javascript:void(0)" class="btn btn-block btn-sm" style="background-color: '.$color_code.'" >'.$message.'</a>';
                     
-                }elseif($workOrder->status=='1'){
-                   $message='Overdue';
-                   return '<a  href="javascript:void(0)" class="btn btn-block btn-outline-success btn-sm">Overdue</a>';
-                   
-                }
-                else{
-                    $message='Completed';
-                    return '<a href="javascript:void(0)" class="btn btn-block btn-outline-success btn-sm">Completed</a>';
-                }
             })
             ->addColumn('action',function($workOrder)use ($logedInUser, $logedInUserRole){
                 $action_buttons='';
-               
              
                 if($logedInUser==$workOrder->user_id){
                     if($workOrder->contract->status_id==1)
@@ -623,6 +613,9 @@ class WorkOrderManagementController extends Controller
             ->rawColumns(['action','status'])
             ->make(true);
         }
+
+
+        $this->data['status_list'] = WorkOrderStatus::whereIsActive(1)->orderBy('slug', 'asc')->get();
 
 
         return view($this->view_path.'.list',$this->data);
@@ -919,7 +912,7 @@ class WorkOrderManagementController extends Controller
     /*****************************************************/
 
     public function show(Request $request, $id){
-        $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'property.country', 'property.state', 'property.city', 'tasks'])->whereId($id)->first();
+        $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'property.country', 'property.state', 'property.city', 'tasks', 'work_order_status'])->whereId($id)->first();
         $checkSlot = WorkOrderSlot::with('contract_service_dates')->whereWorkOrderId($id)->whereBookedStatus('N')->get();
                 $slot_data = $checkSlot;
 
@@ -1320,7 +1313,13 @@ class WorkOrderManagementController extends Controller
                                 $sqlTaskCount = TaskLists::whereWorkOrderId($sqlTask->work_order_id)->whereIsDeleted('N')->get();
                                 if($sqlTaskCount)
                                 {
-                                    $percentPerTask = ($sqlWorkOrder->work_order_complete_percent+(100/count($sqlTaskCount)));
+                                    // echo 'sqlSubTaskCount ::'. count($sqlSubTaskCount);
+                                    // echo 'task_complete_percent ::'. $sqlTask->task_complete_percent;
+
+                                    // exit;
+
+                                    //$percentPerTask = ($sqlWorkOrder->work_order_complete_percent+(100/count($sqlTaskCount)));
+                                    $percentPerTask = $sqlWorkOrder->work_order_complete_percent+(100/count($sqlSubTaskCount));
 
                                     if($request->status==4)
                                     {
@@ -1356,7 +1355,10 @@ class WorkOrderManagementController extends Controller
                             }
                             else
                             {
-                                $sqlWorkOrderSlotCount = WorkOrderSlot::whereWorkOrderId($sqlTask->work_order_id)->get();
+                                //$sqlWorkOrderSlotCount = WorkOrderSlot::whereWorkOrderId($sqlTask->work_order_id)->get();
+                                $sqlWorkOrderSlotCount = TaskLists::whereWorkOrderId($sqlTask->work_order_id)->whereIsDeleted('N')->first();
+
+
                                 if($sqlWorkOrderSlotCount)
                                 {
                                  
@@ -1369,7 +1371,8 @@ class WorkOrderManagementController extends Controller
                                         $totalWarning = $sqlWorkOrder->warning;
                                     }
 
-                                    $percentPerSlot = ($sqlWorkOrder->work_order_complete_percent+(100/count($sqlWorkOrderSlotCount)));
+                                    //$percentPerSlot = ($sqlWorkOrder->work_order_complete_percent+(100/count($sqlWorkOrderSlotCount)));
+                                    $percentPerSlot = $sqlWorkOrder->work_order_complete_percent+(100/count($sqlSubTaskCount));
                                     
                                     if($percentPerSubTask==100)
                                     {
@@ -1453,10 +1456,10 @@ class WorkOrderManagementController extends Controller
 
         if($request->ajax()){
              if($logedInUserRole==5){
-                 $task_list=TaskDetails::with('task', 'task.property', 'task.property.country', 'task.property.state', 'task.property.city')->with('service')->with('work_order_slot')->with('userDetails')->where('user_id', $id)->whereNull('deleted_at');
+                 $task_list=TaskDetails::with('task', 'task.property', 'task.property.country', 'task.property.state', 'task.property.city')->with('service')->with('work_order_status')->with('userDetails')->where('user_id', $id)->whereNull('deleted_at');
              }
              else{
-                $task_list=TaskLists::with('service')->where('work_order_id', $id)->where('created_by', $logedInUser)->whereNull('deleted_at');
+                $task_list=TaskLists::with('service', 'work_order_status')->where('work_order_id', $id)->where('created_by', $logedInUser)->whereNull('deleted_at');
              }
              
             return Datatables::of($task_list)
@@ -1485,53 +1488,11 @@ class WorkOrderManagementController extends Controller
                 $query->whereRaw("DATE_FORMAT(task_finish_date_time,'%d/%m/%Y') like ?", ["%$keyword%"]);
             })
             ->addColumn('status',function($task_list){
-                // if($task_list->status=='1'){
-                //    //$message='deactivate';
-                //    return '<span class="btn btn-block btn-outline-denger btn-sm">Overdue</a>';
-                    
-                // }else if($task_list->status=='0'){
-                //    $message='complete';
-                //    if($task_list->user_feedback==''){
-                //         return '<span class="btn btn-block btn-outline-warning btn-sm">Pending</a>';
-                //    }
-                //    else{
-                //         return '<a title="Click to Complete the daily task" href="javascript:change_status('."'".route('admin.work-order-management.change_status',$task_list->id)."'".','."'".$message."'".')" class="btn btn-block btn-outline-success btn-sm">Pending</a>';
-                //    }
-                   
-                   
-                // }
-                // else if($task_list->status=='1')
-                // {
-                //     return '<span class="btn btn-block btn-outline-denger btn-sm">Overdue</a>';
-                // }
-                // else if($task_list->status=='2')
-                // {
-                //     return '<span class="btn btn-block btn-outline-success btn-sm">Completed</a>';
-                // }
-                // else if($task_list->status=='3')
-                // {
-                //     return '<span class="btn btn-block btn-info btn-sm">Requested for Reschedule</a>';
-                // }
+               $message = $task_list->work_order_status->status_name;
+               $color_code = $task_list->work_order_status->color_code;
 
-                if($task_list->status=='0'){
-                    return '<span class="btn btn-block btn-outline-warning btn-sm">Pending</a>';
-                }
-                else if($task_list->status=='1')
-                {
-                    return '<span class="btn btn-block btn-outline-secondary btn-sm">Overdue</a>';
-                }
-                else if($task_list->status=='2')
-                {
-                    return '<span class="btn btn-block btn-outline-success btn-sm">Completed</a>';
-                }
-                else if($task_list->status=='3')
-                {
-                    return '<span class="btn btn-block btn-info btn-sm">Requested for Reschedule</a>';
-                }
-                else if($task_list->status=='4')
-                {
-                    return '<span class="btn btn-block btn-danger btn-sm">Completed with Warning</a>';
-                }
+                    return '<span class="btn btn-block btn-sm" style="background-color: '.$color_code.'">'.$message.'</a>';
+                
             })
 
             // ->addColumn('late_feedback',function($task_list){
@@ -1562,7 +1523,7 @@ class WorkOrderManagementController extends Controller
                             {
                                 
                                 $details_url = route('admin.work-order-management.labourTaskDetails',$task_list->id);
-                                $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Show Task" id="details_task" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a> <a title="Add Task Feedback" href="javascript:void(0)" onclick="addFeedback('.$task_list->id.')"><i class="fas fa-head-side-cough"></i></a>&nbsp;&nbsp;';
+                                $action_buttons=$action_buttons.'&nbsp;&nbsp;<a title="Show Task" id="details_task" href="'.$details_url.'"><i class="fas fa-eye text-primary"></i></a> <a style="color:green" title="Add Task Feedback" href="javascript:void(0)" onclick="addFeedback('.$task_list->id.')"><i class="far fa-comments"></i></a>&nbsp;&nbsp;';
                             }
                             else
                             {
@@ -1648,10 +1609,10 @@ class WorkOrderManagementController extends Controller
             ->make(true);
         }
 
-
+ 
         
         //$this->data['task_list_data']=TaskLists::with('property')->with('service')->with('country')->with('state')->with('city')->with('userDetails')->findOrFail($id);
-        $workOrderList=WorkOrderLists::with(['contract', 'contract_services', 'contract_service_dates', 'contract_service_recurrence',  'property','service_provider','service', 'property.country', 'property.state', 'property.city'])->whereId($id)->whereIsDeleted('N')->whereNull('deleted_at')->first();
+        $workOrderList=WorkOrderLists::with(['contract', 'contract_services', 'contract_service_dates', 'contract_service_recurrence',  'property','service_provider','service', 'property.country', 'property.state', 'property.city', 'work_order_status'])->whereId($id)->whereIsDeleted('N')->whereNull('deleted_at')->first();
         //dd($workOrderList->contract_service_dates);
         if($logedInUserRole!=5)
         {
@@ -1729,7 +1690,7 @@ class WorkOrderManagementController extends Controller
         $this->data['page_title']='Labour Task List';
         $logedInUser = \Auth::guard('admin')->user()->id;
 
-        $this->data['task_data']=TaskDetails::with('task', 'task.property', 'task.property.country', 'task.property.state', 'task.property.city', 'task.work_order', 'service', 'work_order_slot', 'userDetails', 'task_details_feedback_files')->whereId($id)->orderBy('id','Desc')->first();
+        $this->data['task_data']=TaskDetails::with('task', 'task.property', 'task.property.country', 'task.property.state', 'task.property.city', 'task.work_order', 'service', 'work_order_slot', 'userDetails', 'task_details_feedback_files', 'work_order_status')->whereId($id)->orderBy('id','Desc')->first();
         //dd($this->data['task_data']);
         return view($this->view_path.'.labour-task-details',$this->data);
        
@@ -1752,7 +1713,7 @@ class WorkOrderManagementController extends Controller
         $this->data['page_title']='Labour Task List';
         $logedInUser = \Auth::guard('admin')->user()->id;
         $logedInUserRole = \Auth::guard('admin')->user()->role_id;
-        $taskData = TaskLists::with('contract')->with('property')->with('service', 'contract_services')->with('work_order')->whereId($id)->whereIsDeleted('N')->first();
+        $taskData = TaskLists::with('contract', 'work_order_status')->with('property')->with('service', 'contract_services')->with('work_order')->whereId($id)->whereIsDeleted('N')->first();
 
 
         if($request->ajax()){
@@ -1760,7 +1721,7 @@ class WorkOrderManagementController extends Controller
             //     $task_detail_list=TaskDetails::with('task')->with('service')->with('userDetails')->where('task_id', $id)->orderBy('id','Desc');
             // }
             // else{
-            $labour_task_list=TaskDetails::with('task')->with('users')->with('work_order_slot')->whereTaskId($id)->orderBy('id','Desc');
+            $labour_task_list=TaskDetails::with('task', 'work_order_status')->with('users')->with('work_order_slot')->whereTaskId($id)->orderBy('id','Desc');
             // }
             return Datatables::of($labour_task_list)
             ->editColumn('created_at', function ($labour_task_list) {
@@ -1784,27 +1745,10 @@ class WorkOrderManagementController extends Controller
             })
 
             ->addColumn('status',function($labour_task_list){
-            
-                if($labour_task_list->status=='0'){
-                    return '<span class="btn btn-block btn-outline-warning btn-sm">Pending</a>';
-                }
-                else if($labour_task_list->status=='1')
-                {
-                    return '<span class="btn btn-block btn-outline-secondary btn-sm">Overdue</a>';
-                }
-                else if($labour_task_list->status=='2')
-                {
-                    return '<span class="btn btn-block btn-outline-success btn-sm">Completed</a>';
-                }
-                else if($labour_task_list->status=='3')
-                {
-                    return '<span class="btn btn-block btn-info btn-sm">Requested for Reschedule</a>';
-                }
-                else if($labour_task_list->status=='4')
-                {
-                    return '<span class="btn btn-block btn-danger btn-sm">Completed with Warning</a>';
-                }
 
+               $message = $labour_task_list->work_order_status->status_name;
+               $color_code = $labour_task_list->work_order_status->color_code;
+               return '<span class="btn btn-block btn-sm"  style="background-color: '.$color_code.'">'.$message.'</a>';
 
             })
             ->addColumn('action',function($labour_task_list){
@@ -1824,14 +1768,14 @@ class WorkOrderManagementController extends Controller
                         {
                             $action_buttons = '<input type="checkbox"  name="labour_task_list_maintain" id="labour_task_list_maintain_'.$labour_task_list->id.'" value="'.$labour_task_list->id.'" >';
 
-                            $action_buttons=$action_buttons."&nbsp;&nbsp;<a title='Update Labour Task' id='update_labour_task' 
+                            $action_buttons=$action_buttons."&nbsp;&nbsp;<a style='color:blue' title='Update Labour Task' id='update_labour_task' 
                             href='javascript:updateLabourTaskMaintanence(".$labour_task_list->id.", ".json_encode($labour_task_list->task_description).")'><i class='far fa-calendar-alt'></i></a>";
                         }
                         else
                         {
                             $action_buttons = '<input type="checkbox" name="labour_task_list" id="labour_task_list_'.$labour_task_list->id.'" value="'.$labour_task_list->id.'">';
 
-                            $action_buttons=$action_buttons."&nbsp;&nbsp;<a title='Update Labour Task' id='update_labour_task' 
+                            $action_buttons=$action_buttons."&nbsp;&nbsp;<a style='color:blue' title='Update Labour Task' id='update_labour_task' 
                             href='javascript:updateLabourTask(".$labour_task_list->id.", ".json_encode($labour_task_list->task_description).")'><i class='far fa-calendar-alt'></i></a>";
                         }
                         
@@ -1853,7 +1797,7 @@ class WorkOrderManagementController extends Controller
                      $allRestrictedDate=  $this->getAllRestricedDates($labour_task_list->user_id);
 
                     //$details_url = route('admin.work-order-management.rescheduleTask',$labour_task_list->id);
-                    $action_buttons=$action_buttons."&nbsp;&nbsp;<a title='Reschedule Task' id='details_task' 
+                    $action_buttons=$action_buttons."&nbsp;&nbsp;<a style='color:blue' title='Reschedule Task' id='details_task' 
                     href='javascript:rescheduleTask(".$labour_task_list->id.", ".json_encode($allRestrictedDate).", ".json_encode($labour_task_list->task_description).")'><i class='far fa-calendar-alt'></i></a>";
                  }
 
@@ -1876,7 +1820,7 @@ class WorkOrderManagementController extends Controller
         $this->data['task_action'] = TaskDetails::whereTaskId($id)->whereIsDeleted('N')->whereDate('task_date', '>', date('Y-m-d'))->count();
         //$this->data['work_order_id'] = $id;
        
-            return view($this->view_path.'.task-labour-list',$this->data);
+        return view($this->view_path.'.task-labour-list',$this->data);
        
         
     }

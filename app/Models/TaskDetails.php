@@ -78,5 +78,9 @@ class TaskDetails extends Model
 
         
     }
+
+    public function work_order_status(){
+        return $this->belongsTo(WorkOrderStatus::class,'status','is_default_status');
+    }
     
 }

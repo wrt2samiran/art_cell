@@ -5,7 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\Models\{User,Country,State,City, WorkOrderLists, TaskLists, TaskDetails, ServiceAllocationManagement, Property, Contract, Service, WorkOrderSlot, ContractServiceDate};
+use App\Models\{User,Country,State,City, WorkOrderLists, TaskLists, TaskDetails, ServiceAllocationManagement, Property, Contract, Service, WorkOrderSlot, ContractServiceDate, WorkOrderStatus};
 use Auth, Validator;
 use Yajra\Datatables\Datatables;
 
@@ -35,7 +35,7 @@ class CalendarController extends Controller
         $allWorkOrdersRelatedServiceProvider = array();
         $allWorkOrdersRelatedContractServices = array();
         $allWorkOrdersRelatedServices = array();
-       
+        $this->data['status_list'] = WorkOrderStatus::whereIsActive(1)->orderBy('slug', 'asc')->get();
 
         if($logedInUserRole->role->user_type->slug=='property-owner' || $logedInUserRole->role->user_type->slug=='property-manager')
         {
@@ -81,7 +81,7 @@ class CalendarController extends Controller
                     }
                     //dd($contractList);
 
-                    $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->whereIn('contract_id', $contractList)->where(function ($q) use ($request) {
+                    $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'property.country', 'property.state', 'property.city', 'work_order_status'])->whereIn('contract_id', $contractList)->where(function ($q) use ($request) {
 
                             if ($request->un_assigned==1) {
                                     
@@ -107,7 +107,7 @@ class CalendarController extends Controller
 
                 else{
                
-                        $workOrder = WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'contract_service_dates', 'property.country', 'property.state', 'property.city', 'tasks', 'tasks.task_details'])->where(function ($q) use ($request, $property_list, $sqlContract) {
+                        $workOrder = WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'contract_service_dates', 'property.country', 'property.state', 'property.city', 'tasks', 'tasks.task_details', 'work_order_status'])->where(function ($q) use ($request, $property_list, $sqlContract) {
                             
                             if ($request->property_id!='') {
                                     
@@ -204,7 +204,7 @@ class CalendarController extends Controller
 
                         if($request->property_id!='')
                         {
-                            $allPropertyRelatedWorkOrders = WorkOrderLists::whereNull('deleted_at')->whereIn('property_id', $request->property_id)->where(function($q) use ($request){
+                            $allPropertyRelatedWorkOrders = WorkOrderLists::with('work_order_status')->whereNull('deleted_at')->whereIn('property_id', $request->property_id)->where(function($q) use ($request){
 
                                     if ($request->contract_list!='') {
                                     
@@ -218,7 +218,7 @@ class CalendarController extends Controller
                         }
                         else
                         {
-                            $allPropertyRelatedWorkOrders = WorkOrderLists::whereNull('deleted_at')->where('property_id', $property_list[0]->id)->get();
+                            $allPropertyRelatedWorkOrders = WorkOrderLists::with('work_order_status')->whereNull('deleted_at')->where('property_id', $property_list[0]->id)->get();
 
                             $request["property_id"] = $property_list[0]->id;
                         }
@@ -227,11 +227,11 @@ class CalendarController extends Controller
                         {
                             //$allWorkOrdersRelatedData = WorkOrderLists::with('service_provider', 'contract_services', 'service')->whereNull('deleted_at')->whereIn('id', $request->work_order_id)->get();
                             
-                            $allWorkOrdersRelatedServiceProvider = WorkOrderLists::with('userDetails')->whereNull('deleted_at')->whereIn('id', $request->work_order_id)->groupBy('user_id')->get();
+                            $allWorkOrdersRelatedServiceProvider = WorkOrderLists::with('userDetails', 'work_order_status')->whereNull('deleted_at')->whereIn('id', $request->work_order_id)->groupBy('user_id')->get();
 
-                            $allWorkOrdersRelatedContractServices = WorkOrderLists::with('contract_services')->whereNull('deleted_at')->whereIn('id', $request->work_order_id)->groupBy('contract_service_id')->get();
+                            $allWorkOrdersRelatedContractServices = WorkOrderLists::with('contract_services', 'work_order_status')->whereNull('deleted_at')->whereIn('id', $request->work_order_id)->groupBy('contract_service_id')->get();
 
-                            $allWorkOrdersRelatedServices = WorkOrderLists::with('service')->whereNull('deleted_at')->whereIn('id', $request->work_order_id)->groupBy('service_id')->get();
+                            $allWorkOrdersRelatedServices = WorkOrderLists::with('service', 'work_order_status')->whereNull('deleted_at')->whereIn('id', $request->work_order_id)->groupBy('service_id')->get();
                         }
 
                 }  
@@ -244,7 +244,7 @@ class CalendarController extends Controller
                 {
                     if(count($sqlContract)>0)
                     {
-                        $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'contract_service_dates', 'property.country', 'property.state', 'property.city'])->whereContractId($sqlContract[0]->id)->get();
+                        $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'contract_service_dates', 'property.country', 'property.state', 'property.city', 'work_order_status'])->whereContractId($sqlContract[0]->id)->get();
                     }
                     
                    // $this->data['work_order_all']  = $workOrderAll;
@@ -275,9 +275,9 @@ class CalendarController extends Controller
         else if($logedInUserRole->role->user_type->slug=='service-provider')
         {
             $allLabourList=array();
-            $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->where('user_id',$logedInUser)->orderBy('id','Desc')->get();
+            $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'property.country', 'property.state', 'property.city', 'work_order_status'])->where('user_id',$logedInUser)->orderBy('id','Desc')->get();
 
-            $taskList = TaskLists::with(['contract', 'task_details', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->whereWorkOrderId($workOrder[0]->id)->get();
+            $taskList = TaskLists::with(['contract', 'task_details', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city', 'work_order_status'])->whereWorkOrderId($workOrder[0]->id)->get();
 
             $this->data['work_order_list'] = $workOrder;
             
@@ -293,7 +293,7 @@ class CalendarController extends Controller
                 
                 if($request->un_assigned==1 ||  $request->emergency_service==1)
                 {
-                    $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->where('user_id',$logedInUser)->where(function ($q) use ($request) {
+                    $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'property.country', 'property.state', 'property.city', 'work_order_status'])->where('user_id',$logedInUser)->where(function ($q) use ($request) {
 
                             if ($request->un_assigned==1) {
                                     
@@ -323,7 +323,7 @@ class CalendarController extends Controller
                     //$taskList = TaskLists::with(['contract', 'task_details', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->where(function ($q) use ($request) {
                     $allContractServices = array();
 
-                    $taskList = TaskLists::with(['contract', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->where(function ($q) use ($request, $property_list) {
+                    $taskList = TaskLists::with(['contract', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city', 'work_order_status'])->where(function ($q) use ($request, $property_list) {
 
 
                         if ($request->property_id!='') {
@@ -381,7 +381,7 @@ class CalendarController extends Controller
                             $taskListData[]=$value->id;
                         } 
                        
-                        $taskDetailsList = TaskDetails::with('userDetails', 'task')->where(function ($q) use ($request, $taskListData) {
+                        $taskDetailsList = TaskDetails::with('userDetails', 'task', 'work_order_status')->where(function ($q) use ($request, $taskListData) {
                             
 
                             if ($request->task_id!='') {
@@ -447,11 +447,11 @@ class CalendarController extends Controller
                    // dd($request->all());
                     if($request->property_id!='')
                     {
-                        $allPropertyRelatedWorkOrders = WorkOrderLists::whereNull('deleted_at')->whereIn('property_id', $request->property_id)->get();
+                        $allPropertyRelatedWorkOrders = WorkOrderLists::with('work_order_status')->whereNull('deleted_at')->whereIn('property_id', $request->property_id)->get();
                     }
                     else
                     {
-                        $allPropertyRelatedWorkOrders = WorkOrderLists::whereNull('deleted_at')->where('property_id', $property_list[0]->id)->get();
+                        $allPropertyRelatedWorkOrders = WorkOrderLists::with('work_order_status')->whereNull('deleted_at')->where('property_id', $property_list[0]->id)->get();
 
                         $request["property_id"] = $property_list[0]->id;
                     }
@@ -459,13 +459,13 @@ class CalendarController extends Controller
                     
                     if($request->task_id)
                         {
-                            $allLabourList = TaskDetails::with('userDetails')->whereNull('deleted_at')->whereIn('task_id', $request->task_id)->groupBy('user_id')->get();
+                            $allLabourList = TaskDetails::with('userDetails', 'work_order_status')->whereNull('deleted_at')->whereIn('task_id', $request->task_id)->groupBy('user_id')->get();
                         }
                    $this->data['allLabourList'] = $allLabourList;
 
                    if($request->work_order_id)
                        {
-                            $allContractServices = TaskLists::with(['contract', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->whereIn('work_order_id',$request->work_order_id)->orderBy('id', 'Desc')->get();
+                            $allContractServices = TaskLists::with(['contract', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city', 'work_order_status'])->whereIn('work_order_id',$request->work_order_id)->orderBy('id', 'Desc')->get();
                        }
                
                 }
@@ -475,7 +475,7 @@ class CalendarController extends Controller
             {       
                     
                    // $taskList = TaskLists::with(['contract', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->whereWorkOrderId($workOrder[0]->id)->orderBy('id', 'Desc')->get();
-                    $taskList = TaskLists::with(['contract', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->where(function ($q) use ($property_list) {
+                    $taskList = TaskLists::with(['contract', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city', 'work_order_status'])->where(function ($q) use ($property_list) {
 
 
                         if ($property_list!='') {
@@ -486,13 +486,13 @@ class CalendarController extends Controller
                         } 
                     })->get();
 
-                    $allContractServices = TaskLists::with(['contract', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->whereWorkOrderId($workOrder[0]->id)->orderBy('id', 'Desc')->get();
+                    $allContractServices = TaskLists::with(['contract', 'property','service', 'contract_services', 'property.country', 'property.state', 'property.city', 'work_order_status'])->whereWorkOrderId($workOrder[0]->id)->orderBy('id', 'Desc')->get();
 
                     
                     if(count($taskList)>0)
                     {
                         $request["property_id"] = $property_list[0]->id; 
-                        $taskDetailsList = TaskDetails::with('userDetails', 'task')->whereTaskId($taskList[0]->id)->get();
+                        $taskDetailsList = TaskDetails::with('userDetails', 'task', 'work_order_status')->whereTaskId($taskList[0]->id)->get();
                     }
                     else
                     {
@@ -504,7 +504,7 @@ class CalendarController extends Controller
             $this->data['property_list'] = $property_list;
             $this->data['serviceList'] = Service::whereIsActive(1)->get();
 
-            //dd($taskDetailsList);
+            //dd($workOrder);
             $this->data['task_list']  = $taskList;
             $this->data['task_details_list']  = $taskDetailsList;
             $this->data['slug'] = $logedInUserRole ->role->user_type->slug;
@@ -550,7 +550,7 @@ class CalendarController extends Controller
                     }
                     //dd($contractList);
 
-                    $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'property.country', 'property.state', 'property.city'])->whereIn('contract_id', $contractList)->where(function ($q) use ($request) {
+                    $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'property.country', 'property.state', 'property.city', 'work_order_status'])->whereIn('contract_id', $contractList)->where(function ($q) use ($request) {
 
                             if ($request->un_assigned==1) {
                                     
@@ -576,7 +576,7 @@ class CalendarController extends Controller
 
                 else{
                
-                        $workOrder = WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'contract_service_dates', 'property.country', 'property.state', 'property.city', 'tasks', 'tasks.task_details'])->where(function ($q) use ($request, $property_list, $sqlContract) {
+                        $workOrder = WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'contract_service_dates', 'property.country', 'property.state', 'property.city', 'tasks', 'tasks.task_details', 'work_order_status'])->where(function ($q) use ($request, $property_list, $sqlContract) {
                             
                             if ($request->property_id!='') {
                                     
@@ -673,7 +673,7 @@ class CalendarController extends Controller
 
                         if($request->property_id!='')
                         {
-                            $allPropertyRelatedWorkOrders = WorkOrderLists::whereNull('deleted_at')->whereIn('property_id', $request->property_id)->where(function($q) use ($request){
+                            $allPropertyRelatedWorkOrders = WorkOrderLists::with('work_order_status')->whereNull('deleted_at')->whereIn('property_id', $request->property_id)->where(function($q) use ($request){
 
                                     if ($request->contract_list!='') {
                                     
@@ -687,7 +687,7 @@ class CalendarController extends Controller
                         }
                         else
                         {
-                            $allPropertyRelatedWorkOrders = WorkOrderLists::whereNull('deleted_at')->where('property_id', $property_list[0]->id)->get();
+                            $allPropertyRelatedWorkOrders = WorkOrderLists::with('work_order_status')->whereNull('deleted_at')->where('property_id', $property_list[0]->id)->get();
 
                             $request["property_id"] = $property_list[0]->id;
                         }
@@ -696,11 +696,11 @@ class CalendarController extends Controller
                         {
                             //$allWorkOrdersRelatedData = WorkOrderLists::with('service_provider', 'contract_services', 'service')->whereNull('deleted_at')->whereIn('id', $request->work_order_id)->get();
                             
-                            $allWorkOrdersRelatedServiceProvider = WorkOrderLists::with('userDetails')->whereNull('deleted_at')->whereIn('id', $request->work_order_id)->groupBy('user_id')->get();
+                            $allWorkOrdersRelatedServiceProvider = WorkOrderLists::with('userDetails', 'work_order_status')->whereNull('deleted_at')->whereIn('id', $request->work_order_id)->groupBy('user_id')->get();
 
-                            $allWorkOrdersRelatedContractServices = WorkOrderLists::with('contract_services')->whereNull('deleted_at')->whereIn('id', $request->work_order_id)->groupBy('contract_service_id')->get();
+                            $allWorkOrdersRelatedContractServices = WorkOrderLists::with('contract_services', 'work_order_status')->whereNull('deleted_at')->whereIn('id', $request->work_order_id)->groupBy('contract_service_id')->get();
 
-                            $allWorkOrdersRelatedServices = WorkOrderLists::with('service')->whereNull('deleted_at')->whereIn('id', $request->work_order_id)->groupBy('service_id')->get();
+                            $allWorkOrdersRelatedServices = WorkOrderLists::with('service', 'work_order_status')->whereNull('deleted_at')->whereIn('id', $request->work_order_id)->groupBy('service_id')->get();
                         }
 
                 }  
@@ -712,7 +712,7 @@ class CalendarController extends Controller
                 
                     if(count($sqlContract)>0)
                     {
-                        $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'contract_service_dates', 'property.country', 'property.state', 'property.city'])->whereContractId($sqlContract[0]->id)->get();
+                        $workOrder=WorkOrderLists::with(['contract','property','service_provider','service', 'contract_services', 'contract_service_dates', 'property.country', 'property.state', 'property.city', 'work_order_status'])->whereContractId($sqlContract[0]->id)->get();
                     }
                     
                    // $this->data['work_order_all']  = $workOrderAll;
@@ -728,6 +728,7 @@ class CalendarController extends Controller
             $this->data['serviceList'] = Service::whereIsActive(1)->get();
 
             //dd($workOrder);
+
             $this->data['work_order_list']  = $workOrder;
             $this->data['allPropertyRelatedWorkOrders'] = $allPropertyRelatedWorkOrders;
             $this->data['allWorkOrdersRelatedServiceProvider'] = $allWorkOrdersRelatedServiceProvider;

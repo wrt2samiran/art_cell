@@ -112,6 +112,22 @@ Route::group(["prefix" => "admin","namespace"=>"admin", 'as' => 'admin.'], funct
             });
             /************************************/
 
+             /*Routes for Work Order Status Master management */
+            Route::group(['prefix'=>'work-order-statuses','middleware'=>['check_permissions:manage-work-order-statuses'],'as'=>'work_order_statuses.'],function(){
+
+                Route::get('/', 'WorkOrderStatusController@list')->name('list');
+                Route::get('/create', 'WorkOrderStatusController@create')->name('create');
+                Route::post('/store', 'WorkOrderStatusController@store')->name('store');
+                Route::get('/{id}', 'WorkOrderStatusController@show')->name('show');
+                Route::get('/{id}/edit', 'WorkOrderStatusController@edit')->name('edit');
+                Route::put('/{id}', 'WorkOrderStatusController@update')->name('update');
+                Route::delete('/{id}/delete', 'WorkOrderStatusController@delete')->name('delete');
+                Route::get('/{id}/change-change', 'WorkOrderStatusController@change_status')->name('change_status');
+                Route::post('/ajax/ajax_check_status_name_unique/{status_id?}', 'WorkOrderStatusController@ajax_check_status_name_unique')
+                ->name('ajax_check_status_name_unique');
+            });
+            /************************************/
+
 
             /*Routes for service management */
             Route::group(['prefix'=>'services','middleware'=>['check_permissions:manage-services'],'as'=>'services.'],function(){

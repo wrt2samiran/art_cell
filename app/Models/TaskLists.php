@@ -55,4 +55,8 @@ class TaskLists extends Model
     public function task_details() {
         return $this->hasMany(TaskDetails::class, 'task_id', 'id');
     }
+
+    public function work_order_status(){
+        return $this->belongsTo(WorkOrderStatus::class,'status','is_default_status');
+    }
 }

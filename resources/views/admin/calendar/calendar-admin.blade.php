@@ -119,7 +119,7 @@
                             <div class="col-md-4 form-group" id="status-filter-container">
                                 <select data-placeholder="{{__('calendar_module.filter_labels.filter_with_service')}}"  class="chosen-select" tabindex="8"  name="service_type[]" id="service_type" multiple >
                                     @forelse(@$allWorkOrdersRelatedServices as $service_type_key=> $service_type_list_data)
-                                       <option value="{{$service_type_list_data->service->id}}" @if(is_array($request->maintenance_type)) @if(in_array($service_type_list_data->service->id, $request->service_type)) selected @endif @endif>{{@$service_type_list_data->service->service_name}}</option>
+                                       <option value="{{$service_type_list_data->service->id}}" @if(is_array($request->maintenance_type)) @if(in_array($service_type_list_data->service->id, $request->maintenance_type)) selected @endif @endif>{{@$service_type_list_data->service->service_name}}</option>
                                     @empty
                                     <option value="">No Maintenance Type Found</option>
                                     @endforelse

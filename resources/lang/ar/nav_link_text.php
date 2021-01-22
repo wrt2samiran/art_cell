@@ -52,5 +52,5 @@ return array (
   'skills' => 'مهارات',
   'my-tasks' => 'مهامي',
   'emergency-service-management' => 'إدارة خدمة الطوارئ',
-
+  'work_order_statuses' => 'حالات طلب العمل',
 );

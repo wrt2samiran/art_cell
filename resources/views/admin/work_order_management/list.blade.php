@@ -59,9 +59,9 @@
                                         <div class="col-md-4" id="status-filter-container1">
                                             <select id='status' name="status" class="form-control status-filter" style="width: 200px">
                                                   <option value="">--{{__('work_order_module.filter_labels.filter_by_status')}}--</option>
-                                                  <option value="0">Pending</option>
-                                                  <option value="1">Overdue</option>
-                                                  <option value="2">Completed</option>
+                                                  @foreach($status_list as $status_data)
+                                                       <option value="{{$status_data->is_default_status}}" >{{@$status_data->status_name}}</option>
+                                                  @endforeach
                                                   <option value="emergency">Emergency</option>
                                                   
                                               </select>

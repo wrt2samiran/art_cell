@@ -83,26 +83,11 @@
                     <td>{{__('work_order_module.status')}}</td>
                     <td>
                       @php
-                        if($task_data->status=='0'){
-                            $button = 'warning';
-                            $status = 'Pending';
-                          }
-                          
-                        else if($task_data->status=='1'){
-                            $button = 'danger';
-                            $status = 'Over Due';
+                          $color_code = $task_data->work_order_status->color_code;
+                          $status = $task_data->work_order_status->status_name;
+                      @endphp  
 
-                          }
-                          
-                        else{
-
-                            $button = 'success';
-                            $status = 'Completed';
-                          }
-                          
-                        @endphp  
-
-                      <button role="button" class="btn btn-{{$button}}">{{$status}}</button>
+                      <button role="button" class="btn btn" style="color: {{$color_code}}">{{$status}}</button>
                       
                     </td>
                   </tr>

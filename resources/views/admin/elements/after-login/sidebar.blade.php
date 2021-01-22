@@ -125,6 +125,16 @@
                         </li>
                         @endif
 
+                        @if(auth()->guard('admin')->user()->hasAllPermission(['manage-work-order-statuses']))
+                        <li class="nav-item">
+                            <a href="{{ route('admin.work_order_statuses.list') }}"
+                               class="nav-link {{(request()->is('admin/statuses/*','admin/statuses'))?'active':''}}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>{{__('nav_link_text.work_order_statuses')}}</p>
+                            </a>
+                        </li>
+                        @endif
+
 
 
                         @if(auth()->guard('admin')->user()->hasAllPermission(['manage-services']))

@@ -9,14 +9,14 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Task Details</h1>
+                <h1>{{__('work_order_module.work_order_task_column_name.task_details')}}</h1>
                 <?php //dd($task_data);?>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item "><a href="{{route('admin.work-order-management.labourTaskList', $task_data->task->work_order_id)}}">Task List</a></li>
-                  <li class="breadcrumb-item active">Task Labour List</li>
+                  <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{__('general_sentence.breadcrumbs.dashboard')}}</a></li>
+                  <li class="breadcrumb-item "><a href="{{route('admin.work-order-management.labourTaskList', $task_data->task->work_order_id)}}">{{__('work_order_module.task_list')}}</a></li>
+                  <li class="breadcrumb-item active">{{__('work_order_module.task_labour_list')}}</li>
                 </ol>
               </div>
             </div>
@@ -43,85 +43,85 @@
                   <input type="hidden" name="task_details_id" id="task_details_id" value="{{$task_data->id}}">
                   <input type="hidden" name="rating" id="rating" value="{{$task_data->rating}}">
                   <tr>
-                    <td >Task Title</td>
+                    <td >{{__('work_order_module.work_order_task_column_name.task_title')}}</td>
                     <td >{{$task_data->task->task_title}}</td>
                   </tr>
                  
                   <tr>
-                    <td >Work Order Title</td>
+                    <td >{{__('work_order_module.work_order_task_column_name.work_order_title')}}</td>
                     <td >{{$task_data->task->work_order->task_title}}</td>
                   </tr>
                   <tr>
-                    <td >Property Name</td>
+                    <td >{{__('work_order_module.work_order_task_column_name.property_name')}}</td>
                     <td >{{$task_data->task->property->property_name}}</td>
                   </tr>
                   <tr>
-                    <td >Service</td>
+                    <td >{{__('work_order_module.work_order_task_column_name.service')}}</td>
                     <td >{{$task_data->service->service_name}}</td>
                   </tr>
                   <tr>
-                    <td >Task Finish Date And Time (Assigned)</td>
+                    <td >{{__('work_order_module.work_order_task_column_name.task_finish_date_time_assigned')}}</td>
                     <td >{{ Carbon\Carbon::parse($task_data->task_date)->format('d/m/Y H:i a') }}</td>
                   </tr>
                   <tr>
-                    <td >Slot</td>
+                    <td >{{__('work_order_module.slot')}}</td>
                     <td >
 
                       @if(@$task_data->work_order_slot->daily_slot == 1)
-                          First Slot
+                          {{__('work_order_module.first_slot')}}
                       @elseif(@$task_data->work_order_slot->daily_slot == 2)
-                          Second Slot
+                          {{__('work_order_module.second_slot')}}
                       @elseif(@$task_data->work_order_slot->daily_slot == 3)
-                          Third Slot
+                          {{__('work_order_module.third_slot')}}
                       @elseif(@$task_data->work_order_slot->daily_slot == 4)
-                          Fourth Slot
+                          {{__('work_order_module.fourth_slot')}}
                       @elseif(@$task_data->work_order_slot->daily_slot == 5)
-                          Fifth Slot
+                          {{__('work_order_module.fifth_slot')}}
                       @elseif(@$task_data->work_order_slot->daily_slot == 6)
-                          Sixth Slot
+                          {{__('work_order_module.sixth_slot')}}
                       @elseif(@$task_data->work_order_slot->daily_slot == 7)
-                          Seventh Slot
+                          {{__('work_order_module.seventh_slot')}}
                       @elseif(@$task_data->work_order_slot->daily_slot == 8)
-                          Eighth Slot
+                          {{__('work_order_module.eighth_slot')}}
                       @elseif(@$task_data->work_order_slot->daily_slot == 9)
-                          Nineth Slot
+                          {{__('work_order_module.nineth_slot')}}
                       @elseif(@$task_data->work_order_slot->daily_slot == 10)
-                          Tenth Slot  
+                          {{__('work_order_module.tenth_slot')}}
                       @else
-                          No Slot                  
+                          {{__('work_order_module.no_slot')}}                 
                       @endif
 
                     </td>
                   </tr>
                   <tr>
-                    <td >Task Mode</td>
+                    <td >{{__('work_order_module.work_order_task_column_name.task_mode')}}</td>
                     <td >@if($task_data->reschedule_task_details_id>0)Rescheduled @else Normal @endif
                   </tr>
                   <tr>
-                    <td >Country</td>
+                    <td >{{__('general_sentence.breadcrumbs.country')}}</td>
                     <td >{{$task_data->task->property->country->name}}</td>
                   </tr>
                   <tr>
-                    <td >State</td>
+                    <td >{{__('general_sentence.breadcrumbs.state')}}</td>
                     <td >{{$task_data->task->property->state->name}}</td>
                   </tr>
                   <tr>
-                    <td >City</td>
+                    <td >{{__('general_sentence.breadcrumbs.city')}}</td>
                     <td >{{$task_data->task->property->city->name}}</td>
                   </tr>
                   
                   <tr>
-                    <td>Task Details</td>
+                    <td>{{__('work_order_module.work_order_task_column_name.task_details')}}</td>
                     <td >{!! $task_data->task->task_desc!!}</td>
                   </tr>
 
                   <tr>
-                    <td>Task Feedback</td>
+                    <td>{{__('work_order_module.work_order_task_column_name.labour_feedback')}}</td>
                     <td >{!! $task_data->user_feedback!!}</td>
                   </tr>
 
                   <tr>
-                    <td>Feedback Files</td>
+                    <td>{{__('work_order_module.work_order_task_column_name.feedback_file')}}</td>
                     <td >
                         <table>
                             <tr>
@@ -133,55 +133,32 @@
                     </td>
                   </tr>
                   <tr>
-                    <td >Feedback Date And Time</td>
+                    <td >{{__('work_order_module.work_order_task_column_name.feedback_date_time')}}</td>
                     <td >{{ Carbon\Carbon::parse($task_data->task_finish_date_time)->format('d/m/Y H:i a') }}</td>
                   </tr>
 
                   <tr>
-                    <td>Feedback on Time</td>
+                    <td>{{__('work_order_module.work_order_task_column_name.feedback_on_time')}}</td>
                     <td >@if($task_data->late_feedback=="N") No @else Yes @endif</td>
                   </tr>
                   
                  
                   <tr>
-                    <td>Status</td>
+                    <td>{{__('work_order_module.status')}}</td>
                     <td>
+
                       @php
-                        if($task_data->status=='0'){
-                            $button = 'warning';
-                            $status = 'Pending';
-                          }
-                          
-                        else if($task_data->status=='1'){
-                            $button = 'secondary';
-                            $status = 'Over Due';
+                          $color_code = $task_data->work_order_status->color_code;
+                          $status = $task_data->work_order_status->status_name;
+                      @endphp  
 
-                          }
-                          
-                        else if($task_data->status=='2'){
+                      <button role="button" class="btn btn" style="color: {{$color_code}}">{{$status}}</button>
 
-                            $button = 'success';
-                            $status = 'Completed';
-                          }
-                        else if($task_data->status=='3'){
-
-                            $button = 'info';
-                            $status = 'Requested for Reschedule';
-                          }
-                        else if($task_data->status=='4'){
-
-                            $button = 'danger';
-                            $status = 'Completed with Warning';
-                          }  
-                        @endphp  
-                        
-                      <button role="button" class="btn btn-{{$button}}">{{$status}}</button>
-                      
                     </td>
                   </tr>
                   @if($task_data->status=='2' || $task_data->status=='4')
                     <tr>
-                      <td>Review & Rating</td>
+                      <td>{{__('work_order_module.work_order_task_column_name.review_rating')}}</td>
                       <td>
                           {{$task_data->review}}
                           <section class='rating-widget'>
@@ -209,9 +186,9 @@
                     <tfoot>
                       <tr>
                         @if(Auth::guard('admin')->user()->role->slug=='labour')
-                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.work-order-management.list')}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
+                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.work-order-management.list')}}"><i class="fas fa-backward"></i>&nbsp;{{__('general_sentence.button_and_links.back')}}</a></td>
                         @else
-                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.work-order-management.taskLabourList', $task_data->task->id)}}"><i class="fas fa-backward"></i>&nbsp;Back</a></td>
+                          <td colspan="2"><a class="btn btn-primary" href="{{route('admin.work-order-management.taskLabourList', $task_data->task->id)}}"><i class="fas fa-backward"></i>&nbsp;{{__('general_sentence.button_and_links.back')}}</a></td>
                         @endif  
                       </tr>
                     </tfoot>

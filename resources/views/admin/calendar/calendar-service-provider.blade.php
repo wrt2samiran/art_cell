@@ -139,6 +139,11 @@
                                   <option value="4" @if(is_array($request->status)) @if(in_array(4, $request->status)) selected @endif @endif>Warning</option>
                                   
                                </select>
+
+                               <!-- @foreach($status_list as $status_key=> $status_data)
+                                    <option value="{{@$status_data->is_default_status}}" @if(is_array($request->status)) @if(in_array($status_key, $request->status)) selected @endif @endif>{{@$status_data->status_name}}</option>
+                                    
+                                  @endforeach -->
                                <input type="button" id="status_all" value="{{__('general_sentence.button_and_links.select_all')}}">
                             </div>
                             
@@ -172,10 +177,10 @@
                             <div class="card-body">
                               <!-- the events -->
                               <div id="external-events" style="width: 88px">
-                                <div class="external-event bg-success">{{__('general_sentence.status_button.completed')}}</div>
-                                <div class="external-event bg-warning">{{__('general_sentence.status_button.pending')}}</div>
-                                <div class="external-event btn-secondary">{{__('general_sentence.status_button.overdue')}}</div>
-                                <div class="external-event bg-danger">{{__('general_sentence.status_button.warning')}}</div>
+                                @foreach($status_list as $status_data)
+                                  <div class="external-event bg" style="background-color: {{@$status_data->color_code}}">{{@$status_data->status_name}}</div>
+                                @endforeach
+                               
                                 <!-- <div class="external-event" style="background: #ff6600">Emergency</div> -->
                               </div>
                             </div>
@@ -369,23 +374,25 @@
                           }
                           else
                           {
-                              if($work_order_data->status==1)
-                              {
-                                  $color = '#545b62';              
-                              }
-                              else if($work_order_data->status==0)
-                              {
-                                $color = '#ffc107';
-                              }
-                              else if($work_order_data->status==2)
-                              {
-                                $color = '#28a745';
-                              }
+                              // if($work_order_data->status==1)
+                              // {
+                              //     $color = '#545b62';              
+                              // }
+                              // else if($work_order_data->status==0)
+                              // {
+                              //   $color = '#ffc107';
+                              // }
+                              // else if($work_order_data->status==2)
+                              // {
+                              //   $color = '#28a745';
+                              // }
 
-                              else if($work_order_data->status==4)
-                              {
-                                $color = '#dc3d45';
-                              }
+                              // else if($work_order_data->status==4)
+                              // {
+                              //   $color = '#dc3d45';
+                              // }
+
+                            $color =$work_order_data->work_order_status->color_code;
                           }             
           ?>
 
@@ -405,22 +412,7 @@
                     { 
                       //foreach($task_data->task_details as $detailsData){
                       $user = $task_data->userDetails->name;
-                      if($task_data->status==1)
-                      {
-                          $color = '#545b62';              
-                      }
-                      else if($task_data->status==0)
-                      {
-                        $color = '#ffc107';
-                      }
-                      else if($task_data->status==2)
-                      {
-                        $color = '#28a745';
-                      }
-                      else if($task_data->status==4)
-                      {
-                        $color = '#dc3d45';
-                      }
+                      $color =$task_data->work_order_status->color_code;
                   
             ?>
 
@@ -560,7 +552,7 @@ function checKClickedDate(clicked_date){
                     task_list += '<tr><th><?php echo $work_order_data->task_title; ?></th><th><?php echo @$work_order_data->property->property_name;?> </th><th><?php echo @$work_order_data->service->service_name;?></th><th><?php echo @$work_order_data->contract_services->service_type;?></th><th><?php echo date("d/m/Y H:i a", strtotime(@$work_order_data->start_date)); ?></th><th><?php 
 
                     if(@$work_order_data->emergency_service=='Y') { echo '<div class="external-event ui-draggable ui-draggable-handle" style="position: relative; background-color: #ff6600 !important">'?>{{__("general_sentence.status_button.emergency")}}<?php '</div>';}
-
+                    
                     elseif(@$work_order_data->status==0) {echo '<div class="external-event bg-warning ui-draggable ui-draggable-handle" style="position: relative; background-color: #ffc107 !important">'?>{{__("general_sentence.status_button.pending")}}<?php '</div>'; }
                     
                     elseif(@$work_order_data->status==1) {echo '<div class="external-event btn-secondary ui-draggable ui-draggable-handle" style="position: relative; background-color: #5a6268 !important">'?>{{__("general_sentence.status_button.overdue")}}<?php '</div>';} 

@@ -12,6 +12,17 @@ return [
 	'slot' => 'فتحة',
 	'task_labour_list' => 'تفاصيل المهمة وقائمة العمل',
 	'task_list' => 'قائمة المهام',
+	'first_slot' => 'الفتحة الأولى',
+	'second_slot' => 'الفتحة الثانية',
+	'third_slot' => 'الفتحة الثالثة',
+	'fourth_slot' => 'الفتحة الرابعة',
+	'fifth_slot' => 'الفتحة الخامسة',
+	'sixth_slot' => 'الفتحة السادسة',
+	'seventh_slot' => 'الفتحة السابعة',
+	'eighth_slot' => 'الفتحة الثامنة',
+	'nineth_slot' => 'فتحة نينيث',
+	'tenth_slot' => 'الفتحة العاشرة',
+	'no_slot'	=> 'لا فتحة',
 
 	
 
@@ -42,6 +53,8 @@ return [
 		'task_mode' => 'وضع المهمة',
 		'labour_feedback' => 'ملاحظات العمل',
 		'feedback_date_time' => 'تاريخ ووقت التعليقات',
+		'feedback_file' => 'ملف الملاحظات',
+		'feedback_on_time' => 'ردود الفعل في الوقت المحدد',
 		'add_reschedule' => 'إضافة إعادة الجدولة',
 	],
 	

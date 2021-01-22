@@ -9,12 +9,12 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Status Management</h1>
+            <h1>Work Order Status Management</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="{{route('admin.statuses.list')}}">Statuses</a></li>
+              <li class="breadcrumb-item"><a href="{{route('admin.work_order_statuses.list')}}">Statuses</a></li>
               <li class="breadcrumb-item active">Create</li>
             </ol>
           </div>
@@ -46,7 +46,7 @@
                   @endif
                   <div class="row justify-content-center">
                     <div class="col-md-10 col-sm-12">
-                      <form  method="post" id="admin_status_create_form" action="{{route('admin.statuses.store')}}" method="post" >
+                      <form  method="post" id="admin_status_create_form" action="{{route('admin.work_order_statuses.store')}}" method="post" >
                         @csrf
 
                         <ul class="nav nav-tabs" role="tablist">
@@ -81,17 +81,7 @@
                             </div>
                           </div>
                         </div>
-                        <hr>
-                        <div class="form-group required">
-                          <label for="status_for">Status For<span class="error">*</span></label>
-                          <select class="form-control " id="status_for" name="status_for" style="width: 100%;">
-                            <option value="">Status For</option>
-                            @forelse($status_for as $for)
-                               <option value="{{$for->status_for}}" >{{ucfirst($for->status_for)}}</option>
-                            @empty
-                            @endforelse
-                          </select>
-                        </div>
+                        
                         <div class="form-group required">
                           <label for="color_code">Color Code<span class="error">*</span></label>
                           <input type="color" class="form-control" value="{{old('color_code')?old('color_code'):''}}" name="color_code" id="color_code"  placeholder="Color Code">
@@ -99,9 +89,9 @@
                           <span class="text-danger">{{$errors->first('color_code')}}</span>
                           @endif
                         </div>
-                        <input type="hidden" id="ajax_check_status_name_unique_url" value="{{route('admin.statuses.ajax_check_status_name_unique')}}">
+                        <input type="hidden" id="ajax_check_status_name_unique_url" value="{{route('admin.work_order_statuses.ajax_check_status_name_unique')}}">
                         <div>
-                           <a href="{{route('admin.statuses.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
+                           <a href="{{route('admin.work_order_statuses.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
                            <button type="submit" class="btn btn-success">Submit</button> 
                         </div>
                       </form>
@@ -116,5 +106,5 @@
 @endsection 
 @push('custom-scripts')
 
-<script type="text/javascript" src="{{asset('js/admin/statuses/create.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/admin/work_order_statuses/create.js')}}"></script>
 @endpush

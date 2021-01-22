@@ -52,4 +52,5 @@ return array (
   'skills' => 'Skills',
   'my-tasks' => 'My Tasks',
   'emergency-service-management' => 'Emergency Service Management',
+  'work_order_statuses' => 'Work Order Statuses',
 );

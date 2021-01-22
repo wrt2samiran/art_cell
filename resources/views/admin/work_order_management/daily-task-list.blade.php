@@ -87,7 +87,7 @@
                         <table class="table table-bordered" >
                             <tr> 
                                   <tr>
-                                    <td scope="col" style="text-align:center;" colspan="{{count(@$work_order_list->contract_service_dates)}}"><strong>Date</strong> </td>
+                                    <td  scope="col" style="text-align:center;" colspan="{{count(@$work_order_list->contract_service_dates)}}"><strong>Date</strong> </td>
                                   </tr>
                                  @foreach(@$work_order_list->contract_service_dates as $valueDate)
                                     <td scope="row"  @if(@$valueDate->task_assigned=='Y') style="color: red" @endif>
@@ -138,27 +138,12 @@
                     <td>Status</td>
                     <td>
                       @php
-                        if($work_order_list->status=='0'){
-                            $button = 'warning';
-                            $status = 'Pending';
-                          }
-                          
-                        else if($work_order_list->status=='1'){
-                            $button = 'danger';
-                            $status = 'Over Due';
+                          $color_code = $work_order_list->work_order_status->color_code;
+                          $status = $work_order_list->work_order_status->status_name;
+                      @endphp  
 
-                          }
-                          
-                        else{
+                      <button role="button" class="btn btn" style="color: {{$color_code}}">{{$status}}</button>
 
-                            $button = 'success';
-                            $status = 'Completed';
-                          }
-                          
-                        @endphp  
-
-                      <button role="button" class="btn btn-{{$button}}">{{$status}}</button>
-                      
                     </td>
                   </tr>
                   

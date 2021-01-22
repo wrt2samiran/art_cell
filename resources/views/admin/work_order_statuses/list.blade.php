@@ -9,12 +9,12 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Status Management</h1>
+                <h1>Work Order Status Management</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                   <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
-                  <li class="breadcrumb-item active">Statuses</li>
+                  <li class="breadcrumb-item active">Work Order Statuses</li>
                 </ol>
               </div>
             </div>
@@ -26,16 +26,16 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-				            <div class="card-header">
+				            <!-- <div class="card-header">
 				                <div class="d-flex justify-content-between" >
-				                    <div><span>Status List</span></div>
+				                    <div><span>Work Order Status List</span></div>
 					                <div>
-						                <a class="btn btn-success" href="{{route('admin.statuses.create')}}">
+						                <a class="btn btn-success" href="{{route('admin.work_order_statuses.create')}}">
 						                 Create Status
 						                </a>
 					                </div>
 				                </div>
-				            </div>
+				            </div> -->
 
                             <!-- /.card-header -->
                             <div class="card-body">
@@ -55,7 +55,6 @@
                                     <thead>
                                         <tr>
                                             <th>Id</th>
-                                            <th>Status For</th>
                                             <th>Status Name</th>
                                             <th>Color Code</th>
                                             <th>Status</th>
@@ -65,7 +64,7 @@
                                     </thead>
                                 </table>
 
-                                <input type="hidden" id="statuses_data_url" value="{{route('admin.statuses.list')}}">
+                                <input type="hidden" id="statuses_data_url" value="{{route('admin.work_order_statuses.list')}}">
                             </div>
                         </div>
                     </div>
@@ -78,7 +77,7 @@
 @endsection
 
 @push('custom-scripts')
-<script type="text/javascript" src="{{asset('js/admin/statuses/list.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/admin/work_order_statuses/list.js')}}"></script>
 @endpush
 
 
