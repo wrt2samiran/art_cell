@@ -7,7 +7,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Report Management</h1>
+            <h1>{{__('report_module.module_title')}}</h1>
           </div>
           <div class="col-sm-6">
 
@@ -22,7 +22,7 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Generate Report</h3>
+                <h3 class="card-title">{{__('report_module.page_header')}}</h3>
               </div>
               <div class="card-body">
                   @if(Session::has('success'))
@@ -44,7 +44,7 @@
                         @csrf
                         <div>
                           <div class="form-group required">
-                             <label for="report_on">Report On <span class="error">*</span></label>
+                             <label for="report_on">{{__('report_module.labels.report_on')}} <span class="error">*</span></label>
                               <select class="form-control " id="report_on" name="report_on" style="width: 100%;">
                                 
                                 <option value="work_order">Work Orders</option>
@@ -52,7 +52,7 @@
                               </select>
                           </div>
                           <div class="form-group required">
-                             <label for="service_status">Service Status <span class="error">*</span></label>
+                             <label for="service_status">{{__('report_module.labels.service_status')}} <span class="error">*</span></label>
                               <select class="form-control " id="service_status" name="service_status" style="width: 100%;">
                                 <option value="all">All</option>
                                 <option value="completed">Completed</option>
@@ -61,9 +61,9 @@
                               </select>
                           </div>
                           <div class="form-group required">
-                               <label for="contract_id">Contract </label>
+                               <label for="contract_id">{{__('report_module.labels.contract')}} </label>
                                 <select class="form-control contract" id="contract_id" name="contract_id" style="width: 100%;">
-                                  <option value="">Select Contract</option>
+                                  <option value="">{{__('report_module.placeholders.contract')}}</option>
                                   <option value="all" selected>All Contract</option>
                                   @forelse($contracts as $contract)
                                   <option value="{{$contract->id}}">{{$contract->code}}</option>
@@ -71,11 +71,11 @@
                                   @endforelse
                                 </select>
                             </div>
-                            <div style="margin-top: -1rem;">OR</div>
+                            <div style="margin-top: -1rem;">{{__('report_module.or')}}</div>
                             <div class="form-group required">
-                               <label for="property_id">Property </label>
+                               <label for="property_id">{{__('report_module.labels.property')} </label>
                                 <select class="form-control property" id="property_id" name="property_id" style="width: 100%;">
-                                  <option value="">Select Property</option>
+                                  <option value="">{{__('report_module.placeholders.property')}}</option>
                                   <option value="all" selected>All Property</option>
                                   @forelse($properties as $property)
                                   <option value="{{$property->id}}">{{$property->code}}</option>
@@ -84,31 +84,31 @@
                                 </select>
                             </div>
                           <div class=" form-group required">
-                           <label for="from_date">Date (From) <span class="error">*</span></label>
+                           <label for="from_date">{{__('report_module.labels.date_from')}} <span class="error">*</span></label>
                            <input type="text" readonly="readonly" autocomplete="off" id="from_date" class="form-control" name="from_date">
                           </div>
               
                           <div class="form-group required">
-                             <label for="to_date">Date (To) <span class="error">*</span></label>
+                             <label for="to_date">{{__('report_module.labels.date_to')}} <span class="error">*</span></label>
                              <input type="text"  readonly="readonly" autocomplete="off" class="form-control" id="to_date" name="to_date">
                           </div>
                             <div class="mb-3">
-                              <label >Download As &nbsp;&nbsp;</label>
+                              <label >{{__('report_module.download_as')}} &nbsp;&nbsp;</label>
                               <div class="form-check-inline">
                                 <label class="form-check-label">
-                                  <input type="radio" value="excel" checked class="form-check-input" name="output_format">Excel
+                                  <input type="radio" value="excel" checked class="form-check-input" name="output_format">{{__('report_module.excel')}}
                                 </label>
                               </div>
                               <div class="form-check-inline">
                                 <label class="form-check-label">
-                                  <input type="radio" value="pdf" class="form-check-input" name="output_format">PDF
+                                  <input type="radio" value="pdf" class="form-check-input" name="output_format">{{__('report_module.pdf')}}
                                 </label>
                               </div>
                             </div>
                         </div>
                         <div>
                            
-                          <button type="submit" class="btn btn-success">Generate Report</button> 
+                          <button type="submit" class="btn btn-success">{{__('general_sentence.button_and_links.download_report')}}</button> 
                         </div>
                       </form>
                     </div>
@@ -124,28 +124,15 @@
 @push('custom-scripts')
 <script type="text/javascript">
 $('.contract').select2({
-    theme: 'bootstrap4',
-    placeholder:'Select Contract',
-    "language": {
-        "noResults": function(){
-            return "No Contract Found";
-        }
-    },
-    escapeMarkup: function(markup) {
-        return markup;
-    },
+  theme: 'bootstrap4',
+  placeholder:translations.report_module.placeholders.contract,
+  language: current_locale,
 });
+
 $('.property').select2({
-    theme: 'bootstrap4',
-    placeholder:'Select Property',
-    "language": {
-        "noResults": function(){
-            return "No Property Found";
-        }
-    },
-    escapeMarkup: function(markup) {
-        return markup;
-    },
+  theme: 'bootstrap4',
+  placeholder:translations.report_module.placeholders.property,
+  language: current_locale,
 });
 
 $('#from_date').datepicker({
@@ -189,12 +176,30 @@ $("#report_form").validate({
     messages: {
 
         from_date:{
-            required:  "Enter from date in dd/mm/yyy format",
+            required: function(){
+                if(current_locale=='ar'){
+                  return "دخل من التاريخ";
+                }else{
+                  return "Enter from date";
+                }
+            }
         },
         to_date:{
-            required:  "Enter to date in dd/mm/yyy format",
-            toDateShouldBeGreatherThanFromDate : "TO date should be greater than from date"
-        },
+            required: function(){
+                if(current_locale=='ar'){
+                  return "أدخل حتى الآن";
+                }else{
+                  return "Enter to date";
+                }
+            },
+            toDateShouldGreatherFromDate:function(){
+                if(current_locale=='ar'){
+                  return "يجب أن يكون حتى الآن أكبر من التاريخ";
+                }else{
+                  return "To date should be greater than from the date";
+                }
+            }
+        }
 
     },
     errorPlacement: function (error, element) {

@@ -7,7 +7,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>{{__('service_provider_report_module.module_title')}}</h1>
+            <h1>{{__('report_module.module_title')}}</h1>
           </div>
           <div class="col-sm-6">
 
@@ -22,7 +22,7 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">{{__('service_provider_report_module.generate_report')}}</h3>
+                <h3 class="card-title">{{__('report_module.page_header')}}</h3>
               </div>
               <div class="card-body">
                   @if(Session::has('success'))
@@ -44,22 +44,22 @@
                         @csrf
                           <div>
                           <div class="form-group required">
-                             <label for="report_on">{{__('service_provider_report_module.report_on')}}  <span class="error">*</span></label>
+                             <label for="report_on">{{__('report_module.labels.report_on')}}  <span class="error">*</span></label>
                               <select class="form-control " id="report_on" name="report_on" style="width: 100%;" onchange="getAssignedProperty(this.value);">
-                                <option value=""> {{__('service_provider_report_module.select_type')}} </option>
+                                <option value=""> {{__('report_module.labels.select_type')}} </option>
                                 <option value="work_order">Work Orders</option>
                                 <!-- <option value="maintenance_schedule">Maintenance Schedule</option> -->
                               </select>
                           </div>
 
                           <div class="form-group required">
-                             <label for="contract_id">{{__('service_provider_report_module.property')}}<span class="error">*</span></label>
+                             <label for="contract_id">{{__('report_module.labels.property')}}<span class="error">*</span></label>
                               <select class="form-control contract" multiple="multiple" size="1" searchable="Search for..." id="property_id" name="property_id[]" style="width: 100%;" onchange="getWorkOderList()">
                               </select>
                           </div>
 
                           <div class="form-group required">
-                             <label for="contract_id">{{__('service_provider_report_module.work_orders')}} <span class="error">*</span></label>
+                             <label for="contract_id">{{__('report_module.labels.work_orders')}} <span class="error">*</span></label>
                               <select class="form-control contract" multiple="multiple" size="1" searchable="Search for..." id="work_order_id" name="work_order_id[]" style="width: 100%;" onchange="getTaskList()">
                               </select>
                           </div>
@@ -67,37 +67,37 @@
                         
 
                           <div class="form-group required">
-                             <label for="service_status">{{__('service_provider_report_module.task_list')}} <span class="error">*</span></label>
+                             <label for="service_status">{{__('report_module.labels.task_list')}} <span class="error">*</span></label>
                               <select class="form-control" multiple="multiple" size="1" searchable="Search for..." name="task_id[]" id="task_id" style="width: 100%;" onchange="getServices();">
                                
                               </select>
                           </div>
                           
                           <div class="form-group required">
-                             <label for="service_status">{{__('service_provider_report_module.service')}} <span class="error">*</span></label>
+                             <label for="service_status">{{__('report_module.labels.service')}} <span class="error">*</span></label>
                               <select class="form-control" multiple="multiple" size="1" searchable="Search for..." name="service_id[]" id="service_id" style="width: 100%;">
                                
                               </select>
                           </div>
 
                           <div class="form-group required">
-                             <label for="service_status">{{__('service_provider_report_module.task_type')}} <span class="error">*</span></label>
+                             <label for="service_status">{{__('report_module.labels.task_type')}} <span class="error">*</span></label>
                               <select class="form-control" Placeholder="Select Task Type" name="task_type" id="task_type" style="width: 100%;" onchange="getLabour()">
-                                <option value="">{{__('service_provider_report_module.select_task_type')}}</option>
+                                <option value="">{{__('report_module.placeholders.select_task_type')}}</option>
                                 <option value="labour_task">Labour Task</option>
                                 <option value="main_task">Main Task</option>
                               </select>
                           </div>
 
                           <div class="form-group required assigned_labour_id" style="display: none;">
-                             <label for="service_status">{{__('service_provider_report_module.assigned_labour_list')}} <span class="error">*</span></label>
+                             <label for="service_status">{{__('report_module.labels.assigned_labour_list')}} <span class="error">*</span></label>
                               <select class="form-control" multiple="multiple" size="1" searchable="Search for..." name="labour_id[]" id="labour_id" style="width: 100%;">
                                
                               </select>
                           </div>
 
                           <div class="form-group required">
-                             <label for="service_status">{{__('service_provider_report_module.task_status')}} <span class="error">*</span></label>
+                             <label for="service_status">{{__('report_module.labels.task_status')}} <span class="error">*</span></label>
                               <select class="form-control" Placeholder="Select Task Status" multiple="multiple" size="1" searchable="Search for..."  name="task_status[]" id="task_status" style="width: 100%;">
                                 <option value="0">Pending</option>
                                 <option value="1">Over Due</option>
@@ -106,32 +106,32 @@
                           </div>
                             
                           <div class=" form-group required">
-                           <label for="from_date">{{__('service_provider_report_module.date_form')}} <span class="error">*</span></label>
+                           <label for="from_date">{{__('report_module.labels.date_from')}} <span class="error">*</span></label>
                            <input type="text" readonly="readonly" autocomplete="off" id="from_date" class="form-control" name="from_date">
                           </div>
               
                           <div class="form-group required">
-                             <label for="to_date">{{__('service_provider_report_module.date_to')}} <span class="error">*</span></label>
+                             <label for="to_date">{{__('report_module.labels.date_to')}} <span class="error">*</span></label>
                              <input type="text"  readonly="readonly" autocomplete="off" class="form-control" id="to_date" name="to_date">
                           </div>
 
                           <div class="mb-3">
-                              <label >Download As &nbsp;&nbsp;</label>
+                              <label >{{__('report_module.download_as')}} &nbsp;&nbsp;</label>
                               <div class="form-check-inline">
                                 <label class="form-check-label">
-                                  <input type="radio" value="excel" checked class="form-check-input" name="output_format">Excel
+                                  <input type="radio" value="excel" checked class="form-check-input" name="output_format">{{__('report_module.excel')}}
                                 </label>
                               </div>
                               <div class="form-check-inline">
                                 <label class="form-check-label">
-                                  <input type="radio" value="pdf" class="form-check-input" name="output_format">PDF
+                                  <input type="radio" value="pdf" class="form-check-input" name="output_format">{{__('report_module.pdf')}}
                                 </label>
                               </div>
                               
                         </div>
                         <div>
                            
-                          <button type="submit" class="btn btn-success">{{__('service_provider_report_module.generate_report')}}</button> 
+                          <button type="submit" class="btn btn-success">{{__('general_sentence.button_and_links.download_report')}}</button> 
                         </div>
                       </form>
                     </div>
@@ -479,12 +479,30 @@ $("#report_form").validate({
             required: "Select Task Status",
         },
         from_date:{
-            required:  "Enter from date in dd/mm/yyy format",
+            required: function(){
+                if(current_locale=='ar'){
+                  return "دخل من التاريخ";
+                }else{
+                  return "Enter from date";
+                }
+            }
         },
         to_date:{
-            required:  "Enter to date in dd/mm/yyy format",
-            toDateShouldBeGreatherThanFromDate : "TO date should be greater than from date"
-        },
+            required: function(){
+                if(current_locale=='ar'){
+                  return "أدخل حتى الآن";
+                }else{
+                  return "Enter to date";
+                }
+            },
+            toDateShouldGreatherFromDate:function(){
+                if(current_locale=='ar'){
+                  return "يجب أن يكون حتى الآن أكبر من التاريخ";
+                }else{
+                  return "To date should be greater than from the date";
+                }
+            }
+        }
 
     },
     errorPlacement: function (error, element) {
