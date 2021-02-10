@@ -53,14 +53,7 @@
                     <form  method="post" id="admin_country_edit_form" action="{{route('admin.cities.edit', $details->id)}}" method="post" enctype="multipart/form-data">
                         
 
-                    <ul class="nav nav-tabs" role="tablist">
-                          <li class="nav-item">
-                            <a class="nav-link active" data-toggle="tab" href="#english" role="tab">English</a>
-                          </li>
-                          <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#arabic" role="tab">Arabic</a>
-                          </li>
-                        </ul><!-- Tab panes -->
+                 
                         @csrf
                         <div class="tab-content tab-validate pt-3">
                           <div class="tab-pane active" id="english" role="tabpanel">
@@ -95,7 +88,7 @@
                           </div>
                           
                           <div class="form-group required">
-                            <label for="name">City Name (English) <span class="error">*</span></label>
+                            <label for="name">City Name <span class="error">*</span></label>
                             <input type="text" class="form-control" value="@if(isset($details->name)){{$details->name}}@endif" name="name" id="name"  placeholder="Please Enter Country Name">
                             @if($errors->has('name'))
                             <span class="text-danger">{{$errors->first('name')}}</span>
@@ -106,18 +99,9 @@
                         <div>
                            
                       </div>
-                      <div class="tab-pane" id="arabic" role="tabpanel">
-                                  <div class="form-group required">
-                                  <label for="name">City Name (Arabic) <span class="error">*</span></label>
-                                  <input type="text" class="form-control" value="@if(isset($details->local[1]->name)){{$details->local[1]->name}}@endif" name="ar_name" id="ar_name"  placeholder="Please Enter Country Name">
-                                  @if($errors->has('ar_name'))
-                                  <span class="text-danger">{{$errors->first('ar_name')}}</span>
-                                  @endif
-                                </div>
-                            </div>
-                        </div>
+               
                         <div>
-                        <input type="hidden" name="city_id" id="city_id" value="{{$details->id}}">
+                          <input type="hidden" name="city_id" id="city_id" value="{{$details->id}}">
                            <a href="{{route('admin.cities.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
                            <button type="submit" class="btn btn-success">Submit</button> 
                         </div>

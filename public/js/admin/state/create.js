@@ -9,10 +9,7 @@
             country_id: {
                 required: true,
             },
-            ar_name: {
-                required: true,
-            },           
-           
+          
         },
         messages: {
             name: {
@@ -23,9 +20,7 @@
             country_id: {
                 required:  "Country field is required",
             },
-            ar_name: {
-                required:  "State arabic name is required",
-            },
+            
         },
 
         errorPlacement: function (error, element) {

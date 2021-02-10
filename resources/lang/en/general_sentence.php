@@ -1,7 +1,7 @@
 <?php
 
 return [
-  'admin_panel' => 'SMMS Admin Panel',
+  'admin_panel' => 'Art Cell Admin Panel',
   'dashboard' => 'Dashboard',
   'not_available'=>'Not available',
   'active'=>'Active',

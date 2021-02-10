@@ -31,7 +31,7 @@ class StateController extends Controller
         $this->data['page_title']='State List';
         if($request->ajax()){
 
-            $state=State::with('country')->orderBy('id','ASC');
+            $state=State::with('country')->orderBy('id','DESC');
             return Datatables::of($state)
             ->editColumn('created_at', function ($state) {
                 return $state->created_at ? with(new Carbon($state->created_at))->format('m/d/Y') : '';
@@ -86,16 +86,13 @@ class StateController extends Controller
                 $validationCondition = array(
                     'name'          => 'required|min:2|max:255|unique:'.(new State)->getTable().',name',
                     'country_id'    => 'required',
-                    'ar_name'       =>'required|min:2|max:255',
                 );
                 $validationMessages = array(
                     'name.required'            => 'Please enter name',
                     'name.min'                 => 'Name should be should be at least 2 characters',
                     'name.max'                 => 'Name should not be more than 255 characters',
                     'country_id.required'      => 'Please select country',
-                    'ar_name.required'         => 'Please enter arabic name',
-                    'ar_name.min'              => 'Arabic Name should be should be at least 2 characters',
-                    'ar_name.max'              => 'Arabic Name should not be more than 255 characters',
+
                 );
 
                 $Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);
@@ -171,16 +168,12 @@ class StateController extends Controller
                 $validationCondition = array(
                     'name'          => 'required|min:2|max:255|unique:' .(new State)->getTable().',name,'.$id.'',
                     'country_id'    => 'required',
-                    'ar_name'       =>'required|min:2|max:255',
                 );
                 $validationMessages = array(
                     'name.required'            => 'Please enter name',
                     'name.min'                 => 'Name should be should be at least 2 characters',
                     'name.max'                 => 'Name should not be more than 255 characters',
                     'country_id.required'      => 'Please select country',
-                    'ar_name.required'         => 'Please enter arabic name',
-                    'ar_name.min'              => 'Arabic Name should be should be at least 2 characters',
-                    'ar_name.max'              => 'Arabic Name should not be more than 255 characters',
 
                 );
                 

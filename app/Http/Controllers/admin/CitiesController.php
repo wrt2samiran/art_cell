@@ -31,7 +31,7 @@ class CitiesController extends Controller
         $this->data['page_title']='City List';
         if($request->ajax()){
 
-            $city=City::with('state')->with('country')->orderBy('id','Desc');
+            $city=City::with('state')->with('country');
             return Datatables::of($city)
             ->editColumn('created_at', function ($city) {
                 return $city->created_at ? with(new Carbon($city->created_at))->format('m/d/Y') : '';
@@ -39,6 +39,12 @@ class CitiesController extends Controller
             
             ->filterColumn('created_at', function ($query, $keyword) {
                 $query->whereRaw("DATE_FORMAT(created_at,'%m/%d/%Y') like ?", ["%$keyword%"]);
+            })
+            ->filterColumn('name', function ($query, $keyword) {
+                $query->whereTranslationLike('name', "%{$keyword}%");
+            })
+            ->orderColumn('name', function ($query, $order) {
+                 $query->orderByTranslation('name',$order);
             })
             ->addColumn('is_active',function($city){
                 if($city->is_active=='1'){
@@ -87,7 +93,6 @@ class CitiesController extends Controller
                     'name'          => 'required|min:2|max:255|unique:'.(new City)->getTable().',name',
                     'country_id'    => 'required',
                     'state_id'      => 'required',
-                    'ar_name'       =>'required|min:2|max:255',
                 );
                 $validationMessages = array(
                     'name.required'            => 'Please enter name',
@@ -95,9 +100,6 @@ class CitiesController extends Controller
                     'name.max'                 => 'Name should not be more than 255 characters',
                     'country_id'               => 'Please select country',
                     'state_id.required'        => 'Please select state',
-                    'ar_name.required'         => 'Please enter arabic name',
-                    'ar_name.min'              => 'Arabic Name should be should be at least 2 characters',
-                    'ar_name.max'              => 'Arabic Name should not be more than 255 characters',
                 );
 
                 $Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);
@@ -175,7 +177,6 @@ class CitiesController extends Controller
                     'name'          => 'required|min:2|max:255|unique:' .(new City)->getTable().',name,'.$id.'',
                     'country_id'    => 'required',
                     'state_id'      => 'required',
-                    'ar_name'       =>'required|min:2|max:255',
                 );
                 $validationMessages = array(
                     'name.required'            => 'Please enter name',
@@ -183,10 +184,6 @@ class CitiesController extends Controller
                     'name.max'                 => 'Name should not be more than 255 characters',
                     'country_id.required'      => 'Please select country',
                     'state_id.required'        => 'Please select state',
-                    'ar_name.required'         => 'Please enter arabic name',
-                    'ar_name.min'              => 'Arabic Name should be should be at least 2 characters',
-                    'ar_name.max'              => 'Arabic Name should not be more than 255 characters',
-
                 );
                 
                 $Validator = \Validator::make($request->all(), $validationCondition, $validationMessages);

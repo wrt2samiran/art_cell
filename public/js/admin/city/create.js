@@ -12,9 +12,7 @@
             state_id: {
                 required: true,
             },
-            ar_name: {
-                required: true,
-            },            
+                      
            
         },
         messages: {
@@ -29,9 +27,7 @@
             state_id: {
                 required:  "State name is required",
             },
-            ar_name: {
-                required:  "City arabic name is required",
-            },
+            
         },
 
         errorPlacement: function (error, element) {

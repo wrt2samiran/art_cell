@@ -8,8 +8,8 @@
         columns: [
             { data: 'id', name: 'id' },
             { data: 'name', name: 'name'},
-            { data: 'state.name', name: 'state.name' },
-            { data: 'country.name', name: 'country.name' },
+            { data: 'state.name', name: 'state.name', orderable: false, searchable: false },
+            { data: 'country.name', name: 'country.name', orderable: false, searchable: false },
             { data: 'is_active', name: 'is_active' },
             { data: 'created_at', name: 'created_at' },
             {data: 'action', name: 'action', orderable: false, searchable: false}

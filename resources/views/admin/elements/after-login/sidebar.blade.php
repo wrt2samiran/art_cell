@@ -68,9 +68,9 @@
                     
                 </li>
                 @if(auth()->guard('admin')->user()->hasModulePermission('master-modules'))
-                <li class="nav-item has-treeview {{(request()->is('admin/country/*','admin/country', 'admin/state/*','admin/state', 'admin/cities/*','admin/cities', 'admin/property-types/*','admin/property-types', 'admin/services/*','admin/services','admin/unit','admin/unit/*','admin/skills','admin/skills/*','admin/statuses/*','admin/statuses'))?'menu-open':''}}">
+                <li class="nav-item has-treeview {{(request()->is('admin/country/*','admin/country', 'admin/state/*','admin/state', 'admin/cities/*','admin/cities', 'admin/mobile_brand/*','admin/mobile_brand', 'admin/mobile_brand_model/*','admin/mobile_brand_model', 'admin/property-types/*','admin/property-types', 'admin/services/*','admin/services','admin/unit','admin/unit/*','admin/skills','admin/skills/*','admin/statuses/*','admin/statuses'))?'menu-open':''}}">
                     <a href="#"
-                       class="nav-link {{(request()->is('admin/country/*','admin/country', 'admin/state/*','admin/state', 'admin/cities/*','admin/cities', 'admin/property-types/*','admin/property-types', 'admin/services/*','admin/services','admin/unit','admin/unit/*','admin/unit/*','admin/skills','admin/skills/*','admin/statuses/*','admin/statuses'))?'active':''}}">
+                       class="nav-link {{(request()->is('admin/country/*','admin/country', 'admin/state/*','admin/state', 'admin/cities/*','admin/cities', 'admin/mobile_brand/*','admin/mobile_brand', 'admin/mobile_brand_model/*','admin/mobile_brand_model', 'admin/property-types/*','admin/property-types', 'admin/services/*','admin/services','admin/unit','admin/unit/*','admin/unit/*','admin/skills','admin/skills/*','admin/statuses/*','admin/statuses'))?'active':''}}">
                         <i class="nav-icon fas fa-bars"></i>
                         <p>
                             {{__('nav_link_text.master_modules')}}
@@ -106,197 +106,42 @@
                             </a>
                         </li>
                         @endif
-                        @if(auth()->guard('admin')->user()->hasAllPermission(['manage-property-type']))
+
+                        @if(auth()->guard('admin')->user()->hasAllPermission(['manage-mobile-brand']))
                         <li class="nav-item">
-                            <a href="{{ route('admin.property_types.list') }}"
-                               class="nav-link {{(request()->is('admin/property-types/*','admin/property-types'))?'active':''}}">
+                            <a href="{{ route('admin.mobile_brand.list') }}"
+                               class="nav-link {{(request()->is('admin/mobile_brand/*','admin/mobile_brand'))?'active':''}}">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>{{__('nav_link_text.property_types')}}</p>
-                            </a>
-                        </li>
-                        @endif
-                        @if(auth()->guard('admin')->user()->hasAllPermission(['manage-statuses']))
-                        <li class="nav-item">
-                            <a href="{{ route('admin.statuses.list') }}"
-                               class="nav-link {{(request()->is('admin/statuses/*','admin/statuses'))?'active':''}}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>{{__('nav_link_text.statuses')}}</p>
+                                <p>Mobile Brand</p>
                             </a>
                         </li>
                         @endif
 
-                        @if(auth()->guard('admin')->user()->hasAllPermission(['manage-work-order-statuses']))
+                        @if(auth()->guard('admin')->user()->hasAllPermission(['manage-brand-model']))
                         <li class="nav-item">
-                            <a href="{{ route('admin.work_order_statuses.list') }}"
-                               class="nav-link {{(request()->is('admin/statuses/*','admin/statuses'))?'active':''}}">
+                            <a href="{{ route('admin.mobile_brand_model.list') }}"
+                               class="nav-link {{(request()->is('admin/mobile_brand_model/*','admin/mobile_brand_model'))?'active':''}}">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>{{__('nav_link_text.work_order_statuses')}}</p>
+                                <p>Brand Model</p>
                             </a>
                         </li>
                         @endif
 
-
-
-                        @if(auth()->guard('admin')->user()->hasAllPermission(['manage-services']))
-                        <li class="nav-item">
-                            <a href="{{ route('admin.services.list') }}"
-                               class="nav-link {{(request()->is('admin/services/*','admin/services'))?'active':''}}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>{{__('nav_link_text.services')}}</p>
-                            </a>
-                        </li>
-                        @endif
-                        @if(auth()->guard('admin')->user()->hasAllPermission(['manage-units']))
-                        <li class="nav-item">
-                            <a href="{{ route('admin.unit.list') }}"
-                               class="nav-link {{(request()->is('admin/unit/*','admin/unit'))?'active':''}}">
-                                <i class="nav-icon fas fa-envelope-open-text"></i>
-                                <p>{{__('nav_link_text.unit_management')}}</p>
-                            </a>
-                        </li> 
-                        @endif
-
-                        @if(auth()->guard('admin')->user()->hasAllPermission(['manage-skills']))
-                        <li class="nav-item">
-                            <a href="{{ route('admin.skills.list') }}"
-                               class="nav-link {{(request()->is('admin/skills/*','admin/skills'))?'active':''}}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>{{__('nav_link_text.skills')}}</p>
-                            </a>
-                        </li>   
-                        @endif     
-
+                        
                     </ul>
                     
                 </li>
-                @endif
-                @if(auth()->guard('admin')->user()->hasAllPermission(['manage-translations']))
-                <li class="nav-item ">
-                    <a href="{{URL::to('/').'/admin/translations'}}"
-                    class="nav-link {{(request()->is('admin/translations/*','admin/translations'))?'active':''}}">
-                        <i class="nav-icon fas fa-globe"></i>
-                        <p>
-                             {{__('nav_link_text.translation_management')}}
-                        </p>
-                    </a>
-                </li>
-                @endif
-                
+                @endif           
                 
 
-                @if(auth()->guard('admin')->user()->hasAnyPermission(['group-list','user-list']))
-                <li class="nav-item has-treeview {{(request()->is('admin/user-groups/*','admin/user-groups','admin/users/*','admin/users'))?'menu-open':''}}">
-                    <a href="#"
-                       class="nav-link {{(request()->is('admin/user-groups/*','admin/user-groups','admin/users/*','admin/users'))?'active':''}}">
-                        <i class="nav-icon fas fa-address-book"></i>
-                        <p>
-                            {{__('nav_link_text.user_management')}}
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        @if(auth()->guard('admin')->user()->hasAllPermission(['group-list']))
-                        <li class="nav-item">
-                            <a href="{{route('admin.roles.list')}}" class="nav-link {{(request()->is('admin/user-groups/*','admin/user-groups'))?'active':''}}">
-                               <i class="nav-icon fas fa-users"></i>
-                              <p>
-                                {{__('nav_link_text.groups')}}
-                              </p>
-                            </a>
-                        </li>
-                        @endif
-                        @if(auth()->guard('admin')->user()->hasAllPermission(['user-list']))
-                        <li class="nav-item ">
-                            <a href="{{route('admin.users.list')}}"
-                            class="nav-link {{(request()->is('admin/users/*','admin/users'))?'active':''}}">
-                                <i class="nav-icon fa fa-user"></i>
-                                <p>
-                                     {{__('nav_link_text.users')}}
-                                </p>
-                            </a>
-                        </li>
-                        @endif
-                    </ul>
-                </li>
-                @endif
+             
 
-
-                @if(auth()->guard('admin')->user()->hasAnyPermission(['shared-service-list','spare-parts-list']))
-                <li class="nav-item has-treeview {{(request()->is('admin/shared-services/*','admin/shared-services','admin/spare-parts/*','admin/spare-parts'))?'menu-open':''}}">
-                    <a href="#"
-                       class="nav-link {{(request()->is('admin/shared-services/*','admin/shared-services','admin/spare-parts/*','admin/spare-parts'))?'active':''}}">
-                        <i class="nav-icon fab fa-usps"></i>
-                        <p>
-                            {{__('nav_link_text.manage_service_and_parts')}}
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        @if(auth()->guard('admin')->user()->hasAllPermission(['shared-service-list']))
-    
-                        <li class="nav-item">
-                                <a href="{{ route('admin.shared_services.list') }}" class="nav-link {{(request()->is('admin/shared-services/*','admin/shared-services'))?'active':''}}">
-                                    <i class="nav-icon fas fa-hammer"></i>
-                                    <p>{{__('nav_link_text.shared_services')}}</p>
-                                </a>
-                        </li>
-
-                        @endif
-                        @if(auth()->guard('admin')->user()->hasAllPermission(['spare-parts-list']))
-  
-                        <li class="nav-item">
-                            <a href="{{route('admin.spare_parts.list')}}" class="nav-link {{(request()->is('admin/spare-parts/*','admin/spare-parts'))?'active':''}}">
-                                <i class="nav-icon fas fa-screwdriver"></i>
-                                    <p>{{__('nav_link_text.spare_parts')}}</p>
-                            </a>
-                        </li>
-                      
-                        @endif
-                    </ul>
-                </li>
-                @endif
-
-                @if(auth()->guard('admin')->user()->hasAnyPermission(['shared-service-list','spare-parts-list']))
-                <li class="nav-item has-treeview {{(request()->is('admin/spare-part-orders/manage/orders','admin/spare-part-orders/manage/orders/*','admin/shared-service-orders/manage/orders','admin/shared-service-orders/manage/orders/*'))?'menu-open':''}}">
-                    <a href="#"
-                       class="nav-link {{(request()->is('admin/spare-part-orders/manage/orders','admin/spare-part-orders/manage/orders/*','admin/shared-service-orders/manage/orders','admin/shared-service-orders/manage/orders/*'))?'active':''}}">
-                        <i class="nav-icon fas fa-book"></i>
-                        <p>
-                            {{__('nav_link_text.manage_orders')}}
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        @if(auth()->guard('admin')->user()->hasAllPermission(['spare-part-order-management']))
-                        <li class="nav-item ">
-                            <a href="{{route('admin.spare_part_orders.order_list')}}"
-                            class="nav-link {{(request()->is('admin/spare-part-orders/manage/orders','admin/spare-part-orders/manage/orders/*'))?'active':''}}">
-                                <i class="nav-icon fas fa-shopping-cart"></i>
-                                <p>{{__('nav_link_text.spare_part_orders')}}</p>
-                            </a>
-                        </li>
-                        @endif
-
-                        @if(auth()->guard('admin')->user()->hasAllPermission(['shared-service-order-management']))
-                        <li class="nav-item ">
-                            <a href="{{route('admin.shared_service_orders.order_list')}}"
-                            class="nav-link {{(request()->is('admin/shared-service-orders/manage/orders','admin/shared-service-orders/manage/orders/*'))?'active':''}}">
-                                <i class="nav-icon fas fa-cart-arrow-down"></i>
-                                <p>{{__('nav_link_text.shared_service_orders')}}</p>
-                                
-                            </a>
-                        </li>
-                        @endif
-                    </ul>
-                </li>
-                @endif
-
-                @if(!auth()->guard('admin')->user()->hasAllPermission(['user-list']) && auth()->guard('admin')->user()->hasAllPermission(['service-provider-list']))
+                @if(!auth()->guard('admin')->user()->hasAllPermission(['manage-order']))
                 <li class="nav-item">
-                    <a href="{{route('admin.service_providers.list')}}"
-                    class="nav-link {{(request()->is('admin/service-providers/*','admin/service-providers'))?'active':''}}">
+                    <a href="{{route('admin.order.list')}}"
+                    class="nav-link {{(request()->is('admin/order/*','admin/order'))?'active':''}}">
                         <i class="nav-icon fab fa-usps"></i>
-                        <p>{{__('nav_link_text.service_providers')}}</p>
+                        <p>{{__('nav_link_text.manage_orders')}}</p>
                     </a>
                 </li>
                 @endif
@@ -319,226 +164,8 @@
                 </li>
                 @endif
 
-                @if(auth()->guard('admin')->user()->hasAllPermission(['property-list']))
-                <li class="nav-item ">
-                    <a href="{{route('admin.properties.list')}}"
-                    class="nav-link {{(request()->is('admin/properties/*','admin/properties'))?'active':''}}">
-                        <i class="nav-icon fas fa-igloo"></i>
-                        <p>{{__('nav_link_text.property_management')}}</p>
-                    </a>
-                </li>
-                @endif
-                @if(auth()->guard('admin')->user()->hasAllPermission(['contract-list']))
-                <li class="nav-item ">
-                    <a href="{{route('admin.contracts.list')}}"
-                    class="nav-link {{(request()->is('admin/contracts/*','admin/contracts'))?'active':''}}">
-                        <i class="nav-icon fas fa-money-check-alt"></i>
-                        <p>{{__('nav_link_text.contracts_management')}}</p>
-                    </a>
-                </li>
-                @endif
+              
 
-                @if(auth()->guard('admin')->user()->hasAllPermission(['can-order-spare-part']))
-                <li class="nav-item ">
-                    <a href="{{route('admin.spare_part_orders.create_order')}}"
-                    class="nav-link {{(request()->is('admin/spare-part-orders/create-order','admin/spare-part-orders/cart','admin/spare-part-orders/checkout','admin/spare-part-orders/my-orders'))?'active':''}}">
-                        <i class="nav-icon fas fa-screwdriver"></i>
-                        <p>{{__('nav_link_text.order_spare_part')}}</p>
-                    </a>
-                </li>
-                @endif
-
-                @if(auth()->guard('admin')->user()->hasAllPermission(['can-order-shared-service']))
-                <li class="nav-item ">
-                    <a href="{{route('admin.shared_service_orders.create_order')}}"
-                    class="nav-link {{(request()->is('admin/shared-service-orders/create-order','admin/shared-service-orders/cart','admin/shared-service-orders/checkout','admin/shared-service-orders/my-orders'))?'active':''}}">
-                        <i class="nav-icon fas fa-hammer"></i>
-                        <p>{{__('nav_link_text.order_shared_service')}}</p>
-                    </a>
-                </li>
-                @endif
-
-                @if(auth()->guard('admin')->user()->hasAllPermission(['quotation-list']))
-                <li class="nav-item ">
-                    <a href="{{route('admin.quotations.list')}}"
-                    class="nav-link {{(request()->is('admin/quotations/*','admin/quotations'))?'active':''}}">
-                        <i class="nav-icon fas fa-sticky-note"></i>
-                        <p>{{__('nav_link_text.quotations')}}</p>
-                    </a>
-                </li> 
-                @endif
-
-                @if(auth()->guard('admin')->user()->hasAllPermission(['users-contract-list']))
-                <li class="nav-item ">
-                    <a href="{{route('admin.user_contracts.list')}}"
-                    class="nav-link {{(request()->is('admin/user-contracts/*','admin/user-contracts'))?'active':''}}">
-                        <i class="nav-icon fas fa-handshake"></i>
-                        <p>{{__('nav_link_text.contracts')}}</p>
-                    </a>
-                </li>
-                @endif
-                @if(auth()->guard('admin')->user()->hasAllPermission(['users-property-list']))
-                <li class="nav-item ">
-                    <a href="{{route('admin.user_properties.list')}}"
-                    class="nav-link {{(request()->is('admin/user-properties/*','admin/user-properties'))?'active':''}}">
-                        <i class="nav-icon fas fa-house-user"></i>
-                        <p>{{__('nav_link_text.properties')}}</p>
-                    </a>
-                </li>
-                @endif 
-
-                @if(auth()->guard('admin')->user()->hasAllPermission(['calendar-data']))
-                <li class="nav-item ">
-                    <a href="{{route('admin.calendar.calendardata')}}"
-                    class="nav-link {{(request()->is('admin/calendar/*','admin/calendar'))?'active':''}}">
-                        <i class="nav-icon far fa-calendar-alt"></i>
-                        <p>{{__('nav_link_text.calendar')}}</p>
-                    </a>
-                </li>
-                @endif
-
-                @if(auth()->guard('admin')->user()->hasAllPermission(['manage-email-template']))
-                <li class="nav-item ">
-                    <a href="{{route('admin.email.list')}}"
-                    class="nav-link {{(request()->is('admin/email/*','admin/email'))?'active':''}}">
-                        <i class="nav-icon fa fa-file"></i>
-                        <p>{{__('nav_link_text.email_templete')}}</p>
-                    </a>
-                </li>            
-                @endif
-
-                @if(auth()->guard('admin')->user()->hasAllPermission(['manage-sms-template']))
-                <li class="nav-item ">
-                    <a href="{{route('admin.sms_templates.list')}}"
-                    class="nav-link {{(request()->is('admin/sms-templates/*','admin/sms-templates'))?'active':''}}">
-                        <i class="nav-icon fa fa-file"></i>
-                        <p>{{__('nav_link_text.sms_templates')}}</p>
-                    </a>
-                </li>            
-                @endif
-
-                <li class="nav-item has-treeview {{(request()->is('admin/notifications/*','admin/notifications','admin/messages/*','admin/messages'))?'menu-open':''}}">
-                    <a href="#"
-                       class="nav-link {{(request()->is('admin/notifications/*','admin/notifications','admin/messages/*','admin/messages'))?'active':''}}">
-                        <i class="nav-icon fas fa-envelope"></i>
-                        <p>
-                            {{__('nav_link_text.message_and_notifications')}}
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-
-                        @if(auth()->guard('admin')->user()->hasAllPermission(['view-messages']))
-                        <li class="nav-item ">
-                            <a href="{{route('admin.messages.list')}}"
-                            class="nav-link {{(request()->is('admin/messages/*','admin/messages'))?'active':''}}">
-                                <i class="nav-icon fas fa-envelope-open-text"></i>
-                                <p>
-                                     {{__('nav_link_text.messages')}}
-                                </p>
-                            </a>
-                        </li>
-                        @endif
-                        <li class="nav-item ">
-                            <a href="{{route('admin.notifications.list')}}"
-                            class="nav-link {{(request()->is('admin/notifications/*','admin/notifications'))?'active':''}}">
-                                <i class="nav-icon far fa-bell"></i>
-                                <p>{{__('nav_link_text.notifications')}}</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                @if(auth()->guard('admin')->user()->hasAllPermission(['complaint-list']))
-                <li class="nav-item ">
-                    <a href="{{route('admin.complaints.list')}}"
-                    class="nav-link {{(request()->is('admin/complaints/*','admin/complaints'))?'active':''}}">
-                        <i class="nav-icon far fa-question-circle"></i>
-                        <p>{{__('nav_link_text.complaints')}}</p>
-                    </a>
-                </li>
-                @endif
-
-                @if(auth()->guard('admin')->user()->hasAllPermission(['generate-report']))
-                <li class="nav-item ">
-                    <a href="{{route('admin.reports.index')}}"
-                    class="nav-link {{(request()->is('admin/reports/*','admin/reports'))?'active':''}}">
-                        <i class="nav-icon fas fa-poll"></i>
-                        <p>{{__('nav_link_text.reports')}}</p>
-                    </a>
-                </li>  
-                @endif
-                
-                @if(auth()->guard('admin')->user()->hasAllPermission(['work-order-list']))
-                <li class="nav-item ">
-                    <a href="{{route('admin.work-order-management.list')}}"
-                    class="nav-link {{(request()->is('admin/work-order-management/*','admin/work-order-management'))?'active':''}}">
-                        <i class="nav-icon fas fa-quote-right"></i>
-                        @if($admin->role->user_type->slug=='labour')
-                            <p>{{__('nav_link_text.my-tasks')}}</p>
-                        @else
-                            <p>{{__('nav_link_text.work-order-management')}}</p>
-                        @endif
-                    </a>
-                </li>            
-                @endif
-
-                @if(auth()->guard('admin')->user()->hasAllPermission(['emergency-service-list']))
-                <li class="nav-item ">
-                    <a href="{{route('admin.emergency-service-management.list')}}"
-                    class="nav-link {{(request()->is('admin/emergency-service-management/*','admin/emergency-service-management'))?'active':''}}">
-                        <i class="fas fa-microphone-alt"></i>
-                            <p>{{__('nav_link_text.emergency-service-management')}}</p>
-                    </a>
-                </li>            
-                @endif
-                <!-- @if ($admin->role->user_type->slug =='super-admin' || $admin->role->user_type->slug =='service-provider')
-                <li class="nav-item has-treeview {{(request()->is('admin/labour/*','admin/labour'))?'menu-open':''}}">
-                    
-                    <li class="nav-item">
-                            <a href="{{ route('admin.labour.list') }}" class="nav-link {{(request()->is('admin/labour/*','admin/labour'))?'active':''}}">
-                                <i class="nav-icon fas fa-envelope-open-text"></i>
-                                <p>{{__('nav_link_text.labour_management')}}</p>
-                            </a>
-                        </li>
-                </li>
-                @endif -->
-
-                @if(auth()->guard('admin')->user()->hasModulePermission('labour-management'))
-                <li class="nav-item has-treeview {{(request()->is('admin/labour/*','admin/labour'))?'menu-open':''}}">
-                    <a href="#"
-                       class="nav-link {{(request()->is('admin/labour/*','admin/labour'))?'active':''}}">
-                        <i class="nav-icon fas fa-bars"></i>
-                        <p>
-                            {{__('nav_link_text.labour_management')}}
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    
-                    <ul class="nav nav-treeview">
-                        @if(auth()->guard('admin')->user()->hasAllPermission(['manage-labour']))
-                        <li class="nav-item">
-                            <a href="{{ route('admin.labour.list') }}"
-                               class="nav-link {{(request()->is('admin/labour','admin/labour'))?'active':''}}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>{{__('nav_link_text.labour_list')}}</p>
-                            </a>
-                        </li>
-                        @endif
-                        @if(auth()->guard('admin')->user()->hasAllPermission(['leave-list']))
-                        <li class="nav-item">
-                            <a href="{{ route('admin.leave_management.leaveList') }}" class="nav-link {{(request()->is('admin/leave-list','admin/leave-list', 'admin/show-leave/*','admin/show-leave'))?'active':''}}"
-                               >
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>{{__('nav_link_text.labour_leave_management')}}</p>
-                            </a>
-                        </li>
-                        @endif
-
-                    </ul>
-                    
-                </li>
-                @endif
 
 
             </ul>

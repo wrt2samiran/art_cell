@@ -5,12 +5,6 @@
                 minlength: 3,
                 maxlength: 50,
             },
-           
-           ar_name: {
-                required: true,
-                minlength: 3,
-                maxlength: 50,
-            },
 
             country_code: {
                 required: true,
@@ -31,11 +25,7 @@
                 minlength: "Country name should have 3 characters",
                 maxlength: "Country name should not be more then 50 characters"
             },
-            ar_name: {
-                required:  "Country name is required",
-                minlength: "Country name should have 3 characters",
-                maxlength: "Country name should not be more then 50 characters"
-            },
+           
             country_code: {
                 required:  "Country code is required",
                 minlength: "Country code should have 2 digits",

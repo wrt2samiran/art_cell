@@ -50,18 +50,8 @@
                     @endif
                   <div class="row justify-content-center">
                     <div class="col-md-10 col-sm-12">
-                    <form  method="post" id="admin_city_add_form" action="{{route('admin.cities.add')}}" method="post" enctype="multipart/form-data">
-                        
-
-                    <ul class="nav nav-tabs" role="tablist">
-                          <li class="nav-item">
-                            <a class="nav-link active" data-toggle="tab" href="#english" role="tab">English</a>
-                          </li>
-                          <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#arabic" role="tab">Arabic</a>
-                          </li>
-                        </ul><!-- Tab panes -->
-                        @csrf
+                    <form  method="post" id="admin_city_add_form" action="{{route('admin.cities.add')}}" method="post" enctype="multipart/form-data">  
+                      @csrf
                         <div class="tab-content tab-validate pt-3">
                           <div class="tab-pane active" id="english" role="tabpanel">
                             <div class="form-group required">
@@ -92,22 +82,14 @@
                           </div>
 
                           <div class="form-group required">
-                            <label for="name">City Name (English) <span class="error">*</span></label>
+                            <label for="name">City Name <span class="error">*</span></label>
                             <input type="text" class="form-control" value="{{old('name')?old('name'):''}}" name="name" id="name"  placeholder="Please Enter Country Name">
                             @if($errors->has('name'))
                             <span class="text-danger">{{$errors->first('name')}}</span>
                             @endif
                           </div>
                       </div>
-                      <div class="tab-pane" id="arabic" role="tabpanel">
-                                  <div class="form-group required">
-                                  <label for="name">City Name (Arabic) <span class="error">*</span></label>
-                                  <input type="text" class="form-control" value="{{old('ar_name')?old('ar_name'):''}}" name="ar_name" id="ar_name"  placeholder="Please Enter Country Name">
-                                  @if($errors->has('ar_name'))
-                                  <span class="text-danger">{{$errors->first('ar_name')}}</span>
-                                  @endif
-                                </div>
-                            </div>
+                  
                         </div>
                         <div>
                            <a href="{{route('admin.cities.list')}}"  class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;Back</a>
